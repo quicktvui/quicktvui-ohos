@@ -1,13 +1,21 @@
 {
   "apiType": "stageMode",
   "buildOption": {
+    "externalNativeOptions": {
+      "path": "./src/main/cpp/CMakeLists.txt",
+      "arguments": "",
+      "cppFlags": "",
+    }
   },
   "buildOptionSet": [
     {
-      "name": "release",
+      "name": "debug",
+      "debuggable": true,
       "arkOptions": {
+
         "obfuscation": {
           "ruleOptions": {
+
             "enable": false,
             "files": [
               "./obfuscation-rules.txt"
@@ -19,7 +27,8 @@
   ],
   "targets": [
     {
-      "name": "default"
+      "name": "default",
+
     },
     {
       "name": "ohosTest",

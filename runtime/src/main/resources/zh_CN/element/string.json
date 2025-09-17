@@ -1,0 +1,104 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "模块描述"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "debug_title",
+      "value": "快应用调试V3"
+    },
+    {
+      "name": "debug_runtime_version",
+      "value": "容器版本：Name: %1$s   Code：%2$s"
+    },
+    {
+      "name": "system_name",
+      "value": "系统名称: %1$s"
+    },
+    {
+      "name": "debug_runtime_name",
+      "value": "容器名称: %1$s"
+    },
+    {
+      "name": "debug_ip_address",
+      "value": "当前设备 IP 地址:%1$s"
+    },
+    {
+      "name": "set_debug_server_host_tip",
+      "value": "使用如下命令设置调试服务地址：\nhdc shell \ncem publish --event 'com.extscreen.runtime.ACTION_CHANGE_DEBUG_SERVER' --data '192.168.xx.xx'  （电脑端调试服务地址）"
+    },
+    {
+      "name": "debug_server_ip_address",
+      "value": "电脑调试地址:%1$s"
+    },
+    {
+      "name": "debug_server_not_available",
+      "value": "调试服务不可用"
+    },
+    {
+      "name": "debug_app_tip",
+      "value": "本App仅用开发调试，点击右侧按钮加载测试代码"
+    },
+    {
+      "name": "debug_start",
+      "value": "加载测试代码"
+    },
+    {
+      "name": "reason_location",
+      "value": "用于导航、地图定位和附近服务功能。"
+    },
+    {
+      "name": "reason_camera",
+      "value": "用于拍照、视频录制及视频通话功能。"
+    },
+    {
+      "name": "reason_microphone",
+      "value": "用于语音输入、音视频通话和录音功能。"
+    },
+    {
+      "name": "reason_contacts",
+      "value": "用于联系人选择、展示及相关通信功能。"
+    },
+    {
+      "name": "reason_storage",
+      "value": "用于读取和保存图片、文件等本地数据。"
+    },
+    {
+      "name": "reason_calendar",
+      "value": "用于展示日程、设置提醒及同步日历信息。"
+    },
+    {
+      "name": "reason_health",
+      "value": "用于记录和分析健康数据，例如步数、心率等。"
+    },
+    {
+      "name": "reason_bluetooth",
+      "value": "用于连接和管理蓝牙设备，例如耳机和可穿戴设备。"
+    },
+    {
+      "name": "reason_activity_movement",
+      "value": "用于记录步行、跑步等运动状态以提供健康分析服务。"
+    },
+    {
+      "name": "reason_notifications",
+      "value": "用于接收通知提醒，确保及时获取重要信息。"
+    },
+    {
+      "name": "reason_background_audio",
+      "value": "应用需要在后台持续运行，以完成音频播放任务。"
+    },
+    {
+      "name": "cross_mark",
+      "value": "❌"
+    }
+  ]
+}

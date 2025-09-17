@@ -1,0 +1,104 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "debug_title",
+      "value": "快应用调试V3"
+    },
+    {
+      "name": "debug_runtime_version",
+      "value": "容器版本：Name: %1$s   Code：%2$s"
+    },
+    {
+      "name": "system_name",
+      "value": "系统名称: %1$s"
+    },
+    {
+      "name": "debug_runtime_name",
+      "value": "容器名称: %1$s"
+    },
+    {
+      "name": "debug_ip_address",
+      "value": "当前设备 IP 地址:%1$s"
+    },
+    {
+      "name": "set_debug_server_host_tip",
+      "value": "使用如下命令设置调试服务地址：\nhdc shell \ncem publish --event 'com.extscreen.runtime.ACTION_CHANGE_DEBUG_SERVER' --data '192.168.xx.xx'  （电脑端调试服务地址）"
+    },
+    {
+      "name": "debug_server_ip_address",
+      "value": "电脑调试地址:%1$s"
+    },
+    {
+      "name": "debug_server_not_available",
+      "value": "调试服务不可用"
+    },
+    {
+      "name": "debug_app_tip",
+      "value": "本App仅用开发调试，点击右侧按钮加载测试代码"
+    },
+    {
+      "name": "debug_start",
+      "value": "加载测试代码"
+    },
+    {
+      "name": "reason_location",
+      "value": "Used for navigation, map positioning, and nearby service functions."
+    },
+    {
+      "name": "reason_camera",
+      "value": "Used for taking photos, recording videos, and video call functions."
+    },
+    {
+      "name": "reason_microphone",
+      "value": "Used for voice input, audio/video calls, and recording functions."
+    },
+    {
+      "name": "reason_contacts",
+      "value": "Used for contact selection, display, and related communication features."
+    },
+    {
+      "name": "reason_storage",
+      "value": "Used for reading and saving local data such as images and files."
+    },
+    {
+      "name": "reason_calendar",
+      "value": "Used to display schedules, set reminders, and sync calendar information."
+    },
+    {
+      "name": "reason_health",
+      "value": "Used to record and analyze health data, such as steps and heart rate."
+    },
+    {
+      "name": "reason_bluetooth",
+      "value": "Used to connect and manage Bluetooth devices, such as headsets and wearables."
+    },
+    {
+      "name": "reason_activity_movement",
+      "value": "Used to record activities like walking and running for health analysis services."
+    },
+    {
+      "name": "reason_notifications",
+      "value": "Used to receive notifications to ensure timely access to important information."
+    },
+    {
+      "name": "reason_background_audio",
+      "value": "The app needs to keep running in the background to continue audio playback."
+    },
+    {
+      "name": "cross_mark",
+      "value": "❌"
+    }
+  ]
+}

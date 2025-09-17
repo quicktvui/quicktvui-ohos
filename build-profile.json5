@@ -5,9 +5,10 @@
       {
         "name": "default",
         "signingConfig": "default",
-        "targetSdkVersion": "5.1.1(19)",
-        "compatibleSdkVersion": "5.0.3(15)",
-        "runtimeOS": "HarmonyOS",
+        "compatibleSdkVersion": 12,
+        "compileSdkVersion": 15,
+        "targetSdkVersion": 12,
+        "runtimeOS": "OpenHarmony",
         "buildOption": {
           "strictMode": {
             "caseSensitiveCheck": true,
@@ -37,6 +38,18 @@
           ]
         }
       ]
+    },
+    {
+      "name": "quicktvui",
+      "srcPath": "./quicktvui",
+//      "targets": [
+//        {
+//          "name": "default",
+//          "applyToProducts": [
+//            "default"
+//          ]
+//        }
+//      ]
     }
   ]
 }

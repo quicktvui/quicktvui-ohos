@@ -1,8 +1,9 @@
 {
   "module": {
-    "name": "runtime_test",
+    "name": "quicktvui_oshos_entry_test",
     "type": "feature",
     "deviceTypes": [
+      "default",
       "tablet"
     ],
     "deliveryWithInstall": true,

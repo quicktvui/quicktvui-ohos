@@ -5,6 +5,9 @@
   "main": "",
   "author": "",
   "license": "",
-  "dependencies": {}
+  "dependencies": {
+    "quicktvui": "file:../quicktvui",
+    "hippy": "file:../libs/hippy.har"
+  }
 }
 

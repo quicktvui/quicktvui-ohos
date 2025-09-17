@@ -3,48 +3,121 @@
     "name": "runtime",
     "type": "entry",
     "description": "$string:module_desc",
-    "mainElement": "RuntimeAbility",
+    "mainElement": "RuntimeEntryAbility",
     "deviceTypes": [
+      "default",
       "tablet"
+    ],
+    "querySchemes": [
+      "esapp"
     ],
     "deliveryWithInstall": true,
     "installationFree": false,
     "pages": "$profile:main_pages",
+    "routerMap": "$profile:router_map",
     "abilities": [
       {
-        "name": "RuntimeAbility",
-        "srcEntry": "./ets/runtimeability/RuntimeAbility.ets",
-        "description": "$string:RuntimeAbility_desc",
+        "name": "RuntimeEntryAbility",
+        "srcEntry": "./ets/entryability/RuntimeEntryAbility.ets",
+        "description": "demo",
         "icon": "$media:layered_image",
-        "label": "$string:RuntimeAbility_label",
+        "label": "$string:EntryAbility_label",
         "startWindowIcon": "$media:startIcon",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
+        "backgroundModes": [
+          // 长时任务类型的配置项
+          "audioPlayback"
+        ],
         "skills": [
           {
+            // actions不能为空，actions为空会造成目标方匹配失败
+            "actions": [
+              "ohos.want.action.viewData"
+            ],
+            "uris": [
+              {
+                "scheme": "esapp",
+                "host": "action",
+                "path": "start"
+              }
+            ]
+          },
+          {
             "entities": [
-              "entity.system.home"
+              // entities须包含"entity.system.browsable"
+              "entity.system.browsable"
             ],
             "actions": [
-              "ohos.want.action.home"
-            ]
+              // actions须包含"ohos.want.action.viewData"
+              "ohos.want.action.viewData"
+            ],
+            "uris": [
+              {
+                // scheme须配置为https
+                "scheme": "https",
+                // host须配置关联的域名
+                "host": "www.quicktvui.com",
+                // path可选，为了避免匹配到多个应用，建议配置该字段
+                "path": "runtime"
+              }
+            ],
+            // domainVerify须设置为true
+            "domainVerify": true
           }
         ]
       }
     ],
-    "extensionAbilities": [
+    "requestPermissions": [
       {
-        "name": "RuntimeBackupAbility",
-        "srcEntry": "./ets/runtimebackupability/RuntimeBackupAbility.ets",
-        "type": "backup",
-        "exported": false,
-        "metadata": [
-          {
-            "name": "ohos.extension.backup",
-            "resource": "$profile:backup_config"
-          }
-        ],
-      }
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.GET_NETWORK_INFO"
+      },
+      //      {
+      //        "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
+      //      },
+      {
+        "name": "ohos.permission.LOCATION",
+        "reason": "$string:reason_location",
+        "usedScene": {
+          "abilities": [
+            "RuntimeEntryAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.APPROXIMATELY_LOCATION",
+        "reason": "$string:reason_location",
+        "usedScene": {
+          "abilities": [
+            "RuntimeEntryAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.CAMERA",
+        "reason": "$string:reason_camera",
+        "usedScene": {
+          "abilities": [
+            "RuntimeEntryAbility"
+          ],
+          "when": "always"
+        }
+      },
+      {
+        "name": "ohos.permission.KEEP_BACKGROUND_RUNNING",
+        "reason": "$string:reason_background_audio",
+        "usedScene": {
+          "abilities": [
+            "RuntimeEntryAbility"
+          ],
+          "when": "always"
+        }
+      },
     ]
   }
 }
