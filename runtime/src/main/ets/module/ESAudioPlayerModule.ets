@@ -10,14 +10,12 @@ import {
 import { BaseModule } from './BaseModule';
 import { media } from '@kit.MediaKit';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { QTPlayerEvent } from '../components/player/QTPlayerEvent';
-import { QTPlayerEventProp } from '../components/player/QTPlayerEventProp';
-import { QTPlayerState } from '../components/player/QTPlayerState';
 import Url from '@ohos.url'
 import { audio } from '@kit.AudioKit';
 import { common } from '@kit.AbilityKit';
 import { fileIo as fs } from '@kit.CoreFileKit';
 import QTAppManager from '../quick/QTAppManager';
+import { QTPlayerEvent, QTPlayerEventProp, QTPlayerState } from 'quicktvui';
 
 interface AVCommand {
   name: string;

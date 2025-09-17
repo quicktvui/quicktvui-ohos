@@ -6,7 +6,7 @@
         "name": "default",
         "signingConfig": "default",
         "compatibleSdkVersion": 12,
-        "compileSdkVersion": 15,
+        "compileSdkVersion": 18,
         "targetSdkVersion": 12,
         "runtimeOS": "OpenHarmony",
         "buildOption": {

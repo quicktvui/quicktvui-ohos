@@ -10,9 +10,6 @@ import {
 import { BaseModule } from './BaseModule';
 import { media } from '@kit.MediaKit';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { QTPlayerEvent } from '../components/player/QTPlayerEvent';
-import { QTPlayerEventProp } from '../components/player/QTPlayerEventProp';
-import { QTPlayerState } from '../components/player/QTPlayerState';
 import Url from '@ohos.url'
 import { audio } from '@kit.AudioKit';
 import { common } from '@kit.AbilityKit';
@@ -21,7 +18,7 @@ import QTAppManager from '../quick/QTAppManager';
 
 import { backgroundTaskManager } from '@kit.BackgroundTasksKit';
 import { wantAgent, WantAgent } from '@kit.AbilityKit';
-
+import { QTPlayerEvent, QTPlayerEventProp, QTPlayerState } from 'quicktvui';
 
 interface AVCommand {
   name: string;
@@ -62,7 +59,7 @@ export class ESAudioServicePlayerModule extends BaseModule {
         promise?.resolve(true)
         break;
       }
-    //停止后台任务
+      //停止后台任务
       case 'stopBackgroundRunning': {
         this.stopContinuousTask(promise)
         break;

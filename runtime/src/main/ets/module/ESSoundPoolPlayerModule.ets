@@ -10,10 +10,9 @@ import { BaseModule } from './BaseModule';
 import media from '@ohos.multimedia.media';
 import audio from '@ohos.multimedia.audio';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { QTPlayerState } from '../components/player/QTPlayerState';
-import { QTPlayerEvent } from '../components/player/QTPlayerEvent';
-import { QTPlayerEventProp } from '../components/player/QTPlayerEventProp';
 import { fileIo as fs } from '@kit.CoreFileKit';
+
+import { QTPlayerEvent, QTPlayerEventProp, QTPlayerState } from 'quicktvui';
 
 /**
  * SoundPool

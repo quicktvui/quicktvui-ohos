@@ -7,11 +7,11 @@ import {
   HIPPY_COMPONENT_KEY_PREFIX,
   buildHippyRenderView
 } from 'hippy'
-import { QTBaseComponentView } from 'quicktvui';
+import { QTBaseComponentView } from '../QTBaseComponentView';
 
 @Observed
-export class QTPageView extends QTBaseComponentView {
-  public event: QTPage | null = null
+export class QTPageRouterView extends QTBaseComponentView {
+  public event: QTPageRouter | null = null
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -30,8 +30,8 @@ export class QTPageView extends QTBaseComponentView {
 }
 
 @Component
-export struct QTPage {
-  @ObjectLink renderView: QTPageView
+export struct QTPageRouter {
+  @ObjectLink renderView: QTPageRouterView
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
   public call(method: string, params: Array<HippyAny>,

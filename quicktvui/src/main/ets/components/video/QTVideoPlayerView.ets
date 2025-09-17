@@ -9,13 +9,13 @@ import {
   LogUtils
 } from 'hippy'
 
-import { QTBaseComponentView } from 'quicktvui';
 import media from '@ohos.multimedia.media';
 import { display } from '@kit.ArkUI';
 import { QTPlayerOp } from '../player/QTPlayerOp';
 import { QTPlayerEvent } from '../player/QTPlayerEvent';
 import { QTPlayerState } from '../player/QTPlayerState';
 import { QTPlayerEventProp } from '../player/QTPlayerEventProp';
+import { QTBaseComponentView } from '../QTBaseComponentView';
 
 const PROPORTION = 0.99; // 占屏幕比例
 const SURFACE_W = 0.9; // 表面宽比例

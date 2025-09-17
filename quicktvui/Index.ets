@@ -29,3 +29,10 @@ export { QTAnimation, QTAnimationView } from './src/main/ets/components/animatio
 export { QTItemFrame, QTItemFrameView } from './src/main/ets/components/item/QTItemFrameView'
 
 export { QTLottie, QTLottieView } from './src/main/ets/components/lottie/QTLottieView'
+
+
+export { QTPlayerEventProp } from './src/main/ets/components/player/QTPlayerEventProp'
+
+export { QTPlayerEvent } from './src/main/ets/components/player/QTPlayerEvent'
+
+export { QTPlayerState } from './src/main/ets/components/player/QTPlayerState'

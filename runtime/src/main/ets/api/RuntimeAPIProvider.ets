@@ -19,7 +19,6 @@ import { ESPluginModule } from '../module/ESPluginModule';
 import { ESWindowModule } from '../module/ESWindowModule';
 import { ESPermissionModule } from '../module/ESPermissionModule';
 import { ESModule } from '../module/ESModule';
-import { QTVideoPlayerView } from '../components/video/QTVideoPlayerView';
 import { ESLocalStorageModule } from '../module/ESLocalStorageModule';
 import { ESSoundPoolPlayerModule } from '../module/ESSoundPoolPlayerModule';
 import { ESAudioPlayerModule } from '../module/ESAudioPlayerModule';
@@ -27,8 +26,6 @@ import { ESDownloadModule } from '../module/download/ESDownloadModule';
 import { ESFileModule } from '../module/ESFileModule';
 import { ESUploadModule } from '../module/upload/ESUploadModule';
 import { ESBundleModule } from '../module/ESBundleModule';
-import { QTPageRouterView } from '../components/router/QTPageRouterView';
-import { QTPageView } from '../components/router/QTPageView';
 import { ESAbilityModule } from '../module/ESAbilityModule';
 import { ESNativeRouterModule } from '../module/ESNativeRouterModule';
 import { ESEmitterModule } from '../module/ESEmitterModule';
@@ -104,9 +101,6 @@ export class RuntimeAPIProvider extends HippyAPIProvider {
 
   getCustomRenderViewCreatorMap(): Map<string, HRRenderViewCreator> | null {
     let registerMap: Map<string, HRRenderViewCreator> = new Map()
-    registerMap.set("QTVideoPlayerView", (ctx): HippyRenderBaseView => new QTVideoPlayerView(ctx))
-    registerMap.set("ESPageRouterView", (ctx): HippyRenderBaseView => new QTPageRouterView(ctx))
-    registerMap.set("ESPageRootView", (ctx): HippyRenderBaseView => new QTPageView(ctx))
     return registerMap
   }
 

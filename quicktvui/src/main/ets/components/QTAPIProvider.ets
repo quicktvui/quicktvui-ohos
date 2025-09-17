@@ -1,34 +1,39 @@
 import { HippyAPIProvider } from 'hippy';
 
 import {
-  HippyJSModuleCreator
-} from 'hippy/src/main/ets/hippy_framework/modules/HippyModuleManagerImpl';
-import {
-  HippyNativeModuleCreator
-} from 'hippy/src/main/ets/hippy_framework/modules/HippyModuleManagerImpl';
-
-import HippyRenderBaseView
-  from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView';
-import {
+  HippyJSModuleCreator,
+  HippyNativeModuleCreator,
+  HippyRenderBaseView,
   HRRenderViewCreator
-} from 'hippy/src/main/ets/renderer_native/components/HippyRenderRegisterMap';
+} from 'hippy';
 
-import { QTDivView } from './div/QTDivView';
+import { QTDiv, QTDivView } from './div/QTDivView';
 import { QTFastListView } from './fastlist/QTFastListView';
-import { QTFastFlexView } from './fastlist/QTFastFlexView';
-import { QTFastItemView } from './fastlist/QTFastItemView';
+import { QTFastFlex, QTFastFlexView } from './fastlist/QTFastFlexView';
+import { QTFastItem, QTFastItemView } from './fastlist/QTFastItemView';
 import { TAG_QUICKTVUI } from '../Constant';
-import { QTTextView } from './text/QTTextView';
+import { QTText, QTTextView } from './text/QTTextView';
 import { QTFallback, QTFallbackView } from './compat/QTFallbackView';
-import { QTLoadingView } from './loading/QTLoadingView';
-import { QTEventView } from './event/QTEventView';
-import { QTProgressView } from './progress/QTProgressView';
-import { QTQRCodeView } from './qrcode/QTQRCodeView';
-import { QTWebView } from './web/QTWebView';
-import { QTSliderView } from './slider/QTSliderView';
-import { QTAnimationView } from './animation/QTAnimationView';
-import { QTItemFrameView } from './item/QTItemFrameView';
-import { QTLottieView } from './lottie/QTLottieView';
+import { QTLoading, QTLoadingView } from './loading/QTLoadingView';
+import { QTEvent, QTEventView } from './event/QTEventView';
+import { QTProgress, QTProgressView } from './progress/QTProgressView';
+import { QTQRCode, QTQRCodeView } from './qrcode/QTQRCodeView';
+import { QTWeb, QTWebView } from './web/QTWebView';
+import { QTSlider, QTSliderView } from './slider/QTSliderView';
+import { QTAnimation, QTAnimationView } from './animation/QTAnimationView';
+import { QTItemFrame, QTItemFrameView } from './item/QTItemFrameView';
+import { QTLottie, QTLottieView } from './lottie/QTLottieView';
+import { HRTvImage, HRTvImageView } from './image/HRTvImageView';
+import { HRTvDiv, HRTvDivView } from './view/HRTvDivView';
+import { HRTvListView } from './list/HRTvListView';
+import { HRTvListItem, HRTvListItemView } from './list/HRTvListItemView';
+import { HRTvViewPager, HRTvViewPagerView } from './pager/HRTvViewPager';
+import { HRTvViewPagerItem, HRTvViewPagerItemView } from './pager/HRTvViewPagerItem';
+import { QTFastList } from './fastlist/QTFastList';
+import { QTVideoPlayer, QTVideoPlayerView } from './video/QTVideoPlayerView';
+import { QTPageRouter, QTPageRouterView } from './router/QTPageRouterView';
+import { QTPage, QTPageView } from './router/QTPageView';
+import { HRTvList } from './list/HRTvList';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -44,6 +49,11 @@ export class QTAPIProvider extends HippyAPIProvider {
 
   getCustomRenderViewCreatorMap(): Map<string, HRRenderViewCreator> | null {
     let registerMap: Map<string, HRRenderViewCreator> = new Map()
+
+    registerMap.set("QTVideoPlayerView", (ctx): HippyRenderBaseView => new QTVideoPlayerView(ctx))
+    registerMap.set("ESPageRouterView", (ctx): HippyRenderBaseView => new QTPageRouterView(ctx))
+    registerMap.set("ESPageRootView", (ctx): HippyRenderBaseView => new QTPageView(ctx))
+
     registerMap.set("QTView", (ctx): HippyRenderBaseView => new QTDivView(ctx))
     registerMap.set("FastListView", (ctx): HippyRenderBaseView => new QTFastListView(ctx))
     registerMap.set("FastFlexView", (ctx): HippyRenderBaseView => new QTFastFlexView(ctx))
@@ -71,6 +81,15 @@ export class QTAPIProvider extends HippyAPIProvider {
     // registerMap.set("MyTopView", (ctx): HippyRenderBaseView => new MyTopView(ctx))
     // registerMap.set("MyTabBarView", (ctx): HippyRenderBaseView => new MyTabBarView(ctx))
     // registerMap.set("MyBottomView", (ctx): HippyRenderBaseView => new MyBottomView(ctx))
+
+    //鸿蒙开发者
+    registerMap.set("TvImage", (ctx): HippyRenderBaseView => new HRTvImageView(ctx))
+    registerMap.set("TvView", (ctx): HippyRenderBaseView => new HRTvDivView(ctx))
+    registerMap.set("TvListView", (ctx): HippyRenderBaseView => new HRTvListView(ctx))
+    registerMap.set("TvListViewItem", (ctx): HippyRenderBaseView => new HRTvListItemView(ctx))
+    registerMap.set("TvViewPager", (ctx): HippyRenderBaseView => new HRTvViewPagerView(ctx))
+    registerMap.set("TvViewPagerItem", (ctx): HippyRenderBaseView => new HRTvViewPagerItemView(ctx))
+    //
     return registerMap
   }
 
@@ -80,5 +99,129 @@ export class QTAPIProvider extends HippyAPIProvider {
 
   getCustomMappingRenderViewMap(): Map<string, string> | null {
     return null
+  }
+}
+
+
+@Builder
+export function buildCustomRenderView($$: HippyRenderBaseView) {
+  if ($$ instanceof QTLoadingView) {
+    QTLoading({
+      renderView: $$ as QTLoadingView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTEventView) {
+    QTEvent({
+      renderView: $$ as QTEventView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTProgressView) {
+    QTProgress({
+      renderView: $$ as QTProgressView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTQRCodeView) {
+    QTQRCode({
+      renderView: $$ as QTQRCodeView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTWebView) {
+    QTWeb({
+      renderView: $$ as QTWebView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTVideoPlayerView) {
+    QTVideoPlayer({
+      renderView: $$ as QTVideoPlayerView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTSliderView) {
+    QTSlider({
+      renderView: $$ as QTSliderView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTFastListView) {
+    QTFastList({
+      renderView: $$ as QTFastListView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTTextView) {
+    QTText({
+      renderView: $$ as QTTextView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTFastItemView) {
+    QTFastItem({
+      renderView: $$ as QTFastItemView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTDivView) {
+    QTDiv({
+      renderView: $$ as QTTextView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTPageRouterView) {
+    QTPageRouter({
+      renderView: $$ as QTPageRouterView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTAnimationView) {
+    QTAnimation({
+      renderView: $$ as QTAnimationView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTItemFrameView) {
+    QTItemFrame({
+      renderView: $$ as QTItemFrameView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTLottieView) {
+    QTLottie({
+      renderView: $$ as QTLottieView,
+      children: $$.children,
+    })
+  }
+  //页面
+  else if ($$ instanceof QTPageView) {
+    QTPage({
+      renderView: $$ as QTPageView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTFastFlexView) {
+    QTFastFlex({
+      renderView: $$ as QTFastFlexView,
+      children: $$.children,
+    })
+  }
+  //-------------------------------------------------------------------
+  else if ($$ instanceof HRTvImageView) {
+    HRTvImage({ renderView: $$ as HRTvImageView })
+  } else if ($$ instanceof HRTvDivView) {
+    HRTvDiv({ renderView: $$ as HRTvDivView, children: $$.children })
+  } else if ($$ instanceof HRTvListView) {
+    HRTvList({
+      renderView: $$ as HRTvListView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof HRTvListItemView) {
+    HRTvListItem({
+      renderView: $$ as HRTvListItemView,
+      children: $$.children,
+    }).reuseId($$.type)
+  } else if ($$ instanceof HRTvViewPagerView) {
+    HRTvViewPager({
+      renderView: $$ as HRTvViewPagerView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof HRTvViewPagerItemView) {
+    HRTvViewPagerItem({
+      renderView: $$ as HRTvViewPagerItemView,
+      children: $$.children,
+    })
+  } else {
+    QTFallback({
+      renderView: $$ as QTFallbackView,
+      children: $$.children,
+    })
   }
 }

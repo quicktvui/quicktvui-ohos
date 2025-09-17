@@ -14,58 +14,23 @@ import {
   HippyJsException,
   HippyValue,
   HippyRenderBaseView,
+  BackPressHandler,
+  LogUtils,
 } from 'hippy'
-import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils'
-import { BackPressHandler } from 'hippy/src/main/ets/hippy_framework/HippyEngine'
-import { RuntimeAPIProvider } from '../api/RuntimeAPIProvider'
-import { QTAPIProvider } from 'quicktvui/src/main/ets/components/QTAPIProvider';
-import  {
-  QTLoadingView,
-  QTLoading,
-  QTEventView,
-  QTEvent,
-  QTProgressView,
-  QTProgress,
-  QTQRCodeView,
-  QTQRCode,
-  QTWebView,
-  QTWeb,
-  QTSliderView,
-  QTSlider,
-  QTText,
-  QTTextView,
-  QTFastListView,
-  QTFastList,
-  QTDiv,
-  QTDivView,
-  QTFastFlex,
-  QTFastFlexView,
-  QTAnimation,
-  QTAnimationView,
-  QTItemFrameView,
-  QTItemFrame,
-  QTLottieView,
-  QTLottie,
-} from 'quicktvui';
-import { QTVideoPlayer, QTVideoPlayerView } from '../components/video/QTVideoPlayerView';
-import { QTPageRouter, QTPageRouterView } from '../components/router/QTPageRouterView';
-import { QTPage, QTPageView } from '../components/router/QTPageView';
-import {
-  QTFallbackView,
-  QTFallback
-} from 'quicktvui/src/main/ets/components/compat/QTFallbackView';
 
+import { RuntimeAPIProvider } from '../api/RuntimeAPIProvider'
+import { QTAPIProvider } from 'quicktvui';
 import {
-  QTFastItem,
-  QTFastItemView
-} from 'quicktvui/src/main/ets/components/fastlist/QTFastItemView';
+  buildCustomRenderView,
+} from 'quicktvui';
+
 import { webSocket } from '@kit.NetworkKit';
 import { util } from '@kit.ArkTS';
 import { bundleManager, common } from '@kit.AbilityKit';
 import { connection } from '@kit.NetworkKit';
 import { preferences } from '@kit.ArkData';
 import { BusinessError, commonEventManager, deviceInfo } from '@kit.BasicServicesKit';
-import {QTNativeLayout } from 'libquicktvui.so';
+import { QTNativeLayout } from 'libquicktvui.so';
 
 @Builder
 export function PageDebugBuilder(name: string, param: Object) {
@@ -108,8 +73,7 @@ struct Debug {
   hippyEngine: HippyEngine | null = null
   private rootViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State isEngineInitialized: boolean = false
-
-  @Provide('autoSize')  autoSize? : number[] = []
+  @Provide('autoSize') autoSize?: number[] = []
 
   async aboutToAppear() {
     LogUtils.e(this.TAG, 'Lifecycle: aboutToAppear');
@@ -117,9 +81,9 @@ struct Debug {
     this.initNetworkInfo()
     this.initBundleInfo()
     this.initSystemInfo()
-    console.error('quicktvui','aboutToAppear ')
+    console.error('quicktvui', 'aboutToAppear ')
 
-    console.error('quicktvui','=======222=====1======2====>>>>>' )
+    console.error('quicktvui', '=======222=====1======2====>>>>>')
 
     // let obj:MyObject = new MyObject(10);
     // console.error('quicktvui',"init:", obj.value);     // 10
@@ -129,14 +93,14 @@ struct Debug {
 
 
     // const value:number = quick.callNative(2, 3);
-    const ln : QTNativeLayout = new QTNativeLayout()
+    const ln: QTNativeLayout = new QTNativeLayout()
     // console.error('quicktvui','============2==========>>>>>' + value + "")
     ln.SetWidth(10)
     ln.SetHeight(10)
 
-    console.error('quicktvui','============3==========>>>>>')
-    ln.CalculateLayout(1920,1080)
-    console.info('quicktvui',`native width:${ln.GetWidth()}`)
+    console.error('quicktvui', '============3==========>>>>>')
+    ln.CalculateLayout(1920, 1080)
+    console.info('quicktvui', `native width:${ln.GetWidth()}`)
   }
 
   aboutToDisappear(): void {
@@ -542,104 +506,6 @@ class RuntimeDefaultBackHandler implements BackPressHandler {
   }
 }
 
-@Builder
-function buildCustomRenderView($$: HippyRenderBaseView) {
-  if ($$ instanceof QTLoadingView) {
-    QTLoading({
-      renderView: $$ as QTLoadingView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTEventView) {
-    QTEvent({
-      renderView: $$ as QTEventView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTProgressView) {
-    QTProgress({
-      renderView: $$ as QTProgressView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTQRCodeView) {
-    QTQRCode({
-      renderView: $$ as QTQRCodeView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTWebView) {
-    QTWeb({
-      renderView: $$ as QTWebView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTVideoPlayerView) {
-    QTVideoPlayer({
-      renderView: $$ as QTVideoPlayerView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTSliderView) {
-    QTSlider({
-      renderView: $$ as QTSliderView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTFastListView) {
-    QTFastList({
-      renderView: $$ as QTFastListView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTTextView) {
-    QTText({
-      renderView: $$ as QTTextView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTFastItemView) {
-    QTFastItem({
-      renderView: $$ as QTFastItemView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTDivView) {
-    QTDiv({
-      renderView: $$ as QTTextView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTPageRouterView) {
-    QTPageRouter({
-      renderView: $$ as QTPageRouterView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTAnimationView) {
-    QTAnimation({
-      renderView: $$ as QTAnimationView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTItemFrameView) {
-    QTItemFrame({
-      renderView: $$ as QTItemFrameView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTLottieView) {
-    QTLottie({
-      renderView: $$ as QTLottieView,
-      children: $$.children,
-    })
-  }
-  //页面
-  else if ($$ instanceof QTPageView) {
-    QTPage({
-      renderView: $$ as QTPageView,
-      children: $$.children,
-    })
-  } else if ($$ instanceof QTFastFlexView) {
-    QTFastFlex({
-      renderView: $$ as QTFastFlexView,
-      children: $$.children,
-    })
-  } else {
-    QTFallback({
-      renderView: $$ as QTFallbackView,
-      children: $$.children,
-    })
-  }
-  //路由
-
-}
 
 function buildModuleLoadParams(): ModuleLoadParams {
   let loadParams = new ModuleLoadParams(
