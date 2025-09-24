@@ -25,7 +25,8 @@
       "SystemCapability.MiscServices.Wallpaper",
       "SystemCapability.Security.CertificateManagerDialog",
       "SystemCapability.Notification.NotificationSettings",
-      "SystemCapability.Advertising.Ads"
+      "SystemCapability.Advertising.Ads",
+      "SystemCapability.Resourceschedule.BackgroundProcessManager"
     ]
   }
 }

@@ -48,7 +48,7 @@ struct Debug {
   @State versionCode: string = ''
   @State deviceIp: string = '0.0.0.0' //TODO 不要修改 => 设备的IP地址
   //----------------------------------------------------------------------------------
-  @State debugServerHost: string = '192.168.40.61' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.40.82' //TODO 调试服务地址
   @State debugServerAvailable: boolean = false
   private checkHostAvailableTimerId: number = -1
   private readonly ACTION_CHANGE_DEBUG_SERVER: string =
@@ -387,6 +387,8 @@ struct Debug {
               .fontSize(this.debugServerAvailable ? 40 : 150)
               .fontWeight(FontWeight.Bold)
               .backgroundColor($r('app.color.debug_font_color'))
+              .focusable(true)
+              .defaultFocus(true)
               .type(ButtonType.Circle)
               .width(300)
               .height(300)

@@ -37,10 +37,10 @@ class MyStackModifier implements AttributeModifier<StackAttribute> {
     this.color = color
   }
   applyNormalAttribute(instance: StackAttribute): void {
-    instance.backgroundColor(`${this.color}`);
+    this.color && instance.backgroundColor(`${this.color}`);
   }
 }
-const modifier: MyStackModifier = new MyStackModifier("");
+const modifier: MyStackModifier = new MyStackModifier('');
 
 
 @Observed
@@ -51,7 +51,7 @@ class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
     this.isVisible = isVisible
   }
   applyNormalAttribute(instance: StackAttribute): void {
-    if (this.isVisible == "visibile") {
+    if (this.isVisible == "visible") {
       console.log("HRTvDivView","visible")
       instance.visibility(Visibility.Visible)
     } else if (this.isVisible == "invisible") {
@@ -311,7 +311,7 @@ export class HRTvDivView extends HippyCustomComponentView {
           console.log(this.TAG, "requestFocusDirectly：" + direction);
         }
         break;
-      case "setBackGroundColor":
+      case "setBackgroundColor":
       {
         const focusAbility = params[0] as string;
         const name = params[1] as string;
