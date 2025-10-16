@@ -20,6 +20,7 @@
 import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,HippyArray,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { QTView } from '../../QTTypes';
+import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { FastListUtils } from '../fastlist/FastListUtils';
 import { LayoutAttach } from '../fastlist/LayoutAttach';
 import QTRenderBaseView from '../QTRenderBaseView';
@@ -38,15 +39,7 @@ export class QTDivView extends QTRenderBaseView {
   }
 
   notifyChildSizeChanged(child:QTView,changedView:QTView,width: number, height: number){
-    let la = LayoutAttach.findLayoutAttach(this)
-    if(la){
-      if(la.isAutoWidth){
-        la.setFixedWidth(width + la.getPaddingLeft() + la.getPaddingRight())
-      }
-      if(la.isAutoHeight){
-        la.setFixedHeight(height + la.getPaddingTop() + la.getPaddingBottom())
-      }
-    }
+
     super.notifyChildSizeChanged(child,changedView,width,height)
   }
 }

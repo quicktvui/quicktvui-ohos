@@ -1,5 +1,5 @@
 import {buildHippyRenderView,HippyRenderBaseView,HippyMap} from 'hippy'
-import { QTMap, QTView } from '../../QTTypes';
+import { QTAny, QTMap, QTView } from '../../QTTypes';
 import { QTPlaceholderView } from './QTPlaceholderView';
 
 export class ItemTemplate  {
@@ -25,6 +25,25 @@ export class ItemView{
   constructor(position: number, raw : QTMap | null) {
     this.position = position
     this.raw = raw
+  }
+
+  getItemId():string | null{
+    let id : QTAny | null = null
+    if(this.raw){
+      id = this.raw.get('id')
+      if(id){
+        return id as string
+      }
+      id = this.raw.get('_id')
+      if(id){
+        return id as string
+      }
+      id = this.raw.get('sid')
+      if(id){
+        return id as string
+      }
+    }
+    return null
   }
 }
 

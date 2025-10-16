@@ -1,5 +1,5 @@
 import {HippyMap,HippyRenderBaseView,HippyAny} from 'hippy'
-import { TAG_CLICK } from '../../Constant'
+import { TAG_CLICK, TAG_FAST_EVENT } from '../../Constant'
 import { ExtendUtil } from '../../utils/ExtendUtil'
 import { ItemView } from './ItemView'
 import { LayoutAttach } from './LayoutAttach'
@@ -10,6 +10,13 @@ import { CommonUtils } from '../../utils/CommonUtils'
 import { QTFastItemView } from './QTFastItemView'
 
 export class FastListUtils{
+
+  static EVENT_CLICK = 'onItemClick'
+  static EVENT_BIND = 'onBindItem'
+  static EVENT_UNBIND = 'onItemRecycled'
+  static EVENT_ATTACH = 'onAttachedToWindow'
+  static EVENT_DETACH = 'onDetachedFromWindow'
+
   static handleItemClick(clickView :QTView){
     console.info(TAG_CLICK,`onClick rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId}`)
     let rootListId = LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId
@@ -51,10 +58,32 @@ export class FastListUtils{
       }
       map.set('parentPosition',parentPosition)
       console.log(TAG_CLICK,`sendd onItemClick data:${CommonUtils.hippyMap2String(map)} `)
-      ExtendUtil.sendUIEvent(clickView.ctx,rootListId,'onItemClick',map)
+      ExtendUtil.sendUIEvent(clickView.ctx,rootListId,FastListUtils.EVENT_CLICK,map)
     }else{
       console.error(TAG_CLICK,`handleItemClick error rootListId is -1 clickView:${ExtendUtil.debugView(clickView)}`)
     }
+  }
+
+  static handleItemEvent(fi:QTFastItemView,eventName:string,templateEventEnable:boolean,position : number,listView:QTPendingListView){
+    let rootListId = LayoutAttach.obtainLayoutAttach(fi).virtualExtra.rootListId
+    if(rootListId != -1){
+      let map = new Map<string,HippyAny>()
+      map.set('position',position)
+      map.set('name',LayoutAttach.obtainLayoutAttach(listView).name)
+      ExtendUtil.sendUIEvent(fi.ctx,rootListId,eventName,map)
+      console.log(TAG_FAST_EVENT,`handleItemEvent eventName:${eventName}, rootID:${rootListId},position:${position} data:${CommonUtils.hippyMap2String(map)} `)
+      if(templateEventEnable){
+        let templateView = fi.itemView?.template?.templateView
+        if(templateView){
+          map.set('item',fi.itemView?.raw)
+          ExtendUtil.sendUIEvent(fi.ctx,templateView.tag,eventName,map)
+        }
+      }
+      // console.log(TAG_FAST_EVENT,`handleItemEvent eventName:${eventName}, rootID:${rootListId},position:${position} data:${CommonUtils.hippyMap2String(map)} `)
+    }else{
+      console.error(TAG_FAST_EVENT,`handleItemEvent error rootListId is -1 eventName:${eventName}`)
+    }
+
   }
 
   static findItemView(view:QTView | null) : QTFastItemView | null{

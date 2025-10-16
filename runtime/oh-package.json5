@@ -7,7 +7,7 @@
   "license": "",
   "dependencies": {
     "quicktvui": "file:../quicktvui",
-    "hippy": "file:../libs/hippy.har"
+    "hippy": "file:../../hippy_ohos_tv_extend/libs/hippy.har"
   }
 }
 

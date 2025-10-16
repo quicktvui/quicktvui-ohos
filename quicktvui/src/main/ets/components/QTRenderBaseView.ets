@@ -1,6 +1,8 @@
 import {NativeRenderContext,HippyAny,HippyRenderCallback,HippyCustomComponentView,HippyRenderBaseView} from 'hippy'
 import {  TAG_QUICKTVUI } from '../Constant'
 import { QTView } from '../QTTypes';
+import { QTPixelUtil } from '../utils/QTPixelUtil';
+import { LayoutAttach } from './fastlist/LayoutAttach';
 import { QTBaseComponentView } from './QTBaseComponentView';
 
 type InsertListener = (childTag: number, childViewName: string, childIndex: number)=>void;
@@ -44,7 +46,17 @@ export default abstract class QTRenderBaseView extends  QTBaseComponentView{
 
 
   notifyChildSizeChanged(child:QTView,changedView:QTView,width: number, height: number){
-
+    let la = LayoutAttach.findLayoutAttach(this)
+    if(la){
+      if(la.isAutoWidth){
+        la.setFixedWidth(child.cssWidth + la.getPaddingLeft() + la.getPaddingRight())
+        QTPixelUtil.setRenderViewLayout(this,[this.cssPositionX,this.cssPositionY,la.fixedWidth,this.cssHeight])
+      }
+      if(la.isAutoHeight){
+        la.setFixedHeight(child.cssHeight + la.getPaddingTop() + la.getPaddingBottom())
+        QTPixelUtil.setRenderViewLayout(this,[this.cssPositionX,this.cssPositionY,this.cssWidth,la.fixedHeight])
+      }
+    }
     if(this.parentView instanceof QTRenderBaseView){
       this.parentView.notifyChildSizeChanged(this,changedView,width,height)
     }

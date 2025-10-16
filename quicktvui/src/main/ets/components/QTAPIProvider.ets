@@ -34,6 +34,8 @@ import { QTVideoPlayer, QTVideoPlayerView } from './video/QTVideoPlayerView';
 import { QTPageRouter, QTPageRouterView } from './router/QTPageRouterView';
 import { QTPage, QTPageView } from './router/QTPageView';
 import { HRTvList } from './list/HRTvList';
+import { QTTabs, QTTabsView } from './tabs/QTTabsView';
+import { InnerViewPager, InnerViewPagerView } from './tabs/InnerViewPagerView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -58,7 +60,8 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("FastListView", (ctx): HippyRenderBaseView => new QTFastListView(ctx))
     registerMap.set("FastFlexView", (ctx): HippyRenderBaseView => new QTFastFlexView(ctx))
     registerMap.set("FastItemView", (ctx): HippyRenderBaseView => new QTFastItemView(ctx))
-
+    registerMap.set("TabsView", (ctx): HippyRenderBaseView => new QTTabsView(ctx))
+    registerMap.set("RecyclerViewPager", (ctx): HippyRenderBaseView => new InnerViewPagerView(ctx))
     //测试
     registerMap.set("LoadingViewComponent", (ctx): HippyRenderBaseView => new QTLoadingView(ctx))
     registerMap.set("QrCodeComponent", (ctx): HippyRenderBaseView => new QTQRCodeView(ctx))
@@ -218,7 +221,19 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as HRTvViewPagerItemView,
       children: $$.children,
     })
-  } else {
+  } else if ($$ instanceof QTTabsView) {
+    QTTabs({
+      renderView: $$ as QTTabsView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof InnerViewPagerView) {
+    InnerViewPager({
+      renderView: $$ as InnerViewPagerView,
+      children: $$.children,
+    })
+  }
+
+  else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,

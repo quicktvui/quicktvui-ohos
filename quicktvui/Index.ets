@@ -36,3 +36,6 @@ export { QTPlayerEventProp } from './src/main/ets/components/player/QTPlayerEven
 export { QTPlayerEvent } from './src/main/ets/components/player/QTPlayerEvent'
 
 export { QTPlayerState } from './src/main/ets/components/player/QTPlayerState'
+
+export { QTTabsView,QTTabs } from './src/main/ets/components/tabs/QTTabsView'
+export { InnerViewPagerView,InnerViewPager } from './src/main/ets/components/tabs/InnerViewPagerView'
