@@ -18,17 +18,54 @@
  * limitations under the License.
  */
 import deviceInfo  from '@ohos.deviceInfo';
-import {HippyAny,HippyArray,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
+import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { QTView } from '../../QTTypes';
 import { FastListUtils } from '../fastlist/FastListUtils';
 import { LayoutAttach } from '../fastlist/LayoutAttach';
-import QTRenderBaseView from '../QTRenderBaseView';
+import { HRTvDivView} from '../vendored/view/HRTvDivView';
 
 
 const HippyGestureTag = 'HippyGestureTag'
 
 @Observed
-export class QTDivView extends QTRenderBaseView {
+class MyStackModifier implements AttributeModifier<StackAttribute> {
+  public color: string
+  constructor(color:string) {
+    this.color = color
+  }
+  applyNormalAttribute(instance: StackAttribute): void {
+    if(this.color){
+      instance.backgroundColor(`${this.color}`);
+    }
+  }
+}
+const modifier: MyStackModifier = new MyStackModifier("");
+
+
+@Observed
+class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
+  public isVisible: string
+
+  constructor(isVisible: string) {
+    this.isVisible = isVisible
+  }
+  applyNormalAttribute(instance: StackAttribute): void {
+    if (this.isVisible == "visibile") {
+      console.log("HRTvDivView","visible")
+      instance.visibility(Visibility.Visible)
+    } else if (this.isVisible == "invisible") {
+      instance.visibility(Visibility.Hidden)
+      console.log("HRTvDivView","invisible")
+    } else {
+      instance.visibility(Visibility.None)
+      console.log("HRTvDivView","none")
+    }
+  }
+}
+const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invisible");
+
+@Observed
+export class QTDivView extends HRTvDivView {
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
@@ -48,6 +85,10 @@ export struct QTDiv {
   @ObjectLink renderView: QTDivView
   @ObjectLink children: HippyObservedArray<QTView>
   @Consume('autoSize') @Watch('onAutoSizeChange') autoSize? : number[]
+
+  private readonly TAG = "QTDiv"
+  @State colorModifier: MyStackModifier = modifier
+  @State visibilityModifier: MyStackModifierVisible = visibleModifier
 
   // 监听autoSize变化的回调函数
   onAutoSizeChange(newValue: number[], oldValue: number[]) {
@@ -96,6 +137,9 @@ export struct QTDiv {
         }
         .applyRenderViewBaseAttr(this.renderView)
         .applyGestures(this.renderView)
+        //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
+        //custom
+        .attributeModifier(this.colorModifier)
         .onClick((event=>{
           FastListUtils.handleItemClick(this.renderView)
         }))
@@ -107,16 +151,19 @@ export struct QTDiv {
         }
         .applyRenderViewBaseAttr(this.renderView)
         .applyGestures(this.renderView)
+        //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
+        .attributeModifier(this.colorModifier)
       }
-
     }else {
       if(this.isEventClick()){
+        //from super
         Stack() {
           ForEach(this.children, (item: QTView) => {
             buildHippyRenderView(item, null)
           }, (item: QTView) => item.tag + '')
         }
         .applyRenderViewBaseAttr(this.renderView)
+        .attributeModifier(this.colorModifier)
         .onClick((event=>{
           FastListUtils.handleItemClick(this.renderView)
         }))
@@ -127,26 +174,23 @@ export struct QTDiv {
           }, (item: QTView) => item.tag + '')
         }
         .applyRenderViewBaseAttr(this.renderView)
+        .attributeModifier(this.colorModifier)
       }
-
     }
   }
 }
 
 // base props for all components
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: QTView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+function applyRenderViewBaseAttr($$: QTDivView) {
+  // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
-  .visibility(($$ as QTView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
-  .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)
@@ -158,6 +202,23 @@ function applyRenderViewBaseAttr($$: QTView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //edit by tv
+  .focusable($$.focusable)
+  .border($$.focus ? $$.setBorder() : $$.border)
+  .key($$.name)
+  .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
+  .clip($$.clipChildren)
+  .id($$.sid)
+  .visibility($$.visibility)
+  .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
+  .onFocus(() => {
+    $$.focus = true
+    $$.handleFocus($$.focus)
+  })
+  .onBlur(() => {
+    $$.focus = false
+    $$.handleBlur($$.focus)
+  })
 }
 
 @Extend(Stack)

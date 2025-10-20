@@ -162,6 +162,7 @@ export class HRTvDivView extends QTBaseComponentView {
       case 'focusable':
         {
           this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
+          this.cssFocusable = this.focusable
         }
         return true
       case 'enableFocusBorder':
