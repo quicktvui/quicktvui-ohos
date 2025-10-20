@@ -31,6 +31,7 @@ import { HRValueUtils } from 'hippy/src/main/ets/renderer_native/utils/HRValueUt
 import { HippyResourceLoader } from 'hippy/src/main/ets/hippy_framework/HippyResourceLoader';
 import { UrlUtils } from 'hippy/src/main/ets/support/utils/UrlUtils';
 import { HRPadding, HRRect } from 'hippy/src/main/ets/renderer_native/utils/HRTypes';
+import { QTBaseComponentView } from '../../QTBaseComponentView';
 
 interface TvImageLoadEvent {
   width: number
@@ -66,7 +67,7 @@ enum TvTintColorBlendMode {
 }
 
 @Observed
-export class HRTvImageView extends HippyCustomComponentView {
+export class HRTvImageView extends QTBaseComponentView {
   private static readonly BASE64_IMAGE_PREFIX = "data:image"
   private static readonly RAW_IMAGE_PREFIX = "hpfile://"
   private static readonly ASSETS_PREFIX = "assets://"

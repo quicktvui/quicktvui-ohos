@@ -1,9 +1,12 @@
 import { QTAttach } from '../QTAttach';
-import {HippyRenderBaseView,HippyAny} from 'hippy'
+import {HippyAny} from 'hippy'
 import {QTNativeLayout} from 'libquicktvui.so'
 import { HRValueUtils } from '../../HRValueUtils';
 import { VirtualExtra } from './VirtualExtra';
 import { QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+
+import { TAG_QUICKTVUI } from '../../Constant';
 
 // constexpr static const char * PADDING_LEFT = "paddingLeft";
 // constexpr static const char * PADDING_RIGHT = "paddingRight";
@@ -162,16 +165,34 @@ export class LayoutAttach extends QTAttach{
   }
 
   public static obtainLayoutAttach(renderView:QTView) : LayoutAttach{
-    if(renderView.attachedInfo instanceof LayoutAttach){
-      return renderView.attachedInfo as LayoutAttach
+    // if(renderView.attachedInfo instanceof LayoutAttach){
+    //   return renderView.attachedInfo as LayoutAttach
+    // }
+    let viewActor = ExtendUtil.findViewActor(renderView)
+    if(viewActor){
+      if(viewActor.attachedInfo instanceof LayoutAttach){
+        return viewActor.attachedInfo;
+      }else{
+        viewActor.attachedInfo = new LayoutAttach();
+        return viewActor.attachedInfo as LayoutAttach;
+      }
+    }else{
+      console.warn(TAG_QUICKTVUI,`obtainLayoutAttach error on renderView : ${renderView.viewType}`)
+      return new LayoutAttach();
     }
-    renderView.attachedInfo = new LayoutAttach();
-    return renderView.attachedInfo as LayoutAttach
+    // renderView.attachedInfo = new LayoutAttach();
+    // return renderView.attachedInfo as LayoutAttach
   }
 
   public static findLayoutAttach(renderView:QTView) : LayoutAttach | null{
-    if(renderView.attachedInfo instanceof LayoutAttach){
-      return renderView.attachedInfo as LayoutAttach
+    // if(renderView.attachedInfo instanceof LayoutAttach){
+    //   return renderView.attachedInfo as LayoutAttach
+    // }
+    let viewActor = ExtendUtil.findViewActor(renderView)
+    if(viewActor && viewActor.attachedInfo instanceof LayoutAttach){
+      return viewActor.attachedInfo;
+    }else{
+      console.warn(TAG_QUICKTVUI,`findLayoutAttach error on renderView : ${renderView.viewType}`)
     }
     return null;
   }

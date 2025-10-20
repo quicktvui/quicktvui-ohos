@@ -4,24 +4,40 @@ import {
   HippyAny,
   HippyCustomComponentView,
   HippyRenderCallback,
-  HippyRenderBaseView,
-  HippyArray,
-  HippyMap
 } from 'hippy'
-import { TAG_QUICKTVUI } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
 import { QTView } from '../QTTypes';
-import { CommonUtils } from '../utils/CommonUtils';
 import { LayoutAttach } from './fastlist/LayoutAttach';
+import { QTActorHost } from './QTActorHost';
+import { QTViewActor } from './QTViewActor';
+import { QTVirtualView } from './QTVirtualView';
 
-export class QTBaseComponentView extends HippyCustomComponentView {
+export class QTBaseComponentView extends HippyCustomComponentView  implements  QTActorHost,QTVirtualView{
   childSlot: NodeContent | null = null
   public templateView : QTView | null = null;
   qtPadding: Padding = { top: 0, right: 0, bottom: 0, left: 0 }
   public isVirtual : boolean = false;
+
+  // TV扩展
+  visibility: Visibility = Visibility.Visible
+  sid: string = ''
+  name: string = ''
+  selected: boolean = false
+  showonstate: string = 'normal'
+  focus: boolean = false
+  visible: boolean = false
+  border: BorderOptions = {}   //模拟selected选中效果
+
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
+
+  notifyChildSizeChanged(child: QTView, changedView: QTView, width: number, height: number): void {
+    this.viewActor.notifyChildSizeChanged(child,changedView, width, height)
+  }
+
+  public viewActor: QTViewActor =  new QTViewActor(this);
 
   onCreateByTemplate(templateView : QTView){
 

@@ -13,7 +13,6 @@ import {
   ModuleLoadStatus,
   HippyJsException,
   HippyValue,
-  HippyRenderBaseView,
   BackPressHandler,
   LogUtils,
 } from 'hippy'

@@ -88,8 +88,8 @@ export function  applyLayout(renderView:HippyRenderBaseView){
 }
 
 function applyInit(renderView : HippyRenderBaseView,template: HippyRenderBaseView,templateProps:HippyMap,childIndex:number) : HippyRenderBaseView{
-  const attach  = new LayoutAttach();
-  renderView.attachedInfo = attach;
+  const attach  = LayoutAttach.obtainLayoutAttach(renderView);
+  // renderView.attachedInfo = attach;
   attach.copyStyleNode(template.ctx.getInstanceId(),template.ctx.getRootId(),template.tag)
   renderView.viewType = template.viewType
   attach.viewType = renderView.viewType;

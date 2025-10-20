@@ -20,7 +20,6 @@
 import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,HippyArray,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { QTView } from '../../QTTypes';
-import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { FastListUtils } from '../fastlist/FastListUtils';
 import { LayoutAttach } from '../fastlist/LayoutAttach';
 import QTRenderBaseView from '../QTRenderBaseView';

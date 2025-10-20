@@ -1,6 +1,8 @@
 import {HippyAny,HippyRenderBaseView,EventDispatcher,HREventUtils,NativeRenderContext} from 'hippy'
 import { QTAttach } from '../components/QTAttach';
+import { QTViewActor } from '../components/QTViewActor';
 import { QTView } from '../QTTypes';
+import { QTCompatUtil } from './QTCompatUtil';
 
 export class ExtendUtil{
   static debugView(view:QTView | null) : string{
@@ -29,6 +31,10 @@ export class ExtendUtil{
   }
   static sendViewEvent(view:QTView,eventName:string,params:HippyAny){
     HREventUtils.sendComponentEvent(view.ctx,view.tag,eventName,params)
+  }
+
+  static findViewActor(view : QTView | null): QTViewActor | undefined {
+     return QTCompatUtil.getQTBaseView(view)?.viewActor
   }
 
 

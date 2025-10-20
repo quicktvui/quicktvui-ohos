@@ -147,7 +147,6 @@ export struct  QTFastList {
     if (this.renderView.eventDetachedFromWindow) {
       this.renderView.eventDetachedFromWindow()
     }
-    this.renderView.clearListener()
     this.renderView.onUIAboutToDisappear()
   }
 

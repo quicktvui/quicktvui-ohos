@@ -6,8 +6,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "hippy": "file:../../hippy_ohos_tv_extend/libs/hippy.har",
-    "hippy_tv_extend": "file:../../hippy_ohos_tv_extend/libs/hippy_tv_extend.har",
+    "hippy": "file:../../hippy_ohos_tv/framework/ohos/",
     "@ohos/zxing": "^2.1.1"
   }
 }

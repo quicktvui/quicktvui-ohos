@@ -27,9 +27,10 @@ import HippyRenderBaseView, {
 import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils';
 import { HRValueUtils } from 'hippy/src/main/ets/renderer_native/utils/HRValueUtils';
 import { buildHippyRenderView } from 'hippy/src/main/ets/renderer_native/HippyRenderViewBuilder';
+import { QTBaseComponentView } from '../../QTBaseComponentView';
 
 @Observed
-export class HRTvViewPagerView extends HippyRenderBaseView {
+export class HRTvViewPagerView extends QTBaseComponentView {
   private readonly TAG = "HRTvViewPagerView"
   public initialPage: number = 0
   public index: number = 0

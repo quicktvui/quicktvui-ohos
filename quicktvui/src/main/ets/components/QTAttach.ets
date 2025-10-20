@@ -1,5 +1,6 @@
 import {HippyAny,HippyRenderBaseView} from 'hippy'
 import { QTAny, QTView } from '../QTTypes';
+import { ExtendUtil } from '../utils/ExtendUtil';
 
 export class QTAttach{
   sid: string | null = null;
@@ -19,8 +20,11 @@ export class QTAttach{
   }
 
   public static findQTAttach(renderView:QTView) : QTAttach | null{
-    if(renderView.attachedInfo instanceof QTAttach){
-      return renderView.attachedInfo as QTAttach
+    let viewActor = ExtendUtil.findViewActor(renderView)
+    if(viewActor){
+      if(viewActor.attachedInfo instanceof QTAttach){
+        return viewActor.attachedInfo;
+      }
     }
     return null;
   }
