@@ -10,9 +10,9 @@ export class QTPixelUtil{
   public static dev2Vp(value: number) : number{
     let screenWidthDP = PixelUtil.px2dp(display.getDefaultDisplaySync().width)
     let scalePx = 2560 / QTPixelUtil.DEV_WIDTH
-    // console.log(QUICKTVUI_TAG,`dp2px getDensityScale :${PixelUtil.getDensityScale()},getDensity:${PixelUtil.getDensity()},scalePx:${scalePx}`)
+    console.log(TAG_QUICKTVUI,`dp2px getDensityScale :${PixelUtil.getDensityScale()},getDensity:${PixelUtil.getDensity()},scalePx:${scalePx},screenWidthDP:${screenWidthDP}`)
     //Fixme 这里暂未实现适配
-    return (value ) ;
+    return (value * 0.59)  ;
   }
 
   public static vp2Vp(value: number): number{
@@ -21,6 +21,13 @@ export class QTPixelUtil{
 
   public static devRect2Vp(rect : HRRect){
     return new HRRect(QTPixelUtil.dev2Vp(rect.x),QTPixelUtil.dev2Vp(rect.y),QTPixelUtil.dev2Vp(rect.width),QTPixelUtil.dev2Vp(rect.height))
+  }
+
+  public static devPadding2Vp(padding: Padding){
+    padding.left = QTPixelUtil.dev2Vp(padding.left ? padding.left as number : 0)
+    padding.top = QTPixelUtil.dev2Vp(padding.top ? padding.top as number : 0)
+    padding.right = QTPixelUtil.dev2Vp(padding.right ? padding.right as number : 0)
+    padding.bottom = QTPixelUtil.dev2Vp(padding.bottom ? padding.bottom as number : 0)
   }
 
   public static setScaledRenderViewFrame(view : HippyRenderBaseView | null, rect : HRRect | null, padding : HRPadding | null){
@@ -41,6 +48,12 @@ export class QTPixelUtil{
     }
   }
 
+  public static setRenderViewLayout(view : HippyRenderBaseView | null, layout : number[] ){
+    if(view){
+      view.setRenderViewFrame(new HRRect(layout[0],layout[1],layout[2],layout[3]),null)
+    }
+  }
+
   public static setScaledRenderPadding(view : HippyRenderBaseView | null, padding : number[] ){
     if(view){
       view.setRenderViewFrame(new HRRect(view.cssPositionX,view.cssPositionY,view.cssWidth,view.cssHeight),new HRPadding(padding[0],padding[1],padding[2],padding[3]))
@@ -55,8 +68,8 @@ export class QTPixelUtil{
   public static dev2VpStyle(style : HippyMap) : HippyMap{
     let result = new Map<string,HippyAny>()
     style.forEach((value,key)=>{
-        switch (key){
-        }
+      switch (key){
+      }
     })
     return result
   }

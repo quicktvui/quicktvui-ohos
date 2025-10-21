@@ -23,17 +23,19 @@ import { QTSlider, QTSliderView } from './slider/QTSliderView';
 import { QTAnimation, QTAnimationView } from './animation/QTAnimationView';
 import { QTItemFrame, QTItemFrameView } from './item/QTItemFrameView';
 import { QTLottie, QTLottieView } from './lottie/QTLottieView';
-import { HRTvImage, HRTvImageView } from './image/HRTvImageView';
-import { HRTvDiv, HRTvDivView } from './view/HRTvDivView';
-import { HRTvListView } from './list/HRTvListView';
-import { HRTvListItem, HRTvListItemView } from './list/HRTvListItemView';
-import { HRTvViewPager, HRTvViewPagerView } from './pager/HRTvViewPager';
-import { HRTvViewPagerItem, HRTvViewPagerItemView } from './pager/HRTvViewPagerItem';
+import { HRTvImage, HRTvImageView } from './vendored/image/HRTvImageView';
+import { HRTvDiv, HRTvDivView } from './vendored/view/HRTvDivView';
+import { HRTvListView } from './vendored/list/HRTvListView';
+import { HRTvListItem, HRTvListItemView } from './vendored/list/HRTvListItemView';
+import { HRTvViewPager, HRTvViewPagerView } from './vendored/pager/HRTvViewPager';
+import { HRTvViewPagerItem, HRTvViewPagerItemView } from './vendored/pager/HRTvViewPagerItem';
 import { QTFastList } from './fastlist/QTFastList';
 import { QTVideoPlayer, QTVideoPlayerView } from './video/QTVideoPlayerView';
 import { QTPageRouter, QTPageRouterView } from './router/QTPageRouterView';
 import { QTPage, QTPageView } from './router/QTPageView';
-import { HRTvList } from './list/HRTvList';
+import { HRTvList } from './vendored/list/HRTvList';
+import { QTTabs, QTTabsView } from './tabs/QTTabsView';
+import { InnerViewPager, InnerViewPagerView } from './tabs/InnerViewPagerView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -58,7 +60,8 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("FastListView", (ctx): HippyRenderBaseView => new QTFastListView(ctx))
     registerMap.set("FastFlexView", (ctx): HippyRenderBaseView => new QTFastFlexView(ctx))
     registerMap.set("FastItemView", (ctx): HippyRenderBaseView => new QTFastItemView(ctx))
-
+    registerMap.set("TabsView", (ctx): HippyRenderBaseView => new QTTabsView(ctx))
+    registerMap.set("RecyclerViewPager", (ctx): HippyRenderBaseView => new InnerViewPagerView(ctx))
     //测试
     registerMap.set("LoadingViewComponent", (ctx): HippyRenderBaseView => new QTLoadingView(ctx))
     registerMap.set("QrCodeComponent", (ctx): HippyRenderBaseView => new QTQRCodeView(ctx))
@@ -83,12 +86,19 @@ export class QTAPIProvider extends HippyAPIProvider {
     // registerMap.set("MyBottomView", (ctx): HippyRenderBaseView => new MyBottomView(ctx))
 
     //鸿蒙开发者
-    registerMap.set("TvImage", (ctx): HippyRenderBaseView => new HRTvImageView(ctx))
-    registerMap.set("TvView", (ctx): HippyRenderBaseView => new HRTvDivView(ctx))
-    registerMap.set("TvListView", (ctx): HippyRenderBaseView => new HRTvListView(ctx))
-    registerMap.set("TvListViewItem", (ctx): HippyRenderBaseView => new HRTvListItemView(ctx))
-    registerMap.set("TvViewPager", (ctx): HippyRenderBaseView => new HRTvViewPagerView(ctx))
-    registerMap.set("TvViewPagerItem", (ctx): HippyRenderBaseView => new HRTvViewPagerItemView(ctx))
+    // registerMap.set("TvImage", (ctx): HippyRenderBaseView => new HRTvImageView(ctx))
+    // registerMap.set("TvView", (ctx): HippyRenderBaseView => new HRTvDivView(ctx))
+    // registerMap.set("TvListView", (ctx): HippyRenderBaseView => new HRTvListView(ctx))
+    // registerMap.set("TvListViewItem", (ctx): HippyRenderBaseView => new HRTvListItemView(ctx))
+    // registerMap.set("TvViewPager", (ctx): HippyRenderBaseView => new HRTvViewPagerView(ctx))
+    // registerMap.set("TvViewPagerItem", (ctx): HippyRenderBaseView => new HRTvViewPagerItemView(ctx))
+    //覆写hippy默认组件
+    registerMap.set("Image", (ctx): HippyRenderBaseView => new HRTvImageView(ctx))
+    registerMap.set("View", (ctx): HippyRenderBaseView => new QTDivView(ctx))
+    registerMap.set("ListView", (ctx): HippyRenderBaseView => new HRTvListView(ctx))
+    registerMap.set("ListViewItem", (ctx): HippyRenderBaseView => new HRTvListItemView(ctx))
+    registerMap.set("ViewPager", (ctx): HippyRenderBaseView => new HRTvViewPagerView(ctx))
+    registerMap.set("ViewPagerItem", (ctx): HippyRenderBaseView => new HRTvViewPagerItemView(ctx))
     //
     return registerMap
   }
@@ -157,7 +167,7 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
     })
   } else if ($$ instanceof QTDivView) {
     QTDiv({
-      renderView: $$ as QTTextView,
+      renderView: $$ as QTDivView,
       children: $$.children,
     })
   } else if ($$ instanceof QTPageRouterView) {
@@ -218,7 +228,19 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as HRTvViewPagerItemView,
       children: $$.children,
     })
-  } else {
+  } else if ($$ instanceof QTTabsView) {
+    QTTabs({
+      renderView: $$ as QTTabsView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof InnerViewPagerView) {
+    InnerViewPager({
+      renderView: $$ as InnerViewPagerView,
+      children: $$.children,
+    })
+  }
+
+  else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,

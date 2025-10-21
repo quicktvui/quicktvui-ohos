@@ -13,7 +13,6 @@ import {
   ModuleLoadStatus,
   HippyJsException,
   HippyValue,
-  HippyRenderBaseView,
   BackPressHandler,
   LogUtils,
 } from 'hippy'
@@ -48,7 +47,7 @@ struct Debug {
   @State versionCode: string = ''
   @State deviceIp: string = '0.0.0.0' //TODO 不要修改 => 设备的IP地址
   //----------------------------------------------------------------------------------
-  @State debugServerHost: string = '192.168.40.82' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.80.44' //TODO 调试服务地址
   @State debugServerAvailable: boolean = false
   private checkHostAvailableTimerId: number = -1
   private readonly ACTION_CHANGE_DEBUG_SERVER: string =

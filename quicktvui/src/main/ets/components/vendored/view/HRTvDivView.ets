@@ -27,6 +27,7 @@ import HippyRenderBaseView, {
 } from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView';
 import { HippyCustomComponentView } from 'hippy/src/main/ets/renderer_native/components/custom/HippyCustomComponentView'
 import { ColorMetrics, FrameNode, LengthMetrics, NodeController, typeNode } from '@kit.ArkUI';
+import { QTBaseComponentView } from '../../QTBaseComponentView';
 
 const HippyGestureTag = 'HippyGestureTag'
 
@@ -66,7 +67,7 @@ class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
 const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invisible");
 
 @Observed
-export class HRTvDivView extends HippyCustomComponentView {
+export class HRTvDivView extends QTBaseComponentView {
   private readonly TAG = "HRTvDivView"
   public uiCtx: UIContext | null = null
   // TV扩展
@@ -161,6 +162,7 @@ export class HRTvDivView extends HippyCustomComponentView {
       case 'focusable':
         {
           this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
+          this.cssFocusable = this.focusable
         }
         return true
       case 'enableFocusBorder':

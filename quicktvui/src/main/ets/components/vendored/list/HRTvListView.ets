@@ -22,9 +22,10 @@ import { NativeRenderContext ,HRNodeProps} from 'hippy';
 import HippyRenderBaseView from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView';
 import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils';
 import { HRValueUtils } from 'hippy/src/main/ets/renderer_native/utils/HRValueUtils';
+import { QTBaseComponentView } from '../../QTBaseComponentView';
 
 @Observed
-export class HRTvListView extends HippyRenderBaseView {
+export class HRTvListView extends QTBaseComponentView {
   private readonly TAG = "HRTvListView"
   public scrollForward: number = NestedScrollMode.SELF_FIRST
   public scrollBackward: number = NestedScrollMode.SELF_FIRST

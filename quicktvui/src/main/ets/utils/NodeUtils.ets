@@ -15,26 +15,26 @@ export class NodeUtils{
 
 
   static printViewTreePretty(
-  node: HippyRenderBaseView,
-  prefix: string = '',
-  isLast: boolean = true
-): void {
-  const children = node.children ?? [];
+    node: HippyRenderBaseView,
+    prefix: string = '',
+    isLast: boolean = true
+  ): void {
+    const children = node.children ?? [];
 
-  const branch = isLast ? '└─ ' : '├─ ';
-  const linePrefix = prefix + branch;
-  let templateTag = -1;
-  if(node instanceof QTBaseComponentView && node.templateView){
-    templateTag = node.templateView.tag
+    const branch = isLast ? '└─ ' : '├─ ';
+    const linePrefix = prefix + branch;
+    let templateTag = -1;
+    if(node instanceof QTBaseComponentView && node.templateView){
+      templateTag = node.templateView.tag
+    }
+
+    console.log(TAG_QUICKTVUI,`${linePrefix}${node.viewType}: ${node.tag} ,template:${templateTag} (${children.length} children)`);
+
+    const nextPrefix = prefix + (isLast ? '   ' : '│  ');
+    children.forEach((child, index) =>
+    NodeUtils.printViewTreePretty(child, nextPrefix, index === children.length - 1)
+    );
   }
-
-  console.log(TAG_QUICKTVUI,`${linePrefix}${node.viewType}: ${node.tag} ,template:${templateTag} (${children.length} children)`);
-
-  const nextPrefix = prefix + (isLast ? '   ' : '│  ');
-  children.forEach((child, index) =>
-  NodeUtils.printViewTreePretty(child, nextPrefix, index === children.length - 1)
-  );
-}
 
 
 }

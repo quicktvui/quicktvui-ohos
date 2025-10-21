@@ -72,4 +72,25 @@ export class HRValueUtils {
     return null
   }
 
+  static getNumberValue(key : string,map : HippyMap | null,defaultValue : number) : number{
+    if(key && map && map.has(key)){
+      return map.get(key) as number
+    }
+    return defaultValue;
+  }
+
+  static getStringValue(key : string,map : HippyMap | null,defaultValue : string | null) : string | null{
+    if(key && map && map.has(key)){
+      return map.get(key) as string
+    }
+    return defaultValue;
+  }
+
+  static getBooleanValue(key : string,map : HippyMap | null,defaultValue : boolean) : boolean{
+    if(key && map && map.has(key)){
+      return map.get(key) as boolean
+    }
+    return defaultValue;
+  }
+
 }

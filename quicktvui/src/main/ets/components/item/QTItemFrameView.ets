@@ -34,13 +34,13 @@ export struct QTItemFrame {
   }
 
   build() {
-      Stack() {
-        ForEach(this.children, (item: HippyRenderBaseView) => {
-          buildHippyRenderView(item, null)
-        }, (item: HippyRenderBaseView) => item.tag + '')
-      }
-      .applyRenderViewBaseAttr(this.renderView)
+    Stack() {
+      ForEach(this.children, (item: HippyRenderBaseView) => {
+        buildHippyRenderView(item, null)
+      }, (item: HippyRenderBaseView) => item.tag + '')
     }
+    .applyRenderViewBaseAttr(this.renderView)
+  }
 }
 
 @Extend(Stack)

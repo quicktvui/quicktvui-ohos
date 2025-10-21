@@ -20,7 +20,8 @@
 import {HippyObservedArray,NativeRenderContext,NativeRender,HRRect} from 'hippy'
 import {
   TAG_FASTLIST,
-  TAG_LAYOUT as TAG_LAYOUT, TAG_QUICKTVUI as TAG_QUICKTVUI } from '../../Constant';
+  TAG_LAYOUT as TAG_LAYOUT, TAG_QUICKTVUI as TAG_QUICKTVUI,
+  TAG_REUSE } from '../../Constant';
 import {HippyMap,HippyArray,HippyAny} from 'hippy'
 import {ItemView,getItemType, ItemTemplate} from './ItemView'
 import assertNull from '@ohos/hypium/src/main/module/assert/assertNull';
@@ -30,7 +31,12 @@ import { QTFastItemView } from './QTFastItemView';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { LayoutAttach } from './LayoutAttach';
 import { CommonUtils } from '../../utils/CommonUtils';
-import { QTView } from '../../QTTypes';
+import { QTMap, QTPendingListView, QTView } from '../../QTTypes';
+import { FastListUtils } from './FastListUtils';
+import { HRValueUtils } from '../../HRValueUtils';
+import { QTPixelUtil } from '../../utils/QTPixelUtil';
+import { inspector } from '@kit.ArkUI';
+import { QTFastFlexView } from './QTFastFlexView';
 
 
 // class ItemEntry{
@@ -52,6 +58,12 @@ export class FastListDataSource implements IDataSource {
 
   public static  DEFAULT_TYPE : number = 1;
   public rootListId :number = -1;
+  public listView : QTPendingListView | null = null;
+
+  private bindEventDirty : boolean = true;
+  private lastEventPosition = -1;
+
+  //
 
   constructor(ctx : NativeRenderContext,dataList:HippyObservedArray<QTView>) {
     this.ctx = ctx;
@@ -79,7 +91,7 @@ export class FastListDataSource implements IDataSource {
     let node = NodeUtils.getNodeById(this.ctx,childTag)
     // let renderView = getRenderView(this.ctx,childTag)
     if(child == null || node == null){
-      console.error(TAG_QUICKTVUI,`registerTemplate error renderView:${child},node:${node},viewName:${childViewName}`)
+      console.error(TAG_FASTLIST,`registerTemplate error renderView:${child},node:${node},viewName:${childViewName}`)
       return;
     }
     if(node?.props){
@@ -89,7 +101,7 @@ export class FastListDataSource implements IDataSource {
          type = FastListDataSource.DEFAULT_TYPE
       }
       if(type && child){
-        console.log(TAG_QUICKTVUI,`registerTemplate type:${type},node.props:${CommonUtils.hippyMap2String(node.props)}`)
+        console.log(TAG_FASTLIST,`registerTemplate type:${type},node.props:${CommonUtils.hippyMap2String(node.props)}`)
         let it : ItemTemplate = new ItemTemplate(child,type,node.props)
         this.templatesMap.set(type,it)
       }
@@ -132,6 +144,7 @@ export class FastListDataSource implements IDataSource {
   fillContent(renderView : QTView,wi : QTFastItemView){
     wi.isVirtual = true;
     wi.addSubRenderView(renderView,0)
+    LayoutAttach.obtainLayoutAttach(wi).virtualExtra.rootListId = this.rootListId
     LayoutAttach.obtainLayoutAttach(wi).insertChild(LayoutAttach.obtainLayoutAttach(renderView),0)
   }
 
@@ -144,12 +157,22 @@ export class FastListDataSource implements IDataSource {
     }
     if(item.raw instanceof  Map){
         item.id = FastListDataSource.getIdFromData(item.raw)
+        let decoration = item.raw.get('decoration')
+        if(decoration instanceof Map){
+          fi.decoration.left = HRValueUtils.getNumberValue('left',decoration,0)
+          fi.decoration.top = HRValueUtils.getNumberValue('top',decoration,0)
+          fi.decoration.right = HRValueUtils.getNumberValue('right',decoration,0)
+          fi.decoration.bottom = HRValueUtils.getNumberValue('bottom',decoration,0)
+          QTPixelUtil.devPadding2Vp(fi.decoration)
+        }
     }
+    fi.dataPosition = position
     if(!item.id){
       item.id = item.position +''
       console.error(TAG_QUICKTVUI,`put fallback id :${item.position}`)
     }
     if(type){
+      LayoutAttach.obtainLayoutAttach(fi).virtualExtra.itemType = type;
       let it = this.templatesMap.get(type);
       item.template = it;
       if(it){
@@ -157,7 +180,6 @@ export class FastListDataSource implements IDataSource {
         //1. 遍历模板和数据，生成根布局
         let rv = buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
         // let wrapped = this.wrappedItemIfNeed(rv!!,item);
-
         //2. 预先执行所有update
         updates?.map((p)=>{
           //更新尺寸
@@ -182,7 +204,7 @@ export class FastListDataSource implements IDataSource {
         //3. 执行所有props
         updates?.map((p)=>{
           p.props.forEach((value,key)=>{
-            // console.log(QUICKTVUI_TAG,`updates p :${p.renderView.viewType},prop:${key},value:${value}`)
+            // console.log(TAG_FASTLIST,`updates p :${p.renderView.viewType},prop:${key},value:${value}`)
             //更新所有属性
             let handle = false
             switch (key){
@@ -199,8 +221,7 @@ export class FastListDataSource implements IDataSource {
         //在属性全部执行完以后，计算layout
         if(fi && rv){
           if(fi instanceof QTFastItemView){
-            fi.layoutItem(rv)
-            console.error(TAG_LAYOUT,`setItem Width:${fi.cssWidth},height:${fi.cssHeight}`)
+            fi.layoutItem(rv,this.listView instanceof  QTFastFlexView)
           }else{
             console.error(TAG_FASTLIST,`buildItemError !!!`)
             // LayoutAttach.obtainLayoutAttach(item.renderView).calculateLayout(800,600)
@@ -247,15 +268,27 @@ export class FastListDataSource implements IDataSource {
 
   public getData(index: number): QTFastItemView {
     let fi = this.dataList[index] as QTFastItemView
+
     this.buildItem(fi,index)
-    // console.log(TAG_QUICKTVUI,`getData index:${index}`)
+    // console.log(TAG_FASTLIST,`getData index:${index}`)
+    // console.log(TAG_REUSE,`getData index:${index}`)
     if(fi.cssWidth < 1 || fi.cssHeight < 1){
       console.error(TAG_LAYOUT,`getData layout Error index:${index}`)
     }
     // if(item.renderView){
     //   NodeUtils.printViewTreePretty(item.renderView,'',false)
     // }
+    if(this.bindEventDirty || this.lastEventPosition != index){
+      FastListUtils.handleItemEvent(fi,FastListUtils.EVENT_BIND,true,index,this.listView!!)
+      this.lastEventPosition = index;
+      this.bindEventDirty = false;
+    }
+
     return fi as QTFastItemView
+  }
+
+  makeBindEventDirty(){
+    this.bindEventDirty = true;
   }
 
   // public setListData(rawList : HippyArray){
@@ -275,7 +308,7 @@ export class FastListDataSource implements IDataSource {
   // }
 
   public totalCount(): number {
-    console.log(TAG_QUICKTVUI,`dataSource:totalCount:${this.dataList.length}`)
+    // console.log(TAG_FASTLIST,`dataSource:totalCount:${this.dataList.length}`)
     return this.dataList.length
   }
 
@@ -300,12 +333,14 @@ export class FastListDataSource implements IDataSource {
   }
 
   notifyDataAdd(index : number) {
+    console.log(TAG_FASTLIST,`notifyDataAdd index:${index}`)
     this.listeners.forEach(listener => {
       listener.onDataAdd(index)
     })
   }
 
   notifyDataAddRange(index : number,count:number) {
+    console.log(TAG_FASTLIST,`notifyDataAddRange index:${index},count:${count}`)
     this.listeners.forEach(listener => {
       listener.onDataReloaded()
     })
@@ -324,25 +359,16 @@ export class FastListDataSource implements IDataSource {
   }
 
   notifyDataChanged(start: number,count:number){
+    console.log(TAG_FASTLIST,`notifyDataChanged start:${start},count:${count}`)
     this.listeners.forEach(listener => {
       listener.onDataReloaded()
     })
   }
 
   notifyDataChange(index: number){
+    console.log(TAG_FASTLIST,`notifyDataChanged index:${index}`)
     this.listeners.forEach(listener => {
       listener.onDataChange(index)
     })
-  }
-
-  mockData(){
-    // const total = 100;
-    // for(let i = 0; i < total; i++){
-    //   let map : Map<string, HippyAny> = new Map()
-    //   map.set('type',10001)
-    //   let item = new ItemView(i,map)
-    //   this.dataList.push(item)
-    // }
-    // this.notifyReload()
   }
 }

@@ -12,34 +12,34 @@ let arr: MapEntry[] = []; // ✅ 正确
 export  class CommonUtils{
 
 
-    static hippyMap2String(map : HippyMap | null)  {
-       return hippyMapToString(map)
-    }
+  static hippyMap2String(map : HippyMap | null)  {
+    return hippyMapToString(map)
+  }
 
-    static hippyAny2String(obj : HippyAny | null) : string{
-      if(!obj) {
-        return 'null'
-      }
-      if(obj instanceof Map){
-        return CommonUtils.hippyMap2String(obj)
-      }else{
-        return obj.toString();
-      }
+  static hippyAny2String(obj : HippyAny | null) : string{
+    if(!obj) {
+      return 'null'
     }
+    if(obj instanceof Map){
+      return CommonUtils.hippyMap2String(obj)
+    }else{
+      return obj.toString();
+    }
+  }
 
-    static updateMap(target : QTMap | null | undefined,update: QTMap | null | undefined){
-      if(target && update){
-        update.forEach((value,key)=>{
-          target.set(key,value)
-        })
-      }
+  static updateMap(target : QTMap | null | undefined,update: QTMap | null | undefined){
+    if(target && update){
+      update.forEach((value,key)=>{
+        target.set(key,value)
+      })
     }
+  }
 
   static  printObject(obj: HippyAny | null, indent: string = ''): void {
-      if(!obj){
-        console.warn(TAG_QUICKTVUI,`${indent}null`)
-        return
-      }
+    if(!obj){
+      console.warn(TAG_QUICKTVUI,`${indent}null`)
+      return
+    }
     if(obj instanceof Map){
       printMapPretty(obj,indent,false)
     }else{
@@ -52,7 +52,7 @@ export  class CommonUtils{
     prefix: string = '',
     isLast: boolean = true
   ): void {
-      printMapPretty(map,prefix,isLast)
+    printMapPretty(map,prefix,isLast)
   }
 }
 

@@ -63,18 +63,33 @@ export function applyLayoutTraverse(renderView:HippyRenderBaseView | null){
   }
 }
 
+export function applyLayoutTraverseWithSkip(renderView:HippyRenderBaseView | null,skipView:HippyRenderBaseView | null){
+  if(renderView == null){
+    return;
+  }
+  if(skipView != renderView){
+    applyLayout(renderView);
+  }
+  if(renderView.children){
+    renderView.children.map((child)=>{
+      applyLayoutTraverse(child)
+    })
+  }
+}
+
 
 
 export function  applyLayout(renderView:HippyRenderBaseView){
   let attach = LayoutAttach.obtainLayoutAttach(renderView);
   let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
+  // let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(), attach.getWidth(),attach.getHeight());
   // console.info(TAG_LAYOUT,`applyLayout:type:${attach.viewType},name:${attach.name},layout:[${layout.x},${layout.y},${layout.width},${layout.height}]`)
   QTPixelUtil.setScaledRenderViewFrame(renderView,layout,null)
 }
 
 function applyInit(renderView : HippyRenderBaseView,template: HippyRenderBaseView,templateProps:HippyMap,childIndex:number) : HippyRenderBaseView{
-  const attach  = new LayoutAttach();
-  renderView.attachedInfo = attach;
+  const attach  = LayoutAttach.obtainLayoutAttach(renderView);
+  // renderView.attachedInfo = attach;
   attach.copyStyleNode(template.ctx.getInstanceId(),template.ctx.getRootId(),template.tag)
   renderView.viewType = template.viewType
   attach.viewType = renderView.viewType;
