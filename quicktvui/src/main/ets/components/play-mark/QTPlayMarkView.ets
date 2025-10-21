@@ -11,7 +11,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView'
 export class QTPlayMarkView extends QTBaseComponentView {
   public showType: number = 0 // 0 底部波动；1 中心波动
   public gap: number = -1
-  public roundCorner: number = 3
+  public roundCorner: number = 6
   public startColor: string = '#FFFFFF'
   public endColor: string = '#FFFFFF'
   public isSupportGradient: number = 1
@@ -51,7 +51,7 @@ export struct QTPlayMark {
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
   private timer: number = 0
   private readonly BAR_COUNT = 4
-  private readonly FRAME_INTERVAL = 16 // 约 60fps
+  private readonly FRAME_INTERVAL = 16
   private bars: BarState[] = []
   private settings: RenderingContextSettings = new RenderingContextSettings(true)
   private ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings)
@@ -73,12 +73,13 @@ export struct QTPlayMark {
   private initBars() {
     const viewWidth = this.parseSize(this.renderView.cssWidth, 100)
     const gap = this.renderView.gap > 0 ? this.renderView.gap : viewWidth * 0.1
-    const barWidth = (viewWidth - (this.BAR_COUNT - 1) * gap) / this.BAR_COUNT
+    const barWidth = (viewWidth - (this.BAR_COUNT - 1) * gap) / this.BAR_COUNT - 1
+    const barHeightScale = 1.2 // 高度放大比例，可根据需要调整
 
     const barStartRates = [0.8, 0.8, 0.8, 0.8]
     const barEndRates = [0.2, 0.2, 0.2, 0.2]
     const duration = 720
-    const phases = [0, 0.25, 0.5, 0.75] // 四根柱子错落相位
+    const phases = [0, 0.25, 0.5, 0.75]
 
     this.bars = []
     let startX = 0
@@ -86,8 +87,8 @@ export struct QTPlayMark {
       this.bars.push(new BarState(
         startX,
         barWidth,
-        barStartRates[i],
-        barEndRates[i],
+        barStartRates[i] * barHeightScale, // 高度放大
+        barEndRates[i] * barHeightScale, // 高度放大
         duration,
         this.renderView.showType,
         phases[i]
@@ -127,27 +128,27 @@ export struct QTPlayMark {
       }
 
       const radius = this.renderView.roundCorner
-      this.drawRoundRect(ctx, bar.x, top, bar.width, bottom - top, radius)
+      this.drawRoundWaveRect(ctx, bar.x, top, bar.width, bottom - top, radius)
     }
   }
 
-  private drawRoundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  /** 上下圆角波浪矩形绘制 */
+  private drawRoundWaveRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
     ctx.beginPath()
-    ctx.moveTo(x + r, y)
-    ctx.lineTo(x + w - r, y)
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r)
-    ctx.lineTo(x + w, y + h - r)
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
-    ctx.lineTo(x + r, y + h)
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r)
-    ctx.lineTo(x, y + r)
-    ctx.quadraticCurveTo(x, y, x + r, y)
+    ctx.moveTo(x, y + r) // 起点左上角
+    ctx.quadraticCurveTo(x, y, x + r, y) // top-left 圆角
+    ctx.lineTo(x + w - r, y) // top-right 起点
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r) // top-right 圆角
+    ctx.lineTo(x + w, y + h) // 直线到底部
+    ctx.lineTo(x, y + h) // 底部直线回到左边
     ctx.closePath()
     ctx.fill()
   }
 
   private parseSize(v: string | number, def: number): number {
-    if (typeof v === 'number') return v
+    if (typeof v === 'number') {
+      return v
+    }
     const n = parseFloat(v)
     return isNaN(n) ? def : n
   }
@@ -168,7 +169,7 @@ class BarState {
   public duration: number
   public type: number
   private startTime: number
-  private phase: number // 相位偏移 0~1
+  private phase: number
 
   constructor(
     x: number,
@@ -192,7 +193,7 @@ class BarState {
   getValue(): number {
     const now = Date.now()
     const elapsed = ((now - this.startTime) / this.duration + this.phase) % 1
-    const ease = 0.5 - 0.5 * Math.cos(elapsed * Math.PI * 2) // ease-in-out
+    const ease = 0.5 - 0.5 * Math.cos(elapsed * Math.PI * 2)
     return this.startRate + (this.endRate - this.startRate) * ease
   }
 }
