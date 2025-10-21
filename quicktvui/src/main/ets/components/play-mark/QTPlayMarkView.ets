@@ -135,12 +135,15 @@ export struct QTPlayMark {
   /** 上下圆角波浪矩形绘制 */
   private drawRoundWaveRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
     ctx.beginPath()
-    ctx.moveTo(x, y + r) // 起点左上角
-    ctx.quadraticCurveTo(x, y, x + r, y) // top-left 圆角
-    ctx.lineTo(x + w - r, y) // top-right 起点
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r) // top-right 圆角
-    ctx.lineTo(x + w, y + h) // 直线到底部
-    ctx.lineTo(x, y + h) // 底部直线回到左边
+    ctx.moveTo(x + r, y)
+    ctx.lineTo(x + w - r, y)
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+    ctx.lineTo(x + w, y + h - r)
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+    ctx.lineTo(x + r, y + h)
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+    ctx.lineTo(x, y + r)
+    ctx.quadraticCurveTo(x, y, x + r, y)
     ctx.closePath()
     ctx.fill()
   }
