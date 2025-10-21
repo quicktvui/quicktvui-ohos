@@ -36,6 +36,7 @@ import { QTPage, QTPageView } from './router/QTPageView';
 import { HRTvList } from './vendored/list/HRTvList';
 import { QTTabs, QTTabsView } from './tabs/QTTabsView';
 import { InnerViewPager, InnerViewPagerView } from './tabs/InnerViewPagerView';
+import { QTPlayMark, QTPlayMarkView } from './play-mark/QTPlayMarkView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -74,7 +75,7 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("TextView", (ctx): HippyRenderBaseView => new QTTextView(ctx))
     registerMap.set("ItemFrameComponent", (ctx): HippyRenderBaseView => new QTItemFrameView(ctx))
     registerMap.set("ESLottieViewComponent", (ctx): HippyRenderBaseView => new QTLottieView(ctx))
-
+    registerMap.set("ESPlayMarkViewComponent", (ctx): HippyRenderBaseView => new QTPlayMarkView(ctx))
 
     //fallback
     registerMap.set("ItemFrameComponent", (ctx): HippyRenderBaseView => new QTFallbackView(ctx))
@@ -190,6 +191,11 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTLottieView,
       children: $$.children,
     })
+  } else if ($$ instanceof QTPlayMarkView) {
+    QTPlayMark({
+      renderView: $$ as QTPlayMarkView,
+      children: $$.children,
+    })
   }
   //页面
   else if ($$ instanceof QTPageView) {
@@ -238,9 +244,7 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as InnerViewPagerView,
       children: $$.children,
     })
-  }
-
-  else {
+  } else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,

@@ -37,5 +37,8 @@ export { QTPlayerEvent } from './src/main/ets/components/player/QTPlayerEvent'
 
 export { QTPlayerState } from './src/main/ets/components/player/QTPlayerState'
 
-export { QTTabsView,QTTabs } from './src/main/ets/components/tabs/QTTabsView'
-export { InnerViewPagerView,InnerViewPager } from './src/main/ets/components/tabs/InnerViewPagerView'
+export { QTTabsView, QTTabs } from './src/main/ets/components/tabs/QTTabsView'
+
+export { InnerViewPagerView, InnerViewPager } from './src/main/ets/components/tabs/InnerViewPagerView'
+
+export { QTPlayMarkView, QTPlayMark } from './src/main/ets/components/play-mark/QTPlayMarkView'
