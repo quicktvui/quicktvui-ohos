@@ -12,8 +12,8 @@ export class QTPlayMarkView extends QTBaseComponentView {
   public showType: number = 0 // 0 底部波动；1 中心波动
   public gap: number = -1
   public roundCorner: number = 3
-  public startColor: string = '#FF8534'
-  public endColor: string = '#FFCA37'
+  public startColor: string = '#FFFFFF'
+  public endColor: string = '#FFFFFF'
   public isSupportGradient: number = 1
 
   constructor(ctx: NativeRenderContext) {
@@ -49,24 +49,24 @@ export class QTPlayMarkView extends QTBaseComponentView {
 export struct QTPlayMark {
   @ObjectLink renderView: QTPlayMarkView
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
-  // 动画状态
   private timer: number = 0
   private readonly BAR_COUNT = 4
-  private readonly interval = 16 // 约 60fps
+  private readonly FRAME_INTERVAL = 16 // 约 60fps
   private bars: BarState[] = []
   private settings: RenderingContextSettings = new RenderingContextSettings(true)
   private ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings)
 
   aboutToAppear() {
     this.initBars()
-    this.timer = setInterval(() => {
-      this.updateBars()
+    const animate = () => {
       this.draw()
-    }, this.interval)
+      this.timer = setTimeout(animate, this.FRAME_INTERVAL)
+    }
+    this.timer = setTimeout(animate, this.FRAME_INTERVAL)
   }
 
   aboutToDisappear() {
-    clearInterval(this.timer)
+    clearTimeout(this.timer)
     this.timer = -1
   }
 
@@ -75,10 +75,10 @@ export struct QTPlayMark {
     const gap = this.renderView.gap > 0 ? this.renderView.gap : viewWidth * 0.1
     const barWidth = (viewWidth - (this.BAR_COUNT - 1) * gap) / this.BAR_COUNT
 
-    const barStartRates = [0.8, 0.9, 1.0, 0.5]
-    const barEndRates = [0.2, 0.4, 0.2, 0.1]
-    const duration = [200, 190, 180, 180]
-    const delays = [0, 0, 0, 20]
+    const barStartRates = [0.8, 0.8, 0.8, 0.8]
+    const barEndRates = [0.2, 0.2, 0.2, 0.2]
+    const duration = 720
+    const phases = [0, 0.25, 0.5, 0.75] // 四根柱子错落相位
 
     this.bars = []
     let startX = 0
@@ -88,17 +88,12 @@ export struct QTPlayMark {
         barWidth,
         barStartRates[i],
         barEndRates[i],
-        duration[i],
-        delays[i],
-        this.renderView.showType
+        duration,
+        this.renderView.showType,
+        phases[i]
       ))
       startX += barWidth + gap
     }
-  }
-
-  private updateBars() {
-    const now = Date.now()
-    this.bars.forEach((bar): void => bar.update(now))
   }
 
   private draw() {
@@ -152,9 +147,7 @@ export struct QTPlayMark {
   }
 
   private parseSize(v: string | number, def: number): number {
-    if (typeof v === 'number') {
-      return v
-    }
+    if (typeof v === 'number') return v
     const n = parseFloat(v)
     return isNaN(n) ? def : n
   }
@@ -166,18 +159,16 @@ export struct QTPlayMark {
   }
 }
 
-// 条形波动画状态
+// 平滑条形动画状态（统一节奏、相位错落）
 class BarState {
-  private lastUpdate = Date.now()
-  private progress = 0
-  private direction = 1
-  public x: number;
-  public width: number;
-  public startRate: number;
-  public endRate: number;
-  public duration: number;
-  public delay: number;
-  public type: number;
+  public x: number
+  public width: number
+  public startRate: number
+  public endRate: number
+  public duration: number
+  public type: number
+  private startTime: number
+  private phase: number // 相位偏移 0~1
 
   constructor(
     x: number,
@@ -185,34 +176,24 @@ class BarState {
     startRate: number,
     endRate: number,
     duration: number,
-    delay: number,
-    type: number
+    type: number,
+    phase: number
   ) {
-    this.x = x;
-    this.width = width;
-    this.startRate = startRate;
-    this.endRate = endRate;
-    this.duration = duration;
-    this.delay = delay;
-    this.type = type;
-  }
-
-  update(now: number) {
-    const elapsed = now - this.lastUpdate - this.delay
-    if (elapsed < 0) {
-      return
-    }
-    const cycle = this.duration
-    const t = (elapsed % cycle) / cycle
-    this.progress = this.direction === 1 ? t : 1 - t
-
-    if (elapsed % (2 * cycle) >= cycle) {
-      this.direction = -this.direction
-    }
+    this.x = x
+    this.width = width
+    this.startRate = startRate
+    this.endRate = endRate
+    this.duration = duration
+    this.type = type
+    this.phase = phase
+    this.startTime = Date.now()
   }
 
   getValue(): number {
-    return this.startRate - (this.startRate - this.endRate) * this.progress
+    const now = Date.now()
+    const elapsed = ((now - this.startTime) / this.duration + this.phase) % 1
+    const ease = 0.5 - 0.5 * Math.cos(elapsed * Math.PI * 2) // ease-in-out
+    return this.startRate + (this.endRate - this.startRate) * ease
   }
 }
 
@@ -223,14 +204,8 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({
-    width:
-    typeof $$.cssWidth === 'number'
-      ? $$.cssWidth
-      : parseFloat($$.cssWidth) || 100,
-    height:
-    typeof $$.cssHeight === 'number'
-      ? $$.cssHeight
-      : parseFloat($$.cssHeight) || 100,
+    width: typeof $$.cssWidth === 'number' ? $$.cssWidth : parseFloat($$.cssWidth) || 100,
+    height: typeof $$.cssHeight === 'number' ? $$.cssHeight : parseFloat($$.cssHeight) || 100,
   })
   .opacity($$.cssOpacity)
   .visibility($$.cssVisibility)
