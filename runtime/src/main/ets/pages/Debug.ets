@@ -47,7 +47,12 @@ struct Debug {
   @State versionCode: string = ''
   @State deviceIp: string = '0.0.0.0' //TODO 不要修改 => 设备的IP地址
   //----------------------------------------------------------------------------------
-  @State debugServerHost: string = '192.168.80.44' //TODO 调试服务地址
+  // TODO debugMode = true  拉取本地服务
+  // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
+  private debugMode: boolean = true
+  @State debugServerHost: string = '192.168.40.64' //TODO 调试服务地址
+  //----------------------------------------------------------------------------------
+
   @State debugServerAvailable: boolean = false
   private checkHostAvailableTimerId: number = -1
   private readonly ACTION_CHANGE_DEBUG_SERVER: string =
@@ -112,10 +117,10 @@ struct Debug {
     this.destroyEngine()
     //
     let params = new EngineInitParams(this.libHippy!, this.abilityContext!, this.getUIContext())
-    params.coreJSAssetsPath = "vue2/vendor.ohos.js"
+    params.coreJSAssetsPath = "vue/vendor.android.js"
     params.enableArkCApi = false
     params.debugServerHost = this.debugServerHost + ':38989'
-    params.debugMode = true
+    params.debugMode = this.debugMode
     params.enableLog = true
     //自定义 module 和 component 入口
     params.providers = [
@@ -380,10 +385,10 @@ struct Debug {
           .justifyContent(FlexAlign.Start)
 
           Column() {
-            Button(this.debugServerAvailable ? $r('app.string.debug_start') :
+            Button(this.debugServerAvailable || !this.debugMode ? $r('app.string.debug_start') :
             $r('app.string.cross_mark'))
               .fontColor(Color.Black)
-              .fontSize(this.debugServerAvailable ? 40 : 150)
+              .fontSize((this.debugServerAvailable || !this.debugMode) ? 40 : 150)
               .fontWeight(FontWeight.Bold)
               .backgroundColor($r('app.color.debug_font_color'))
               .focusable(true)
@@ -392,7 +397,7 @@ struct Debug {
               .width(300)
               .height(300)
               .onClick(() => {
-                if (!this.debugServerAvailable) {
+                if (!this.debugServerAvailable && this.debugMode) {
                   this.showDebugServerAvailableToast(false)
                   return
                 }
@@ -510,7 +515,7 @@ class RuntimeDefaultBackHandler implements BackPressHandler {
 
 function buildModuleLoadParams(): ModuleLoadParams {
   let loadParams = new ModuleLoadParams(
-    'vue2/index.ohos.js',
+    'vue/index.android.js',
     '',
     '',
     '',
