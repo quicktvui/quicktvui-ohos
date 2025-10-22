@@ -1,11 +1,12 @@
 
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
+import { QTDivView } from '../div/QTDivView';
 import QTRenderBaseView from '../QTRenderBaseView';
 
 
 @Observed
-export class QTFallbackView extends QTRenderBaseView{
-
+export class QTFallbackView extends QTDivView{
+  cssFocusable: boolean | null = true;
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
@@ -14,9 +15,7 @@ export class QTFallbackView extends QTRenderBaseView{
     return super.setProp(propKey, propValue)
   }
 
-  call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
 
-  }
 
 }
 

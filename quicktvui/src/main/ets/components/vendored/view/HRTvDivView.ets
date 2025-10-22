@@ -28,6 +28,9 @@ import HippyRenderBaseView, {
 import { HippyCustomComponentView } from 'hippy/src/main/ets/renderer_native/components/custom/HippyCustomComponentView'
 import { ColorMetrics, FrameNode, LengthMetrics, NodeController, typeNode } from '@kit.ArkUI';
 import { QTBaseComponentView } from '../../QTBaseComponentView';
+import { QTLog } from '../../../utils/QTLog';
+import { TAG_FOCUS } from '../../../Constant';
+import { ExtendUtil } from '../../../utils/ExtendUtil';
 
 const HippyGestureTag = 'HippyGestureTag'
 
@@ -163,6 +166,7 @@ export class HRTvDivView extends QTBaseComponentView {
         {
           this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
           this.cssFocusable = this.focusable
+          QTLog.i(TAG_FOCUS,`set focusable ${this.focusable} view:`+ExtendUtil.debugView(this))
         }
         return true
       case 'enableFocusBorder':
