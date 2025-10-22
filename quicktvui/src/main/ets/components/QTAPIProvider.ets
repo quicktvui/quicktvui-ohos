@@ -57,7 +57,7 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("ESPageRouterView", (ctx): HippyRenderBaseView => new QTPageRouterView(ctx))
     registerMap.set("ESPageRootView", (ctx): HippyRenderBaseView => new QTPageView(ctx))
 
-    registerMap.set("QTView", (ctx): HippyRenderBaseView => new QTDivView(ctx))
+    // registerMap.set("QTView", (ctx): HippyRenderBaseView => new QTDivView(ctx))
     registerMap.set("FastListView", (ctx): HippyRenderBaseView => new QTFastListView(ctx))
     registerMap.set("FastFlexView", (ctx): HippyRenderBaseView => new QTFastFlexView(ctx))
     registerMap.set("FastItemView", (ctx): HippyRenderBaseView => new QTFastItemView(ctx))

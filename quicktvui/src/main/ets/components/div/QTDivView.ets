@@ -203,7 +203,8 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //edit by tv
-  .focusable($$.focusable)
+  .focusable($$.cssFocusable)
+  .tabStop($$.cssFocusable)
   .border($$.focus ? $$.setBorder() : $$.border)
   .key($$.name)
   .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})

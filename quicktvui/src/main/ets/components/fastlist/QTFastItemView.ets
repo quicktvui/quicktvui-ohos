@@ -4,12 +4,12 @@ import {
   HippyAny,
   HIPPY_COMPONENT_KEY_PREFIX,
   HippyRenderCallback,
-  HRPadding,
   buildHippyRenderView,
 } from 'hippy'
 import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
 import { QTPendingListView, QTView } from '../../QTTypes';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
+import { QTDivView } from '../div/QTDivView';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
@@ -146,7 +146,7 @@ export struct QTFastItem {
     Stack() {
       ForEach(this.children, (item: QTView) => {
         buildHippyRenderView(item, null)
-      }, (item: QTView) => item.tag + '')
+      }, (item: QTView,index:number) => item.tag + ''+index)
     }
     .applyRenderViewBaseAttr(this.renderView)
     .onAttach(()=>{
