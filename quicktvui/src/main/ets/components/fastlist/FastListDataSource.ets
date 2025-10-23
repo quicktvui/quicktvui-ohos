@@ -37,6 +37,9 @@ import { HRValueUtils } from '../../HRValueUtils';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { inspector } from '@kit.ArkUI';
 import { QTFastFlexView } from './QTFastFlexView';
+import { QTFastListView } from './QTFastListView';
+import { QTLog } from '../../utils/QTLog';
+import { ExtendUtil } from '../../utils/ExtendUtil';
 
 
 // class ItemEntry{
@@ -50,7 +53,6 @@ import { QTFastFlexView } from './QTFastFlexView';
 
 export class FastListDataSource implements IDataSource {
   private listeners: DataChangeListener[] = [];
-  private templates: HippyObservedArray<QTView> = [];
   private dataList: HippyObservedArray<QTView> = [];
 
   private ctx : NativeRenderContext;
@@ -63,7 +65,7 @@ export class FastListDataSource implements IDataSource {
   private bindEventDirty : boolean = true;
   private lastEventPosition = -1;
 
-  //
+  private itemStore : QTView | null = null;
 
   constructor(ctx : NativeRenderContext,dataList:HippyObservedArray<QTView>) {
     this.ctx = ctx;
@@ -72,21 +74,32 @@ export class FastListDataSource implements IDataSource {
     this.dataList = dataList;
   }
 
-  public setTemplates(templates : HippyObservedArray<QTView>){
-    this.templates = templates;
-    console.info(TAG_QUICKTVUI, `setTemplates total:${templates.length}`)
+  public registerTemplates(templates : HippyObservedArray<QTView>,isVirtual : boolean  = false){
+    templates?.map((child)=>{
+      if(child.tag != -1){
+        this.registerTemplate(child,isVirtual)
+      }
+    })
+    if(this.listView){
+      if(this.listView.isVirtual && this.rootListId){
+          let parentList = NodeUtils.getRenderView(this.ctx,this.rootListId)
+        if(parentList instanceof QTFastListView){
+          parentList?.dataSource?.itemStore?.children.map((c)=>{
+              QTLog.d(TAG_FASTLIST,`regist data from rootList child :${ExtendUtil.debugView(c)}`)
+              this.registerTemplate(c,true)
+          })
+        }
+      }
+    }
+
   }
 
   public itemIndexOfDataList(itemView:QTFastItemView) : number{
     return this.dataList.indexOf(itemView)
   }
 
-  public registerTemplate(parent:QTView, child: QTView,childIndex: number,isVirtual : boolean  = false){
+  public registerTemplate( child: QTView,isVirtual : boolean  = false){
     let childTag =  child.tag
-    // if(isVirtual && child instanceof QTBaseComponentView){
-    //   console.error(QUICKTVUI_TAG,`registerTemplat isVirtual template ,childTag:${child.templateView?.tag},viewName:${child.viewType}`)
-    //   childTag = child.templateView!!.tag
-    // }
     let childViewName = child.viewType
     let node = NodeUtils.getNodeById(this.ctx,childTag)
     // let renderView = getRenderView(this.ctx,childTag)
@@ -101,9 +114,18 @@ export class FastListDataSource implements IDataSource {
          type = FastListDataSource.DEFAULT_TYPE
       }
       if(type && child){
-        console.log(TAG_FASTLIST,`registerTemplate type:${type},node.props:${CommonUtils.hippyMap2String(node.props)}`)
-        let it : ItemTemplate = new ItemTemplate(child,type,node.props)
-        this.templatesMap.set(type,it)
+        console.log(TAG_FASTLIST,`registerTemplate type:${type},viewType:${child.viewType} node.props:${CommonUtils.hippyMap2String(node.props)}`)
+        if(child.viewType == 'ItemStoreView'){
+          this.itemStore = child;
+          if(!isVirtual){
+            child.children.map((c)=>{
+              this.registerTemplate(c,true)
+            })
+          }
+        }else{
+          let it : ItemTemplate = new ItemTemplate(child,type,node.props)
+          this.templatesMap.set(type,it)
+        }
       }
     }
   }
@@ -148,6 +170,26 @@ export class FastListDataSource implements IDataSource {
     LayoutAttach.obtainLayoutAttach(wi).insertChild(LayoutAttach.obtainLayoutAttach(renderView),0)
   }
 
+  public getTemplateByType(type:number) : ItemTemplate | undefined{
+    //先从itemStore里寻找
+    // if(this.itemStore){
+    //   this.itemStore.children.map((child)=>{
+    //     let childTag =  child.tag
+    //     let childViewName = child.viewType
+    //     let node = NodeUtils.getNodeById(this.ctx,childTag)
+    //     // let renderView = getRenderView(this.ctx,childTag)
+    //     if(child == null || node == null){
+    //       console.error(TAG_FASTLIST,`getTemplateByType in itemStore error renderView:${child},node:${node},viewName:${childViewName}`)
+    //       return;
+    //     }
+    //   })
+    // }
+
+    let it = this.templatesMap.get(type);
+
+    return it
+  }
+
 
   public buildItem(fi: QTFastItemView,position:number){
     let item: ItemView = fi.itemView!!
@@ -173,7 +215,7 @@ export class FastListDataSource implements IDataSource {
     }
     if(type){
       LayoutAttach.obtainLayoutAttach(fi).virtualExtra.itemType = type;
-      let it = this.templatesMap.get(type);
+      let it = this.getTemplateByType(type);
       item.template = it;
       if(it){
         let  updates:Array<PathUpdate> = []

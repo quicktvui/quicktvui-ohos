@@ -57,14 +57,18 @@ export class QTFastListView extends QTRenderBaseView{
       if(!this.templateView){
         console.error(TAG_FASTLIST,`handleOnChildrenUpdated registerTemplate error for virtual FastList,this.templateView is null`)
       }
-      this.templateView?.children.map((c,index)=>{
-        this.dataSource?.registerTemplate(this,c,index,true)
-      })
+      // this.templateView?.children.map((c,index)=>{
+      //   this.dataSource?.registerTemplate(c,true)
+      // })
+      if(this.templateView){
+        this.dataSource?.registerTemplates(this.templateView.children,this.isVirtual)
+      }
     }else{
-      this.getTemplate().map((c,index)=>{
-        // console.log(QUICKTVUI_TAG,`template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.renderView.ctx,c.tag))
-        this.dataSource?.registerTemplate(this,c,index,this.isVirtual)
-      })
+      this.dataSource?.registerTemplates(this.getTemplate(),this.isVirtual)
+      // this.getTemplate().map((c,index)=>{
+      //   // console.log(QUICKTVUI_TAG,`template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.renderView.ctx,c.tag))
+      //   this.dataSource?.registerTemplate(c,this.isVirtual)
+      // })
     }
     // this.dataSource?.notifyReload()
   }
@@ -84,6 +88,7 @@ export class QTFastListView extends QTRenderBaseView{
   setupDataSource(rootListID : number){
     this.dataSource = new FastListDataSource(this.ctx,this.virtualChildren)
     this.dataSource.rootListId = rootListID
+
     this.dataSource.listView = this
     this.prepareTemplate()
     this.endBatchCallback = () =>{

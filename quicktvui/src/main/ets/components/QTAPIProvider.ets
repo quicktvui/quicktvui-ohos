@@ -37,6 +37,7 @@ import { HRTvList } from './vendored/list/HRTvList';
 import { QTTabs, QTTabsView } from './tabs/QTTabsView';
 import { InnerViewPager, InnerViewPagerView } from './tabs/InnerViewPagerView';
 import { QTPlayMark, QTPlayMarkView } from './play-mark/QTPlayMarkView';
+import { ItemStore, ItemStoreView } from './fastlist/ItemStoreView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -63,6 +64,7 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("FastItemView", (ctx): HippyRenderBaseView => new QTFastItemView(ctx))
     registerMap.set("TabsView", (ctx): HippyRenderBaseView => new QTTabsView(ctx))
     registerMap.set("RecyclerViewPager", (ctx): HippyRenderBaseView => new InnerViewPagerView(ctx))
+    registerMap.set("ItemStoreView", (ctx): HippyRenderBaseView => new ItemStoreView(ctx))
     //测试
     registerMap.set("LoadingViewComponent", (ctx): HippyRenderBaseView => new QTLoadingView(ctx))
     registerMap.set("QrCodeComponent", (ctx): HippyRenderBaseView => new QTQRCodeView(ctx))
@@ -244,7 +246,13 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as InnerViewPagerView,
       children: $$.children,
     })
-  } else {
+  }else if ($$ instanceof ItemStoreView) {
+    ItemStore({
+      renderView: $$ as ItemStoreView,
+      children: $$.children,
+    })
+  }
+  else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,

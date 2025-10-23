@@ -46,14 +46,17 @@ export class QTFastFlexView extends QTRenderBaseView {
     let children = this.templateView?.children
     console.error(TAG_FASTLIST,`QTFastFlexView aboutToUpdate!! children size:${children?.length}`)
     NodeUtils.printViewTreePretty(this,'',false)
-    children?.map((c,index)=>{
-      if(c.tag != -1){
-        console.log(TAG_FASTLIST,`QTFastFlexView template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.ctx,c.tag))
-        this.dataSource?.registerTemplate(this.templateView!!,c,index,this.isVirtual)
-      }else{
-        console.error(TAG_FASTLIST,`QTFastFlexView registerTemplate error child id is -1`)
-      }
-    })
+    // children?.map((c,index)=>{
+    //   if(c.tag != -1){
+    //     console.log(TAG_FASTLIST,`QTFastFlexView template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.ctx,c.tag))
+    //     this.dataSource?.registerTemplate(c,this.isVirtual)
+    //   }else{
+    //     console.error(TAG_FASTLIST,`QTFastFlexView registerTemplate error child id is -1`)
+    //   }
+    // })
+    if(children){
+      this.dataSource?.registerTemplates(children,this.isVirtual)
+    }
   }
 
   onDataChanged(data : HippyArray | null){
