@@ -477,6 +477,8 @@ export struct  QTTabs {
       })
     }
     .barPosition(BarPosition.Start)
+    .barOverlap(true)
+    .barBackgroundColor(Color.White)
     .onContentWillChange((currentIndex:number,comingIndex:number)=>{
       return this.renderView.onTabsContentWillChangeCallback(currentIndex,comingIndex)
     })

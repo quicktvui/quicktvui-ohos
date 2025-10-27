@@ -10,7 +10,7 @@ export class QTPixelUtil{
   public static dev2Vp(value: number) : number{
     let screenWidthDP = PixelUtil.px2dp(display.getDefaultDisplaySync().width)
     let scalePx = 2560 / QTPixelUtil.DEV_WIDTH
-    console.log(TAG_QUICKTVUI,`dp2px getDensityScale :${PixelUtil.getDensityScale()},getDensity:${PixelUtil.getDensity()},scalePx:${scalePx},screenWidthDP:${screenWidthDP}`)
+    // console.log(TAG_QUICKTVUI,`dp2px getDensityScale :${PixelUtil.getDensityScale()},getDensity:${PixelUtil.getDensity()},scalePx:${scalePx},screenWidthDP:${screenWidthDP}`)
     //Fixme 这里暂未实现适配
     return (value * 0.59)  ;
   }
