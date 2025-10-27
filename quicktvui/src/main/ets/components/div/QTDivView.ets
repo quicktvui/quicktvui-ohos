@@ -21,7 +21,7 @@ import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { QTView } from '../../QTTypes';
 import { FastListUtils } from '../fastlist/FastListUtils';
-import QTRenderBaseView from '../QTRenderBaseView';
+import { HRTvDivView } from '../vendored/view/HRTvDivView';
 
 
 const HippyGestureTag = 'HippyGestureTag'
@@ -64,7 +64,7 @@ class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
 const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invisible");
 
 @Observed
-export class QTDivView extends QTRenderBaseView {
+export class QTDivView extends HRTvDivView {
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
@@ -204,21 +204,21 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   //edit by tv
   .focusable($$.cssFocusable)
   .tabStop($$.cssFocusable)
-  // .border($$.focus ? $$.setBorder() : $$.border)
-  // .key($$.name)
-  // .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
-  // .clip($$.clipChildren)
-  // .id($$.sid)
-  // .visibility($$.visibility)
-  // .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
-  // .onFocus(() => {
-  //   $$.focus = true
-  //   $$.handleFocus($$.focus)
-  // })
-  // .onBlur(() => {
-  //   $$.focus = false
-  //   $$.handleBlur($$.focus)
-  // })
+  .border($$.focus ? $$.setBorder() : $$.border)
+  .key($$.name)
+  .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
+  .clip($$.clipChildren)
+  .id($$.sid)
+  .visibility($$.visibility)
+  .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
+  .onFocus(() => {
+    $$.focus = true
+    $$.handleFocus($$.focus)
+  })
+  .onBlur(() => {
+    $$.focus = false
+    $$.handleBlur($$.focus)
+  })
 }
 
 @Extend(Stack)
