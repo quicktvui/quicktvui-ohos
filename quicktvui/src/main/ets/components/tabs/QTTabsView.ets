@@ -460,10 +460,25 @@ function buildPage(item: TabPageData, index: number){
 
 }
 
+
+
 @Component
 export struct  QTTabs {
   @ObjectLink renderView: QTTabsView
   @ObjectLink children: HippyObservedArray<QTView>
+
+  // @Builder tabBuilder(title: string, targetIndex: number) {
+  //   Column() {
+  //     // Image(this.renderView.currentIndex === targetIndex ? selectedImg : normalImg)
+  //     //   .size({ width: 25, height: 25 })
+  //     Text(title)
+  //       .fontColor(this.renderView.selectedIndex === targetIndex ? '#1698CE' : '#6B6B6B')
+  //   }
+  //   .margin({left:20,right:20,top:40})
+  //   .height(180)
+  //   .backgroundColor(Color.White)
+  //   .justifyContent(FlexAlign.Start)
+  // }
 
   build(): void {
     Tabs({barPosition: this.renderView.barPosition,index: this.renderView.currentIndex,controller: this.renderView.controller}){
@@ -471,18 +486,20 @@ export struct  QTTabs {
         TabContent() {
           buildPage(item,index)
         }
-        .tabBar(`${item.title}`)
+        // .tabBar(this.tabBuilder(item.title!!,index))
+        .tabBar(item.title)
       },(item:TabPageData,index:number)=>{
         return ''+index
       })
     }
-    .barPosition(BarPosition.Start)
-    .barOverlap(true)
+    .barPosition(BarPosition.End)
+    .barMode(BarMode.Scrollable)
+    // .barOverlap(true)
     .barBackgroundColor(Color.White)
     .onContentWillChange((currentIndex:number,comingIndex:number)=>{
       return this.renderView.onTabsContentWillChangeCallback(currentIndex,comingIndex)
     })
-    .backgroundColor(Color.Black)
+    // .backgroundColor(Color.Black)
 
   }
 
