@@ -35,7 +35,6 @@ import { QTMap, QTPendingListView, QTView } from '../../QTTypes';
 import { FastListUtils } from './FastListUtils';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
-import { inspector } from '@kit.ArkUI';
 import { QTFastFlexView } from './QTFastFlexView';
 import { QTFastListView } from './QTFastListView';
 import { QTLog } from '../../utils/QTLog';
@@ -61,6 +60,7 @@ export class FastListDataSource implements IDataSource {
   public static  DEFAULT_TYPE : number = 1;
   public rootListId :number = -1;
   public listView : QTPendingListView | null = null;
+  public rootListView : QTFastListView | null = null;
 
   private bindEventDirty : boolean = true;
   private lastEventPosition = -1;
@@ -74,23 +74,62 @@ export class FastListDataSource implements IDataSource {
     this.dataList = dataList;
   }
 
+  public static getItemStoreFromParentList(parentList:QTFastListView) : QTView | null{
+    let itemStore : QTView | null = null;
+    parentList.children?.map((child)=>{
+      if(child.viewType == 'ItemStoreView'){
+        itemStore = child;
+      }
+    })
+    return itemStore;
+  }
+
+  public registerParentItemStore(){
+    QTLog.fatal(TAG_FASTLIST,`regist item registerParentItemStore ${ExtendUtil.debugView(this.listView)}`)
+    if(this.listView){
+      if(this.listView?.isVirtual && this.rootListId ==  -1){
+        QTLog.fatal(TAG_FASTLIST,`regist item rootListID不可为空,return`)
+        return;
+      }
+      if(this.listView.isVirtual && this.rootListId){
+        let parentList = NodeUtils.getRenderView(this.ctx,this.rootListId)
+        if(parentList instanceof QTFastListView){
+          let itemStore=  FastListDataSource.getItemStoreFromParentList(parentList)
+          QTLog.d(TAG_FASTLIST,`regist item itemStore :${itemStore}`)
+          itemStore?.children.map((c)=>{
+            QTLog.d(TAG_FASTLIST,`regist item from rootList child :${ExtendUtil.debugView(c)}`)
+            this.registerTemplate(c,true)
+          })
+        }else{
+          QTLog.fatal(TAG_FASTLIST,`regist item store error parent :${parentList?.viewType},rootListID:${this.rootListId}，this:${ExtendUtil.debugView(this.listView)}`)
+        }
+      }else{
+        QTLog.fatal(TAG_FASTLIST,`regist item error isVirtual :${this.listView.isVirtual},rootLitID:${this.rootListId},this:${ExtendUtil.debugView(this.listView)}`)
+      }
+    }else{
+      QTLog.fatal(TAG_FASTLIST,`regist item error listView null `)
+    }
+  }
+
   public registerTemplates(templates : HippyObservedArray<QTView>,isVirtual : boolean  = false){
     templates?.map((child)=>{
       if(child.tag != -1){
         this.registerTemplate(child,isVirtual)
       }
     })
-    if(this.listView){
-      if(this.listView.isVirtual && this.rootListId){
-          let parentList = NodeUtils.getRenderView(this.ctx,this.rootListId)
-        if(parentList instanceof QTFastListView){
-          parentList?.dataSource?.itemStore?.children.map((c)=>{
-              QTLog.d(TAG_FASTLIST,`regist data from rootList child :${ExtendUtil.debugView(c)}`)
-              this.registerTemplate(c,true)
-          })
-        }
+    if(this.itemStore){
+      if(this.listView?.isVirtual && this.rootListId ==  -1){
+        QTLog.fatal(TAG_FASTLIST,`rootListID不可为空,return`)
+        return;
       }
+        this.itemStore.children.map((c)=>{
+          QTLog.d(TAG_FASTLIST,`register itemStore child:${c.viewType}`)
+          this.registerTemplate(c,true)
+        })
+    }else{
+      this.registerParentItemStore()
     }
+    // this.notifyReload()
 
   }
 
@@ -104,7 +143,7 @@ export class FastListDataSource implements IDataSource {
     let node = NodeUtils.getNodeById(this.ctx,childTag)
     // let renderView = getRenderView(this.ctx,childTag)
     if(child == null || node == null){
-      console.error(TAG_FASTLIST,`registerTemplate error renderView:${child},node:${node},viewName:${childViewName}`)
+      QTLog.d(TAG_FASTLIST,`registerTemplate error renderView:${child},node:${node},viewName:${childViewName}`)
       return;
     }
     if(node?.props){
@@ -114,14 +153,9 @@ export class FastListDataSource implements IDataSource {
          type = FastListDataSource.DEFAULT_TYPE
       }
       if(type && child){
-        console.log(TAG_FASTLIST,`registerTemplate type:${type},viewType:${child.viewType} node.props:${CommonUtils.hippyMap2String(node.props)}`)
+        QTLog.d(TAG_FASTLIST,`registerTemplate type:${type},viewType:${child.viewType} this ${ExtendUtil.debugView(this.listView)}`)
         if(child.viewType == 'ItemStoreView'){
           this.itemStore = child;
-          if(!isVirtual){
-            child.children.map((c)=>{
-              this.registerTemplate(c,true)
-            })
-          }
         }else{
           let it : ItemTemplate = new ItemTemplate(child,type,node.props)
           this.templatesMap.set(type,it)
@@ -295,10 +329,10 @@ export class FastListDataSource implements IDataSource {
         // })
 
       }else{
-        console.error(TAG_QUICKTVUI,'getData error template is null')
+        QTLog.fatal(TAG_FASTLIST,`getData error template is null position:${position},this;${ExtendUtil.debugView(this.listView)}`)
       }
     }else{
-      console.error(TAG_QUICKTVUI,'getData type is undefined')
+      QTLog.fatal(TAG_FASTLIST,'getData type is undefined')
     }
 
     // return item.renderView as QTFastItemView
@@ -310,8 +344,12 @@ export class FastListDataSource implements IDataSource {
 
   public getData(index: number): QTFastItemView {
     let fi = this.dataList[index] as QTFastItemView
+    try{
+      this.buildItem(fi,index)
+    }catch (error){
+      QTLog.e(TAG_FASTLIST,`buildItem error :${error}`)
+    }
 
-    this.buildItem(fi,index)
     // console.log(TAG_FASTLIST,`getData index:${index}`)
     // console.log(TAG_REUSE,`getData index:${index}`)
     if(fi.cssWidth < 1 || fi.cssHeight < 1){
@@ -350,7 +388,7 @@ export class FastListDataSource implements IDataSource {
   // }
 
   public totalCount(): number {
-    // console.log(TAG_FASTLIST,`dataSource:totalCount:${this.dataList.length}`)
+    // console.log(TAG_FASTLIST,`dataSource:totalCount:${this.dataList.length},this:${ExtendUtil.debugView(this.listView)}`)
     return this.dataList.length
   }
 
@@ -368,7 +406,7 @@ export class FastListDataSource implements IDataSource {
   }
 
   notifyReload() {
-    console.log(TAG_QUICKTVUI,'notifyReload called')
+    QTLog.i(TAG_FASTLIST,`notifyReload called this:${ExtendUtil.debugView(this.listView)},data count:this.${this.dataList.length}`)
     this.listeners.forEach(listener => {
       listener.onDataReloaded();
     })

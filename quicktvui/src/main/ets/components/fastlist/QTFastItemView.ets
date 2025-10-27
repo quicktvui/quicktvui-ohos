@@ -11,6 +11,7 @@ import { QTPendingListView, QTView } from '../../QTTypes';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTDivView } from '../div/QTDivView';
 import QTRenderBaseView from '../QTRenderBaseView';
+import { FastListUtils } from './FastListUtils';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
 import { applyLayoutTraverse, applyLayoutTraverseWithSkip } from './TemplateViewManager';
@@ -143,18 +144,36 @@ export struct QTFastItem {
   @ObjectLink children: HippyObservedArray<QTView>
 
   build(): void {
-    Stack() {
-      ForEach(this.children, (item: QTView) => {
-        buildHippyRenderView(item, null)
-      }, (item: QTView,index:number) => item.tag + ''+index)
+    if(this.renderView.isEventClick()){
+      Stack() {
+        ForEach(this.children, (item: QTView) => {
+          buildHippyRenderView(item, null)
+        }, (item: QTView,index:number) => item.tag + ''+index)
+      }
+      .applyRenderViewBaseAttr(this.renderView)
+      .onAttach(()=>{
+        console.log(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
+      })
+      .onDetach(()=>{
+        console.log(TAG_REUSE,`--onDetach position:${this.renderView.dataPosition}`)
+      })
+      .onClick((event=>{
+        FastListUtils.handleItemClick(this.renderView)
+      }))
+    }else{
+      Stack() {
+        ForEach(this.children, (item: QTView) => {
+          buildHippyRenderView(item, null)
+        }, (item: QTView,index:number) => item.tag + ''+index)
+      }
+      .applyRenderViewBaseAttr(this.renderView)
+      .onAttach(()=>{
+        console.log(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
+      })
+      .onDetach(()=>{
+        console.log(TAG_REUSE,`--onDetach position:${this.renderView.dataPosition}`)
+      })
     }
-    .applyRenderViewBaseAttr(this.renderView)
-    .onAttach(()=>{
-      console.log(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
-    })
-    .onDetach(()=>{
-      console.log(TAG_REUSE,`--onDetach position:${this.renderView.dataPosition}`)
-    })
   }
 
   aboutToAppear(): void {

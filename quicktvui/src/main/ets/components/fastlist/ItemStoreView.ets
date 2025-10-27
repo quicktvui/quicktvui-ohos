@@ -1,19 +1,10 @@
 import {
   HippyObservedArray,
   NativeRenderContext,
-  HippyAny,
   HIPPY_COMPONENT_KEY_PREFIX,
-  HippyRenderCallback,
-  buildHippyRenderView,
 } from 'hippy'
-import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
 import { QTPendingListView, QTView } from '../../QTTypes';
-import { QTPixelUtil } from '../../utils/QTPixelUtil';
-import { QTDivView } from '../div/QTDivView';
 import QTRenderBaseView from '../QTRenderBaseView';
-import { ItemView } from './ItemView';
-import { LayoutAttach } from './LayoutAttach';
-import { applyLayoutTraverse, applyLayoutTraverseWithSkip } from './TemplateViewManager';
 
 
 @Observed
@@ -31,13 +22,13 @@ export struct ItemStore {
   @ObjectLink children: HippyObservedArray<QTView>
 
   build(): void {
-    Stack() {
-      ForEach(this.children, (item: QTView) => {
-        buildHippyRenderView(item, null)
-      }, (item: QTView,index:number) => item.tag + ''+index)
-    }
-    .applyRenderViewBaseAttr(this.renderView)
-    .backgroundColor(Color.Pink)
+    // Stack() {
+    //   ForEach(this.children, (item: QTView) => {
+    //     buildHippyRenderView(item, null)
+    //   }, (item: QTView,index:number) => item.tag + ''+index)
+    // }
+    // .applyRenderViewBaseAttr(this.renderView)
+    // .backgroundColor(Color.Pink)
   }
 
   aboutToAppear(): void {
@@ -50,7 +41,7 @@ export struct ItemStore {
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
-  .backgroundColor($$.cssBackgroundColor)
+  .backgroundColor(Color.Orange)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)

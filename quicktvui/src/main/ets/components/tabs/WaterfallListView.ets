@@ -1,5 +1,6 @@
 import {NativeRenderContext} from 'hippy'
 import { QTAny } from '../../QTTypes';
+import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTFastListView } from "../fastlist/QTFastListView";
 
 @Observed
@@ -11,6 +12,7 @@ export class WaterfallListView extends QTFastListView{
   }
 
   init(){
+    LayoutAttach.obtainLayoutAttach(this).name = 'WATERFALL_LISTVIEW'
     this.isVirtual = true;
     this.isHorizontal = false;
   }

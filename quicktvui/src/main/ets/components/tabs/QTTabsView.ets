@@ -6,6 +6,7 @@ import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { TabsDataSource } from './TabsDataSource';
@@ -197,7 +198,7 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   onPageTemplateReady(template:QTView){
-    console.log(TAG_TABS,`onPageTemplateReady:${template}`)
+    console.log(TAG_TABS,`onPageTemplateReady:${ExtendUtil.debugView(template)}`)
     this.contentTemplate = template;
     // this.tabsData.forEach((value)=>{
     //   value.contentView?.setcus
@@ -342,6 +343,7 @@ export class QTTabsView extends QTRenderBaseView{
           console.error(TAG_TABS,`setPageData error contentTemplate is null`)
           return;
         }
+        QTLog.d(TAG_TABS,`setPageData tag:${this.contentTemplate.tag} `)
         pd.contentView.nativeSetupIfNeed(this.contentTemplate.tag,this.contentTemplate)
         pd.contentView.updateSections(dataArray,pd.contentParams)
       }

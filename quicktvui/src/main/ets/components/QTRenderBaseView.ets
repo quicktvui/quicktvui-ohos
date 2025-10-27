@@ -21,6 +21,8 @@ export default abstract class QTRenderBaseView extends  QTBaseComponentView{
     console.info(TAG_QUICKTVUI,`call in RenderView method:${method},params:${params}`)
   }
 
+
+
   // // 自定义测量方法。只有 HippyAPIProvider getCustomMeasureRenderViews 方法里指定的自定义组件才会调用该方法。
   // customMeasure(width: number, widthMode: HRMeasureMode, height: number, heightMode: HRMeasureMode): HRMeasureResult {
   //   return new HRMeasureResult(0, 0)

@@ -47,6 +47,10 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   }
 
+  isEventClick() : boolean{
+    return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventClick
+  }
+
   setProp(propKey: string, propValue: HippyAny): boolean {
     // console.info(TAG_QUICKTVUI,`QTRenderBaseView setProp:${propKey},propValue:${propValue}`)
     switch (propKey){

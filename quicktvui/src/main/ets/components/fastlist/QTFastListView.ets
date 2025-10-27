@@ -6,6 +6,7 @@ import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { NodeUtils } from '../../utils/NodeUtils';
+import { QTLog } from '../../utils/QTLog';
 
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListDataSource } from './FastListDataSource';
@@ -27,6 +28,7 @@ export class QTFastListView extends QTRenderBaseView{
   scrollOffset: number =  0
   autofocusPosition: number = -1;
   dataSource: FastListDataSource | null = null;
+  isNativeCreate = false;
 
   // private customTemplate: QTView | null = null;
 
@@ -74,21 +76,35 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   onUIAboutToAppear(ui : QTFastList){
-    console.log(TAG_FASTLIST,`FastList onUIAboutToAppear`)
-    this.setupDataSource(this.tag)
+    QTLog.e(TAG_FASTLIST,`FastList onUIAboutToAppear this:${ExtendUtil.debugView(this)}`)
+    // if(this.tag != -1){
+      QTLog.e(TAG_FASTLIST,`onUIAboutToAppear setupDataSource:${ExtendUtil.debugView(this)}，this.tag:${this.tag}`)
+      if(!this.isVirtual){
+        this.setupDataSource(this.tag)
+      }else{
+        if(this.templateView){
+          this.setupDataSource(this.templateView.tag)
+        }else{
+          QTLog.fatal(TAG_FASTLIST,`nUIAboutToAppear setupDataSource error when templateView is null`)
+        }
+      }
+    // }
   }
 
+
   nativeSetupIfNeed(rootListID : number,customTemplate: QTView){
+    QTLog.e(TAG_FASTLIST,`FastList nativeSetupIfNeed this:${ExtendUtil.debugView(this)}`)
+    this.isNativeCreate = true;
     if(!this.dataSource){
       this.setCustomTemplate(customTemplate)
-      this.setupDataSource(rootListID)
+      // this.setupDataSource(rootListID)
     }
   }
 
   setupDataSource(rootListID : number){
+    QTLog.e(TAG_FASTLIST,`setupDataSource rootListID:${rootListID} this:${ExtendUtil.debugView(this)}`)
     this.dataSource = new FastListDataSource(this.ctx,this.virtualChildren)
     this.dataSource.rootListId = rootListID
-
     this.dataSource.listView = this
     this.prepareTemplate()
     this.endBatchCallback = () =>{
@@ -449,7 +465,7 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   setListWithPrams(data:QTArray | null | undefined,params:QTAny | null | undefined){
-    console.info(TAG_FASTLIST,`setListWithPrams data:${data?.length} this:${ExtendUtil.debugView(this)}`)
+    QTLog.e(TAG_FASTLIST,`setListWithPrams data:${data?.length} this:${ExtendUtil.debugView(this)}`)
     if(data){
       this.onDataChanged(data)
     }else{

@@ -1,11 +1,12 @@
 
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
 import { QTDivView } from '../div/QTDivView';
+import { FastListUtils } from '../fastlist/FastListUtils';
 import QTRenderBaseView from '../QTRenderBaseView';
 
 
 @Observed
-export class QTFallbackView extends QTDivView{
+export class QTFallbackView extends QTRenderBaseView{
   cssFocusable: boolean | null = true;
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -25,14 +26,28 @@ export struct  QTFallback {
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
   build(): void {
-    Stack() {
-      ForEach(this.children, (item: HippyRenderBaseView) => {
-        buildHippyRenderView(item, null)
-      }, (item: HippyRenderBaseView) => item.tag + '')
-      ContentSlot(this.renderView.childSlot)
+    if(this.renderView.isEventClick()){
+      Stack() {
+        ForEach(this.children, (item: HippyRenderBaseView) => {
+          buildHippyRenderView(item, null)
+        }, (item: HippyRenderBaseView) => item.tag + '')
+        ContentSlot(this.renderView.childSlot)
+      }
+      .applyRenderViewBaseAttr(this.renderView)
+      .backgroundColor(Color.Pink)
+      .onClick((event=>{
+        FastListUtils.handleItemClick(this.renderView)
+      }))
+    }else{
+      Stack() {
+        ForEach(this.children, (item: HippyRenderBaseView) => {
+          buildHippyRenderView(item, null)
+        }, (item: HippyRenderBaseView) => item.tag + '')
+        ContentSlot(this.renderView.childSlot)
+      }
+      .applyRenderViewBaseAttr(this.renderView)
+      // .backgroundColor(Color.Pink)
     }
-    .applyRenderViewBaseAttr(this.renderView)
-    .backgroundColor(Color.Pink)
   }
 
   aboutToAppear(): void {

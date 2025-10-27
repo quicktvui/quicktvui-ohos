@@ -7,6 +7,10 @@ import { TemplateCodeParser } from './TemplateCodeParser'
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { LayoutAttach } from './LayoutAttach';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
+import { QTFastFlexView } from './QTFastFlexView';
+import { QTLog } from '../../utils/QTLog';
+import { TAG_FASTLIST } from '../../Constant';
+import { ExtendUtil } from '../../utils/ExtendUtil';
 
 
 export class BuildResult{
@@ -135,6 +139,15 @@ export function buildRenderViewTraverse(rootListId:number, ctx:NativeRenderConte
   let patch = buildRenderView(template,templateProps,itemData,index)
   if(!patch){
     return null;
+  }
+  // QTLog.d(TAG_FASTLIST,`buildRenderViewTraverse view :${ExtendUtil.debugView(patch.renderView)}`)
+  if(patch.renderView instanceof QTFastFlexView){
+    QTLog.d(TAG_FASTLIST,`buildRenderViewTraverse fastFlexView setRootListID:${rootListId}`)
+    if(rootListId){
+      patch.renderView.setRootListID(rootListId)
+    }else{
+      QTLog.fatal(TAG_FASTLIST,`buildRenderViewTraverse fastFlexView error rootListID is -1`)
+    }
   }
   LayoutAttach.obtainLayoutAttach(patch.renderView).virtualExtra.rootListId = rootListId;
   updates.push(patch)

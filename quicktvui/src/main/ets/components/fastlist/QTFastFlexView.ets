@@ -24,11 +24,15 @@ import { QTFastItem, QTFastItemView } from './QTFastItemView';
 export class QTFastFlexView extends QTRenderBaseView {
   public virtualChildren: HippyObservedArray<QTView> = new HippyObservedArray()
   dataSource: FastListDataSource | null = null;
-
   constructor(ctx: NativeRenderContext) {
     super(ctx)
     this.dataSource = new FastListDataSource(ctx,this.virtualChildren)
     this.dataSource.listView = this;
+  }
+
+  setRootListID(rootListID:number){
+    this.dataSource!!.rootListId = rootListID;
+    this.dataSource!!.registerParentItemStore()
   }
 
   onChildInserted(childTag: number, childViewName: string, childIndex: number): void {
@@ -44,8 +48,8 @@ export class QTFastFlexView extends QTRenderBaseView {
 
   aboutToUpdate(): void {
     let children = this.templateView?.children
-    console.error(TAG_FASTLIST,`QTFastFlexView aboutToUpdate!! children size:${children?.length}`)
-    NodeUtils.printViewTreePretty(this,'',false)
+    // console.error(TAG_FASTLIST,`QTFastFlexView aboutToUpdate!! children size:${children?.length}`)
+    // NodeUtils.printViewTreePretty(this,'',false)
     // children?.map((c,index)=>{
     //   if(c.tag != -1){
     //     console.log(TAG_FASTLIST,`QTFastFlexView template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.ctx,c.tag))
@@ -65,8 +69,7 @@ export class QTFastFlexView extends QTRenderBaseView {
       for(let  i = 0; i < data.length; i++){
         let item : ItemView = new ItemView(i,data[i] as HippyMap);
         // this.dataSource?.buildItem(item,i)
-        let fi : QTFastItemView=  new QTFastItemView(this.ctx).init(this,item)
-        this.dataSource.rootListId = LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId
+        let fi : QTFastItemView =  new QTFastItemView(this.ctx).init(this,item)
         this.dataSource.buildItem(fi,i)
         this.virtualChildren.push(fi)
         CommonUtils.printMapPretty(item.raw as HippyMap,'FastFlex:',false)
@@ -215,14 +218,13 @@ export struct QTFastFlex {
       })
       // ContentSlot(this.renderView.childSlot)
     }
-    .backgroundColor(Color.Blue)
     .applyRenderViewBaseAttr(this.renderView)
+    // .backgroundColor(Color.Blue)
   }
 
 
 
   aboutToAppear(): void {
-    console.error(TAG_FASTLIST,`QTFastFlex aboutToAppear`)
     // this.endBatchCallback = () =>{
     // }
     // this.renderView.ctx.getNativeRender().addEndBatchCallback(this.renderView.ctx.getRootId(),this.endBatchCallback)

@@ -21,8 +21,7 @@ import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { QTView } from '../../QTTypes';
 import { FastListUtils } from '../fastlist/FastListUtils';
-import { LayoutAttach } from '../fastlist/LayoutAttach';
-import { HRTvDivView} from '../vendored/view/HRTvDivView';
+import QTRenderBaseView from '../QTRenderBaseView';
 
 
 const HippyGestureTag = 'HippyGestureTag'
@@ -65,7 +64,7 @@ class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
 const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invisible");
 
 @Observed
-export class QTDivView extends HRTvDivView {
+export class QTDivView extends QTRenderBaseView {
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
@@ -111,9 +110,9 @@ export struct QTDiv {
     )
   }
 
-  isEventClick(){
-    return this.renderView.isVirtual && LayoutAttach.obtainLayoutAttach(this.renderView).virtualExtra.eventClick
-  }
+  // isEventClick(){
+  //   return this.renderView.isVirtual && LayoutAttach.obtainLayoutAttach(this.renderView).virtualExtra.eventClick
+  // }
 
   aboutToAppear() {
     if (this.renderView.eventAttachedToWindow) {
@@ -129,7 +128,7 @@ export struct QTDiv {
 
   build() {
     if(this.shouldAddGesture()){
-      if(this.isEventClick()){
+      if(this.renderView.isEventClick()){
         Stack() {
           ForEach(this.children, (item: QTView) => {
             buildHippyRenderView(item, null)
@@ -155,7 +154,7 @@ export struct QTDiv {
         .attributeModifier(this.colorModifier)
       }
     }else {
-      if(this.isEventClick()){
+      if(this.renderView.isEventClick()){
         //from super
         Stack() {
           ForEach(this.children, (item: QTView) => {
@@ -205,21 +204,21 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   //edit by tv
   .focusable($$.cssFocusable)
   .tabStop($$.cssFocusable)
-  .border($$.focus ? $$.setBorder() : $$.border)
-  .key($$.name)
-  .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
-  .clip($$.clipChildren)
-  .id($$.sid)
-  .visibility($$.visibility)
-  .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
-  .onFocus(() => {
-    $$.focus = true
-    $$.handleFocus($$.focus)
-  })
-  .onBlur(() => {
-    $$.focus = false
-    $$.handleBlur($$.focus)
-  })
+  // .border($$.focus ? $$.setBorder() : $$.border)
+  // .key($$.name)
+  // .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
+  // .clip($$.clipChildren)
+  // .id($$.sid)
+  // .visibility($$.visibility)
+  // .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
+  // .onFocus(() => {
+  //   $$.focus = true
+  //   $$.handleFocus($$.focus)
+  // })
+  // .onBlur(() => {
+  //   $$.focus = false
+  //   $$.handleBlur($$.focus)
+  // })
 }
 
 @Extend(Stack)
