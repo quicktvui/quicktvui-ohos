@@ -582,10 +582,9 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .backgroundImage($$.cssBackgroundImage)
   .backgroundImageSize($$.cssBackgroundImageSize)
   .backgroundImagePosition($$.cssBackgroundImagePosition)
-  .transform($$.cssMatrix)
+  // .transform($$.cssMatrix)
   .rotate($$.cssRotate)
-  .scale($$.cssScale)
-  .translate($$.cssTranslate)
+  // .scale($$.cssScale)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
 }
