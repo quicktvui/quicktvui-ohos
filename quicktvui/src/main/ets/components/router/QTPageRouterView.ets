@@ -49,7 +49,7 @@ export struct QTPageRouter {
 
   build(): void {
     Stack() {
-      ForEach(this.children, (item: HippyRenderBaseView) => {
+      ForEach([this.children[this.children.length - 1]], (item: HippyRenderBaseView) => {
         buildHippyRenderView(item, null)
       }, (item: HippyRenderBaseView) => item.tag + '')
       ContentSlot(this.renderView.childSlot)

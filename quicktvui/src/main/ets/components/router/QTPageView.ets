@@ -62,7 +62,7 @@ export struct QTPage {
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
-  .backgroundColor(Color.Black)
+  .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
