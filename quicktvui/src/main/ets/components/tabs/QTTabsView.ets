@@ -1,6 +1,6 @@
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
-import { InnerViewPagerView, QTFastList,QTFastListView } from '../../../../../Index';
+import { InnerViewPagerView, QTBaseComponentView, QTFastList,QTFastListView } from '../../../../../Index';
 import { TAG_FASTLIST, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
@@ -509,7 +509,7 @@ export struct  QTTabs {
 }
 
 @Extend(Tabs)
-function applyRenderViewBaseAttr($$: QTView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
@@ -532,6 +532,10 @@ function applyRenderViewBaseAttr($$: QTView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //quicktvui tv basic
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }
 
 @Observed

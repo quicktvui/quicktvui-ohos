@@ -2,6 +2,7 @@
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
 import { QTDivView } from '../div/QTDivView';
 import { FastListUtils } from '../fastlist/FastListUtils';
+import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 
 
@@ -55,7 +56,7 @@ export struct  QTFallback {
 }
 
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
@@ -78,5 +79,8 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }
 
