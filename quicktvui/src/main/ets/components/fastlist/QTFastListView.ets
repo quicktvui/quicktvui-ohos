@@ -366,7 +366,7 @@ export class QTFastListView extends QTRenderBaseView{
     if(data && data.length > 0){
       this.virtualChildren.push(...
         data?.map((item,index)=>{
-          console.log(TAG_FASTLIST,`onDataChanged crate item :${CommonUtils.hippyAny2String(item)}`)
+          // console.log(TAG_FASTLIST,`onDataChanged crate item :${CommonUtils.hippyAny2String(item)}`)
           //CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
           let it =  new ItemView(index,item as HippyMap)
           return new QTFastItemView(this.ctx).init(this,it)

@@ -10,6 +10,7 @@ import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } fr
 import { QTPendingListView, QTView } from '../../QTTypes';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTDivView } from '../div/QTDivView';
+import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListUtils } from './FastListUtils';
 import { ItemView } from './ItemView';
@@ -191,7 +192,7 @@ export struct QTFastItem {
 }
 
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: QTView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
@@ -214,4 +215,8 @@ function applyRenderViewBaseAttr($$: QTView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //tv basic
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }

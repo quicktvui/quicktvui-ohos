@@ -116,11 +116,27 @@ function applyBasicStyle(rendView:HippyRenderBaseView | null,styleMap: HippyMap)
       if(!TemplateCodeParser.parsePendingProp(value)){//不处理模板code的情况
         switch (key){
           case 'sid':
-            LayoutAttach.obtainLayoutAttach(rendView).sid = HRValueUtils.getString(value);
+            let sid = HRValueUtils.getString(value)
+            LayoutAttach.obtainLayoutAttach(rendView).sid = sid
+            if(rendView instanceof QTBaseComponentView){
+              if(sid){
+                rendView.sid = sid;
+              }else{
+                rendView.sid = ''
+              }
+            }
             return;
           case 'name':
-            LayoutAttach.obtainLayoutAttach(rendView).name = HRValueUtils.getString(value);
+            let name = HRValueUtils.getString(value);
+            LayoutAttach.obtainLayoutAttach(rendView).name = name;
             //rendView.setProp(key,value)
+            if(rendView instanceof QTBaseComponentView){
+              if(name){
+                rendView.name = name;
+              }else{
+                rendView.name = ''
+              }
+            }
             return ;
         }
       }

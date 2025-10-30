@@ -7,6 +7,7 @@ import MeasureText from '@ohos.measure';
 import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTView } from '../../QTTypes';
+import { QTBaseComponentView } from '../QTBaseComponentView';
 
 
 @Observed
@@ -190,7 +191,7 @@ export struct  QTText {
 }
 
 @Extend(Text)
-function applyRenderViewBaseAttr($$: QTView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
@@ -212,5 +213,8 @@ function applyRenderViewBaseAttr($$: QTView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }
 

@@ -266,4 +266,8 @@ function applyRenderViewBaseAttr($$: QTFastFlexView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //tv basic
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }

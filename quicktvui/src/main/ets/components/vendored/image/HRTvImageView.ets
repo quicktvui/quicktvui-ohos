@@ -329,9 +329,9 @@ export class HRTvImageView extends QTBaseComponentView {
         this.showonstate = HRValueUtils.getString(propValue as HippyAny);
         this.showOnState();
         return true;
-      case 'name':
-        this.name = HRValueUtils.getString(propValue as HippyAny);
-        return true;
+      // case 'name':
+      //   this.name = HRValueUtils.getString(propValue as HippyAny);
+      //   return true;
       case HRNodeProps.WIDTH:
         if (this.isImageSpan()) {
           this.cssWidth = HRValueUtils.getNumber(propValue as HippyAny);
@@ -433,11 +433,11 @@ export class HRTvImageView extends QTBaseComponentView {
         }
         return true
 
-      case 'sid':
-        {
-          this.sid = propValue as string
-        }
-        return true
+      // case 'sid':
+      //   {
+      //     this.sid = propValue as string
+      //   }
+      //   return true
 
       default:
         break

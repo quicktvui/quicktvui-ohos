@@ -81,7 +81,7 @@ export struct QTSlider {
 
 // base props for all components
 @Extend(Slider)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
@@ -104,4 +104,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }

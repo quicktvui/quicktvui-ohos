@@ -203,7 +203,7 @@ class BarState {
 
 // 通用 Canvas 属性扩展
 @Extend(Canvas)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
@@ -218,4 +218,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .rotate($$.cssRotate)
   .scale($$.cssScale)
   .translate($$.cssTranslate)
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }

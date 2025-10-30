@@ -6,7 +6,8 @@ import {
   buildHippyRenderView,
   HIPPY_COMPONENT_KEY_PREFIX,
 } from 'hippy'
-import { QTDivView } from '../../../../../Index';
+import { QTBaseComponentView, QTDivView } from '../../../../../Index';
+import { QTBaseView } from '../../QTTypes';
 
 @Observed
 export class QTItemFrameView extends QTDivView {
@@ -44,7 +45,7 @@ export struct QTItemFrame {
 }
 
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
@@ -67,4 +68,8 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //basic
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }
