@@ -64,11 +64,13 @@ export struct QTWeb {
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
   private webviewController: WebviewController = new webview.WebviewController()
   private js2Vue: Js2Vue = new Js2Vue(this.renderView);
-  @State private url: string = "";
+  @State private url: string | null = null;
+  private isControllerAttached: boolean = false
 
   aboutToAppear() {
     this.renderView.web = this
   }
+
   aboutToDisappear() {
   }
 
@@ -77,6 +79,13 @@ export struct QTWeb {
     switch (method) {
       case 'loadUrl': {
         this.url = params[0] as string;
+        if (this.isControllerAttached) {
+          try {
+            this.webviewController.loadUrl(this.url);
+          } catch (error) {
+            console.error(`ErrorCode: ${(error as BusinessError).code},  Message: ${(error as BusinessError).message}`);
+          }
+        }
         return true
       }
       case 'evaluateJavascript': {
@@ -101,17 +110,25 @@ export struct QTWeb {
 
   build() {
     Web({
-      src: this.url,
+      src: "",
       controller: this.webviewController,
       renderMode: RenderMode.ASYNC_RENDER
     })
       .javaScriptAccess(true)
       .fileAccess(true)
       .onControllerAttached(() => {
+        this.isControllerAttached = true
         try {
           this.webviewController.registerJavaScriptProxy(this.js2Vue, "Js2Vue", ["js2Vue"], [], '')
         } catch (error) {
           console.error(`ErrorCode: ${(error as BusinessError).code},Message: ${(error as BusinessError).message}`);
+        }
+        if (this.url != null) {
+          try {
+            this.webviewController.loadUrl(this.url);
+          } catch (error) {
+            console.error(`ErrorCode: ${(error as BusinessError).code},  Message: ${(error as BusinessError).message}`);
+          }
         }
       })
       .onPageBegin(e => {
