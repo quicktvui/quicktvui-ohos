@@ -66,6 +66,7 @@ export struct QTWeb {
   private js2Vue: Js2Vue = new Js2Vue(this.renderView);
   @State private url: string | null = null;
   private isControllerAttached: boolean = false
+  private localHtmlUrl = "resource://rawfile/local.html"
 
   aboutToAppear() {
     this.renderView.web = this
@@ -110,7 +111,7 @@ export struct QTWeb {
 
   build() {
     Web({
-      src: "",
+      src: $rawfile("local.html"),
       controller: this.webviewController,
       renderMode: RenderMode.ASYNC_RENDER
     })
@@ -132,18 +133,27 @@ export struct QTWeb {
         }
       })
       .onPageBegin(e => {
+        if (this.localHtmlUrl == e.url) {
+          return
+        }
         let event = new HippyViewEvent("onPageStarted")
         let params = new Map<string, string>()
         params.set('url', e.url)
         event.send(this.renderView.ctx, this.renderView.tag, params)
       })
       .onPageEnd(e => {
+        if (this.localHtmlUrl == e.url) {
+          return
+        }
         let event = new HippyViewEvent("onPageFinished")
         let params = new Map<string, string>()
         params.set('url', e.url)
         event.send(this.renderView.ctx, this.renderView.tag, params)
       })
       .onResourceLoad(e => {
+        if (this.localHtmlUrl == e.url) {
+          return
+        }
         let event = new HippyViewEvent("onLoadResource")
         let params = new Map<string, string>()
         params.set('url', e.url)
