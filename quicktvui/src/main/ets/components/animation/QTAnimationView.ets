@@ -6,7 +6,7 @@ import {
   HippyRenderCallback,
   HIPPY_COMPONENT_KEY_PREFIX,
   buildHippyRenderView,
-  LogUtils
+  LogUtils,
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView'
 
@@ -16,6 +16,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView'
 @Observed
 export class QTAnimationView extends QTBaseComponentView {
   public animation: QTAnimation | null = null
+  public callers: Array<Caller> = []
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -26,11 +27,29 @@ export class QTAnimationView extends QTBaseComponentView {
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
+    if (this.animation == null) {
+      this.callers.push({
+        method,
+        params,
+        callback
+      })
+      return;
+    }
+    this.callInner(method, params, callback)
+  }
+
+  callInner(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
     if (this.animation && this.animation.call(method, params, callback)) {
       return;
     }
     super.call(method, params, callback)
   }
+}
+
+export interface Caller {
+  method: string
+  params: Array<HippyAny>
+  callback: HippyRenderCallback | null
 }
 
 @Component
@@ -324,6 +343,14 @@ export struct QTAnimation {
     this.scaleX = this.renderView?.cssScale?.x ?? 1
     this.scaleY = this.renderView?.cssScale?.y ?? 1
     this.scaleZ = this.renderView?.cssScale?.z ?? 1
+
+    //
+    if (this.renderView.callers && this.renderView.callers.length > 0) {
+      this.renderView.callers.forEach((item, index) => {
+        this.renderView.call(item.method, item.params, item.callback);
+      });
+      this.renderView.callers = []
+    }
   }
 
   aboutToDisappear() {
@@ -556,7 +583,7 @@ export struct QTAnimation {
   }
 
   private logInfo(action: string, message: string) {
-    LogUtils.i(this.TAG, `[${action}] ${message}`);
+    LogUtils.d(this.TAG, `[${action}] ${message}`);
   }
 
   private logWarn(action: string, message: string) {
@@ -583,7 +610,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .backgroundImageSize($$.cssBackgroundImageSize)
   .backgroundImagePosition($$.cssBackgroundImagePosition)
   // .transform($$.cssMatrix)
-  .rotate($$.cssRotate)
+  // .rotate($$.cssRotate)
   // .scale($$.cssScale)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
