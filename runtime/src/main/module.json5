@@ -31,6 +31,14 @@
         ],
         "skills": [
           {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "ohos.want.action.home"
+            ]
+          },
+          {
             // actions不能为空，actions为空会造成目标方匹配失败
             "actions": [
               "ohos.want.action.viewData"

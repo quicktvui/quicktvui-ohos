@@ -50,7 +50,7 @@ struct Debug {
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
   private debugMode: boolean = true
-  @State debugServerHost: string = '192.168.80.147' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.40.64' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
@@ -105,6 +105,10 @@ struct Debug {
     console.error('quicktvui', '============3==========>>>>>')
     ln.CalculateLayout(1920, 1080)
     console.info('quicktvui', `native width:${ln.GetWidth()}`)
+
+    setTimeout(()=>{
+      this.initEngine()
+    }, 5000)
   }
 
   aboutToDisappear(): void {
@@ -132,6 +136,7 @@ struct Debug {
 
     //
     this.hippyEngine = createHippyEngine(params)
+    console.log("=======createHippyEngine========>>>>" + this.hippyEngine)
     let engineListener = new DefaultEngineListener(this.hippyEngine, this.rootViewWrapper, () => {
       console.log("=======DefaultEngineListener========>>>>")
       this.isEngineInitialized = true
@@ -420,12 +425,15 @@ struct Debug {
             hippyEngine: this.hippyEngine,
             rootViewWrapper: this.rootViewWrapper,
             onRenderException: (exception: HippyException) => {
-              this.exception = `${exception.message}\n${exception.stack}`
+              this.exception = `onRenderException： ${exception.message}\n${exception.stack}`
             },
           }).layoutWeight(1)
         }
         if (this.exception) {
           Text(this.exception)
+            .fontSize(40)
+            .fontColor(Color.Red)
+            .fontWeight(FontWeight.Bold)
         }
       }
       .alignContent(Alignment.TopStart)
