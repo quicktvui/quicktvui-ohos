@@ -161,6 +161,9 @@ struct Debug {
 
   //--------------------------------DEBUG SERVER------------------------------------------
   private initDebugServer() {
+    if (!this.debugMode){
+      return
+    }
     this.subscribe()
     const debugServerHost = this.getDebugServerHost()
     if (debugServerHost) {
@@ -271,6 +274,10 @@ struct Debug {
   }
 
   private checkDebugServerAvailable() {
+    if (!this.debugMode){
+      return
+    }
+
     const uuid = util.generateRandomUUID(true)
     let defaultIpAddress =
       "ws://" + this.debugServerHost + ":38989/debugger-proxy?role=android_client&clientId=" + uuid;
