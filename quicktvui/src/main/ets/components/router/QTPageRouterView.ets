@@ -49,7 +49,7 @@ export struct QTPageRouter {
 
   build(): void {
     Stack() {
-      ForEach(this.children, (item: HippyRenderBaseView) => {
+      ForEach([this.children[this.children.length - 1]], (item: HippyRenderBaseView) => {
         buildHippyRenderView(item, null)
       }, (item: HippyRenderBaseView) => item.tag + '')
       ContentSlot(this.renderView.childSlot)
@@ -62,7 +62,7 @@ export struct QTPageRouter {
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
-  .backgroundColor(Color.Red)
+  .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
