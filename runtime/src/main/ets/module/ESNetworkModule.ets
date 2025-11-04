@@ -18,86 +18,101 @@ import { AsyncCallback, BusinessError } from '@kit.BasicServicesKit';
  */
 @HippyNativeModule({ name: "ESNetworkModule" })
 export class ESNetworkModule extends BaseModule {
-  public static readonly NAME: string = 'ESNetworkModule'
-  conn: connection.NetConnection | null = null
-  networkCallback: AsyncCallback<void> = (err: BusinessError, data: void) => {
-    LogUtils.i('ESNetworkModule',
-      'register networkCallback: err:' + err + ' data:' + data);
-  }
+  public static readonly NAME: string = 'ESNetworkModule';
+  private conn: connection.NetConnection | null = null;
+  private readonly TAG = ESNetworkModule.NAME;
+  private readonly networkCallback: AsyncCallback<void> = (err: BusinessError, data: void) => {
+    LogUtils.i(this.TAG, `networkCallback triggered - err: ${JSON.stringify(err)}, data: ${JSON.stringify(data)}`);
+  };
 
   constructor(ctx: HippyEngineContext) {
-    super(ctx)
+    super(ctx);
   }
 
   initialize(): void {
-    let netSpecifier: connection.NetSpecifier = {
+    LogUtils.i(this.TAG, 'initialize() called');
+    const netSpecifier: connection.NetSpecifier = {
       netCapabilities: {
-        // 假设当前默认网络是WiFi，需要创建蜂窝网络连接，可指定网络类型为蜂窝网。
         bearerTypes: [
           connection.NetBearType.BEARER_CELLULAR,
           connection.NetBearType.BEARER_WIFI,
           connection.NetBearType.BEARER_ETHERNET
         ],
-        // 指定网络能力为Internet。
-        networkCap: [
-          connection.NetCap.NET_CAPABILITY_INTERNET,
-        ]
-      },
+        networkCap: [connection.NetCap.NET_CAPABILITY_INTERNET]
+      }
     };
-    // 指定超时时间为10s(默认值为0)。
-    let timeout = 10 * 1000;
-    // 创建NetConnection对象。
-    this.conn = connection.createNetConnection(netSpecifier, timeout);
-    // 订阅指定网络状态变化的通知。
-    this.conn.register(this.networkCallback);
-    // 订阅事件，如果当前指定网络可用，通过on_netAvailable通知用户。
-    this.conn.on('netAvailable', ((data: connection.NetHandle) => {
-      this.dispatchEvent("onConnectivityChanged", {})
-    }));
-    // 订阅事件，如果当前指定网络不可用，通过on_netUnavailable通知用户。
-    this.conn.on('netUnavailable', ((data: void) => {
-      this.dispatchEvent("onConnectivityChanged", {})
-    }));
+
+    const timeout = 10 * 1000; // 10s
+
+    try {
+      this.conn = connection.createNetConnection(netSpecifier, timeout);
+      this.conn.register(this.networkCallback);
+
+      this.conn.on('netAvailable', (data: connection.NetHandle) => {
+        LogUtils.i(this.TAG, `on netAvailable: ${JSON.stringify(data)}`);
+        this.dispatchEvent("onConnectivityChanged", {});
+      });
+
+      this.conn.on('netUnavailable', (data: void) => {
+        LogUtils.i(this.TAG, 'on netUnavailable');
+        this.dispatchEvent("onConnectivityChanged", {});
+      });
+
+    } catch (e) {
+      LogUtils.e(this.TAG, `initialize error: ${JSON.stringify(e)}`);
+    }
   }
 
   public call(method: string, params: Array<HippyAny>, promise: HippyModulePromise): HippyAny {
+    LogUtils.i(this.TAG, `call() method=${method}`);
+
     switch (method) {
-      //WIFI类型
       case 'getWifiInfo':
-        this.getWifiNetworkInfoList().then(ret => {
-          promise.resolve(ret);
-        })
+        this.getWifiNetworkInfoList()
+          .then(ret => promise.resolve(ret))
+          .catch((e: BusinessError) => {
+            LogUtils.e(this.TAG, `getWifiNetworkInfoList error: ${JSON.stringify(e)}`);
+            promise.reject(JSON.stringify(e));
+          });
         break;
-    //网络类型
+
       case 'getNetworkType':
-        this.getDefaultNetworkType().then(ret => {
-          promise.resolve(ret);
-        })
+        this.getDefaultNetworkType()
+          .then(ret => promise.resolve(ret))
+          .catch((e: BusinessError) => {
+            LogUtils.e(this.TAG, `getNetworkType error: ${JSON.stringify(e)}`);
+            promise.reject(JSON.stringify(e));
+          });
         break;
-    //所有默认网络信息
+
       case 'getActiveNetworkInfo':
-        this.getDefaultNetworkInfo().then(ret => {
-          promise.resolve(ret);
-        })
+        this.getDefaultNetworkInfo()
+          .then(ret => promise.resolve(ret))
+          .catch((e: BusinessError) => {
+            LogUtils.e(this.TAG, `getActiveNetworkInfo error: ${JSON.stringify(e)}`);
+            promise.reject(JSON.stringify(e));
+          });
         break;
-    //所有注册网络
-      case 'getNetworkInfoList': {
-        this.getNetworkInfoList().then(ret => {
-          promise.resolve(ret);
-        })
+
+      case 'getNetworkInfoList':
+        this.getNetworkInfoList()
+          .then(ret => promise.resolve(ret))
+          .catch((e: BusinessError) => {
+            LogUtils.e(this.TAG, `getNetworkInfoList error: ${JSON.stringify(e)}`);
+            promise.reject(JSON.stringify(e));
+          });
         break;
-      }
-    //网络是否链接
-      case 'isNetworkConnected': {
+
+      case 'isNetworkConnected':
         try {
-          const ret = this.isNetworkConnected()
-          promise.resolve(ret)
+          const ret = this.isNetworkConnected();
+          promise.resolve(ret);
         } catch (e) {
-          let err = e as BusinessError;
-          promise.reject(JSON.stringify(err))
+          LogUtils.e(this.TAG, `isNetworkConnected error: ${JSON.stringify(e)}`);
+          promise.reject(JSON.stringify(e));
         }
         break;
-      }
+
       default:
         super.call(method, params, promise);
     }
