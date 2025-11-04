@@ -30,6 +30,8 @@ import { connection } from '@kit.NetworkKit';
 import { preferences } from '@kit.ArkData';
 import { BusinessError, commonEventManager, deviceInfo } from '@kit.BasicServicesKit';
 import { QTNativeLayout } from 'libquicktvui.so';
+import libHippy from 'libhippy.so';
+import { App } from '../App';
 
 @Builder
 export function PageDebugBuilder(name: string, param: Object) {
@@ -37,7 +39,7 @@ export function PageDebugBuilder(name: string, param: Object) {
 }
 
 @Component
-struct Debug {
+export struct Debug {
   private TAG: string = 'RuntimeDebugPage'
   private navPathStack: NavPathStack = new NavPathStack();
   @State name: string = ''
@@ -70,8 +72,6 @@ struct Debug {
   //----------------------------------------------------------------------
 
   @State message: string = 'Hello World';
-  @StorageLink('libHippy') private libHippy: HippyLibrary | null = null
-  @StorageLink('abilityContext') private abilityContext: Context | null = null
   //
   @State exception: string = ""
   hippyEngine: HippyEngine | null = null
@@ -116,7 +116,7 @@ struct Debug {
     //
     this.destroyEngine()
     //
-    let params = new EngineInitParams(this.libHippy!, this.abilityContext!, this.getUIContext())
+    let params = new EngineInitParams(libHippy, App.instance.context!, this.getUIContext())
     params.coreJSAssetsPath = "vue/vendor.android.js"
     params.enableArkCApi = false
     params.debugServerHost = this.debugServerHost + ':38989'
@@ -492,7 +492,7 @@ struct Debug {
       } else {
         if (this.navPathStack.size() <= 1) {
           //关闭应用
-          (this.abilityContext as common.UIAbilityContext).terminateSelf()
+          (App.instance.context as common.UIAbilityContext).terminateSelf()
             .then(() => {
               LogUtils.d(this.TAG, 'terminateSelf success.');
             })

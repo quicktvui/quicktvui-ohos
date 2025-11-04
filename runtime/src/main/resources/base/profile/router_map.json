@@ -9,6 +9,14 @@
       }
     },
     {
+      "name": "AppView",
+      "pageSourceFile": "src/main/ets/eskit/ui/AppView.ets",
+      "buildFunction": "PageDebugBuilder",
+      "data": {
+        "description": "eskit app view"
+      }
+    },
+    {
       "name": "Animation",
       "pageSourceFile": "src/main/ets/pages/Animation.ets",
       "buildFunction": "PageDebugBuilder",
