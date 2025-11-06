@@ -50,7 +50,7 @@ struct Debug {
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
   private debugMode: boolean = true
-  @State debugServerHost: string = '192.168.80.147' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.40.64' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
@@ -85,24 +85,11 @@ struct Debug {
     this.initNetworkInfo()
     this.initBundleInfo()
     this.initSystemInfo()
-    console.error('quicktvui', 'aboutToAppear ')
 
-    console.error('quicktvui', '=======222=====1======2====>>>>>')
-
-    // let obj:MyObject = new MyObject(10);
-    // console.error('quicktvui',"init:", obj.value);     // 10
-    // obj.value = 20;
-    // console.error('quicktvui',"after set:", obj.value); // 20
-    // console.error('quicktvui',"plusOne:", obj.plusOne()); // 21
-
-
-    // const value:number = quick.callNative(2, 3);
     const ln: QTNativeLayout = new QTNativeLayout()
-    // console.error('quicktvui','============2==========>>>>>' + value + "")
     ln.SetWidth(10)
     ln.SetHeight(10)
 
-    console.error('quicktvui', '============3==========>>>>>')
     ln.CalculateLayout(1920, 1080)
     console.info('quicktvui', `native width:${ln.GetWidth()}`)
   }
@@ -133,7 +120,6 @@ struct Debug {
     //
     this.hippyEngine = createHippyEngine(params)
     let engineListener = new DefaultEngineListener(this.hippyEngine, this.rootViewWrapper, () => {
-      console.log("=======DefaultEngineListener========>>>>")
       this.isEngineInitialized = true
     })
     this.hippyEngine.initEngine(engineListener)
@@ -156,6 +142,9 @@ struct Debug {
 
   //--------------------------------DEBUG SERVER------------------------------------------
   private initDebugServer() {
+    if (!this.debugMode) {
+      return
+    }
     this.subscribe()
     const debugServerHost = this.getDebugServerHost()
     if (debugServerHost) {
@@ -266,6 +255,10 @@ struct Debug {
   }
 
   private checkDebugServerAvailable() {
+    if (!this.debugMode) {
+      return
+    }
+
     const uuid = util.generateRandomUUID(true)
     let defaultIpAddress =
       "ws://" + this.debugServerHost + ":38989/debugger-proxy?role=android_client&clientId=" + uuid;
@@ -386,7 +379,7 @@ struct Debug {
 
           Column() {
             Button(this.debugServerAvailable || !this.debugMode ? $r('app.string.debug_start') :
-            $r('app.string.cross_mark'))
+              $r('app.string.cross_mark'))
               .fontColor(Color.Black)
               .fontSize((this.debugServerAvailable || !this.debugMode) ? 40 : 150)
               .fontWeight(FontWeight.Bold)
@@ -420,12 +413,15 @@ struct Debug {
             hippyEngine: this.hippyEngine,
             rootViewWrapper: this.rootViewWrapper,
             onRenderException: (exception: HippyException) => {
-              this.exception = `${exception.message}\n${exception.stack}`
+              this.exception = `onRenderException： ${exception.message}\n${exception.stack}`
             },
           }).layoutWeight(1)
         }
         if (this.exception) {
           Text(this.exception)
+            .fontSize(40)
+            .fontColor(Color.Red)
+            .fontWeight(FontWeight.Bold)
         }
       }
       .alignContent(Alignment.TopStart)

@@ -6,7 +6,7 @@ import {
   HippyRenderCallback,
   HIPPY_COMPONENT_KEY_PREFIX,
   buildHippyRenderView,
-  LogUtils
+  LogUtils,
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView'
 
@@ -16,6 +16,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView'
 @Observed
 export class QTAnimationView extends QTBaseComponentView {
   public animation: QTAnimation | null = null
+  public callers: Array<Caller> = []
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -26,11 +27,29 @@ export class QTAnimationView extends QTBaseComponentView {
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
+    if (this.animation == null) {
+      this.callers.push({
+        method,
+        params,
+        callback
+      })
+      return;
+    }
+    this.callInner(method, params, callback)
+  }
+
+  callInner(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
     if (this.animation && this.animation.call(method, params, callback)) {
       return;
     }
     super.call(method, params, callback)
   }
+}
+
+export interface Caller {
+  method: string
+  params: Array<HippyAny>
+  callback: HippyRenderCallback | null
 }
 
 @Component
@@ -65,24 +84,24 @@ export struct QTAnimation {
       case 'setPivotX': {
         const value: number = params[0] as number;
         this.centerX = value
-        break
+        return true
       }
       case 'setPivotY': {
         const value: number = params[0] as number;
         this.centerY = value
-        break
+        return true
       }
       case 'resetPivot': {
         this.centerX = -1
         this.centerY = -1
-        break
+        return true
       }
       case 'animator': {
         const id: string = params[0] as string;
         const animator = this.convertAnimatorToKeyframes(params)
         this.logInfo('animator', `animator: ${JSON.stringify(animator)}`);
         this.animationMap.set(id, animator);
-        break
+        return true
       }
       case 'resume':
       case 'startDelay':
@@ -102,7 +121,7 @@ export struct QTAnimation {
           }
           this.logInfo('startDelay', `animator: ${JSON.stringify(clonedAnimation)}`);
           this.getUIContext()?.keyframeAnimateTo(clonedAnimation.param, clonedAnimation.keyframes);
-          break;
+          return true
         }
         // 动画集合处理
         if (Array.isArray(animationSet) && animationSet.length > 0) {
@@ -130,16 +149,16 @@ export struct QTAnimation {
           this.logInfo('start', `Start animation set | ID: ${id}, Delay: ${delay ?? 0}`);
           this.getUIContext()?.keyframeAnimateTo(combinedAnimation.param,
             combinedAnimation.keyframes);
-          break;
+          return true
         }
         // 都没找到
         this.logWarn('start', `Animation or animation set not found | ID: ${id}`);
-        break
+        return true
       }
       case 'pause': {
         const id: string = params[0] as string;
         LogUtils.w(this.TAG, `Unsupported property: pause`);
-        break
+        return true
       }
       case 'cancel': {
         try {
@@ -148,7 +167,7 @@ export struct QTAnimation {
           this.logInfo('cancel', `Cancel animation | ID: ${id}`);
         } catch (e) {
         }
-        break
+        return true
       }
       case 'reverse': {
         const id: string = params[0] as string;
@@ -169,21 +188,21 @@ export struct QTAnimation {
         } else {
           this.logWarn('reverse', `Animation not found | ID: ${id}`);
         }
-        break
+        return true
       }
       case 'afterDelay': {
         const animatorSetId: string = params[0] as string;
         const animatorId: string = params[1] as string;
-        break
+        return true
       }
       case 'reset': {
         this.logInfo('reset', `Reset animations`);
         this.animationMap.clear();
         this.centerX = -1
         this.centerY = -1
-        break
+        return true
       }
-    //----------------------------------------------------------------------------
+      //----------------------------------------------------------------------------
       case 'animatorSet': {
         const animatorSetId: string = params[0] as string;
         const animatorSet = this.convertAnimatorSetToKeyframes(params)
@@ -197,13 +216,13 @@ export struct QTAnimation {
           const merged: Array<KeyframeAnimate> = [...oldSet, ...newSet];
           this.animationSetMap.set(animatorSetId, merged);
         }
-        break
+        return true
       }
       case 'play': {
         const animatorId: string = params[1] as string;
         const animator: KeyframeAnimate | undefined = this.animationMap.get(animatorId)
         if (!animator) {
-          break
+          return true
         }
         const animatorSetId: string = params[0] as string;
         const oldSet: Array<KeyframeAnimate> | undefined = this.animationSetMap.get(animatorSetId);
@@ -214,26 +233,26 @@ export struct QTAnimation {
           const merged: Array<KeyframeAnimate> = [...oldSet, animator];
           this.animationSetMap.set(animatorSetId, merged);
         }
-        break
+        return true
       }
       case 'with': {
         const animatorSetId: string = params[0] as string;
         const animatorId: string = params[1] as string;
         const animator: KeyframeAnimate | undefined = this.animationMap.get(animatorId);
         if (!animator) {
-          break;
+          return true
         }
         const oldSet: Array<KeyframeAnimate> | undefined = this.animationSetMap.get(animatorSetId);
         const newSet = oldSet ? [...oldSet, animator] : [animator];
         const merged = this.mergeKeyframeAnimates(newSet);
         this.animationSetMap.set(animatorSetId, [merged]);
-        break
+        return true
       }
       case 'before': {
         const animatorId: string = params[1] as string;
         const animator: KeyframeAnimate | undefined = this.animationMap.get(animatorId)
         if (!animator) {
-          break
+          return true
         }
         const animatorSetId: string = params[0] as string;
         const oldSet: Array<KeyframeAnimate> | undefined = this.animationSetMap.get(animatorSetId);
@@ -244,13 +263,13 @@ export struct QTAnimation {
           const merged: Array<KeyframeAnimate> = [...oldSet, animator];
           this.animationSetMap.set(animatorSetId, merged);
         }
-        break
+        return true
       }
       case 'after': {
         const animatorId: string = params[1] as string;
         const animator: KeyframeAnimate | undefined = this.animationMap.get(animatorId)
         if (!animator) {
-          break
+          return true
         }
         const animatorSetId: string = params[0] as string;
         const oldSet: Array<KeyframeAnimate> | undefined = this.animationSetMap.get(animatorSetId);
@@ -261,7 +280,7 @@ export struct QTAnimation {
           const merged: Array<KeyframeAnimate> = [animator, ...oldSet];
           this.animationSetMap.set(animatorSetId, merged);
         }
-        break
+        return true
       }
       case 'playSequentially': {
         const animatorSetId: string = params[0] as string;
@@ -283,7 +302,7 @@ export struct QTAnimation {
         }
         this.logInfo('playSequentially',
           `AnimationSet: ${JSON.stringify(this.animationSetMap.get(animatorSetId))}`);
-        break
+        return true
       }
       case 'playTogether': {
         const animatorSetId: string = params[0] as string;
@@ -297,13 +316,13 @@ export struct QTAnimation {
           .map(animator => animator as KeyframeAnimate);
 
         if (animators.length === 0) {
-          break;
+          return true
         }
         const mergedAnimate: KeyframeAnimate = this.mergeKeyframeAnimates(animators);
         this.logInfo('playTogether',
           `animatorSetId: ${animatorSetId} animatorIds: ${JSON.stringify(mergedAnimate)}`);
         this.animationSetMap.set(animatorSetId, [mergedAnimate]);
-        break
+        return true
       }
     }
     return false
@@ -324,6 +343,14 @@ export struct QTAnimation {
     this.scaleX = this.renderView?.cssScale?.x ?? 1
     this.scaleY = this.renderView?.cssScale?.y ?? 1
     this.scaleZ = this.renderView?.cssScale?.z ?? 1
+
+    //
+    if (this.renderView.callers && this.renderView.callers.length > 0) {
+      this.renderView.callers.forEach((item, index) => {
+        this.renderView.call(item.method, item.params, item.callback);
+      });
+      this.renderView.callers = []
+    }
   }
 
   aboutToDisappear() {
@@ -377,7 +404,7 @@ export struct QTAnimation {
         return Curve.Smooth;
       case QTAnimationInterpolatorType.QT_BOUNCE_INTERPOLATOR:
         return Curve.Friction;
-    // 这些在 ArkTS 中无明确对应：
+      // 这些在 ArkTS 中无明确对应：
       case QTAnimationInterpolatorType.QT_CYCLE_INTERPOLATOR:
       case QTAnimationInterpolatorType.QT_PATH_INTERPOLATOR:
         return Curve.Linear; // 默认或自定义扩展支持
@@ -556,7 +583,7 @@ export struct QTAnimation {
   }
 
   private logInfo(action: string, message: string) {
-    LogUtils.i(this.TAG, `[${action}] ${message}`);
+    LogUtils.d(this.TAG, `[${action}] ${message}`);
   }
 
   private logWarn(action: string, message: string) {
@@ -583,7 +610,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .backgroundImageSize($$.cssBackgroundImageSize)
   .backgroundImagePosition($$.cssBackgroundImagePosition)
   // .transform($$.cssMatrix)
-  .rotate($$.cssRotate)
+  // .rotate($$.cssRotate)
   // .scale($$.cssScale)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
