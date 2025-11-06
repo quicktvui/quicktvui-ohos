@@ -11,13 +11,11 @@ import {
 import { TAG_FASTLIST } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
-import { CommonUtils } from '../../utils/CommonUtils';
-import { NodeUtils } from '../../utils/NodeUtils';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListDataSource } from './FastListDataSource';
 import { ItemView, renderItem } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
-import { QTFastItem, QTFastItemView } from './QTFastItemView';
+import { QTItemRoot, QTItemRootView } from './QTItemRootView';
 
 
 @Observed
@@ -65,14 +63,15 @@ export class QTFastFlexView extends QTRenderBaseView {
 
   onDataChanged(data : HippyArray | null){
     console.log(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
+    this.virtualChildren = []
     if(this.dataSource && data && data.length > 0){
       for(let  i = 0; i < data.length; i++){
         let item : ItemView = new ItemView(i,data[i] as HippyMap);
         // this.dataSource?.buildItem(item,i)
-        let fi : QTFastItemView =  new QTFastItemView(this.ctx).init(this,item)
+        let fi : QTItemRootView =  new QTItemRootView(this.ctx).init(this,item)
         this.dataSource.buildItem(fi,i)
         this.virtualChildren.push(fi)
-        CommonUtils.printMapPretty(item.raw as HippyMap,'FastFlex:',false)
+        //CommonUtils.printMapPretty(item.raw as HippyMap,'FastFlex:',false)
       }
       // this.dataList.push(...
       //   data?.map((item,index)=>{
@@ -85,7 +84,7 @@ export class QTFastFlexView extends QTRenderBaseView {
   }
 
   keyGenerate(item : QTView,index : number) : string{
-    if(item instanceof QTFastItemView){
+    if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid
       if(id){
         console.debug(TAG_FASTLIST,`FastFlex:keyGenerate id from sid:${id}`)
@@ -208,12 +207,12 @@ export struct QTFastFlex {
 
   build(): void {
     Row() {
-      ForEach(this.renderView.virtualChildren,(item : QTFastItemView)=>{
-        QTFastItem({
-          renderView:item as QTFastItemView,
+      ForEach(this.renderView.virtualChildren,(item : QTItemRootView)=>{
+        QTItemRoot({
+          renderView:item as QTItemRootView,
           children: item.children,
         }).reuseId(item.getReuseId())
-      },(item : QTFastItemView,index)=>{
+      },(item : QTItemRootView,index)=>{
         return this.renderView.keyGenerate(item,index)
       })
       // ContentSlot(this.renderView.childSlot)

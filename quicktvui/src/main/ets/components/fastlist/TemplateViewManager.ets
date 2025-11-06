@@ -182,7 +182,24 @@ export function buildRenderViewTraverse(rootListId:number, ctx:NativeRenderConte
   return patch.renderView
 }
 
-export function gatherToUpdateMap(rendView:HippyRenderBaseView ,templateProps:HippyMap,itemData : HippyMap,style : Map<String,HippyAny>) : PathUpdate{
+export function gatherToUpdateMapTraverse(rendView:HippyRenderBaseView , template : HippyRenderBaseView | null,templateProps:HippyMap,itemData : HippyMap,style : Map<String,HippyAny> | null
+,updates:Array<PathUpdate>,singleton : boolean){
+  let u = singleton ? gatherToUpdateMap4Singleton(rendView,templateProps,itemData,style) :  gatherToUpdateMap(rendView,templateProps,itemData,style)
+  if(u){
+    updates.push(u)
+  }
+  template?.children?.map((childTemplate,index)=>{
+    let childNode = NodeUtils.getNodeById(rendView.ctx,childTemplate.tag)
+    //let childTemplate = template?.children[index]
+    let childView = rendView.children[index]
+    if(!childView || !childTemplate || !childNode?.props){
+      throw new IllegalStateException(`child node is null tag :${childTemplate.tag},viewType:${childTemplate.viewType}`)
+    }
+    gatherToUpdateMapTraverse(childView,childTemplate,childNode.props,itemData,style,updates,singleton)
+  })
+}
+
+export function gatherToUpdateMap(rendView:HippyRenderBaseView ,templateProps:HippyMap,itemData : HippyMap,style : Map<String,HippyAny> | null) : PathUpdate{
   let toUpdate = new Map<string, HippyAny>()
   let patch = new PathUpdate(rendView,toUpdate)
   templateProps.forEach((value,key)=>{
@@ -203,9 +220,38 @@ export function gatherToUpdateMap(rendView:HippyRenderBaseView ,templateProps:Hi
           // console.log(QUICKTVUI_TAG,`--gatherToUpdateMap discard key:${key},data:${CommonUtils.hippyAny2String(value)}`)
           // toUpdate.set(key,value)
           //原数据没有${xx}，直接按value处理
-          if(!handleCustomProps(key,value,patch)){
+          if(!handleCustomProps(key,value,patch)){23
             toUpdate.set(key,value)
           }
+        }
+      }
+    }
+  })
+  return patch
+}
+
+export function gatherToUpdateMap4Singleton(rendView:HippyRenderBaseView ,templateProps:HippyMap,itemData : HippyMap,style : Map<String,HippyAny> | null) : PathUpdate{
+  let toUpdate = new Map<string, HippyAny>()
+  let patch = new PathUpdate(rendView,toUpdate)
+  templateProps.forEach((value,key)=>{
+    if(!(TemplateCodeParser.PENDING_PROP_CREATE_IF === key)){
+      if(TemplateCodeParser.isEquationProp(value)){
+        let b = TemplateCodeParser.parseBooleanFromPendingProp(key,itemData,value)
+        toUpdate.set(key,b)
+      }else{
+        let pendingProp = TemplateCodeParser.parsePlaceholderProp(key,templateProps)
+        if(pendingProp){
+          let dataFromValue = TemplateCodeParser.getValueFromCode(itemData,pendingProp)
+          // console.info(QUICKTVUI_TAG,`++put pendingProp key:${key},dataFromValue:${dataFromValue},pendingProp:${pendingProp} ,value:${value},data:${CommonUtils.hippyAny2String(dataFromValue)}`)
+          //从${xx}取出dataFromValue数据
+          if(!handleCustomProps(key,dataFromValue,patch)){
+            toUpdate.set(key,dataFromValue)
+          }
+        }else{
+          // console.log(QUICKTVUI_TAG,`--gatherToUpdateMap discard key:${key},data:${CommonUtils.hippyAny2String(value)}`)
+          // toUpdate.set(key,value)
+          //原数据没有${xx}，直接按value处理
+            toUpdate.set(key,value)
         }
       }
     }
