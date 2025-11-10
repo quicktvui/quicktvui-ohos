@@ -4,7 +4,7 @@ import { TAG_FASTLIST, TAG_LAYOUT } from "../../Constant";
 import { FastListDataSource } from "./FastListDataSource";
 import { NodeUtils } from "../../utils/NodeUtils";
 import { QTView } from "../../QTTypes";
-import { QTFastItem, QTFastItemView } from "./QTFastItemView";
+import { QTItemRoot, QTItemRootView } from "./QTItemRootView";
 import { LayoutAttach } from "./LayoutAttach";
 
 @Component
@@ -38,7 +38,7 @@ export struct  QTFastList {
 
 
   keyGenerate(item : QTView,index : number) : string{
-    if(item instanceof QTFastItemView){
+    if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid
       if(id){
         // console.debug(TAG_FASTLIST,`keyGenerate id from sid:${id}`)
@@ -62,10 +62,10 @@ export struct  QTFastList {
       if(this.renderView.isHorizontal){
         Stack() {
           Grid(this.renderView.scroller){
-            LazyForEach(this.renderView.dataSource,(item : QTFastItemView,index : number)=>{
+            LazyForEach(this.renderView.dataSource,(item : QTItemRootView,index : number)=>{
               GridItem() {
-                QTFastItem({
-                  renderView:item as QTFastItemView,
+                QTItemRoot({
+                  renderView:item as QTItemRootView,
                   children: item.children,
                 }).reuseId(item.getReuseId())
               }
@@ -82,10 +82,10 @@ export struct  QTFastList {
       }else{
         Stack() {
           Grid(this.renderView.scroller){
-            LazyForEach(this.renderView.dataSource,(item : QTFastItemView,index : number)=>{
+            LazyForEach(this.renderView.dataSource,(item : QTItemRootView,index : number)=>{
               GridItem() {
-                QTFastItem({
-                  renderView:item as QTFastItemView,
+                QTItemRoot({
+                  renderView:item as QTItemRootView,
                   children: item.children,
                 }).reuseId(item.getReuseId())
               }
@@ -103,10 +103,10 @@ export struct  QTFastList {
     }else{
       Stack() {
         List({ space: this.renderView.listSpace, initialIndex: this.renderView.initialPosition, scroller: this.renderView.scroller }){
-          LazyForEach(this.renderView.dataSource,(item : QTFastItemView,index : number)=>{
+          LazyForEach(this.renderView.dataSource,(item : QTItemRootView,index : number)=>{
             ListItem() {
-              QTFastItem({
-                renderView:item as QTFastItemView,
+              QTItemRoot({
+                renderView:item as QTItemRootView,
                 children: item.children,
               }).reuseId(item.getReuseId())
             }
