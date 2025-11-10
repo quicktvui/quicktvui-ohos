@@ -243,7 +243,7 @@ export class QTTabsView extends QTRenderBaseView{
         wl.templateView = this.viewpager?.templateListView as QTView
       }
       p.contentView = wl
-      QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth,this.cssHeight])
+      QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])
       // console.log(TAG_TABS,`updateTabsData this width:${this.cssWidth},height:${this.cssHeight}`)
       if(item){
         p.tabItem = item as QTMap
