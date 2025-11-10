@@ -30,6 +30,10 @@ import { HRTvListItem, HRTvListItemView } from './vendored/list/HRTvListItemView
 import { HRTvViewPager, HRTvViewPagerView } from './vendored/pager/HRTvViewPager';
 import { HRTvViewPagerItem, HRTvViewPagerItemView } from './vendored/pager/HRTvViewPagerItem';
 import { QTFastList } from './fastlist/QTFastList';
+
+import { QTMediaSeriesView } from './select-series/QTMediaSeriesView.ets';
+import { QTMediaSeries } from './select-series/QTMediaSeries.ets';
+
 import { QTVideoPlayer, QTVideoPlayerView } from './video/QTVideoPlayerView';
 import { QTPageRouter, QTPageRouterView } from './router/QTPageRouterView';
 import { QTPage, QTPageView } from './router/QTPageView';
@@ -60,6 +64,10 @@ export class QTAPIProvider extends HippyAPIProvider {
 
     // registerMap.set("QTView", (ctx): HippyRenderBaseView => new QTDivView(ctx))
     registerMap.set("FastListView", (ctx): HippyRenderBaseView => new QTFastListView(ctx))
+
+    registerMap.set("SelectSeries", (ctx): HippyRenderBaseView => new QTMediaSeriesView(ctx))
+    registerMap.set("LargeListComponent", (ctx): HippyRenderBaseView => new QTMediaSeriesView(ctx))
+
     registerMap.set("FastFlexView", (ctx): HippyRenderBaseView => new QTFastFlexView(ctx))
     registerMap.set("FastItemView", (ctx): HippyRenderBaseView => new QTFastItemView(ctx))
     registerMap.set("TabsView", (ctx): HippyRenderBaseView => new QTTabsView(ctx))
@@ -158,7 +166,13 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTFastListView,
       children: $$.children,
     })
-  } else if ($$ instanceof QTTextView) {
+  } else if ($$ instanceof QTMediaSeriesView) {
+    QTMediaSeries({
+      renderView: $$ as QTMediaSeriesView,
+      children: $$.children,
+    })
+  } 
+  else if ($$ instanceof QTTextView) {
     QTText({
       renderView: $$ as QTTextView,
       children: $$.children,
