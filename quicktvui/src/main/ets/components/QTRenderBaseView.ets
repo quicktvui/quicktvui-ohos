@@ -42,5 +42,12 @@ export default abstract class QTRenderBaseView extends  QTBaseComponentView{
   //   }
   // }
 
+  onAboutToRecycle(): void {
+
+  }
+
+  onAboutToReuse(params: Record<string, Object>): void {
+
+  }
 
 }

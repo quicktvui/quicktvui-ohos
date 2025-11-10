@@ -10,7 +10,7 @@ import {
 import { QTDiv, QTDivView } from './div/QTDivView';
 import { QTFastListView } from './fastlist/QTFastListView';
 import { QTFastFlex, QTFastFlexView } from './fastlist/QTFastFlexView';
-import { QTFastItem, QTFastItemView } from './fastlist/QTFastItemView';
+import { QTItemRoot, QTItemRootView } from './fastlist/QTItemRootView';
 import { TAG_QUICKTVUI } from '../Constant';
 import { QTText, QTTextView } from './text/QTTextView';
 import { QTFallback, QTFallbackView } from './compat/QTFallbackView';
@@ -42,6 +42,8 @@ import { QTTabs, QTTabsView } from './tabs/QTTabsView';
 import { InnerViewPager, InnerViewPagerView } from './tabs/InnerViewPagerView';
 import { QTPlayMark, QTPlayMarkView } from './play-mark/QTPlayMarkView';
 import { ItemStore, ItemStoreView } from './fastlist/ItemStoreView';
+import { QTFastItem, QTFastItemView } from './fastlist/QTFastItemView';
+import { QTNodeOp, QTNodeOpView } from './node/QTNodeOpView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -79,6 +81,9 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("ESWebViewComponent", (ctx): HippyRenderBaseView => new QTWebView(ctx))
     registerMap.set("TVProgressBarViewComponent", (ctx): HippyRenderBaseView => new QTProgressView(ctx))
     registerMap.set("EsEventComponent", (ctx): HippyRenderBaseView => new QTEventView(ctx))
+
+    registerMap.set("QTNodeOpView", (ctx): HippyRenderBaseView => new QTNodeOpView(ctx))
+
     registerMap.set("QTSliderView", (ctx): HippyRenderBaseView => new QTSliderView(ctx))
     registerMap.set("AnimationViewComponent", (ctx): HippyRenderBaseView => new QTAnimationView(ctx))
 
@@ -136,6 +141,11 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTEventView,
       children: $$.children,
     })
+  } else if ($$ instanceof QTNodeOpView) {
+    QTNodeOp({
+      renderView: $$ as QTNodeOpView,
+      children: $$.children,
+    })
   } else if ($$ instanceof QTProgressView) {
     QTProgress({
       renderView: $$ as QTProgressView,
@@ -177,9 +187,9 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTTextView,
       children: $$.children,
     })
-  } else if ($$ instanceof QTFastItemView) {
-    QTFastItem({
-      renderView: $$ as QTFastItemView,
+  } else if ($$ instanceof QTItemRootView) {
+    QTItemRoot({
+      renderView: $$ as QTItemRootView,
       children: $$.children,
     })
   } else if ($$ instanceof QTDivView) {
@@ -260,13 +270,22 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as InnerViewPagerView,
       children: $$.children,
     })
-  }else if ($$ instanceof ItemStoreView) {
+  } else if ($$ instanceof ItemStoreView) {
     ItemStore({
       renderView: $$ as ItemStoreView,
       children: $$.children,
     })
-  }
-  else {
+  } else if ($$ instanceof QTItemRootView) {
+    QTItemRoot({
+      renderView: $$ as QTItemRootView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTFastItemView) {
+    QTFastItem({
+      renderView: $$ as QTFastItemView,
+      children: $$.children,
+    })
+  } else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,

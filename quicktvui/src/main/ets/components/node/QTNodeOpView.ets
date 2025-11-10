@@ -5,13 +5,14 @@ import {
   HippyAny,
   HippyRenderCallback,
   HIPPY_COMPONENT_KEY_PREFIX,
+  HippyViewEvent,
   buildHippyRenderView
 } from 'hippy'
-import { QTBaseComponentView } from '../QTBaseComponentView';
+import { QTBaseComponentView } from '../QTBaseComponentView'
 
 @Observed
-export class QTPageRouterView extends QTBaseComponentView {
-  public event: QTPageRouter | null = null
+export class QTNodeOpView extends QTBaseComponentView {
+  public event: QTNodeOp | null = null
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -30,12 +31,26 @@ export class QTPageRouterView extends QTBaseComponentView {
 }
 
 @Component
-export struct QTPageRouter {
-  @ObjectLink renderView: QTPageRouterView
+export struct QTNodeOp {
+  @ObjectLink renderView: QTNodeOpView
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
   public call(method: string, params: Array<HippyAny>,
     callback: HippyRenderCallback | null): boolean {
+    if (method == "operate") {
+      console.log("=====operate=======start==>>>>")
+
+      const oneParent = this.children[0]
+      const targetView = oneParent.children[0]
+      targetView.removeFromParentView()
+
+      const twoParent = this.children[1]
+      twoParent.addSubRenderView(targetView, 0)
+
+      console.log("=====operate=====end====>>>>")
+
+      return true
+    }
     return false
   }
 
@@ -49,7 +64,7 @@ export struct QTPageRouter {
 
   build(): void {
     Stack() {
-      ForEach([this.children[this.children.length - 1]], (item: HippyRenderBaseView) => {
+      ForEach(this.children, (item: HippyRenderBaseView) => {
         buildHippyRenderView(item, null)
       }, (item: HippyRenderBaseView) => item.tag + '')
       ContentSlot(this.renderView.childSlot)
@@ -58,7 +73,6 @@ export struct QTPageRouter {
   }
 }
 
-// base props for all components
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)

@@ -7,7 +7,7 @@ import { QTFastFlexView } from './QTFastFlexView'
 import { QTFastListView } from './QTFastListView'
 import { QTPendingListView, QTView } from '../../QTTypes'
 import { CommonUtils } from '../../utils/CommonUtils'
-import { QTFastItemView } from './QTFastItemView'
+import { QTItemRootView } from './QTItemRootView'
 
 export class FastListUtils{
 
@@ -21,7 +21,7 @@ export class FastListUtils{
     console.info(TAG_CLICK,`onClick rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId}`)
     let rootListId = LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId
     if(rootListId != -1){
-      let fastItem : QTFastItemView | null = FastListUtils.findItemView(clickView)
+      let fastItem : QTItemRootView | null = FastListUtils.findItemView(clickView)
       let itemView :ItemView | null | undefined = fastItem?.itemView
       if(!itemView){
         console.error(TAG_CLICK,"handleItemClick error findItemView null ")
@@ -41,7 +41,7 @@ export class FastListUtils{
       let map = new Map<string,HippyAny>()
       let parentPosition = -1;
       if(parentList){
-        let parentItem : QTFastItemView  | null = FastListUtils.findItemView(parentList as QTView)
+        let parentItem : QTItemRootView | null = FastListUtils.findItemView(parentList as QTView)
         if(parentItem){
             parentPosition = FastListUtils.findItemPosition(parentItem)
         }else{
@@ -64,7 +64,7 @@ export class FastListUtils{
     }
   }
 
-  static handleItemEvent(fi:QTFastItemView,eventName:string,templateEventEnable:boolean,position : number,listView:QTPendingListView){
+  static handleItemEvent(fi:QTItemRootView,eventName:string,templateEventEnable:boolean,position : number,listView:QTPendingListView){
     let rootListId = LayoutAttach.obtainLayoutAttach(fi).virtualExtra.rootListId
     if(rootListId != -1){
       let map = new Map<string,HippyAny>()
@@ -86,17 +86,17 @@ export class FastListUtils{
 
   }
 
-  static findItemView(view:QTView | null) : QTFastItemView | null{
+  static findItemView(view:QTView | null) : QTItemRootView | null{
     if(view == null){
       return null;
     }
-    if(view instanceof QTFastItemView){
+    if(view instanceof QTItemRootView){
       return view;
     }
     return FastListUtils.findItemView(view.parentView)
   }
 
-  static findListParent(fastItem: QTFastItemView  |  null) : QTPendingListView | null{
+  static findListParent(fastItem: QTItemRootView |  null) : QTPendingListView | null{
     if(fastItem == null){
       return null;
     }
@@ -104,7 +104,7 @@ export class FastListUtils{
   }
 
   static findItemPosition(view:QTView | null) : number{
-    let fi :QTFastItemView | null = FastListUtils.findItemView(view)
+    let fi :QTItemRootView | null = FastListUtils.findItemView(view)
     if(!fi){
       return -1;
     }

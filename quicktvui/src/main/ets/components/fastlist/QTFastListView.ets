@@ -12,7 +12,7 @@ import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListDataSource } from './FastListDataSource';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
-import { QTFastItemView } from './QTFastItemView';
+import { QTItemRootView } from './QTItemRootView';
 import { QTFastList } from './QTFastList';
 
 
@@ -354,7 +354,7 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
 
-  public itemIndexOfDataList(itemView:QTFastItemView | null) : number{
+  public itemIndexOfDataList(itemView:QTItemRootView | null) : number{
     if(!itemView){
       return -1;
     }
@@ -369,7 +369,7 @@ export class QTFastListView extends QTRenderBaseView{
           // console.log(TAG_FASTLIST,`onDataChanged crate item :${CommonUtils.hippyAny2String(item)}`)
           //CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
           let it =  new ItemView(index,item as HippyMap)
-          return new QTFastItemView(this.ctx).init(this,it)
+          return new QTItemRootView(this.ctx).init(this,it)
         })
       )
       this.notifyReload()
@@ -388,7 +388,7 @@ export class QTFastListView extends QTRenderBaseView{
     data?.forEach((item,index)=>{
       let itemIndex = index + start;
       let fi = this.virtualChildren[itemIndex]
-      if(fi instanceof QTFastItemView){
+      if(fi instanceof QTItemRootView){
         console.log(TAG_FASTLIST,`updateItemRange crate item :`)
         CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
         // let it =  new ItemView(index + start,item as HippyMap)
@@ -410,7 +410,7 @@ export class QTFastListView extends QTRenderBaseView{
   updateItemData(postion : number,data:HippyMap){
     let fi  = this.virtualChildren[postion]
     if(fi){
-     let itemMap : QTMap | null | undefined=  (fi as QTFastItemView).itemView?.raw
+     let itemMap : QTMap | null | undefined=  (fi as QTItemRootView).itemView?.raw
       CommonUtils.updateMap(itemMap,data)
       this.dataSource?.notifyDataChange(postion)
     }else{
@@ -425,7 +425,7 @@ export class QTFastListView extends QTRenderBaseView{
       console.log(TAG_FASTLIST,`insertItemRange crate item :`)
       CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
       let it =  new ItemView(index + start,item as HippyMap)
-      return new QTFastItemView(this.ctx).init(this,it)
+      return new QTItemRootView(this.ctx).init(this,it)
     })
     )
     this.virtualChildren.splice(start,0,...replaced)
@@ -447,7 +447,7 @@ export class QTFastListView extends QTRenderBaseView{
           console.log(TAG_FASTLIST,`insertItemRange crate item :`)
           CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
           let it =  new ItemView(index + start,item as HippyMap)
-          return new QTFastItemView(this.ctx).init(this,it)
+          return new QTItemRootView(this.ctx).init(this,it)
         })
         this.virtualChildren.splice(this.virtualChildren.length - deleteCount,deleteCount,...newData)
         this.notifyReload()
