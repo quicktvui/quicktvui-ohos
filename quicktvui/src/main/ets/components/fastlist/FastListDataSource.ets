@@ -338,7 +338,7 @@ export class FastListDataSource implements IDataSource {
               QTLog.d(TAG_FASTLIST,`buildItem use cached View`)
               //updates = fi.updates;
               rv = fi.contentView;
-              gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,false)
+              // gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,false)
             }else{
               rv = buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
               this.fillContent(type,rv!!,fi)

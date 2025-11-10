@@ -23,6 +23,14 @@ export class QTPixelUtil{
     return new HRRect(QTPixelUtil.dev2Vp(rect.x),QTPixelUtil.dev2Vp(rect.y),QTPixelUtil.dev2Vp(rect.width),QTPixelUtil.dev2Vp(rect.height))
   }
 
+  public static getScreenDevWidth(){
+    return 1137
+  }
+
+  public static getScreenDevHeight(){
+    return 640
+  }
+
   public static devPadding2Vp(padding: Padding){
     padding.left = QTPixelUtil.dev2Vp(padding.left ? padding.left as number : 0)
     padding.top = QTPixelUtil.dev2Vp(padding.top ? padding.top as number : 0)
