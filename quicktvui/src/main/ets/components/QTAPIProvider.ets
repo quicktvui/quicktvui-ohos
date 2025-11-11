@@ -30,6 +30,10 @@ import { HRTvListItem, HRTvListItemView } from './vendored/list/HRTvListItemView
 import { HRTvViewPager, HRTvViewPagerView } from './vendored/pager/HRTvViewPager';
 import { HRTvViewPagerItem, HRTvViewPagerItemView } from './vendored/pager/HRTvViewPagerItem';
 import { QTFastList } from './fastlist/QTFastList';
+
+import { QTMediaSeriesView } from './select-series/QTMediaSeriesView.ets';
+import { QTMediaSeries } from './select-series/QTMediaSeries.ets';
+
 import { QTVideoPlayer, QTVideoPlayerView } from './video/QTVideoPlayerView';
 import { QTPageRouter, QTPageRouterView } from './router/QTPageRouterView';
 import { QTPage, QTPageView } from './router/QTPageView';
@@ -39,6 +43,7 @@ import { InnerViewPager, InnerViewPagerView } from './tabs/InnerViewPagerView';
 import { QTPlayMark, QTPlayMarkView } from './play-mark/QTPlayMarkView';
 import { ItemStore, ItemStoreView } from './fastlist/ItemStoreView';
 import { QTFastItem, QTFastItemView } from './fastlist/QTFastItemView';
+import { QTNodeOp, QTNodeOpView } from './node/QTNodeOpView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -61,6 +66,10 @@ export class QTAPIProvider extends HippyAPIProvider {
 
     // registerMap.set("QTView", (ctx): HippyRenderBaseView => new QTDivView(ctx))
     registerMap.set("FastListView", (ctx): HippyRenderBaseView => new QTFastListView(ctx))
+
+    registerMap.set("SelectSeries", (ctx): HippyRenderBaseView => new QTMediaSeriesView(ctx))
+    registerMap.set("LargeListComponent", (ctx): HippyRenderBaseView => new QTMediaSeriesView(ctx))
+
     registerMap.set("FastFlexView", (ctx): HippyRenderBaseView => new QTFastFlexView(ctx))
     registerMap.set("FastItemView", (ctx): HippyRenderBaseView => new QTFastItemView(ctx))
     registerMap.set("TabsView", (ctx): HippyRenderBaseView => new QTTabsView(ctx))
@@ -72,6 +81,9 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("ESWebViewComponent", (ctx): HippyRenderBaseView => new QTWebView(ctx))
     registerMap.set("TVProgressBarViewComponent", (ctx): HippyRenderBaseView => new QTProgressView(ctx))
     registerMap.set("EsEventComponent", (ctx): HippyRenderBaseView => new QTEventView(ctx))
+
+    registerMap.set("QTNodeOpView", (ctx): HippyRenderBaseView => new QTNodeOpView(ctx))
+
     registerMap.set("QTSliderView", (ctx): HippyRenderBaseView => new QTSliderView(ctx))
     registerMap.set("AnimationViewComponent", (ctx): HippyRenderBaseView => new QTAnimationView(ctx))
 
@@ -129,6 +141,11 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTEventView,
       children: $$.children,
     })
+  } else if ($$ instanceof QTNodeOpView) {
+    QTNodeOp({
+      renderView: $$ as QTNodeOpView,
+      children: $$.children,
+    })
   } else if ($$ instanceof QTProgressView) {
     QTProgress({
       renderView: $$ as QTProgressView,
@@ -159,7 +176,13 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTFastListView,
       children: $$.children,
     })
-  } else if ($$ instanceof QTTextView) {
+  } else if ($$ instanceof QTMediaSeriesView) {
+    QTMediaSeries({
+      renderView: $$ as QTMediaSeriesView,
+      children: $$.children,
+    })
+  } 
+  else if ($$ instanceof QTTextView) {
     QTText({
       renderView: $$ as QTTextView,
       children: $$.children,
@@ -247,25 +270,22 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as InnerViewPagerView,
       children: $$.children,
     })
-  }else if ($$ instanceof ItemStoreView) {
+  } else if ($$ instanceof ItemStoreView) {
     ItemStore({
       renderView: $$ as ItemStoreView,
       children: $$.children,
     })
-  }
-  else if ($$ instanceof QTItemRootView) {
+  } else if ($$ instanceof QTItemRootView) {
     QTItemRoot({
       renderView: $$ as QTItemRootView,
       children: $$.children,
     })
-  }
-  else if ($$ instanceof QTFastItemView) {
+  } else if ($$ instanceof QTFastItemView) {
     QTFastItem({
       renderView: $$ as QTFastItemView,
       children: $$.children,
     })
-  }
-  else {
+  } else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,
