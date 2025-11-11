@@ -32,6 +32,12 @@ export class QTSliderView extends QTBaseComponentView {
   public blockDrawable: EllipseOptions = {}; // 滑块自定义形状值
   public thumbDrawable: EllipseOptions = {}; //滑块形状激活样式
   public thumbInactivatedDrawable: EllipseOptions = {}; //滑块形状未激活样式
+  public thumbBorderColor: string = ""; // 滑块描边颜色
+  public thumbInactivatedBorderColor: string = ""; // 滑块未激活描边颜色
+  public blockBorderColor: string = ""; // 滑块描边颜色值
+  public thumbBorderWidth: number = 0; // 滑块描边粗细
+  public thumbInactivatedBorderWidth: number = 0; // 滑块未激活描边粗细
+  public blockBorderWidth: number = 0; // 滑块描边粗细值
   public enableFocusBorder: boolean = true; // 启用焦点边框
   public focusable: boolean = true; // 是否获焦
   public showTips: boolean = false; // 气泡是否显示
@@ -127,20 +133,27 @@ export class QTSliderView extends QTBaseComponentView {
       }
       case 'setThumbDrawable': {
         let initParam : QTMap = params[0] as QTMap;
-        let colors: HippyAny = initParam.get('colors');
+        let colors: HippyAny = initParam.get('colors') as string;
         let cornerRadius: number = HRValueUtils.getNumberValue('cornerRadius',initParam,100);
         let orientation: number = HRValueUtils.getNumberValue('orientation',initParam,1);
         this.thumbDrawable = {width:cornerRadius ,height:cornerRadius};
+        this.thumbBorderColor = colors;
+        this.thumbBorderWidth = orientation;
         break;
       }
       case 'setThumbInactivatedDrawable': {
         this.thumbType = SliderBlockType.SHAPE;
         let initParam : QTMap = params[0] as QTMap;
-        let colors = initParam.get('colors');
+        let colors = initParam.get('colors') as string;
         let cornerRadius = HRValueUtils.getNumberValue('cornerRadius',initParam,100);
         let orientation = HRValueUtils.getNumberValue('orientation',initParam,1);
         this.thumbInactivatedDrawable = {width:cornerRadius ,height:cornerRadius};
+        this.thumbInactivatedBorderColor = colors;
+        this.thumbInactivatedBorderWidth = orientation;
+        // 未激活给页面的初始值
         this.blockDrawable = this.thumbInactivatedDrawable;
+        this.blockBorderColor = this.thumbInactivatedBorderColor;
+        this.blockBorderWidth = this.thumbInactivatedBorderWidth;
         break;
       }
       case 'setIndicatorShowMode':
@@ -192,16 +205,24 @@ export struct QTSlider {
       .slideRange(this.renderView.slideRange) // 有效滑动区间
       .blockSize({ width: this.renderView.thumbWidth, height: this.renderView.thumbHeight }) // 滑块的宽高
       .blockStyle({ type: this.renderView.thumbType, image: this.renderView.blockUrl, shape: new Ellipse(this.renderView.thumbDrawable) }) // 滑块的样式
+      .blockBorderColor(this.renderView.blockBorderColor) // 滑块的边框颜色
+      .blockBorderWidth(this.renderView.blockBorderWidth) // 滑块的边框宽度
       .focusable(this.renderView.focusable) // 是否获焦
       .focusBox({ strokeColor: this.renderView.enableFocusBorder?ColorMetrics.rgba(0, 0, 255, 1):ColorMetrics.rgba(0, 0, 0, 0) }) // 获焦之后的样式
       .showTips(this.renderView.showTips) // 是否显示气泡
       .onFocus(() => {
+        // 失去焦点是激活的初始值
         this.renderView.blockUrl = this.renderView.thumbUrl;
         this.renderView.blockDrawable = this.renderView.thumbDrawable;
+        this.renderView.blockBorderColor = this.renderView.thumbBorderColor;
+        this.renderView.blockBorderWidth = this.renderView.thumbBorderWidth;
       })
       .onBlur(() => {
+        // 失去焦点是未激活的初始值
         this.renderView.blockUrl = this.renderView.thumbInactivatedUrl;
         this.renderView.blockDrawable = this.renderView.thumbInactivatedDrawable;
+        this.renderView.blockBorderColor = this.renderView.thumbInactivatedBorderColor;
+        this.renderView.blockBorderWidth = this.renderView.thumbInactivatedBorderWidth;
       })
   }
 }
