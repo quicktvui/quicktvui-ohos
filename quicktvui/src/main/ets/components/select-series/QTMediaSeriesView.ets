@@ -16,26 +16,7 @@ import { QTView } from "../../QTTypes"
 import QTRenderBaseView from '../QTRenderBaseView';
 import { HashMap } from '@kit.ArkTS';
 
-interface VipInfo {
-  enable: boolean;
-  text: string;
-}
-
-interface vipTitleStyle {
-  width: number;
-  height: number;
-}
-
-interface MyComponentParams {
-  title?: string;
-  cover?: string;
-  showVip?: boolean;
-  floatText?: string;
-  vip?: VipInfo; // <-- 这里直接使用你定义的类型
-  vipTitleStyle?: vipTitleStyle;
-  index2?: string;
-};
-
+import { InitParam ,MyComponentParams } from './types/index';
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView {
@@ -122,7 +103,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
 
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_FASTLIST, `QTFastListView :propKey:${propKey},value:${propValue}`)
+    console.log(TAG_FASTLIST, `setProp ============ QTFastListView :propKey:${propKey},value:${propValue}`)
     // if(propKey === 'attributes'){
     //   CommonUtils.printObject(propValue,'FastList setAttributes')
     // }
@@ -131,15 +112,19 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         // 图文模式
         let initParam = HRValueUtils.getMap(propValue);
 
-        let __initParam = `{
+        //测试数据：
+        let __initParam:InitParam = {
           "initPosition": 0,
           "contentWidth": 1740,
           "contentHeight": 160,
           "itemGap": 36,
-          "enableGroup": true,
-          "groupSize": 20,
+
+          "enableGroup": true,  //是否开启快速分组
+          "groupSize": 20, // 快速分组对应的集数
           "groupHeight": 46,
           "groupTopMargin": 24,
+
+          // 控制快速分组的UI
           "group": {
             "itemWidth": 85,
             "itemHeight": 46,
@@ -171,6 +156,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
               "color": "#FFD97C"
             }
           },
+
           "template": {
             "titleSize": 28,
             "floatTitleSize": 20,
@@ -204,7 +190,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           },
           "totalCount": 100,
           "pageSize": 10
-        }`;
+        };
 
 
         console.log(TAG_FASTLIST, `QTFastListView ${Array.from(initParam)}`)
@@ -224,7 +210,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let groupSize = groupParam?.get('groupSize');
         console.log(TAG_FASTLIST, `QTFastListView :groupSize is:${groupSize}`)
       case "commonParam":
-        //  
+        //
 
 
       default:
