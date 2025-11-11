@@ -1,5 +1,12 @@
-
-import {HippyObservedArray,NativeRenderContext,HippyAny,HippyRenderCallback,HippyArray,HippyMap,HippyEndBatchCallback} from 'hippy'
+import {
+  HippyObservedArray,
+  NativeRenderContext,
+  HippyAny,
+  HippyRenderCallback,
+  HippyArray,
+  HippyMap,
+  HippyEndBatchCallback
+} from 'hippy'
 import { TAG_FASTLIST } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 
@@ -7,45 +14,23 @@ import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTView } from "../../QTTypes"
 
 import QTRenderBaseView from '../QTRenderBaseView';
+import { HashMap } from '@kit.ArkTS';
 
-interface VipInfo {
-  enable: boolean;
-  text: string;
-}
-
-interface vipTitleStyle {
-  width: number; height: number;
-}
-
-interface MyComponentParams {
-  title: string;
-  cover: string;
-  showVip: boolean;
-  floatText: string;
-  vip: VipInfo; // <-- 这里直接使用你定义的类型
-  vipTitleStyle: vipTitleStyle;
-  index2: string;
-};
-
+import { InitParam ,MyComponentParams } from './types/index';
 
 @Observed
-export class QTMediaSeriesView extends QTRenderBaseView{
-
+export class QTMediaSeriesView extends QTRenderBaseView {
   public virtualChildren: HippyObservedArray<QTView> = new HippyObservedArray()
-  isHorizontal : boolean = false;
-  spanCount : string | null= null;
-  initialPosition : number = 0;
+  isHorizontal: boolean = false;
+  spanCount: string | null = null;
+  initialPosition: number = 0;
   listSpace: number = 0;
   scroller: ListScroller = new ListScroller();
-  scrollOffset: number =  0
+  scrollOffset: number = 0
   autofocusPosition: number = -1;
-
   isNativeCreate = false;
-
-  contentTemplate : QTView | null = null;
-
-  listData: Array<MyComponentParams|number> = [];
-
+  contentTemplate: QTView | null = null;
+  listData: Array<MyComponentParams | number | string> = [];
   // private customTemplate: QTView | null = null;
 
   private endBatchCallback: HippyEndBatchCallback | null = null
@@ -59,7 +44,7 @@ export class QTMediaSeriesView extends QTRenderBaseView{
    * let pageSize: number = 10;
     let totalCount: number = 100;
    * */
-  getLRDataByPage (page:number, pageSize:number, totalSize:number) {
+  getLRDataByPage(page: number, pageSize: number, totalSize: number) {
     let result: Array<MyComponentParams> = [];
     let isLast = Math.floor(totalSize / pageSize) <= page;
     let size = isLast ? totalSize - page * pageSize : pageSize;
@@ -68,7 +53,8 @@ export class QTMediaSeriesView extends QTRenderBaseView{
       let index2 = index > 9 ? '' + index : '0' + index;
       result.push({
         // 选集标题
-        title: i % 2 === 0 ? `第${page * pageSize + i + 1}集内容`:`第${page * pageSize + i + 1}集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容`,
+        title: i % 2 === 0 ? `第${page * pageSize + i + 1}集内容` :
+          `第${page * pageSize + i + 1}集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容`,
         // 图文图片
         // cover: 'https://i.328888.xyz/2023/01/04/W49yq.md.jpeg',
         cover: 'https://www.huikez.com/uploads/allimg/2009/1-200921144Ub07.jpg',
@@ -81,7 +67,7 @@ export class QTMediaSeriesView extends QTRenderBaseView{
           enable: true,
           text: 'VIP',
         },
-        vipTitleStyle:{width:150,height:100},
+        vipTitleStyle: { width: 150, height: 100 },
         index2
       })
     }
@@ -89,26 +75,26 @@ export class QTMediaSeriesView extends QTRenderBaseView{
   }
 
 
-  exeScroll(){
+  exeScroll() {
     this.scroller.scrollToIndex(this.initialPosition)
   }
 
-  getTemplate() : HippyObservedArray<QTView>{
+  getTemplate(): HippyObservedArray<QTView> {
     return this.templateView ? this.templateView.children : this.children
   }
 
-  setCustomTemplate(customTemplate: QTView | null){
+  setCustomTemplate(customTemplate: QTView | null) {
     this.templateView = customTemplate;
   }
 
-  onUIAboutToDisappear(){
-    if(this.endBatchCallback){
-      this.ctx.getNativeRender().removeEndBatchCallback(this.ctx.getRootId(),this.endBatchCallback)
+  onUIAboutToDisappear() {
+    if (this.endBatchCallback) {
+      this.ctx.getNativeRender().removeEndBatchCallback(this.ctx.getRootId(), this.endBatchCallback)
     }
   }
 
-  onPageTemplateReady(template:QTView){
-    console.log(TAG_FASTLIST,`onPageTemplateReady:${ExtendUtil.debugView(template)}`)
+  onPageTemplateReady(template: QTView) {
+    console.log(TAG_FASTLIST, `onPageTemplateReady:${ExtendUtil.debugView(template)}`)
     this.contentTemplate = template;
     // this.tabsData.forEach((value)=>{
     //   value.contentView?.setcus
@@ -117,23 +103,28 @@ export class QTMediaSeriesView extends QTRenderBaseView{
 
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_FASTLIST,`FastList:propKey:${propKey},value:${propValue}`)
+    console.log(TAG_FASTLIST, `setProp ============ QTFastListView :propKey:${propKey},value:${propValue}`)
     // if(propKey === 'attributes'){
     //   CommonUtils.printObject(propValue,'FastList setAttributes')
     // }
-    switch (propKey){
+    switch (propKey) {
       case "initParam":
-        let initParam  = HRValueUtils.getMap(propValue);
+        // 图文模式
+        let initParam = HRValueUtils.getMap(propValue);
 
-        let __initParam = `{
+        //测试数据：
+        let __initParam:InitParam = {
           "initPosition": 0,
           "contentWidth": 1740,
           "contentHeight": 160,
           "itemGap": 36,
-          "enableGroup": true,
-          "groupSize": 20,
+
+          "enableGroup": true,  //是否开启快速分组
+          "groupSize": 20, // 快速分组对应的集数
           "groupHeight": 46,
           "groupTopMargin": 24,
+
+          // 控制快速分组的UI
           "group": {
             "itemWidth": 85,
             "itemHeight": 46,
@@ -165,6 +156,7 @@ export class QTMediaSeriesView extends QTRenderBaseView{
               "color": "#FFD97C"
             }
           },
+
           "template": {
             "titleSize": 28,
             "floatTitleSize": 20,
@@ -198,14 +190,28 @@ export class QTMediaSeriesView extends QTRenderBaseView{
           },
           "totalCount": 100,
           "pageSize": 10
-        }`;
+        };
 
 
-        let key = initParam!.keys();
-        console.log(TAG_FASTLIST,`FastList:propKey:initParam keykeykeykeykeykeykeykeykeykey:${Array.from(key)}`)
+        console.log(TAG_FASTLIST, `QTFastListView ${Array.from(initParam)}`)
+        let template = initParam?.get('template');
+        let type = (template as HippyMap).get('type');
+        /*
+         * type == ’leftRight‘ : 图文
+         *
+         * */
+        console.log(TAG_FASTLIST, `QTFastListView template.type :${type}`)
 
-        this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
+        //this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
+      case "groupParam":
+        //  是否设置快速分组
+        let groupParam = HRValueUtils.getMap(propValue);
+        let groupSize = groupParam?.get('groupSize');
+        console.log(TAG_FASTLIST, `QTFastListView :groupSize is:${groupSize}`)
+      case "commonParam":
+        //
+
 
       default:
         return true;
@@ -215,30 +221,54 @@ export class QTMediaSeriesView extends QTRenderBaseView{
   aboutToUpdate(): void {
   }
 
-  isGridLayout() : boolean{
+  isGridLayout(): boolean {
     return this.spanCount != null && this.spanCount != undefined
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    console.log(TAG_FASTLIST,`QTFastListView call function : ${method},params:${params}`)
-      switch (method){
+    console.log(TAG_FASTLIST, `QTFastListView call function : ${method},params:${params}`)
+    switch (method) {
 
-        case "keyName":
-          console.error(TAG_FASTLIST,`QTFastListView : 未实现的function : ${method}`)
-          return;
-      }
+      case "setPageData":
+        let getArray = HRValueUtils.getArray(params as HippyArray)
+        let page = getArray![0];
+        let data = getArray![1] as Map<string, HippyAny>; //数据格式参考 getLRDataByPage 函数返回值
 
-      switch (method){
+        console.log(TAG_FASTLIST, `QTFastListView:page:${method},value:${page}`)
+
+        let _listData = this.listData.slice();
+        data.forEach((value: HippyAny, keyA: string) => {
+          console.log(TAG_FASTLIST, `QTFastListView:page,key:${keyA}`);
+
+          (value as HippyMap).forEach((eachValue: HippyAny, keyB: string) => {
+            console.log(TAG_FASTLIST, `QTFastListView:page,key:${keyA}-${keyB}`, eachValue);
+          })
+
+          _listData.push({
+            title: HRValueUtils.getStringValue('title', value as HippyMap, null)!
+            //.....
+          });
+
+        });
+        this.listData = _listData;
+
+        break;
+
+      case "keyName":
+        console.error(TAG_FASTLIST, `QTFastListView : 未实现的function : ${method}`)
+        return;
+    }
+
+    switch (method) {
 
 
-        case 'scrollToTop':
-          this.initialPosition = 0;
-          this.exeScroll()
-          break;
+      case 'scrollToTop':
+        this.initialPosition = 0;
+        this.exeScroll()
+        break;
 
-      }
+    }
   }
-
 }
 
 

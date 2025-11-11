@@ -3,6 +3,26 @@ import {HippyObservedArray,HRDiv,HIPPY_COMPONENT_KEY_PREFIX,HippyRenderBaseView,
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
 import { QTView } from "../../QTTypes";
 
+interface VipInfo {
+  enable: boolean;
+  text: string;
+}
+
+interface vipTitleStyle {
+  width: number; height: number;
+}
+
+interface MyComponentParams {
+  title?: string;
+  cover?: string;
+  showVip?: boolean;
+  floatText?: string;
+  vip?: VipInfo; // <-- 这里直接使用你定义的类型
+  vipTitleStyle?: vipTitleStyle;
+  index2?: string;
+};
+
+
 @Component  
 export struct  QTMediaSeries {
   @ObjectLink renderView: QTMediaSeriesView
@@ -16,7 +36,7 @@ export struct  QTMediaSeries {
     setTimeout(()=>{
       let event = new HippyViewEvent("onLoadPageData")
       let params = new Map<string, number>()
-      params.set('page', 1)
+      params.set('page', 0)
       params.set('tag', this.renderView.tag)
       event.send(this.renderView.ctx, this.renderView.tag, params)
       console.error('ffefefe', ' this.renderView.tag' , this.renderView.tag)
@@ -27,10 +47,11 @@ export struct  QTMediaSeries {
 
   build() {
     Stack() {
+
       List({ space: 20, initialIndex: 0 }) {
-        ForEach(this.renderView.listData, (item: number) => {
+        ForEach(this.renderView.listData, (item: MyComponentParams,index:number) => {
           ListItem() {
-            Text('' + item)
+            Text( item.title)
               .width('20%').height(100).fontSize(16)
               .textAlign(TextAlign.Center).borderRadius(10).backgroundColor(0xFFFFFF)
           }
