@@ -11,6 +11,7 @@ import { QTFastFlexView } from './QTFastFlexView';
 import { QTLog } from '../../utils/QTLog';
 import { TAG_FASTLIST } from '../../Constant';
 import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTFastItemView } from './QTFastItemView';
 
 
 export class BuildResult{
@@ -58,6 +59,11 @@ export function buildRenderView(template:HippyRenderBaseView | null, templatePro
 export function applyLayoutTraverse(renderView:HippyRenderBaseView | null){
   if(renderView == null){
     return;
+  }
+  if(renderView instanceof QTBaseComponentView && !renderView.isVirtual){
+    if(!renderView.isVirtual && !(renderView instanceof QTFastItemView)){
+      return;
+    }
   }
   applyLayout(renderView);
   if(renderView.children){
@@ -220,7 +226,7 @@ export function gatherToUpdateMap(rendView:HippyRenderBaseView ,templateProps:Hi
           // console.log(QUICKTVUI_TAG,`--gatherToUpdateMap discard key:${key},data:${CommonUtils.hippyAny2String(value)}`)
           // toUpdate.set(key,value)
           //原数据没有${xx}，直接按value处理
-          if(!handleCustomProps(key,value,patch)){23
+          if(!handleCustomProps(key,value,patch)){
             toUpdate.set(key,value)
           }
         }
