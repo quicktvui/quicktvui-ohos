@@ -8,6 +8,25 @@ import { QTView } from "../../QTTypes"
 
 import QTRenderBaseView from '../QTRenderBaseView';
 
+interface VipInfo {
+  enable: boolean;
+  text: string;
+}
+
+interface vipTitleStyle {
+  width: number; height: number;
+}
+
+interface MyComponentParams {
+  title: string;
+  cover: string;
+  showVip: boolean;
+  floatText: string;
+  vip: VipInfo; // <-- 这里直接使用你定义的类型
+  vipTitleStyle: vipTitleStyle;
+  index2: string;
+};
+
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView{
@@ -25,12 +44,48 @@ export class QTMediaSeriesView extends QTRenderBaseView{
 
   contentTemplate : QTView | null = null;
 
+  listData: Array<MyComponentParams|number> = [];
+
   // private customTemplate: QTView | null = null;
 
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+  }
+
+  /*
+   *
+   * let pageSize: number = 10;
+    let totalCount: number = 100;
+   * */
+  getLRDataByPage (page:number, pageSize:number, totalSize:number) {
+    let result: Array<MyComponentParams> = [];
+    let isLast = Math.floor(totalSize / pageSize) <= page;
+    let size = isLast ? totalSize - page * pageSize : pageSize;
+    for (let i = 0; i < size; i++) {
+      let index = page * pageSize + i + 1;
+      let index2 = index > 9 ? '' + index : '0' + index;
+      result.push({
+        // 选集标题
+        title: i % 2 === 0 ? `第${page * pageSize + i + 1}集内容`:`第${page * pageSize + i + 1}集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容`,
+        // 图文图片
+        // cover: 'https://i.328888.xyz/2023/01/04/W49yq.md.jpeg',
+        cover: 'https://www.huikez.com/uploads/allimg/2009/1-200921144Ub07.jpg',
+        // flagText: needFlag ? `flag${page * pageSize + i}` : '',
+        // flagText: (i !== 0 || page !== 0) ? i % 2 === 0 ? 'VIP' : '付费' : '',
+        showVip: (i !== 0 || page !== 0) ? i % 2 === 0 ? true : true : false,
+        // floatText: `float${page * pageSize + i}`,
+        floatText: i % 2 === 0 ? '05:30' : '10:06',
+        vip: {
+          enable: true,
+          text: 'VIP',
+        },
+        vipTitleStyle:{width:150,height:100},
+        index2
+      })
+    }
+    return result;
   }
 
 
@@ -148,6 +203,8 @@ export class QTMediaSeriesView extends QTRenderBaseView{
 
         let key = initParam!.keys();
         console.log(TAG_FASTLIST,`FastList:propKey:initParam keykeykeykeykeykeykeykeykeykey:${Array.from(key)}`)
+
+        this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
 
       default:

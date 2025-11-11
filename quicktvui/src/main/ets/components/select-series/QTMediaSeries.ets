@@ -15,11 +15,11 @@ export struct  QTMediaSeries {
 
     setTimeout(()=>{
       let event = new HippyViewEvent("onLoadPageData")
-      let params = new Map<string, string|number>()
+      let params = new Map<string, number>()
       params.set('page', 1)
       params.set('tag', this.renderView.tag)
       event.send(this.renderView.ctx, this.renderView.tag, params)
-
+      console.error('ffefefe', ' this.renderView.tag' , this.renderView.tag)
 
     },1000)
 
@@ -27,12 +27,20 @@ export struct  QTMediaSeries {
 
   build() {
     Stack() {
-      Text("This is a custom component A.")
+      List({ space: 20, initialIndex: 0 }) {
+        ForEach(this.renderView.listData, (item: number) => {
+          ListItem() {
+            Text('' + item)
+              .width('20%').height(100).fontSize(16)
+              .textAlign(TextAlign.Center).borderRadius(10).backgroundColor(0xFFFFFF)
+          }
+        }, (item: string) => item)
+      }
+      .listDirection(Axis.Horizontal) // 排列方向
+
       ForEach(this.children, (item: HippyRenderBaseView) => {
         buildHippyRenderView(item, null)
       }, (item: HippyRenderBaseView) => item.tag + '')
-      // 该自定义组件有Hippy子组件或其它自定义子组件时，必须加Slot来衔接子组件
-      ContentSlot(this.renderView.childSlot)
     }
     .applyRenderViewBaseAttr(this.renderView)
   }
