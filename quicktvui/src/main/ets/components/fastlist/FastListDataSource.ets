@@ -302,10 +302,10 @@ export class FastListDataSource implements IDataSource {
       item.id = item.position +''
       console.error(TAG_QUICKTVUI,`put fallback id :${item.position}`)
     }
+    let it = this.getTemplateByType(type);
+    let singleTon = it?.props.has('singleton')
     if(type){
       LayoutAttach.obtainLayoutAttach(fi).virtualExtra.itemType = type;
-      let it = this.getTemplateByType(type);
-      let singleTon = it?.props.has('singleton')
       if(singleTon){
         QTLog.e(TAG_FASTLIST,`singleton Item type:${type},position:${position}`)
       }
@@ -316,7 +316,7 @@ export class FastListDataSource implements IDataSource {
         if(singleTon){
           if(item.template?.templateView){
             rv = item.template?.templateView
-            if(rv.parentView){
+            if(rv.parentView && rv.parentView != fi){
               rv.parentView.removeSubView(rv)
             }
             this.fillContent(type,rv,fi)
@@ -413,21 +413,20 @@ export class FastListDataSource implements IDataSource {
 
         if(fi && rv){
           if(fi instanceof QTItemRootView){
-            fi.layoutItem(rv,this.listView instanceof  QTFastFlexView)
+            fi.layoutItem(rv,this.listView instanceof  QTFastFlexView,singleTon)
             let layout : number[] = [0,0,0,0]
             if(singleTon){
               FastListDataSource.findItemViewSize(it.props,position,item.raw as QTMap,layout)
-              QTLog.i(TAG_FASTLIST,`findItemViewSize width:${layout[2]},height:${layout[3]}`)
+              QTLog.i(TAG_LAYOUT,`singleTon findItemViewSize width:${layout[2]},height:${layout[3]},cssWidth:${fi.cssWidth},cssHeight:${fi.cssHeight}，childWidth:${rv.cssWidth},childHeight:${rv.cssHeight}`)
               let itemWidth = fi.cssWidth
               let itemHeight = fi.cssHeight
               if(itemWidth < 1){
-                itemWidth = layout[2];
+                itemWidth = QTPixelUtil.dev2Vp(layout[2]);
               }
-
               if(itemHeight < 1){
-                itemHeight = layout[3];
+                itemHeight = QTPixelUtil.dev2Vp(layout[3]);
               }
-              QTPixelUtil.setScaledRenderViewLayout(fi,[0,0,itemWidth,itemHeight])
+              QTPixelUtil.setRenderViewLayout(fi,[0,0,itemWidth,itemHeight])
             }
           }else{
             console.error(TAG_FASTLIST,`buildItemError !!!`)
@@ -470,7 +469,7 @@ export class FastListDataSource implements IDataSource {
       }
       fi.updateDirty = false;
     }
-    QTLog.d(TAG_FASTLIST,`getData index:${index},data:${fi},this listView:${ExtendUtil.debugView(this.listView)}`)
+    QTLog.d(TAG_LAYOUT,`getData index:${index},data:${fi},this listView:${ExtendUtil.debugView(this.listView)},width:${fi.cssWidth},height:${fi.cssHeight}`)
     // console.log(TAG_FASTLIST,`getData index:${index}`)
     // console.log(TAG_REUSE,`getData index:${index}`)
     if(fi.cssWidth < 1 || fi.cssHeight < 1){

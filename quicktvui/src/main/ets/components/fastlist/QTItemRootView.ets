@@ -8,6 +8,8 @@ import {
 } from 'hippy'
 import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
 import { QTPendingListView, QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
@@ -88,23 +90,41 @@ export class QTItemRootView extends QTRenderBaseView{
 
 
 
-  layoutItem(childView:QTView ,flexLayout: boolean){
-    if(this.parentView){
-      LayoutAttach.obtainLayoutAttach(this).calculateLayout(this.parentView.cssWidth,this.parentView.cssHeight)
+  layoutItem(childView:QTView ,flexLayout: boolean,singleton:boolean | undefined){
+    if(singleton){
+        QTLog.i(TAG_LAYOUT,`layoutItem singleton childView:${ExtendUtil.debugView(childView)},childWidth:${childView.cssWidth},childHeight:${childView.cssHeight}`)
+        if(false){
+          QTPixelUtil.setRenderViewLayout(this,[childView.cssPositionX,childView.cssPositionY,childView.cssWidth,childView.cssHeight]);
+          QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
+        }else{
+          LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
+          LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
+          QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
+
+          QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
+          // this.cssWidth = childView.cssWidth
+          // this.cssHeight = childView.cssHeight
+        }
     }else{
-      //fixme 暂时写死
-      LayoutAttach.obtainLayoutAttach(this).calculateLayout(1920,1080)
+      if(this.parentView){
+        LayoutAttach.obtainLayoutAttach(this).calculateLayout(this.parentView.cssWidth,this.parentView.cssHeight)
+      }else{
+        //fixme 暂时写死
+        LayoutAttach.obtainLayoutAttach(this).calculateLayout(1920,1080)
+      }
+      LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
+      LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
+      applyLayoutTraverse(this)
+      // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
+      if(flexLayout){
+        QTPixelUtil.setRenderViewLayout(this,[childView.cssPositionX,childView.cssPositionY,childView.cssWidth,childView.cssHeight]);
+        QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
+      }else{
+        QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
+      }
     }
-    LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
-    LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
-    applyLayoutTraverse(this)
-    // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
-    if(flexLayout){
-      QTPixelUtil.setRenderViewLayout(this,[childView.cssPositionX,childView.cssPositionY,childView.cssWidth,childView.cssHeight]);
-      QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
-    }else{
-      QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
-    }
+
+
   }
   onAboutToReuse(){
     if(this.children[0]){
@@ -156,6 +176,8 @@ export struct QTItemRoot {
         }, (item: QTView,index:number) => item.tag + ''+index)
       }
       .applyRenderViewBaseAttr(this.renderView)
+      // .width(this.renderView.contentView?.cssWidth)
+      // .height(this.renderView.contentView?.cssHeight)
       .onAttach(()=>{
         console.log(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
       })
