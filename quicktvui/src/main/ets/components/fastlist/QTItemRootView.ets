@@ -16,6 +16,7 @@ import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListUtils } from './FastListUtils';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
+import { QTFastListView } from './QTFastListView';
 import { applyLayoutTraverse, applyLayoutTraverseWithSkip, PathUpdate } from './TemplateViewManager';
 
 export class ElementNode{
@@ -71,12 +72,23 @@ export class QTItemRootView extends QTRenderBaseView{
     // console.info(TAG_LAYOUT,`notifyChildSizeChanged on FastItem,isVirtual${this.isVirtual} changeViewType:${changedView.viewType},width:${width},height:${height},child width:${LayoutAttach.obtainLayoutAttach(child).fixedWidth}`)
     //主里直接阻断向上，只处理一层
     //super.notifyChildSizeChanged
-    LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(child).getWidth())
-    LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(child).getHeight())
-    //这里跳过changedView，解决文本通知parent变化，parent变化再让文本变化，导致死循环
-    applyLayoutTraverseWithSkip(this,changedView)
-    // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
-    QTPixelUtil.setRenderViewLayout(this,[0,0,child.cssWidth,child.cssHeight]);
+    let changed = child.cssWidth != this.cssWidth
+    if(!changed){
+      changed = child.cssHeight != this.cssHeight
+    }
+    if(changed){
+      LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(child).getWidth())
+      LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(child).getHeight())
+      //这里跳过changedView，解决文本通知parent变化，parent变化再让文本变化，导致死循环
+      applyLayoutTraverseWithSkip(this,changedView)
+      // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
+      QTPixelUtil.setRenderViewLayout(this,[0,0,child.cssWidth,child.cssHeight]);
+
+      //QTLog.e(TAG_LAYOUT,`notifyChildSizeChanged parentView:${ExtendUtil.debugView(this.parentList)},dataPosition:${this.dataPosition},this.cssWidth:${this.cssWidth}`)
+      // if(this.parentList instanceof QTFastListView && this.dataPosition){
+      //   this.parentList.notifyItemChanged(this.dataPosition)
+      // }
+    }
 
   }
 
@@ -93,18 +105,10 @@ export class QTItemRootView extends QTRenderBaseView{
   layoutItem(childView:QTView ,flexLayout: boolean,singleton:boolean | undefined){
     if(singleton){
         QTLog.i(TAG_LAYOUT,`layoutItem singleton childView:${ExtendUtil.debugView(childView)},childWidth:${childView.cssWidth},childHeight:${childView.cssHeight}`)
-        if(false){
-          QTPixelUtil.setRenderViewLayout(this,[childView.cssPositionX,childView.cssPositionY,childView.cssWidth,childView.cssHeight]);
-          QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
-        }else{
-          LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
-          LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
-          QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
-
-          QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
-          // this.cssWidth = childView.cssWidth
-          // this.cssHeight = childView.cssHeight
-        }
+        LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
+        LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
+        QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
+        QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
     }else{
       if(this.parentView){
         LayoutAttach.obtainLayoutAttach(this).calculateLayout(this.parentView.cssWidth,this.parentView.cssHeight)

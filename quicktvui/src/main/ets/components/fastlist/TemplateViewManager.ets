@@ -10,7 +10,6 @@ import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTFastFlexView } from './QTFastFlexView';
 import { QTLog } from '../../utils/QTLog';
 import { TAG_FASTLIST } from '../../Constant';
-import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTFastItemView } from './QTFastItemView';
 
 

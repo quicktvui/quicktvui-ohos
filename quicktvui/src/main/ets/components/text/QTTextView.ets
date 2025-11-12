@@ -8,6 +8,8 @@ import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTView } from '../../QTTypes';
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TAG_FASTLIST, TAG_LAYOUT } from '../../Constant';
+import { QTLog } from '../../utils/QTLog';
 
 
 @Observed
@@ -163,7 +165,7 @@ export struct  QTText {
       .padding(this.renderView.qtPadding)
       .onAreaChange((oldValue: Area, newValue: Area) => {
         if(newValue.width != oldValue.width || newValue.height != oldValue.height){
-          if(this.renderView.parentView instanceof QTRenderBaseView){
+          if(this.renderView.parentView instanceof QTBaseComponentView){
             if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight){
               if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth){
                 LayoutAttach.obtainLayoutAttach(this.renderView).setWidth(Number(newValue.width))
@@ -173,8 +175,11 @@ export struct  QTText {
                 this.renderView.cssHeight = Number(newValue.height)
               }
               // QTPixelUtil.setRenderViewLayout(this.renderView,[0,])
+              // QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
               this.renderView.parentView.notifyChildSizeChanged(this.renderView,this.renderView,Number(newValue.width),Number(newValue.height))
             }
+          }else{
+            QTLog.d(TAG_LAYOUT,`parent is not QTRenderBaseView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
           }
         }
       })

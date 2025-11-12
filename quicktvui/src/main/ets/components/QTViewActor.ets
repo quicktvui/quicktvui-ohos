@@ -2,8 +2,10 @@ import { QTAny, QTBaseView, QTView } from "../QTTypes"
 import { QTPixelUtil } from "../utils/QTPixelUtil"
 import { LayoutAttach } from "./fastlist/LayoutAttach"
 import {HippyRenderBaseView} from 'hippy'
-import { TAG_QUICKTVUI } from "../Constant"
+import { TAG_LAYOUT, TAG_QUICKTVUI } from "../Constant"
 import { QTAttach } from "./QTAttach"
+import { ExtendUtil } from "../utils/ExtendUtil"
+import { QTLog } from "../utils/QTLog"
 
 export class QTViewActor{
   constructor(hostView: HippyRenderBaseView) {
@@ -16,13 +18,16 @@ export class QTViewActor{
   hostView : QTView
 
   notifyChildSizeChanged(child:QTView,changedView:QTView,width: number, height: number){
+    // QTLog.i(TAG_LAYOUT,'notifyChildSizeChanged by QTActorHost child:'+ExtendUtil.debugView(child)+",width:"+width+",height:"+height+",this:"+ExtendUtil.debugView(this.hostView))
+
     let la = LayoutAttach.findLayoutAttach(this.hostView)
+    // QTLog.i(TAG_LAYOUT,`notifyChildSizeChanged styleWidth:${la?.getStyleWidth()},styleHeight:${la?.getStyleHeight()},this:${this.hostView}`)
     if(la){
-      if(la.isAutoWidth){
+      if(la.isAutoWidth || (!la.getStyleWidth()) || la.getStyleWidth() < 1 ){
         la.setFixedWidth(child.cssWidth + la.getPaddingLeft() + la.getPaddingRight())
         QTPixelUtil.setRenderViewLayout(this.hostView,[this.hostView.cssPositionX,this.hostView.cssPositionY,la.fixedWidth,this.hostView.cssHeight])
       }
-      if(la.isAutoHeight){
+      if(la.isAutoHeight || (!la.getStyleHeight()) || la.getStyleHeight() < 1){
         la.setFixedHeight(child.cssHeight + la.getPaddingTop() + la.getPaddingBottom())
         QTPixelUtil.setRenderViewLayout(this.hostView,[this.hostView.cssPositionX,this.hostView.cssPositionY,this.hostView.cssWidth,la.fixedHeight])
       }
@@ -30,9 +35,12 @@ export class QTViewActor{
     if(this.hostView?.parentView){
       let parent = this.hostView.parentView  as QTBaseView
       if(parent){
-        console.log(TAG_QUICKTVUI,'notifyChildSizeChanged by QTActorHost')
         parent.notifyChildSizeChanged?.(this.hostView,changedView,width,height)
+      }else{
+        QTLog.w(TAG_LAYOUT,`notifyChildSizeChanged 2 return on parent invalid:${ExtendUtil.debugView(this.hostView)},parent:${ExtendUtil.debugView(this.hostView?.parentView)}`)
       }
+    }else{
+      // QTLog.w(TAG_LAYOUT,`notifyChildSizeChanged return on parent invalid:${ExtendUtil.debugView(this.hostView)},parent:${ExtendUtil.debugView(this.hostView?.parentView)}`)
     }
 
   }

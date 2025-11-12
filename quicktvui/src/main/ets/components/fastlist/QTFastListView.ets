@@ -459,6 +459,10 @@ export class QTFastListView extends QTRenderBaseView{
     this.dataSource?.notifyReload()
   }
 
+  public notifyItemChanged(pos : number){
+    this.dataSource?.notifyDataChange(pos)
+  }
+
   aboutToUpdate(): void {
     super.aboutToUpdate()
     this.prepareTemplate()

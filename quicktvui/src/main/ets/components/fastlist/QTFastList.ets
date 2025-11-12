@@ -110,8 +110,6 @@ export struct  QTFastList {
                 children: item.children,
               }).reuseId(item.getReuseId())
             }
-            .width(item?.cssWidth)
-            .height(item?.cssHeight)
             .margin(item.decoration)
           }, this.keyGenerate)
         }
