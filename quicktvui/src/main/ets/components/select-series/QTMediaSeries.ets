@@ -1,47 +1,35 @@
 import { QTMediaSeriesView } from "./QTMediaSeriesView"
-import {HippyObservedArray,HRDiv,HIPPY_COMPONENT_KEY_PREFIX,HippyRenderBaseView,buildHippyRenderView,HippyViewEvent,HippyMap,HippyEndBatchCallback} from 'hippy'
+import {
+  HippyObservedArray,
+  HRDiv,
+  HIPPY_COMPONENT_KEY_PREFIX,
+  HippyRenderBaseView,
+  buildHippyRenderView,
+  HippyViewEvent,
+  HippyMap,
+  HippyEndBatchCallback
+} from 'hippy'
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
 import { QTView } from "../../QTTypes";
+import { MyComponentParams } from './types/index';
+import { TAG_MediaSeries } from '../../Constant';
 
-interface VipInfo {
-  enable: boolean;
-  text: string;
-}
-
-interface vipTitleStyle {
-  width: number; height: number;
-}
-
-interface MyComponentParams {
-  title?: string;
-  cover?: string;
-  showVip?: boolean;
-  floatText?: string;
-  vip?: VipInfo; // <-- 这里直接使用你定义的类型
-  vipTitleStyle?: vipTitleStyle;
-  index2?: string;
-};
-
-
-@Component  
-export struct  QTMediaSeries {
+@Component
+export struct QTMediaSeries {
   @ObjectLink renderView: QTMediaSeriesView
   @ObjectLink children: HippyObservedArray<QTView>
-
-
-  test : boolean = false
+  test: boolean = false
 
   aboutToAppear(): void {
 
-    setTimeout(()=>{
+    setTimeout(() => {
       let event = new HippyViewEvent("onLoadPageData")
       let params = new Map<string, number>()
       params.set('page', 0)
       params.set('tag', this.renderView.tag)
       event.send(this.renderView.ctx, this.renderView.tag, params)
-      console.error('ffefefe', ' this.renderView.tag' , this.renderView.tag)
-
-    },1000)
+      console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
+    }, 0)
 
   }
 
@@ -49,11 +37,15 @@ export struct  QTMediaSeries {
     Stack() {
 
       List({ space: 20, initialIndex: 0 }) {
-        ForEach(this.renderView.listData, (item: MyComponentParams,index:number) => {
+        ForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
           ListItem() {
-            Text( item.title)
-              .width('20%').height(100).fontSize(16)
-              .textAlign(TextAlign.Center).borderRadius(10).backgroundColor(0xFFFFFF)
+            Text(item.title)
+              .width('20%')
+              .height(100)
+              .fontSize(16)
+              .textAlign(TextAlign.Center)
+              .borderRadius(10)
+              .backgroundColor(0xFFFFFF)
           }
         }, (item: string) => item)
       }
@@ -72,17 +64,14 @@ export struct  QTMediaSeries {
     }
     this.renderView.onUIAboutToDisappear()
   }
-
 }
-
-
 
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
-  .position({x: $$.cssPositionX, y: $$.cssPositionY})
-  .size({width:$$.cssWidth, height: $$.cssHeight})
+  .position({ x: $$.cssPositionX, y: $$.cssPositionY })
+  .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
   .visibility(($$ as QTMediaSeriesView).cssVisibility) // must add as, otherwise the compiler has error
