@@ -7,7 +7,7 @@ import {
   HippyMap,
   HippyEndBatchCallback
 } from 'hippy'
-import { TAG_FASTLIST } from '../../Constant';
+import { TAG_MediaSeries } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -16,7 +16,7 @@ import { QTView } from "../../QTTypes"
 import QTRenderBaseView from '../QTRenderBaseView';
 import { HashMap } from '@kit.ArkTS';
 
-import { InitParam ,MyComponentParams } from './types/index';
+import { InitParam, MyComponentParams } from './types/index';
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView {
@@ -94,7 +94,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   }
 
   onPageTemplateReady(template: QTView) {
-    console.log(TAG_FASTLIST, `onPageTemplateReady:${ExtendUtil.debugView(template)}`)
+    console.log(TAG_MediaSeries, `onPageTemplateReady:${ExtendUtil.debugView(template)}`)
     this.contentTemplate = template;
     // this.tabsData.forEach((value)=>{
     //   value.contentView?.setcus
@@ -103,7 +103,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
 
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_FASTLIST, `setProp ============ QTFastListView :propKey:${propKey},value:${propValue}`)
+    console.log(TAG_MediaSeries, `setProp ============ QTMediaSeriesView :propKey:${propKey},value:${propValue}`)
     // if(propKey === 'attributes'){
     //   CommonUtils.printObject(propValue,'FastList setAttributes')
     // }
@@ -113,13 +113,13 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let initParam = HRValueUtils.getMap(propValue);
 
         //测试数据：
-        let __initParam:InitParam = {
+        let __initParam: InitParam = {
           "initPosition": 0,
           "contentWidth": 1740,
           "contentHeight": 160,
           "itemGap": 36,
 
-          "enableGroup": true,  //是否开启快速分组
+          "enableGroup": true, //是否开启快速分组
           "groupSize": 20, // 快速分组对应的集数
           "groupHeight": 46,
           "groupTopMargin": 24,
@@ -193,14 +193,17 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         };
 
 
-        console.log(TAG_FASTLIST, `QTFastListView ${Array.from(initParam)}`)
+        console.log(TAG_MediaSeries, `QTMediaSeriesView ${Array.from(initParam)}`)
         let template = initParam?.get('template');
         let type = (template as HippyMap).get('type');
+
+        //是否开启快速分组
+        let enableGroup = initParam?.get('enableGroup');
         /*
          * type == ’leftRight‘ : 图文
          *
          * */
-        console.log(TAG_FASTLIST, `QTFastListView template.type :${type}`)
+        console.log(TAG_MediaSeries, `QTMediaSeriesView template.type :${type} ,${typeof enableGroup},${enableGroup}`)
 
         //this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
@@ -208,9 +211,9 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         //  是否设置快速分组
         let groupParam = HRValueUtils.getMap(propValue);
         let groupSize = groupParam?.get('groupSize');
-        console.log(TAG_FASTLIST, `QTFastListView :groupSize is:${groupSize}`)
+        console.log(TAG_MediaSeries, `QTMediaSeriesView :groupSize is:${groupSize}`)
       case "commonParam":
-        //
+      //
 
 
       default:
@@ -226,22 +229,22 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    console.log(TAG_FASTLIST, `QTFastListView call function : ${method},params:${params}`)
+    console.log(TAG_MediaSeries, `QTMediaSeriesView call function : ${method},params:${params}`)
     switch (method) {
-
+      //加载数据
       case "setPageData":
         let getArray = HRValueUtils.getArray(params as HippyArray)
         let page = getArray![0];
         let data = getArray![1] as Map<string, HippyAny>; //数据格式参考 getLRDataByPage 函数返回值
 
-        console.log(TAG_FASTLIST, `QTFastListView:page:${method},value:${page}`)
+        console.log(TAG_MediaSeries, `QTMediaSeriesView:page:${method},value:${page}`)
 
         let _listData = this.listData.slice();
         data.forEach((value: HippyAny, keyA: string) => {
-          console.log(TAG_FASTLIST, `QTFastListView:page,key:${keyA}`);
+          console.log(TAG_MediaSeries, `QTMediaSeriesView:page,key:${keyA}`);
 
           (value as HippyMap).forEach((eachValue: HippyAny, keyB: string) => {
-            console.log(TAG_FASTLIST, `QTFastListView:page,key:${keyA}-${keyB}`, eachValue);
+            console.log(TAG_MediaSeries, `QTMediaSeriesView:page,key:${keyA}-${keyB}`, eachValue);
           })
 
           _listData.push({
@@ -254,20 +257,33 @@ export class QTMediaSeriesView extends QTRenderBaseView {
 
         break;
 
-      case "keyName":
-        console.error(TAG_FASTLIST, `QTFastListView : 未实现的function : ${method}`)
-        return;
-    }
-
-    switch (method) {
-
-
-      case 'scrollToTop':
-        this.initialPosition = 0;
-        this.exeScroll()
+      //设置选中的item
+      case "setSelectChildPosition":
+        let childPos = HRValueUtils.getNumber2(params[0], 0)
+        console.log(TAG_MediaSeries, `setSelectChildPosition : childPos is : ${childPos} `)
         break;
 
+      //滚动到指定位置
+      case "scrollToPosition":
+        let scrollPos = HRValueUtils.getNumber2(params[0], 0)
+        console.log(TAG_MediaSeries, `scrollToPosition : scrollPos is : ${scrollPos}`)
+        break;
+
+      //滚动到指定位置 可添加偏移量
+      case "scrollToPositionWithOffset":
+        let scrollPosIdx = HRValueUtils.getNumber2(params[0], 0)
+        let scrollPosOffset = HRValueUtils.getNumber2(params[1], 0)
+        console.log(TAG_MediaSeries,
+          `scrollToPositionWithOffset : scrollPosIdx is : ${scrollPosIdx}, scrollPosOffset is :${scrollPosOffset}`)
+        break;
+
+      //设置选中的item
+      case "requestChildFocus":
+        let focusPos = HRValueUtils.getNumber2(params[0], 0)
+        console.log(TAG_MediaSeries, `requestChildFocus : focusPos is : ${focusPos}`)
+        break;
     }
+
   }
 }
 
