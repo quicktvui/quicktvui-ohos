@@ -16,7 +16,7 @@ import { QTView } from "../../QTTypes"
 import QTRenderBaseView from '../QTRenderBaseView';
 import { HashMap } from '@kit.ArkTS';
 
-import { Group, InitParam, MyComponentParams, Template } from './types/index';
+import { Group, InitParam, MyComponentParams, GeneratePageData, Template } from './types/index';
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView {
@@ -31,6 +31,9 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   isNativeCreate = false;
   contentTemplate: QTView | null = null;
   listData: Array<MyComponentParams | number | string> = [];
+  generatePageData: GeneratePageData[] = [];
+  currentTitleId: number = 0;
+  navTitleScroller: Scroller = new Scroller();
   initParamTemplate: Template = {
     titleSize: 28,
     floatTitleSize: 20,
@@ -129,6 +132,24 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     return result;
   }
 
+  generatePageRanges(totalCount: number, pageSize: number): GeneratePageData[] {
+    const result: GeneratePageData[] = [];
+    const totalPages = Math.ceil(totalCount / pageSize);
+    for (let page = 0; page < totalPages; page++) {
+      const start = page * pageSize + 1;
+      const end = Math.min((page + 1) * pageSize, totalCount);
+      // 生成当前页的数字列表
+      const list: number[] = [];
+      for (let i = start; i <= end; i++) {
+        list.push(i);
+      }
+      result.push({
+        list,
+        title: `${start}-${end}`
+      });
+    }
+    return result;
+  }
 
   exeScroll() {
     this.scroller.scrollToIndex(this.initialPosition)
@@ -246,8 +267,6 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         //   "pageSize": 10
         // };
         console.log(TAG_MediaSeries, `QTMediaSeriesView ${Array.from(initParam)}`)
-        //是否开启快速分组
-        let enableGroup = initParam?.get('enableGroup');
         /*
          * type == ’leftRight‘ : 图文
          *
@@ -316,11 +335,15 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             color: (mark as HippyMap).get('color') as string | '#FFD97C',
           }
         }
+        // 是否开启快速分组
+        if(this.initParam.enableGroup) {
+          this.generatePageData = this.generatePageRanges(this.initParam.totalCount, this.initParam.pageSize);
+        }
         console.log(TAG_FASTLIST, `QTFastListView template.type :${JSON.stringify(this.initParam)}`)
         console.log(TAG_FASTLIST, `QTFastListView initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)
         console.log(TAG_FASTLIST, `QTFastListView initParamGroup :${JSON.stringify(this.initParamGroup)}`)
         console.log(TAG_FASTLIST, `QTFastListView extra :${JSON.stringify(extra)}`)
-        console.log(TAG_MediaSeries, `QTMediaSeriesView template.type :${type} ,${typeof enableGroup},${enableGroup}`)
+        console.log(TAG_FASTLIST, `QTFastListView generatePageData :${JSON.stringify(this.generatePageData)}`)
         //this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
       case "groupParam":

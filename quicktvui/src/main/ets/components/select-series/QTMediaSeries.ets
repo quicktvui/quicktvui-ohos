@@ -11,8 +11,9 @@ import {
 } from 'hippy'
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
 import { QTView } from "../../QTTypes";
-import { MyComponentParams } from './types/index';
+import { GeneratePageData, MyComponentParams } from './types/index';
 import { TAG_MediaSeries } from '../../Constant';
+import { ColorMetrics } from "@kit.ArkUI";
 
 @Component
 export struct QTMediaSeries {
@@ -94,6 +95,42 @@ export struct QTMediaSeries {
       ForEach(this.children, (item: HippyRenderBaseView) => {
         buildHippyRenderView(item, null)
       }, (item: HippyRenderBaseView) => item.tag + '')
+
+      // List({ scroller: this.renderView.navTitleScroller }) {
+      //   ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
+      //     ListItem() {
+      //       Column() {
+      //         Text(item.title)
+      //           .fontSize(this.renderView.currentTitleId === index ? 16 : 14)
+      //           .textAlign(TextAlign.Center)
+      //           .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' : Color.Black)
+      //           .opacity(this.renderView.currentTitleId === index ? 1 : 0.6)
+      //           .fontWeight(this.renderView.currentTitleId === index ? FontWeight.Bold : FontWeight.Normal)
+      //           .onClick(() => {
+      //             // Pass in the current list item index and true.
+      //             // this.listChange(index, true);
+      //           })
+      //           .onFocus(() => {
+      //             // this.listChange(index, true);
+      //           })
+      //         // .focusBox({
+      //         //   strokeColor: ColorMetrics.rgba(0, 0, 0, 0),
+      //         // })
+      //         Text(' '){}
+      //         .width(30)
+      //         .height(3)
+      //         .backgroundColor('#ffffff')
+      //         .borderRadius(2)
+      //         .margin({top: 4})
+      //         .visibility(this.renderView.currentTitleId === index?Visibility.Visible:Visibility.Hidden)
+      //       }
+      //       .width(90)
+      //       .height(56)
+      //     }
+      //   }, (item: GeneratePageData) => JSON.stringify(item.title))
+      // }
+      // .scrollBar(BarState.Off)
+      // .listDirection(Axis.Horizontal)
     }
     .applyRenderViewBaseAttr(this.renderView)
   }
