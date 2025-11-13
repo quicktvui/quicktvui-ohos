@@ -36,24 +36,21 @@ export struct QTMediaSeries {
   build() {
     Stack() {
 
-      List({ space: 20, initialIndex: 0 }) {
+      List({ space: px2vp(this.renderView.initParam.itemGap), initialIndex: 0 }) {
         ForEach(this.renderView.listData, (item: MyComponentParams,index:number) => {
           ListItem() {
             Row() {
               Image(item.cover)
-                .width('45%')
-                .height('100%')
-                .borderRadius({
-                  topLeft: 10,
-                  bottomLeft: 10
-                })
+                .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
+                .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
               Column(){
                 Text(item.title)
-                  .fontSize(px2vp(28))
+                  .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
                   .textAlign(TextAlign.Start)
                   .fontColor(item.showVip?"#FFFFD97C":"#FFFFFFFF")
                   .maxLines(3)
                   .textOverflow({ overflow: TextOverflow.Ellipsis })
+                  .fontFamily('HarmonyOS Sans')
               }
               .width('55%')
               .height(px2vp(160))
@@ -63,7 +60,7 @@ export struct QTMediaSeries {
               Text(item.floatText)
                 .position({
                   x: 10,
-                  y: 76
+                  y: 70
                 })
                 .backgroundColor('#803E3838')
                 .fontColor(0xFFFFFF)
@@ -72,18 +69,19 @@ export struct QTMediaSeries {
                   left: 4,
                   right: 4
                 })
+                .fontFamily('HarmonyOS Sans')
+                .fontSize(px2vp(this.renderView.initParamTemplate.floatTitleSize))
               Image(item.cover)
                 .position({
-                  x: -70,
+                  x: -60,
                   y: 70
                 })
-                .width(40)
+                .width(30)
                 .aspectRatio(1)
                 .borderRadius(20)
             }
-            .width('30%')
-            .height(px2vp(160))
-            .borderRadius(10)
+            .width(px2vp(this.renderView.initParamTemplate.width))
+            .height(px2vp(this.renderView.initParamTemplate.height))
             .backgroundColor('#80988787')
             .alignItems(VerticalAlign.Top)
           }

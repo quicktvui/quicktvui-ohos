@@ -31,61 +31,60 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   isNativeCreate = false;
   contentTemplate: QTView | null = null;
   listData: Array<MyComponentParams | number | string> = [];
-  initParamTemplate: Template | HippyAny = {
-    titleSize: 0,
-    floatTitleSize: 0,
+  initParamTemplate: Template = {
+    titleSize: 28,
+    floatTitleSize: 20,
     isFree: false,
-    type: '',
-    width: 0,
-    height: 0,
-    focusScale: 0,
+    type: 'leftRight',
+    width: 560,
+    height: 160,
+    focusScale: 1.1,
     extra: {
-      imgWidth: 0,
-      imgHeight: 0,
+      imgWidth: 268,
+      imgHeight: 160,
       textColor: {
-        normal: '',
-        focused: '',
-        selected: '',
+        normal: '#80FFFFFF',
+        focused: '#FFD97C',
+        selected: '#FFD97C',
       },
       cornerBgColor: {
-        orientation: '',
-        cornerRadius: [],
-        color: [],
-        padding: [],
+        orientation: 'LEFT_RIGHT',
+        cornerRadius: [4, 4, 4, 4],
+        color: ["#B67827", "#DBAF5C"],
       }
     }
   }
   initParamGroup: Group = {
-    itemWidth: 0,
-    itemHeight: 0,
-    itemGap: 0,
-    textSize: 0,
+    itemWidth: 85,
+    itemHeight: 46,
+    itemGap: 50,
+    textSize: 30,
     textColor: {
-      normal: '',
-      focused: '',
-      selected: '',
+      normal: '#80FFFFFF',
+      focused: '#603314',
+      selected: '#FFD97C',
     },
     focusBackground: {
-      orientation: '',
-      cornerRadius: [],
-      color: [],
-      padding: [],
+      orientation: 'LEFT_RIGHT',
+      cornerRadius: [40, 40, 40, 40],
+      color: ["#FFE398", "#EEB364"],
+      padding: [34, 6],
     },
     mark: {
-      color: ''
+      color: '#FFD97C'
     }
   }
   initParam: InitParam = {
     initPosition: 0,
-    contentWidth: 0,
-    contentHeight: 0,
-    itemGap: 0,
-    enableGroup: false,
-    groupSize: 0,
-    groupHeight: 0,
-    groupTopMargin: 0,
+    contentWidth: 1740,
+    contentHeight: 160,
+    itemGap: 36,
+    enableGroup: true,
+    groupSize: 20,
+    groupHeight: 46,
+    groupTopMargin: 24,
     totalCount: 0,
-    pageSize: 0,
+    pageSize: 10,
   };
   // private customTemplate: QTView | null = null;
 
@@ -168,84 +167,84 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         // 图文模式
         let initParam = HRValueUtils.getMap(propValue);
         //测试数据：
-        let __initParam: InitParam = {
-          "initPosition": 0,
-          "contentWidth": 1740,
-          "contentHeight": 160,
-          "itemGap": 36,
-
-          "enableGroup": true, //是否开启快速分组
-          "groupSize": 20, // 快速分组对应的集数
-          "groupHeight": 46,
-          "groupTopMargin": 24,
-
-          // 控制快速分组的UI
-          "group": {
-            "itemWidth": 85,
-            "itemHeight": 46,
-            "itemGap": 50,
-            "textSize": 30,
-            "textColor": {
-              "normal": "#80FFFFFF",
-              "focused": "#603314",
-              "selected": "#FFD97C"
-            },
-            "focusBackground": {
-              "orientation": "LEFT_RIGHT",
-              "cornerRadius": [
-                40,
-                40,
-                40,
-                40
-              ],
-              "color": [
-                "#FFE398",
-                "#EEB364"
-              ],
-              "padding": [
-                34,
-                6
-              ]
-            },
-            "mark": {
-              "color": "#FFD97C"
-            }
-          },
-
-          "template": {
-            "titleSize": 28,
-            "floatTitleSize": 20,
-            "isFree": false,
-            "type": "leftRight",
-            "width": 560,
-            "height": 160,
-            "focusScale": 1.1,
-            "extra": {
-              "imgWidth": 268,
-              "imgHeight": 160,
-              "textColor": {
-                "normal": "#80FFFFFF",
-                "focused": "#FFD97C",
-                "selected": "#FFD97C"
-              },
-              "cornerBgColor": {
-                "orientation": "LEFT_RIGHT",
-                "cornerRadius": [
-                  4,
-                  4,
-                  4,
-                  4
-                ],
-                "color": [
-                  "#B67827",
-                  "#DBAF5C"
-                ]
-              }
-            }
-          },
-          "totalCount": 100,
-          "pageSize": 10
-        };
+        // let __initParam: InitParam = {
+        //   "initPosition": 0,
+        //   "contentWidth": 1740,
+        //   "contentHeight": 160,
+        //   "itemGap": 36,
+        //
+        //   "enableGroup": true, //是否开启快速分组
+        //   "groupSize": 20, // 快速分组对应的集数
+        //   "groupHeight": 46,
+        //   "groupTopMargin": 24,
+        //
+        //   // 控制快速分组的UI
+        //   "group": {
+        //     "itemWidth": 85,
+        //     "itemHeight": 46,
+        //     "itemGap": 50,
+        //     "textSize": 30,
+        //     "textColor": {
+        //       "normal": "#80FFFFFF",
+        //       "focused": "#603314",
+        //       "selected": "#FFD97C"
+        //     },
+        //     "focusBackground": {
+        //       "orientation": "LEFT_RIGHT",
+        //       "cornerRadius": [
+        //         40,
+        //         40,
+        //         40,
+        //         40
+        //       ],
+        //       "color": [
+        //         "#FFE398",
+        //         "#EEB364"
+        //       ],
+        //       "padding": [
+        //         34,
+        //         6
+        //       ]
+        //     },
+        //     "mark": {
+        //       "color": "#FFD97C"
+        //     }
+        //   },
+        //
+        //   "template": {
+        //     "titleSize": 28,
+        //     "floatTitleSize": 20,
+        //     "isFree": false,
+        //     "type": "leftRight",
+        //     "width": 560,
+        //     "height": 160,
+        //     "focusScale": 1.1,
+        //     "extra": {
+        //       "imgWidth": 268,
+        //       "imgHeight": 160,
+        //       "textColor": {
+        //         "normal": "#80FFFFFF",
+        //         "focused": "#FFD97C",
+        //         "selected": "#FFD97C"
+        //       },
+        //       "cornerBgColor": {
+        //         "orientation": "LEFT_RIGHT",
+        //         "cornerRadius": [
+        //           4,
+        //           4,
+        //           4,
+        //           4
+        //         ],
+        //         "color": [
+        //           "#B67827",
+        //           "#DBAF5C"
+        //         ]
+        //       }
+        //     }
+        //   },
+        //   "totalCount": 100,
+        //   "pageSize": 10
+        // };
         console.log(TAG_MediaSeries, `QTMediaSeriesView ${Array.from(initParam)}`)
         //是否开启快速分组
         let enableGroup = initParam?.get('enableGroup');
@@ -254,16 +253,16 @@ export class QTMediaSeriesView extends QTRenderBaseView {
          *
          * */
         this.initParam = {
-          initPosition: initParam?.get('initPosition') as number,
-          contentWidth: initParam?.get('contentWidth') as number,
-          contentHeight: initParam?.get('contentHeight') as number,
-          itemGap: initParam?.get('itemGap') as number,
-          enableGroup: initParam?.get('enableGroup') as boolean,
-          groupSize: initParam?.get('groupSize') as number,
-          groupHeight: initParam?.get('groupHeight') as number,
-          groupTopMargin: initParam?.get('groupTopMargin') as number,
-          totalCount: initParam?.get('totalCount') as number,
-          pageSize: initParam?.get('pageSize') as number,
+          initPosition: initParam?.get('initPosition') as number | 0,
+          contentWidth: initParam?.get('contentWidth') as number | 1740,
+          contentHeight: initParam?.get('contentHeight') as number | 160,
+          itemGap: initParam?.get('itemGap') as number | 36,
+          enableGroup: initParam?.get('enableGroup') as boolean | true,
+          groupSize: initParam?.get('groupSize') as number | 20,
+          groupHeight: initParam?.get('groupHeight') as number | 46,
+          groupTopMargin: initParam?.get('groupTopMargin') as number | 24,
+          totalCount: initParam?.get('totalCount') as number | 0,
+          pageSize: initParam?.get('pageSize') as number | 10,
         };
         let template = initParam?.get('template');
         let type = (template as HippyMap).get('type');
@@ -271,26 +270,25 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let textColor = (extra as HippyMap).get('textColor');
         let cornerBgColor = (extra as HippyMap).get('cornerBgColor');
         this.initParamTemplate = {
-          titleSize: (template as HippyMap).get('titleSize') as number,
-          floatTitleSize: (template as HippyMap).get('floatTitleSize') as number,
-          isFree: (template as HippyMap).get('isFree') as boolean,
-          type: (template as HippyMap).get('type') as string,
-          width: (template as HippyMap).get('width') as number,
-          height: (template as HippyMap).get('height') as number,
-          focusScale: (template as HippyMap).get('focusScale') as number,
+          titleSize: (template as HippyMap).get('titleSize') as number | 28,
+          floatTitleSize: (template as HippyMap).get('floatTitleSize') as number | 20,
+          isFree: (template as HippyMap).get('isFree') as boolean | false,
+          type: (template as HippyMap).get('type') as string | 'leftRight',
+          width: (template as HippyMap).get('width') as number | 560,
+          height: (template as HippyMap).get('height') as number | 160,
+          focusScale: (template as HippyMap).get('focusScale') as number | 1.1,
           extra: {
-            imgWidth: (extra as HippyMap).get('imgWidth') as number,
-            imgHeight: (extra as HippyMap).get('imgHeight') as number,
+            imgWidth: (extra as HippyMap).get('imgWidth') as number | 268,
+            imgHeight: (extra as HippyMap).get('imgHeight') as number | 160,
             textColor: {
-              normal: (textColor as HippyMap).get('normal') as string,
-              focused: (textColor as HippyMap).get('focused') as string,
-              selected: (textColor as HippyMap).get('selected') as string,
+              normal: (textColor as HippyMap).get('normal') as string | '#803e3838',
+              focused: (textColor as HippyMap).get('focused') as string | '#FFD97C',
+              selected: (textColor as HippyMap).get('selected') as string | '#FFD97C',
             },
             cornerBgColor: {
-              orientation: (cornerBgColor as HippyMap).get('orientation') as string,
-              cornerRadius: (cornerBgColor as HippyMap).get('cornerRadius') as number[],
-              color: (cornerBgColor as HippyMap).get('color') as string[],
-              padding: (cornerBgColor as HippyMap).get('padding') as number[],
+              orientation: (cornerBgColor as HippyMap).get('orientation') as string | 'LEFT_RIGHT',
+              cornerRadius: (cornerBgColor as HippyMap).get('cornerRadius') as number[] | [4,4,4,4],
+              color: (cornerBgColor as HippyMap).get('color') as string[] | ["#B67827", "#DBAF5C"],
             }
           }
         }
@@ -299,23 +297,23 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let focusBackground = (group as HippyMap).get('focusBackground');
         let mark = (group as HippyMap).get('mark');
         this.initParamGroup = {
-          itemWidth: (groupTextColor as HippyMap).get('itemWidth') as number,
-          itemHeight: (groupTextColor as HippyMap).get('itemHeight') as number,
-          itemGap: (groupTextColor as HippyMap).get('itemGap') as number,
-          textSize: (groupTextColor as HippyMap).get('textSize') as number,
+          itemWidth: (groupTextColor as HippyMap).get('itemWidth') as number | 85,
+          itemHeight: (groupTextColor as HippyMap).get('itemHeight') as number | 46,
+          itemGap: (groupTextColor as HippyMap).get('itemGap') as number | 50,
+          textSize: (groupTextColor as HippyMap).get('textSize') as number | 30,
           textColor: {
-            normal: (groupTextColor as HippyMap).get('normal') as string,
-            focused: (groupTextColor as HippyMap).get('focused') as string,
-            selected: (groupTextColor as HippyMap).get('selected') as string,
+            normal: (groupTextColor as HippyMap).get('normal') as string | '#80FFFFFF',
+            focused: (groupTextColor as HippyMap).get('focused') as string | '#603314',
+            selected: (groupTextColor as HippyMap).get('selected') as string | '#FFD97C',
           },
           focusBackground: {
-            orientation: (focusBackground as HippyMap).get('orientation') as string,
-            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[],
-            color: (focusBackground as HippyMap).get('color') as string[],
-            padding: (focusBackground as HippyMap).get('padding') as number[],
+            orientation: (focusBackground as HippyMap).get('orientation') as string | 'LEFT_RIGHT',
+            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[] | [40, 40, 40, 40],
+            color: (focusBackground as HippyMap).get('color') as string[] | ['#FFE398', '#EEB364'],
+            padding: (focusBackground as HippyMap).get('padding') as number[] | [34, 6],
           },
           mark: {
-            color: (mark as HippyMap).get('color') as string,
+            color: (mark as HippyMap).get('color') as string | '#FFD97C',
           }
         }
         console.log(TAG_FASTLIST, `QTFastListView template.type :${JSON.stringify(this.initParam)}`)
@@ -386,19 +384,19 @@ export class QTMediaSeriesView extends QTRenderBaseView {
 
         break;
 
-      //设置选中的item
+    //设置选中的item
       case "setSelectChildPosition":
         let childPos = HRValueUtils.getNumber2(params[0], 0)
         console.log(TAG_MediaSeries, `setSelectChildPosition : childPos is : ${childPos} `)
         break;
 
-      //滚动到指定位置
+    //滚动到指定位置
       case "scrollToPosition":
         let scrollPos = HRValueUtils.getNumber2(params[0], 0)
         console.log(TAG_MediaSeries, `scrollToPosition : scrollPos is : ${scrollPos}`)
         break;
 
-      //滚动到指定位置 可添加偏移量
+    //滚动到指定位置 可添加偏移量
       case "scrollToPositionWithOffset":
         let scrollPosIdx = HRValueUtils.getNumber2(params[0], 0)
         let scrollPosOffset = HRValueUtils.getNumber2(params[1], 0)
@@ -406,7 +404,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           `scrollToPositionWithOffset : scrollPosIdx is : ${scrollPosIdx}, scrollPosOffset is :${scrollPosOffset}`)
         break;
 
-      //设置选中的item
+    //设置选中的item
       case "requestChildFocus":
         let focusPos = HRValueUtils.getNumber2(params[0], 0)
         console.log(TAG_MediaSeries, `requestChildFocus : focusPos is : ${focusPos}`)
