@@ -299,10 +299,10 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let focusBackground = (group as HippyMap).get('focusBackground');
         let mark = (group as HippyMap).get('mark');
         this.initParamGroup = {
-          itemWidth: 0,
-          itemHeight: 0,
-          itemGap: 0,
-          textSize:0,
+          itemWidth: (groupTextColor as HippyMap).get('itemWidth') as number,
+          itemHeight: (groupTextColor as HippyMap).get('itemHeight') as number,
+          itemGap: (groupTextColor as HippyMap).get('itemGap') as number,
+          textSize: (groupTextColor as HippyMap).get('textSize') as number,
           textColor: {
             normal: (groupTextColor as HippyMap).get('normal') as string,
             focused: (groupTextColor as HippyMap).get('focused') as string,
