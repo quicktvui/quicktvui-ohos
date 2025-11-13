@@ -37,26 +37,27 @@ export struct QTMediaSeries {
     Stack() {
 
       List({ space: px2vp(this.renderView.initParam.itemGap), initialIndex: 0 }) {
-        ForEach(this.renderView.listData, (item: MyComponentParams,index:number) => {
+        ForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
           ListItem() {
             Row() {
               Image(item.cover)
                 .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
                 .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
-              Column(){
+              Column() {
                 Text(item.title)
                   .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
                   .textAlign(TextAlign.Start)
-                  .fontColor(item.showVip?"#FFFFD97C":"#FFFFFFFF")
+                  .fontColor(item.showVip ? "#FFFFD97C" : "#FFFFFFFF")
                   .maxLines(3)
                   .textOverflow({ overflow: TextOverflow.Ellipsis })
                   .fontFamily('HarmonyOS Sans')
               }
-              .width('55%')
-              .height(px2vp(160))
+              .width(px2vp(this.renderView.initParamTemplate.width - this.renderView.initParamTemplate.extra.imgWidth))
+              .height(px2vp(this.renderView.initParamTemplate.height))
               .alignItems(HorizontalAlign.Start)
               .justifyContent(FlexAlign.Start)
               .padding(10)
+
               Text(item.floatText)
                 .position({
                   x: 10,

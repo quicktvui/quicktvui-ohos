@@ -287,7 +287,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             },
             cornerBgColor: {
               orientation: (cornerBgColor as HippyMap).get('orientation') as string | 'LEFT_RIGHT',
-              cornerRadius: (cornerBgColor as HippyMap).get('cornerRadius') as number[] | [4,4,4,4],
+              cornerRadius: (cornerBgColor as HippyMap).get('cornerRadius') as number[] | [4, 4, 4, 4],
               color: (cornerBgColor as HippyMap).get('color') as string[] | ["#B67827", "#DBAF5C"],
             }
           }
