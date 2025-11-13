@@ -37,18 +37,59 @@ export struct QTMediaSeries {
     Stack() {
 
       List({ space: 20, initialIndex: 0 }) {
-        ForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
+        ForEach(this.renderView.listData, (item: MyComponentParams,index:number) => {
           ListItem() {
-            Text(item.title)
-              .width('20%')
-              .height(100)
-              .fontSize(16)
-              .textAlign(TextAlign.Center)
-              .borderRadius(10)
-              .backgroundColor(0xFFFFFF)
+            Row() {
+              Image(item.cover)
+                .width('45%')
+                .height('100%')
+                .borderRadius({
+                  topLeft: 10,
+                  bottomLeft: 10
+                })
+              Column(){
+                Text(item.title)
+                  .fontSize(px2vp(28))
+                  .textAlign(TextAlign.Start)
+                  .fontColor(item.showVip?"#FFFFD97C":"#FFFFFFFF")
+                  .maxLines(3)
+                  .textOverflow({ overflow: TextOverflow.Ellipsis })
+              }
+              .width('55%')
+              .height(px2vp(160))
+              .alignItems(HorizontalAlign.Start)
+              .justifyContent(FlexAlign.Start)
+              .padding(10)
+              Text(item.floatText)
+                .position({
+                  x: 10,
+                  y: 76
+                })
+                .backgroundColor('#803E3838')
+                .fontColor(0xFFFFFF)
+                .borderRadius(4)
+                .padding({
+                  left: 4,
+                  right: 4
+                })
+              Image(item.cover)
+                .position({
+                  x: -70,
+                  y: 70
+                })
+                .width(40)
+                .aspectRatio(1)
+                .borderRadius(20)
+            }
+            .width('30%')
+            .height(px2vp(160))
+            .borderRadius(10)
+            .backgroundColor('#80988787')
+            .alignItems(VerticalAlign.Top)
           }
         }, (item: string) => item)
       }
+      .scrollBar(BarState.Off)
       .listDirection(Axis.Horizontal) // 排列方向
 
       ForEach(this.children, (item: HippyRenderBaseView) => {

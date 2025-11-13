@@ -7,7 +7,7 @@ import {
   HippyMap,
   HippyEndBatchCallback
 } from 'hippy'
-import { TAG_MediaSeries } from '../../Constant';
+import { TAG_FASTLIST, TAG_MediaSeries } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -16,7 +16,7 @@ import { QTView } from "../../QTTypes"
 import QTRenderBaseView from '../QTRenderBaseView';
 import { HashMap } from '@kit.ArkTS';
 
-import { InitParam, MyComponentParams } from './types/index';
+import { Group, InitParam, MyComponentParams, Template } from './types/index';
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView {
@@ -31,6 +31,62 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   isNativeCreate = false;
   contentTemplate: QTView | null = null;
   listData: Array<MyComponentParams | number | string> = [];
+  initParamTemplate: Template | HippyAny = {
+    titleSize: 0,
+    floatTitleSize: 0,
+    isFree: false,
+    type: '',
+    width: 0,
+    height: 0,
+    focusScale: 0,
+    extra: {
+      imgWidth: 0,
+      imgHeight: 0,
+      textColor: {
+        normal: '',
+        focused: '',
+        selected: '',
+      },
+      cornerBgColor: {
+        orientation: '',
+        cornerRadius: [],
+        color: [],
+        padding: [],
+      }
+    }
+  }
+  initParamGroup: Group = {
+    itemWidth: 0,
+    itemHeight: 0,
+    itemGap: 0,
+    textSize: 0,
+    textColor: {
+      normal: '',
+      focused: '',
+      selected: '',
+    },
+    focusBackground: {
+      orientation: '',
+      cornerRadius: [],
+      color: [],
+      padding: [],
+    },
+    mark: {
+      color: ''
+    }
+  }
+  initParam: InitParam = {
+    initPosition: 0,
+    contentWidth: 0,
+    contentHeight: 0,
+    itemGap: 0,
+    enableGroup: false,
+    groupSize: 0,
+    groupHeight: 0,
+    groupTopMargin: 0,
+    totalCount: 0,
+    pageSize: 0,
+  };
   // private customTemplate: QTView | null = null;
 
   private endBatchCallback: HippyEndBatchCallback | null = null
@@ -111,7 +167,6 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       case "initParam":
         // 图文模式
         let initParam = HRValueUtils.getMap(propValue);
-
         //测试数据：
         let __initParam: InitParam = {
           "initPosition": 0,
@@ -191,20 +246,83 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           "totalCount": 100,
           "pageSize": 10
         };
-
-
         console.log(TAG_MediaSeries, `QTMediaSeriesView ${Array.from(initParam)}`)
-        let template = initParam?.get('template');
-        let type = (template as HippyMap).get('type');
-
         //是否开启快速分组
         let enableGroup = initParam?.get('enableGroup');
         /*
          * type == ’leftRight‘ : 图文
          *
          * */
+        this.initParam = {
+          initPosition: initParam?.get('initPosition') as number,
+          contentWidth: initParam?.get('contentWidth') as number,
+          contentHeight: initParam?.get('contentHeight') as number,
+          itemGap: initParam?.get('itemGap') as number,
+          enableGroup: initParam?.get('enableGroup') as boolean,
+          groupSize: initParam?.get('groupSize') as number,
+          groupHeight: initParam?.get('groupHeight') as number,
+          groupTopMargin: initParam?.get('groupTopMargin') as number,
+          totalCount: initParam?.get('totalCount') as number,
+          pageSize: initParam?.get('pageSize') as number,
+        };
+        let template = initParam?.get('template');
+        let type = (template as HippyMap).get('type');
+        let extra = (template as HippyMap).get('extra');
+        let textColor = (extra as HippyMap).get('textColor');
+        let cornerBgColor = (extra as HippyMap).get('cornerBgColor');
+        this.initParamTemplate = {
+          titleSize: (template as HippyMap).get('titleSize') as number,
+          floatTitleSize: (template as HippyMap).get('floatTitleSize') as number,
+          isFree: (template as HippyMap).get('isFree') as boolean,
+          type: (template as HippyMap).get('type') as string,
+          width: (template as HippyMap).get('width') as number,
+          height: (template as HippyMap).get('height') as number,
+          focusScale: (template as HippyMap).get('focusScale') as number,
+          extra: {
+            imgWidth: (extra as HippyMap).get('imgWidth') as number,
+            imgHeight: (extra as HippyMap).get('imgHeight') as number,
+            textColor: {
+              normal: (textColor as HippyMap).get('normal') as string,
+              focused: (textColor as HippyMap).get('focused') as string,
+              selected: (textColor as HippyMap).get('selected') as string,
+            },
+            cornerBgColor: {
+              orientation: (cornerBgColor as HippyMap).get('orientation') as string,
+              cornerRadius: (cornerBgColor as HippyMap).get('cornerRadius') as number[],
+              color: (cornerBgColor as HippyMap).get('color') as string[],
+              padding: (cornerBgColor as HippyMap).get('padding') as number[],
+            }
+          }
+        }
+        let group = initParam?.get('group');
+        let groupTextColor = (group as HippyMap).get('textColor');
+        let focusBackground = (group as HippyMap).get('focusBackground');
+        let mark = (group as HippyMap).get('mark');
+        this.initParamGroup = {
+          itemWidth: 0,
+          itemHeight: 0,
+          itemGap: 0,
+          textSize:0,
+          textColor: {
+            normal: (groupTextColor as HippyMap).get('normal') as string,
+            focused: (groupTextColor as HippyMap).get('focused') as string,
+            selected: (groupTextColor as HippyMap).get('selected') as string,
+          },
+          focusBackground: {
+            orientation: (focusBackground as HippyMap).get('orientation') as string,
+            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[],
+            color: (focusBackground as HippyMap).get('color') as string[],
+            padding: (focusBackground as HippyMap).get('padding') as number[],
+          },
+          mark: {
+            color: (mark as HippyMap).get('color') as string,
+          }
+        }
+        console.log(TAG_FASTLIST, `QTFastListView template.type :${JSON.stringify(this.initParam)}`)
+        console.log(TAG_FASTLIST, `QTFastListView initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)
+        console.log(TAG_FASTLIST, `QTFastListView initParamGroup :${JSON.stringify(this.initParamGroup)}`)
+        console.log(TAG_FASTLIST, `QTFastListView extra :${JSON.stringify(extra)}`)
         console.log(TAG_MediaSeries, `QTMediaSeriesView template.type :${type} ,${typeof enableGroup},${enableGroup}`)
-
         //this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
       case "groupParam":
@@ -248,8 +366,19 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           })
 
           _listData.push({
-            title: HRValueUtils.getStringValue('title', value as HippyMap, null)!
-            //.....
+            title: HRValueUtils.getStringValue('title', value as HippyMap, null)!,
+            cover: HRValueUtils.getStringValue('cover', value as HippyMap, null)!,
+            floatText: HRValueUtils.getStringValue('floatText', value as HippyMap, null)!,
+            showVip: HRValueUtils.getBooleanValue('showVip', value as HippyMap, false)!,
+            vip: {
+              enable: HRValueUtils.getMap('vip')?.get('enable') as boolean,
+              text: HRValueUtils.getMap('vip')?.get('text') as string,
+            },
+            vipTitleStyle: {
+              width: HRValueUtils.getMap('vipTitleStyle')?.get('width') as number,
+              height: HRValueUtils.getMap('vipTitleStyle')?.get('height') as number,
+            },
+            index2: HRValueUtils.getStringValue('index2', value as HippyMap, null)!,
           });
 
         });

@@ -55,8 +55,8 @@ export interface InitParam {
   groupSize: number;
   groupHeight: number;
   groupTopMargin: number;
-  group: Group;
-  template: Template;
+  group?: Group;
+  template?: Template;
   totalCount: number;
   pageSize: number;
 }
