@@ -102,9 +102,9 @@ export struct QTMediaSeries {
                     Text(item.title)
                       .fontSize(px2vp(this.renderView.initParamGroup.textSize))
                       .textAlign(TextAlign.Center)
+                      .fontFamily('HarmonyOS Sans')
                       .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :
                       this.renderView.initParamGroup.textColor.normal)
-                      .margin(px2vp(this.renderView.initParamGroup.itemGap))
                       .onClick(() => {
                         // this.listChange(index, true);
                       })

@@ -58,7 +58,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     }
   }
   initParamGroup: Group = {
-    itemWidth: 85,
+    itemWidth: 90,
     itemHeight: 46,
     itemGap: 50,
     textSize: 30,
@@ -323,10 +323,10 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let focusBackground = (group as HippyMap).get('focusBackground');
         let mark = (group as HippyMap).get('mark');
         this.initParamGroup = {
-          itemWidth: (groupTextColor as HippyMap).get('itemWidth') as number | 85,
-          itemHeight: (groupTextColor as HippyMap).get('itemHeight') as number | 46,
-          itemGap: (groupTextColor as HippyMap).get('itemGap') as number | 50,
-          textSize: (groupTextColor as HippyMap).get('textSize') as number | 30,
+          itemWidth: (group as HippyMap).get('itemWidth') as number | 90,
+          itemHeight: (group as HippyMap).get('itemHeight') as number | 46,
+          itemGap: (group as HippyMap).get('itemGap') as number | 50,
+          textSize: (group as HippyMap).get('textSize') as number | 30,
           textColor: {
             normal: (groupTextColor as HippyMap).get('normal') as string | '#80FFFFFF',
             focused: (groupTextColor as HippyMap).get('focused') as string | '#603314',
@@ -351,6 +351,8 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         console.log(TAG_FASTLIST, `QTFastListView initParamGroup :${JSON.stringify(this.initParamGroup)}`)
         console.log(TAG_FASTLIST, `QTFastListView extra :${JSON.stringify(extra)}`)
         console.log(TAG_FASTLIST, `QTFastListView generatePageData :${JSON.stringify(this.generatePageData)}`)
+        console.log(TAG_FASTLIST, `QTFastListView enableGroup :${this.initParam.enableGroup}`)
+
         //this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
       case "groupParam":
