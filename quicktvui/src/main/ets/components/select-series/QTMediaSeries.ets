@@ -29,6 +29,7 @@ export struct QTMediaSeries {
     params.set('tag', this.renderView.tag)
     event.send(this.renderView.ctx, this.renderView.tag, params)
     console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
+    this.getUIContext()?.getFocusController().activate(true)
   }
 
   build() {
@@ -41,6 +42,10 @@ export struct QTMediaSeries {
                 Image(item.cover)
                   .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
                   .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
+                  .focusable(true)
+                  .onFocus(() => {
+                  })
+                  .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
                   Text(item.title)
                     .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
@@ -85,16 +90,16 @@ export struct QTMediaSeries {
               .backgroundColor('#80988787')
               .alignItems(VerticalAlign.Top)
             }
-            .onClick(()=>{
+            .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
               let params = new Map<string, number>()
-              params.set('position',index)
+              params.set('position', index)
               event.send(this.renderView.ctx, this.renderView.tag, params)
             })
-            .onFocus(()=>{
+            .onFocus(() => {
               let event = new HippyViewEvent("onItemFocused")
               let params = new Map<string, number>()
-              params.set('position',index)
+              params.set('position', index)
               event.send(this.renderView.ctx, this.renderView.tag, params)
             })
           }, (item: string) => item)
@@ -115,50 +120,49 @@ export struct QTMediaSeries {
 
         if (this.renderView.initParam.enableGroup) {
 
-            List({ space: px2vp(this.renderView.initParamGroup.itemGap), scroller: this.renderView.navTitleScroller }) {
-              ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
-                ListItem() {
-                  Column() {
-                    Text(item.title)
-                      .fontSize(px2vp(this.renderView.initParamGroup.textSize))
-                      .textAlign(TextAlign.Center)
-                      .fontFamily('HarmonyOS Sans')
-                      .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :
-                      this.renderView.initParamGroup.textColor.normal)
-                      .onClick(() => {
-                        // this.listChange(index, true);
-                      })
-                      .onFocus(() => {
-                        // this.listChange(index, true);
-                      })
-                      .focusable(true)
-                    // .focusBox({
-                    //   strokeColor: ColorMetrics.rgba(0, 0, 0, 0),
-                    // })
-                    Text(' ') {
-                    }
-                    .width(24)
-                    .height(3)
-                    .backgroundColor('#ffffff')
-                    .borderRadius(2)
-                    .margin({ top: 4 })
-                    .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
+          List({ space: px2vp(this.renderView.initParamGroup.itemGap), scroller: this.renderView.navTitleScroller }) {
+            ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
+              ListItem() {
+                Column() {
+                  Text(item.title)
+                    .fontSize(px2vp(this.renderView.initParamGroup.textSize))
+                    .textAlign(TextAlign.Center)
+                    .fontFamily('HarmonyOS Sans')
+                    .focusable(true)
+                    .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :
+                    this.renderView.initParamGroup.textColor.normal)
+                    .onClick(() => {
+                      // this.listChange(index, true);
+                    })
+                    .onFocus(() => {
+                      // this.listChange(index, true);
+                    })
+                  Text(' ') {
                   }
-                  .width(px2vp(this.renderView.initParamGroup.itemWidth))
-                  .height(px2vp(this.renderView.initParamGroup.itemHeight))
+                  .width(24)
+                  .height(3)
+                  .backgroundColor('#ffffff')
+                  .borderRadius(2)
+                  .margin({ top: 4 })
+                  .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
                 }
-                .onFocus(()=>{
-                  let event = new HippyViewEvent("onGroupItemFocused")
-                  let params = new Map<string, number>()
-                  params.set('position',index)
-                  event.send(this.renderView.ctx, this.renderView.tag, params)
-                })
-              }, (item: GeneratePageData) => JSON.stringify(item.title))
-            }
-            .height(px2vp(this.renderView.initParamGroup.itemHeight))
-            .scrollBar(BarState.Off)
-            .listDirection(Axis.Horizontal)
-
+                .width(px2vp(this.renderView.initParamGroup.itemWidth))
+                .height(px2vp(this.renderView.initParamGroup.itemHeight))
+              }
+              .onFocus(() => {
+                let event = new HippyViewEvent("onGroupItemFocused")
+                let params = new Map<string, number>()
+                params.set('position', index)
+                event.send(this.renderView.ctx, this.renderView.tag, params)
+              })
+            }, (item: GeneratePageData) => JSON.stringify(item.title))
+          }
+          .height(px2vp(this.renderView.initParamGroup.itemHeight))
+          .scrollBar(BarState.Off)
+          .listDirection(Axis.Horizontal)
+          .margin({
+            top: px2vp(this.renderView.initParamGroup.itemGap)
+          })
         }
 
         ForEach(this.children, (item: HippyRenderBaseView) => {
