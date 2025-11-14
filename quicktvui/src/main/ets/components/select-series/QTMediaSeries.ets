@@ -140,8 +140,24 @@ export struct QTMediaSeries {
                     .focusable(true)
                     .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :
                     this.renderView.initParamGroup.textColor.normal)
+                    .onClick(() => {
+                      // this.listChange(index, true);
+                    })
                     .onFocus(() => {
                       // this.listChange(index, true);
+                    })
+                    .backgroundColor('#ccc')
+                    .borderRadius({
+                      topLeft: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[0]),
+                      topRight: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[1]),
+                      bottomLeft: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[2]),
+                      bottomRight: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[3]),
+                    })
+                    .padding({
+                      left: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[0]),
+                      right: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[0]),
+                      top: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
+                      bottom: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
                     })
                   Text(' ') {
                   }
@@ -152,8 +168,7 @@ export struct QTMediaSeries {
                   .margin({ top: 4 })
                   .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
                 }
-
-              .width(px2vp(this.renderView.initParamGroup.itemWidth))
+                // .width(px2vp(this.renderView.initParamGroup.itemWidth))
                 .height(px2vp(this.renderView.initParamGroup.itemHeight))
               }
 
