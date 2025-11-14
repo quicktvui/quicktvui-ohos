@@ -16,7 +16,7 @@ import { QTView } from "../../QTTypes"
 import QTRenderBaseView from '../QTRenderBaseView';
 import { HashMap } from '@kit.ArkTS';
 
-import { Group, InitParam, MyComponentParams, GeneratePageData, Template } from './types/index';
+import { Group, InitParam, MyComponentParams, GeneratePageData, Template, MyDataSource } from './types/index';
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView {
@@ -30,7 +30,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   autofocusPosition: number = -1;
   isNativeCreate = false;
   contentTemplate: QTView | null = null;
-  listData: Array<MyComponentParams | number | string> = [];
+  listData: MyDataSource = new MyDataSource([]);
   generatePageData: GeneratePageData[] = [];
   currentTitleId: number = 0;
   navTitleScroller: Scroller = new Scroller();
@@ -58,7 +58,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     }
   }
   initParamGroup: Group = {
-    itemWidth: 90,
+    itemWidth: 105,
     itemHeight: 46,
     itemGap: 50,
     textSize: 30,
@@ -323,7 +323,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let focusBackground = (group as HippyMap).get('focusBackground');
         let mark = (group as HippyMap).get('mark');
         this.initParamGroup = {
-          itemWidth: (group as HippyMap).get('itemWidth') as number | 90,
+          itemWidth: (group as HippyMap).get('itemWidth') as number | 105,
           itemHeight: (group as HippyMap).get('itemHeight') as number | 46,
           itemGap: (group as HippyMap).get('itemGap') as number | 50,
           textSize: (group as HippyMap).get('textSize') as number | 30,
@@ -387,7 +387,6 @@ export class QTMediaSeriesView extends QTRenderBaseView {
 
         console.log(TAG_MediaSeries, `QTMediaSeriesView:page:${method},value:${page}`)
 
-        let _listData = this.listData.slice();
         data.forEach((value: HippyAny, keyA: string) => {
           console.log(TAG_MediaSeries, `QTMediaSeriesView:page,key:${keyA}`);
 
@@ -395,7 +394,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             console.log(TAG_MediaSeries, `QTMediaSeriesView:page,key:${keyA}-${keyB}`, eachValue);
           })
 
-          _listData.push({
+          this.listData.addData({
             title: HRValueUtils.getStringValue('title', value as HippyMap, null)!,
             cover: HRValueUtils.getStringValue('cover', value as HippyMap, null)!,
             floatText: HRValueUtils.getStringValue('floatText', value as HippyMap, null)!,
@@ -410,9 +409,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             },
             index2: HRValueUtils.getStringValue('index2', value as HippyMap, null)!,
           });
-
-        });
-        this.listData = _listData;
+        })
 
         break;
 
