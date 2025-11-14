@@ -80,3 +80,8 @@ export interface MyComponentParams {
   vipTitleStyle?: vipTitleStyle;
   index2?: string;
 };
+
+export interface GeneratePageData {
+  list: number[];
+  title: string;
+};

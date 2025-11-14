@@ -98,9 +98,8 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   }
 
   /*
-   *
    * let pageSize: number = 10;
-    let totalCount: number = 100;
+   * let totalCount: number = 100;
    * */
   getLRDataByPage(page: number, pageSize: number, totalSize: number) {
     let result: Array<MyComponentParams> = [];
@@ -132,6 +131,10 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     return result;
   }
 
+  /*
+   * let pageSize: number = 10;
+   * let totalCount: number = 100;
+   * */
   generatePageRanges(totalCount: number, pageSize: number): GeneratePageData[] {
     const result: GeneratePageData[] = [];
     const totalPages = Math.ceil(totalCount / pageSize);
@@ -143,9 +146,13 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       for (let i = start; i <= end; i++) {
         list.push(i);
       }
+      // 格式化标题，将1-9格式化为01-09
+      const formatNumber = (num: number): string => {
+        return num < 10 ? `0${num}` : `${num}`;
+      };
       result.push({
         list,
-        title: `${start}-${end}`
+        title: `${formatNumber(start)}-${formatNumber(end)}`
       });
     }
     return result;
