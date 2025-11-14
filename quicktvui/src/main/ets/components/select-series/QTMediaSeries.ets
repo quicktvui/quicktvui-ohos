@@ -20,18 +20,15 @@ export struct QTMediaSeries {
   @ObjectLink renderView: QTMediaSeriesView
   @ObjectLink children: HippyObservedArray<QTView>
   test: boolean = false
+  pageNum: number = 0
 
   aboutToAppear(): void {
-
-    setTimeout(() => {
-      let event = new HippyViewEvent("onLoadPageData")
-      let params = new Map<string, number>()
-      params.set('page', 0)
-      params.set('tag', this.renderView.tag)
-      event.send(this.renderView.ctx, this.renderView.tag, params)
-      console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
-    }, 0)
-
+    let event = new HippyViewEvent("onLoadPageData")
+    let params = new Map<string, number>()
+    params.set('page', this.pageNum++)
+    params.set('tag', this.renderView.tag)
+    event.send(this.renderView.ctx, this.renderView.tag, params)
+    console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
   }
 
   build() {
@@ -90,11 +87,23 @@ export struct QTMediaSeries {
             }
           }, (item: string) => item)
         }
-        .scrollBar(BarState.Off)
+        .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
+        .height(px2vp(this.renderView.initParamTemplate.height))
+        .onReachEnd(()=>{
+          console.log(TAG_MediaSeries, `HippyViewEvent pageNum pageSize :${this.pageNum} - ${this.renderView.initParam.pageSize}`)
+          if(this.renderView.initParam.totalCount<=this.pageNum*this.renderView.initParam.pageSize){
+            return
+          }
+          let event = new HippyViewEvent("onLoadPageData")
+          let params = new Map<string, number>()
+          params.set('page', this.pageNum++)
+          params.set('tag', this.renderView.tag)
+          event.send(this.renderView.ctx, this.renderView.tag, params)
+        })
 
         if (this.renderView.initParam.enableGroup) {
-          Column() {
+
             List({ space: px2vp(this.renderView.initParamGroup.itemGap), scroller: this.renderView.navTitleScroller }) {
               ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
                 ListItem() {
@@ -129,17 +138,16 @@ export struct QTMediaSeries {
                 }
               }, (item: GeneratePageData) => JSON.stringify(item.title))
             }
+            .height(px2vp(this.renderView.initParamGroup.itemHeight))
             .scrollBar(BarState.Off)
             .listDirection(Axis.Horizontal)
-          }
-          .alignItems(HorizontalAlign.Start)
-          .width('100%')
+
         }
 
         ForEach(this.children, (item: HippyRenderBaseView) => {
           buildHippyRenderView(item, null)
         }, (item: HippyRenderBaseView) => item.tag + '')
-      }
+      }.alignItems(HorizontalAlign.Start)
     }
     .applyRenderViewBaseAttr(this.renderView)
   }
