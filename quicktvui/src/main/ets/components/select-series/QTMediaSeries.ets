@@ -85,14 +85,25 @@ export struct QTMediaSeries {
               .backgroundColor('#80988787')
               .alignItems(VerticalAlign.Top)
             }
+            .onClick(()=>{
+              let event = new HippyViewEvent("onItemClick")
+              let params = new Map<string, number>()
+              params.set('position',index)
+              event.send(this.renderView.ctx, this.renderView.tag, params)
+            })
+            .onFocus(()=>{
+              let event = new HippyViewEvent("onItemFocused")
+              let params = new Map<string, number>()
+              params.set('position',index)
+              event.send(this.renderView.ctx, this.renderView.tag, params)
+            })
           }, (item: string) => item)
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
         .height(px2vp(this.renderView.initParamTemplate.height))
-        .onReachEnd(()=>{
-          console.log(TAG_MediaSeries, `HippyViewEvent pageNum pageSize :${this.pageNum} - ${this.renderView.initParam.pageSize}`)
-          if(this.renderView.initParam.totalCount<=this.pageNum*this.renderView.initParam.pageSize){
+        .onReachEnd(() => {
+          if (this.renderView.initParam.totalCount <= this.pageNum * this.renderView.initParam.pageSize) {
             return
           }
           let event = new HippyViewEvent("onLoadPageData")
@@ -136,6 +147,12 @@ export struct QTMediaSeries {
                   .width(px2vp(this.renderView.initParamGroup.itemWidth))
                   .height(px2vp(this.renderView.initParamGroup.itemHeight))
                 }
+                .onFocus(()=>{
+                  let event = new HippyViewEvent("onGroupItemFocused")
+                  let params = new Map<string, number>()
+                  params.set('position',index)
+                  event.send(this.renderView.ctx, this.renderView.tag, params)
+                })
               }, (item: GeneratePageData) => JSON.stringify(item.title))
             }
             .height(px2vp(this.renderView.initParamGroup.itemHeight))
