@@ -37,8 +37,8 @@ export struct QTMediaSeries {
   build() {
     Stack() {
       Column() {
-        List({ space: px2vp(this.renderView.initParam.itemGap), initialIndex: 0 }) {
-          ForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
+        List({ space: px2vp(this.renderView.initParam.itemGap), initialIndex: 0, scroller: this.renderView.scroller }) {
+          LazyForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
             ListItem() {
               Row() {
                 Image(item.cover)

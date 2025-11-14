@@ -85,3 +85,59 @@ export interface GeneratePageData {
   list: number[];
   title: string;
 };
+
+export class MyDataSource implements IDataSource {
+  private dataArray: MyComponentParams[] = [];
+  private listeners: DataChangeListener[] = [];
+
+  constructor(data: MyComponentParams[]) {
+    this.dataArray = data;
+  }
+
+  totalCount(): number {
+    return this.dataArray.length;
+  }
+
+  getData(index: number): MyComponentParams {
+    return this.dataArray[index];
+  }
+
+  registerDataChangeListener(listener: DataChangeListener): void {
+    if (this.listeners.indexOf(listener) < 0) {
+      this.listeners.push(listener);
+    }
+  }
+
+  unregisterDataChangeListener(listener: DataChangeListener): void {
+    const pos = this.listeners.indexOf(listener);
+    if (pos >= 0) {
+      this.listeners.splice(pos, 1);
+    }
+  }
+
+  // 数据更新方法
+  addData(item: MyComponentParams): void {
+    this.dataArray.push(item);
+    this.notifyDataChange();
+  }
+
+  removeData(index: number): void {
+    if (index >= 0 && index < this.dataArray.length) {
+      this.dataArray.splice(index, 1);
+      this.notifyDataChange();
+    }
+  }
+
+  updateData(index: number, item: MyComponentParams): void {
+    if (index >= 0 && index < this.dataArray.length) {
+      this.dataArray[index] = item;
+      this.notifyDataChange();
+    }
+  }
+
+  private notifyDataChange(): void {
+    this.listeners.forEach(listener => {
+      listener.onDataReloaded();
+    });
+  }
+}
