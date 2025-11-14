@@ -117,6 +117,15 @@ export struct QTMediaSeries {
           params.set('tag', this.renderView.tag)
           event.send(this.renderView.ctx, this.renderView.tag, params)
         })
+        .onScrollIndex((_, __, index) => {
+          if (!this.renderView.initParam.enableGroup) {
+            return
+          }
+
+          this.renderView.currentTitleId = Math.floor(index / this.renderView.initParam.groupSize)
+        })
+        //.backgroundColor(Color.Orange)
+
 
         if (this.renderView.initParam.enableGroup) {
 
@@ -131,9 +140,6 @@ export struct QTMediaSeries {
                     .focusable(true)
                     .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :
                     this.renderView.initParamGroup.textColor.normal)
-                    .onClick(() => {
-                      // this.listChange(index, true);
-                    })
                     .onFocus(() => {
                       // this.listChange(index, true);
                     })
@@ -146,9 +152,28 @@ export struct QTMediaSeries {
                   .margin({ top: 4 })
                   .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
                 }
-                .width(px2vp(this.renderView.initParamGroup.itemWidth))
+
+              .width(px2vp(this.renderView.initParamGroup.itemWidth))
                 .height(px2vp(this.renderView.initParamGroup.itemHeight))
               }
+
+              .onClick(() => {
+                if (this.renderView.currentTitleId === index) {
+                  return
+                }
+                this.renderView.currentTitleId = index
+                let _itv = setInterval(() => {
+                  if (this.renderView.listData.totalCount() <= index * this.renderView.initParam.groupSize) {
+                    console.log(TAG_MediaSeries, `QTMediaSeriesView:setInterval: check listData for scrollToIndex`)
+                    this.renderView.scroller.scrollToIndex(this.renderView.listData.totalCount() - 1)
+                  } else {
+                    clearInterval(_itv)
+                    //console.log(TAG_MediaSeries, `QTMediaSeriesView:setInterval:${this.renderView.listData.totalCount()} - ${index} - ${index*this.renderView.initParam.groupSize}}`);
+                    this.renderView.scroller.scrollToIndex(index * this.renderView.initParam.groupSize)
+                  }
+                }, 100)
+              })
+
               .onFocus(() => {
                 let event = new HippyViewEvent("onGroupItemFocused")
                 let params = new Map<string, number>()
