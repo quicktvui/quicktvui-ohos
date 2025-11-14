@@ -132,15 +132,15 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   }
 
   /*
-   * let pageSize: number = 10;
+   * let groupSize: number = 20;
    * let totalCount: number = 100;
    * */
-  generatePageRanges(totalCount: number, pageSize: number): GeneratePageData[] {
+  generatePageRanges(totalCount: number, groupSize: number): GeneratePageData[] {
     const result: GeneratePageData[] = [];
-    const totalPages = Math.ceil(totalCount / pageSize);
+    const totalPages = Math.ceil(totalCount / groupSize);
     for (let page = 0; page < totalPages; page++) {
-      const start = page * pageSize + 1;
-      const end = Math.min((page + 1) * pageSize, totalCount);
+      const start = page * groupSize + 1;
+      const end = Math.min((page + 1) * groupSize, totalCount);
       // 生成当前页的数字列表
       const list: number[] = [];
       for (let i = start; i <= end; i++) {
@@ -344,7 +344,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         }
         // 是否开启快速分组
         if(this.initParam.enableGroup) {
-          this.generatePageData = this.generatePageRanges(this.initParam.totalCount, this.initParam.pageSize);
+          this.generatePageData = this.generatePageRanges(this.initParam.totalCount, this.initParam.groupSize);
         }
         console.log(TAG_FASTLIST, `QTFastListView template.type :${JSON.stringify(this.initParam)}`)
         console.log(TAG_FASTLIST, `QTFastListView initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)

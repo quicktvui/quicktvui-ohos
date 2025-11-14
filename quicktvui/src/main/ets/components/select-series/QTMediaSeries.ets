@@ -93,46 +93,48 @@ export struct QTMediaSeries {
         .scrollBar(BarState.Off)
         .listDirection(Axis.Horizontal) // 排列方向
 
-
-        Column() {
-          List({ scroller: this.renderView.navTitleScroller }) {
-            ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
-              ListItem() {
-                Column() {
-                  Text(item.title)
-                    .fontSize(this.renderView.currentTitleId === index ? 16 : 14)
-                    .textAlign(TextAlign.Center)
-                    .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :'#f5f5f5')
-                    .opacity(this.renderView.currentTitleId === index ? 1 : 0.6)
-                    .fontWeight(this.renderView.currentTitleId === index ? FontWeight.Bold : FontWeight.Normal)
-                    .onClick(() => {
-                      // this.listChange(index, true);
-                    })
-                    .onFocus(() => {
-                      // this.listChange(index, true);
-                    })
-                  // .focusBox({
-                  //   strokeColor: ColorMetrics.rgba(0, 0, 0, 0),
-                  // })
-                  Text(' ') {
+        if (this.renderView.initParam.enableGroup) {
+          Column() {
+            List({ space: px2vp(this.renderView.initParamGroup.itemGap), scroller: this.renderView.navTitleScroller }) {
+              ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
+                ListItem() {
+                  Column() {
+                    Text(item.title)
+                      .fontSize(px2vp(this.renderView.initParamGroup.textSize))
+                      .textAlign(TextAlign.Center)
+                      .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :
+                      this.renderView.initParamGroup.textColor.normal)
+                      .margin(px2vp(this.renderView.initParamGroup.itemGap))
+                      .onClick(() => {
+                        // this.listChange(index, true);
+                      })
+                      .onFocus(() => {
+                        // this.listChange(index, true);
+                      })
+                      .focusable(true)
+                    // .focusBox({
+                    //   strokeColor: ColorMetrics.rgba(0, 0, 0, 0),
+                    // })
+                    Text(' ') {
+                    }
+                    .width(24)
+                    .height(3)
+                    .backgroundColor('#ffffff')
+                    .borderRadius(2)
+                    .margin({ top: 4 })
+                    .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
                   }
-                  .width(30)
-                  .height(3)
-                  .backgroundColor('#ffffff')
-                  .borderRadius(2)
-                  .margin({ top: 4 })
-                  .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
+                  .width(px2vp(this.renderView.initParamGroup.itemWidth))
+                  .height(px2vp(this.renderView.initParamGroup.itemHeight))
                 }
-                .width(60)
-                .height(56)
-              }
-            }, (item: GeneratePageData) => JSON.stringify(item.title))
+              }, (item: GeneratePageData) => JSON.stringify(item.title))
+            }
+            .scrollBar(BarState.Off)
+            .listDirection(Axis.Horizontal)
           }
-          .scrollBar(BarState.Off)
-          .listDirection(Axis.Horizontal)
+          .alignItems(HorizontalAlign.Start)
+          .width('100%')
         }
-        .alignItems(HorizontalAlign.Start)
-        .width('100%')
 
         ForEach(this.children, (item: HippyRenderBaseView) => {
           buildHippyRenderView(item, null)
