@@ -108,12 +108,13 @@ export struct QTMediaSeries {
               this.renderView.focusStr = item.key;
             })
             .onFocus(() => {
-              console.log(TAG_MediaSeries, 'onFocus ListItem', item.key)
+              console.log(TAG_MediaSeries, 'onFocus ListItem', item.key, this.renderView.currentTitleId)
               let event = new HippyViewEvent("onItemFocused")
               let params = new Map<string, number>()
               params.set('position', index)
               event.send(this.renderView.ctx, this.renderView.tag, params)
               this.renderView.focusStr = item.key;
+              this.renderView.isSelectedButton = true;
             })
           }, (item: string) => item)
         }
@@ -158,7 +159,7 @@ export struct QTMediaSeries {
                     .focusable(true)
                     .fontColor(this.renderView.focusStr == item.key ?
                     Color.Black :
-                      this.renderView.currentTitleId === index ? Color.White :
+                      (this.renderView.currentTitleId === index && this.renderView.isSelectedButton) ? Color.White :
                       this.renderView.initParamGroup.textColor.normal)
                     .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                     .backgroundColor(this.renderView.focusStr == item.key ? Color.White : Color.Transparent)
@@ -179,13 +180,15 @@ export struct QTMediaSeries {
                     .onFocus(() => {
                       console.log(TAG_MediaSeries, 'onFocus Text', item.key);
                       this.renderView.focusStr = item.key;
+                      this.renderView.isSelectedButton = false;
                     })
                   Text(' ')
                     .width(px2vp(40))
                     .height(px2vp(5))
                     .backgroundColor(Color.White)
                     .borderRadius(6)
-                    .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
+                    .visibility((this.renderView.currentTitleId === index && this.renderView.isSelectedButton) ?
+                    Visibility.Visible : Visibility.Hidden)
                 }
                 .height(px2vp(this.renderView.initParamGroup.itemHeight))
               }
