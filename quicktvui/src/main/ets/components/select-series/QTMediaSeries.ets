@@ -44,12 +44,7 @@ export struct QTMediaSeries {
                   .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
                   .focusable(true)
                   .defaultFocus(this.renderView.focusStr == item.key)
-                  .onFocus(() => {
-                    console.log(TAG_MediaSeries, 'onFocus Image', item.key);
-                    this.renderView.focusStr = item.key;
-                    // this.renderView.focusIndex++
-                  })
-                // .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
+                  .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
                   Text(item.title)
                     .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
@@ -110,18 +105,25 @@ export struct QTMediaSeries {
               let params = new Map<string, number>()
               params.set('position', index)
               event.send(this.renderView.ctx, this.renderView.tag, params)
+              this.renderView.focusStr = item.key;
             })
             .onFocus(() => {
+              console.log(TAG_MediaSeries, 'onFocus ListItem', item.key)
               let event = new HippyViewEvent("onItemFocused")
               let params = new Map<string, number>()
               params.set('position', index)
               event.send(this.renderView.ctx, this.renderView.tag, params)
+              this.renderView.focusStr = item.key;
             })
           }, (item: string) => item)
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
         .height(px2vp(this.renderView.initParamTemplate.height))
+        .padding({
+          left: px2vp(60),
+          right: px2vp(60),
+        })
         .onReachEnd(() => {
           if (this.renderView.initParam.totalCount <= this.pageNum * this.renderView.initParam.pageSize) {
             return
