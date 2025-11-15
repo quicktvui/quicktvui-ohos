@@ -43,9 +43,13 @@ export struct QTMediaSeries {
                   .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
                   .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
                   .focusable(true)
+                  .defaultFocus(this.renderView.focusStr == item.key)
                   .onFocus(() => {
+                    console.log(TAG_MediaSeries, 'onFocus Image', item.key)
+                    this.renderView.focusStr = item.key
+                    this.renderView.focusIndex++
                   })
-                  .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
+                // .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
                   Text(item.title)
                     .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
@@ -89,6 +93,17 @@ export struct QTMediaSeries {
               .height(px2vp(this.renderView.initParamTemplate.height))
               .backgroundColor('#80988787')
               .alignItems(VerticalAlign.Top)
+              .border({
+                width: 2,
+                color: this.renderView.focusStr == item.key ? Color.White : Color.Transparent,
+                style: BorderStyle.Solid,
+                radius: "4lpx"
+              })
+
+              // .scale({
+              //   x: this.renderView.focusStr == item.key ? 1.1 : 1,
+              //   y: this.renderView.focusStr == item.key ? 1.1 : 1,
+              // })
             }
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
@@ -124,12 +139,13 @@ export struct QTMediaSeries {
 
           this.renderView.currentTitleId = Math.floor(index / this.renderView.initParam.groupSize)
         })
+
         //.backgroundColor(Color.Orange)
 
 
         if (this.renderView.initParam.enableGroup) {
 
-          List({ space: px2vp(this.renderView.initParamGroup.itemGap), scroller: this.renderView.navTitleScroller }) {
+          List({ scroller: this.renderView.navTitleScroller }) {
             ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
               ListItem() {
                 Column() {
@@ -138,15 +154,12 @@ export struct QTMediaSeries {
                     .textAlign(TextAlign.Center)
                     .fontFamily('HarmonyOS Sans')
                     .focusable(true)
-                    .fontColor(this.renderView.currentTitleId === index ? '#FFFFFF' :
-                    this.renderView.initParamGroup.textColor.normal)
-                    .onClick(() => {
-                      // this.listChange(index, true);
-                    })
-                    .onFocus(() => {
-                      // this.listChange(index, true);
-                    })
-                    .backgroundColor('#ccc')
+                    .fontColor(this.renderView.focusStr == item.key ?
+                    Color.Black :
+                      this.renderView.currentTitleId === index ? Color.White :
+                      this.renderView.initParamGroup.textColor.normal)
+                    .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
+                    .backgroundColor(this.renderView.focusStr == item.key ? Color.White : Color.Transparent)
                     .borderRadius({
                       topLeft: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[0]),
                       topRight: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[1]),
@@ -159,19 +172,21 @@ export struct QTMediaSeries {
                       top: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
                       bottom: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
                     })
-                  Text(' ') {
-                  }
-                  .width(24)
-                  .height(3)
-                  .backgroundColor('#ffffff')
-                  .borderRadius(2)
-                  .margin({ top: 4 })
-                  .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
+                    .onClick(() => {
+                    })
+                    .onFocus(() => {
+                      console.log(TAG_MediaSeries, 'onFocus Text', item.key)
+                      this.renderView.focusStr = item.key
+                    })
+                  Text(' ')
+                    .width(px2vp(40))
+                    .height(px2vp(5))
+                    .backgroundColor(Color.White)
+                    .borderRadius(6)
+                    .visibility(this.renderView.currentTitleId === index ? Visibility.Visible : Visibility.Hidden)
                 }
-                // .width(px2vp(this.renderView.initParamGroup.itemWidth))
                 .height(px2vp(this.renderView.initParamGroup.itemHeight))
               }
-
               .onClick(() => {
                 if (this.renderView.currentTitleId === index) {
                   return
@@ -197,11 +212,15 @@ export struct QTMediaSeries {
               })
             }, (item: GeneratePageData) => JSON.stringify(item.title))
           }
-          .height(px2vp(this.renderView.initParamGroup.itemHeight))
+          // .height(px2vp(this.renderView.initParamGroup.itemHeight))
           .scrollBar(BarState.Off)
           .listDirection(Axis.Horizontal)
           .margin({
             top: px2vp(this.renderView.initParamGroup.itemGap)
+          })
+          .padding({
+            left: px2vp(60),
+            right: px2vp(60),
           })
         }
 

@@ -34,6 +34,8 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   generatePageData: GeneratePageData[] = [];
   currentTitleId: number = 0;
   navTitleScroller: Scroller = new Scroller();
+  focusStr: string | undefined = undefined;
+  focusIndex: number = 0;
   initParamTemplate: Template = {
     titleSize: 28,
     floatTitleSize: 20,
@@ -151,11 +153,18 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         return num < 10 ? `0${num}` : `${num}`;
       };
       result.push({
+        key:  this.getRandomString(),
         list,
-        title: `${formatNumber(start)}-${formatNumber(end)}`
+        title: `${formatNumber(start)}-${formatNumber(end)}`,
       });
     }
     return result;
+  }
+
+  getRandomString() {
+    let date = new Date().getTime().toString();
+    let data = Math.floor(Math.random() * 9000) + 1000;
+    return `${date}${data}`;
   }
 
   exeScroll() {
@@ -395,6 +404,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           })
 
           this.listData.addData({
+            key: this.getRandomString(),
             title: HRValueUtils.getStringValue('title', value as HippyMap, null)!,
             cover: HRValueUtils.getStringValue('cover', value as HippyMap, null)!,
             floatText: HRValueUtils.getStringValue('floatText', value as HippyMap, null)!,
@@ -410,7 +420,14 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             index2: HRValueUtils.getStringValue('index2', value as HippyMap, null)!,
           });
         })
-
+        console.log(TAG_FASTLIST, `QTFastListView listData :${JSON.stringify(this.listData)}`)
+        if(!AppStorage.get('focus')) {
+          AppStorage.setOrCreate('focus', this.listData.getData(0)?.key)
+        }
+        setTimeout(() => {
+          this.focusStr = AppStorage.get('focus');
+        }, 400)
+        console.log(TAG_FASTLIST, `QTFastListView focusStr :${this.focusStr}`)
         break;
 
     //设置选中的item

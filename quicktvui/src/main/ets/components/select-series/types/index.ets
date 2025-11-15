@@ -72,6 +72,7 @@ export interface vipTitleStyle {
 }
 
 export interface MyComponentParams {
+  key?: string;
   title?: string;
   cover?: string;
   showVip?: boolean;
@@ -82,6 +83,7 @@ export interface MyComponentParams {
 };
 
 export interface GeneratePageData {
+  key: string;
   list: number[];
   title: string;
 };
