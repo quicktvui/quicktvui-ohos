@@ -35,7 +35,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   currentTitleId: number = 0;
   navTitleScroller: Scroller = new Scroller();
   focusStr: string | undefined = undefined;
-  focusIndex: number = 0;
+  // focusIndex: number = 0;
   initParamTemplate: Template = {
     titleSize: 28,
     floatTitleSize: 20,

@@ -45,9 +45,9 @@ export struct QTMediaSeries {
                   .focusable(true)
                   .defaultFocus(this.renderView.focusStr == item.key)
                   .onFocus(() => {
-                    console.log(TAG_MediaSeries, 'onFocus Image', item.key)
-                    this.renderView.focusStr = item.key
-                    this.renderView.focusIndex++
+                    console.log(TAG_MediaSeries, 'onFocus Image', item.key);
+                    this.renderView.focusStr = item.key;
+                    // this.renderView.focusIndex++
                   })
                 // .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
@@ -175,8 +175,8 @@ export struct QTMediaSeries {
                     .onClick(() => {
                     })
                     .onFocus(() => {
-                      console.log(TAG_MediaSeries, 'onFocus Text', item.key)
-                      this.renderView.focusStr = item.key
+                      console.log(TAG_MediaSeries, 'onFocus Text', item.key);
+                      this.renderView.focusStr = item.key;
                     })
                   Text(' ')
                     .width(px2vp(40))
@@ -199,7 +199,7 @@ export struct QTMediaSeries {
                   } else {
                     clearInterval(_itv)
                     //console.log(TAG_MediaSeries, `QTMediaSeriesView:setInterval:${this.renderView.listData.totalCount()} - ${index} - ${index*this.renderView.initParam.groupSize}}`);
-                    this.renderView.scroller.scrollToIndex(index * this.renderView.initParam.groupSize)
+                    this.renderView.scroller.scrollToIndex(index * this.renderView.initParam.groupSize);
                   }
                 }, 100)
               })
