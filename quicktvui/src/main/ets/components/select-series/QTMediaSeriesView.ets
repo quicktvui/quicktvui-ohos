@@ -7,7 +7,7 @@ import {
   HippyMap,
   HippyEndBatchCallback
 } from 'hippy'
-import { TAG_FASTLIST, TAG_MediaSeries } from '../../Constant';
+import { TAG_MediaSeries } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -79,12 +79,12 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       color: '#FFD97C'
     }
   }
+  enableGroup: boolean = true;
   initParam: InitParam = {
     initPosition: 0,
     contentWidth: 1740,
     contentHeight: 160,
     itemGap: 36,
-    enableGroup: true,
     groupSize: 20,
     groupHeight: 46,
     groupTopMargin: 24,
@@ -143,21 +143,16 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     for (let page = 0; page < totalPages; page++) {
       const start = page * groupSize + 1;
       const end = Math.min((page + 1) * groupSize, totalCount);
-      // 生成当前页的数字列表
-      const list: number[] = [];
-      for (let i = start; i <= end; i++) {
-        list.push(i);
-      }
       // 格式化标题，将1-9格式化为01-09
       const formatNumber = (num: number): string => {
         return num < 10 ? `0${num}` : `${num}`;
       };
       result.push({
-        key:  this.getRandomString(),
-        list,
+        key: this.getRandomString(),
         title: `${formatNumber(start)}-${formatNumber(end)}`,
       });
     }
+    console.log(TAG_MediaSeries, `generatePageRanges is :${JSON.stringify(result)}`)
     return result;
   }
 
@@ -200,7 +195,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     //   CommonUtils.printObject(propValue,'FastList setAttributes')
     // }
     switch (propKey) {
-      case "initParam":
+      case "initParam": {
         // 图文模式
         let initParam = HRValueUtils.getMap(propValue);
         //测试数据：
@@ -292,13 +287,13 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           contentWidth: initParam?.get('contentWidth') as number | 1740,
           contentHeight: initParam?.get('contentHeight') as number | 160,
           itemGap: initParam?.get('itemGap') as number | 36,
-          enableGroup: initParam?.get('enableGroup') as boolean | true,
           groupSize: initParam?.get('groupSize') as number | 20,
           groupHeight: initParam?.get('groupHeight') as number | 46,
           groupTopMargin: initParam?.get('groupTopMargin') as number | 24,
           totalCount: initParam?.get('totalCount') as number | 0,
           pageSize: initParam?.get('pageSize') as number | 10,
         };
+        this.enableGroup = initParam?.get('enableGroup') as boolean | true;
         let template = initParam?.get('template');
         let type = (template as HippyMap).get('type');
         let extra = (template as HippyMap).get('extra');
@@ -352,23 +347,49 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           }
         }
         // 是否开启快速分组
-        if(this.initParam.enableGroup) {
+        if (this.enableGroup) {
           this.generatePageData = this.generatePageRanges(this.initParam.totalCount, this.initParam.groupSize);
         }
-        console.log(TAG_FASTLIST, `QTFastListView template.type :${JSON.stringify(this.initParam)}`)
-        console.log(TAG_FASTLIST, `QTFastListView initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)
-        console.log(TAG_FASTLIST, `QTFastListView initParamGroup :${JSON.stringify(this.initParamGroup)}`)
-        console.log(TAG_FASTLIST, `QTFastListView extra :${JSON.stringify(extra)}`)
-        console.log(TAG_FASTLIST, `QTFastListView generatePageData :${JSON.stringify(this.generatePageData)}`)
-        console.log(TAG_FASTLIST, `QTFastListView enableGroup :${this.initParam.enableGroup}`)
+        console.log(TAG_MediaSeries, ` this.enableGroup :${this.enableGroup}`)
+        console.log(TAG_MediaSeries, ` template.type :${JSON.stringify(this.initParam)}`)
+        console.log(TAG_MediaSeries, ` initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)
+        console.log(TAG_MediaSeries, ` initParamGroup :${JSON.stringify(this.initParamGroup)}`)
+        console.log(TAG_MediaSeries, ` extra :${JSON.stringify(extra)}`)
+        console.log(TAG_MediaSeries, ` generatePageData :${JSON.stringify(this.generatePageData)}`)
 
         //this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
-      case "groupParam":
-        //  是否设置快速分组
+      }
+      case "groupParam": {
+        // 选集类型为非图文模式('leftrigth') 例如：'custom'
         let groupParam = HRValueUtils.getMap(propValue);
-        let groupSize = groupParam?.get('groupSize');
-        console.log(TAG_MediaSeries, `QTMediaSeriesView :groupSize is:${groupSize}`)
+
+        let groupTextColor = (groupParam as HippyMap).get('textColor');
+        let focusBackground = (groupParam as HippyMap).get('focusBackground');
+        let mark = (groupParam as HippyMap).get('mark');
+
+        this.initParamGroup = {
+          itemWidth: (groupParam as HippyMap).get('itemWidth') as number | 105,
+          itemHeight: (groupParam as HippyMap).get('itemHeight') as number | 46,
+          itemGap: (groupParam as HippyMap).get('itemGap') as number | 50,
+          textSize: (groupParam as HippyMap).get('textSize') as number | 30,
+          textColor: {
+            normal: (groupTextColor as HippyMap).get('normal') as string | '#80FFFFFF',
+            focused: (groupTextColor as HippyMap).get('focused') as string | '#603314',
+            selected: (groupTextColor as HippyMap).get('selected') as string | '#FFD97C',
+          },
+          focusBackground: {
+            orientation: (focusBackground as HippyMap).get('orientation') as string | 'LEFT_RIGHT',
+            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[] | [40, 40, 40, 40],
+            color: (focusBackground as HippyMap).get('color') as string[] | ['#FFE398', '#EEB364'],
+            padding: (focusBackground as HippyMap).get('padding') as number[] | [34, 6],
+          },
+          mark: {
+            color: (mark as HippyMap).get('color') as string | '#FFD97C',
+          }
+        }
+        return true;
+      }
       case "commonParam":
       //
 
@@ -420,29 +441,39 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             index2: HRValueUtils.getStringValue('index2', value as HippyMap, null)!,
           });
         })
-        console.log(TAG_FASTLIST, `QTFastListView listData :${JSON.stringify(this.listData)}`)
-        if(!AppStorage.get('focus')) {
+        console.log(TAG_MediaSeries, `QTMediaSeriesView listData :${JSON.stringify(this.listData)}`)
+        if (!AppStorage.get('focus')) {
           AppStorage.setOrCreate('focus', this.listData.getData(0)?.key)
         }
         setTimeout(() => {
           this.focusStr = AppStorage.get('focus');
         }, 400)
-        console.log(TAG_FASTLIST, `QTFastListView focusStr :${this.focusStr}`)
+        console.log(TAG_MediaSeries, `QTMediaSeriesView focusStr :${this.focusStr}`)
         break;
 
-    //设置选中的item
+      // 自定义模式下的 数据总数
+      case "setInitData":
+        let totalCount = HRValueUtils.getNumber2(params[0], 0)
+        let pageSize = HRValueUtils.getNumber2(params[1], 0)
+        this.initParam.totalCount = totalCount;
+        this.initParam.pageSize = pageSize;
+        this.enableGroup = true
+        this.generatePageData = this.generatePageRanges(totalCount, pageSize);
+        break;
+
+      //设置选中的item
       case "setSelectChildPosition":
         let childPos = HRValueUtils.getNumber2(params[0], 0)
         console.log(TAG_MediaSeries, `setSelectChildPosition : childPos is : ${childPos} `)
         break;
 
-    //滚动到指定位置
+      //滚动到指定位置
       case "scrollToPosition":
         let scrollPos = HRValueUtils.getNumber2(params[0], 0)
         console.log(TAG_MediaSeries, `scrollToPosition : scrollPos is : ${scrollPos}`)
         break;
 
-    //滚动到指定位置 可添加偏移量
+      //滚动到指定位置 可添加偏移量
       case "scrollToPositionWithOffset":
         let scrollPosIdx = HRValueUtils.getNumber2(params[0], 0)
         let scrollPosOffset = HRValueUtils.getNumber2(params[1], 0)
@@ -450,7 +481,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           `scrollToPositionWithOffset : scrollPosIdx is : ${scrollPosIdx}, scrollPosOffset is :${scrollPosOffset}`)
         break;
 
-    //设置选中的item
+      //设置选中的item
       case "requestChildFocus":
         let focusPos = HRValueUtils.getNumber2(params[0], 0)
         console.log(TAG_MediaSeries, `requestChildFocus : focusPos is : ${focusPos}`)

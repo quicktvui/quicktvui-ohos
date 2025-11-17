@@ -116,7 +116,7 @@ export struct QTMediaSeries {
               this.renderView.focusStr = item.key;
               this.renderView.isSelectedButton = true;
             })
-            .onBlur(()=>{
+            .onBlur(() => {
               this.renderView.focusStr = undefined;
             })
           }, (item: string) => item)
@@ -139,7 +139,7 @@ export struct QTMediaSeries {
           event.send(this.renderView.ctx, this.renderView.tag, params)
         })
         .onScrollIndex((_, __, index) => {
-          if (!this.renderView.initParam.enableGroup) {
+          if (!this.renderView.enableGroup) {
             return
           }
 
@@ -149,7 +149,7 @@ export struct QTMediaSeries {
         //.backgroundColor(Color.Orange)
 
 
-        if (this.renderView.initParam.enableGroup) {
+        if (this.renderView.enableGroup) {
 
           List({ scroller: this.renderView.navTitleScroller }) {
             ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
@@ -216,24 +216,27 @@ export struct QTMediaSeries {
                 event.send(this.renderView.ctx, this.renderView.tag, params)
               })
 
-              .onBlur(()=>{
+              .onBlur(() => {
                 this.renderView.focusStr = undefined;
               })
 
             }, (item: GeneratePageData) => JSON.stringify(item.title))
           }
-          .height(px2vp(this.renderView.initParamGroup.itemHeight))
+          .height(px2vp(this.renderView.initParamGroup.itemHeight + px2vp(this.renderView.initParamGroup.itemGap) / 2))
           .scrollBar(BarState.Off)
           .listDirection(Axis.Horizontal)
           .padding({
-            left: px2vp(this.renderView.initParamGroup.itemGap)/2,
-            right: px2vp(this.renderView.initParamGroup.itemGap)/2,
+            left: px2vp(this.renderView.initParamGroup.itemGap) / 2,
+            right: px2vp(this.renderView.initParamGroup.itemGap) / 2
           })
         }
 
         ForEach(this.children, (item: HippyRenderBaseView) => {
           buildHippyRenderView(item, null)
         }, (item: HippyRenderBaseView) => item.tag + '')
+
+        ContentSlot(this.renderView.childSlot)
+
       }.alignItems(HorizontalAlign.Start)
     }
     .applyRenderViewBaseAttr(this.renderView)
