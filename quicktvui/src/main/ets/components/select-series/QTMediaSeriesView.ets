@@ -3,6 +3,7 @@ import {
   NativeRenderContext,
   HippyAny,
   HippyRenderCallback,
+  HIPPY_COMPONENT_KEY_PREFIX,
   HippyArray,
   HippyMap,
   HippyEndBatchCallback
@@ -15,6 +16,8 @@ import { QTView } from "../../QTTypes"
 
 import QTRenderBaseView from '../QTRenderBaseView';
 import { HashMap } from '@kit.ArkTS';
+
+import { LengthMetrics } from "@kit.ArkUI";
 
 import { Group, InitParam, MyComponentParams, GeneratePageData, Template, MyDataSource } from './types/index';
 
@@ -369,25 +372,28 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let mark = (groupParam as HippyMap).get('mark');
 
         this.initParamGroup = {
-          itemWidth: (groupParam as HippyMap).get('itemWidth') as number | 105,
-          itemHeight: (groupParam as HippyMap).get('itemHeight') as number | 46,
-          itemGap: (groupParam as HippyMap).get('itemGap') as number | 50,
-          textSize: (groupParam as HippyMap).get('textSize') as number | 30,
+          itemWidth: (groupParam as HippyMap).get('itemWidth') as number || 105,
+          itemHeight: (groupParam as HippyMap).get('itemHeight') as number || 46,
+          itemGap: (groupParam as HippyMap).get('itemGap') as number || 50,
+          textSize: (groupParam as HippyMap).get('textSize') as number || 30,
           textColor: {
-            normal: (groupTextColor as HippyMap).get('normal') as string | '#80FFFFFF',
-            focused: (groupTextColor as HippyMap).get('focused') as string | '#603314',
-            selected: (groupTextColor as HippyMap).get('selected') as string | '#FFD97C',
+            normal: (groupTextColor as HippyMap).get('normal') as string || '#80FFFFFF',
+            focused: (groupTextColor as HippyMap).get('focused') as string || '#603314',
+            selected: (groupTextColor as HippyMap).get('selected') as string || '#FFD97C',
           },
           focusBackground: {
-            orientation: (focusBackground as HippyMap).get('orientation') as string | 'LEFT_RIGHT',
-            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[] | [40, 40, 40, 40],
-            color: (focusBackground as HippyMap).get('color') as string[] | ['#FFE398', '#EEB364'],
-            padding: (focusBackground as HippyMap).get('padding') as number[] | [34, 6],
+            orientation: (focusBackground as HippyMap).get('orientation') as string || 'LEFT_RIGHT',
+            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[] || [40, 40, 40, 40],
+            color: (focusBackground as HippyMap).get('color') as string[] || ['#FFE398', '#EEB364'],
+            padding: (focusBackground as HippyMap).get('padding') as number[] || [34, 6],
           },
           mark: {
-            color: (mark as HippyMap).get('color') as string | '#FFD97C',
+            color: (mark as HippyMap).get('color') as string || '#FFD97C',
           }
         }
+
+        console.log(TAG_MediaSeries, ` initParamGroup :${JSON.stringify(this.initParamGroup)}`)
+
         return true;
       }
       case "commonParam":
@@ -456,7 +462,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let totalCount = HRValueUtils.getNumber2(params[0], 0)
         let pageSize = HRValueUtils.getNumber2(params[1], 0)
         this.initParam.totalCount = totalCount;
-        this.initParam.pageSize = pageSize;
+        this.initParam.pageSize = this.initParam.groupSize = pageSize;
         this.enableGroup = true
         this.generatePageData = this.generatePageRanges(totalCount, pageSize);
         break;
@@ -470,6 +476,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       //滚动到指定位置
       case "scrollToPosition":
         let scrollPos = HRValueUtils.getNumber2(params[0], 0)
+        this.scroller.scrollToIndex(scrollPos);
         console.log(TAG_MediaSeries, `scrollToPosition : scrollPos is : ${scrollPos}`)
         break;
 
@@ -477,6 +484,9 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       case "scrollToPositionWithOffset":
         let scrollPosIdx = HRValueUtils.getNumber2(params[0], 0)
         let scrollPosOffset = HRValueUtils.getNumber2(params[1], 0)
+        this.scroller.scrollToIndex(scrollPosIdx, false, ScrollAlign.START,
+          { extraOffset: LengthMetrics.vp(scrollPosOffset) });
+
         console.log(TAG_MediaSeries,
           `scrollToPositionWithOffset : scrollPosIdx is : ${scrollPosIdx}, scrollPosOffset is :${scrollPosOffset}`)
         break;
@@ -484,7 +494,9 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       //设置选中的item
       case "requestChildFocus":
         let focusPos = HRValueUtils.getNumber2(params[0], 0)
-        console.log(TAG_MediaSeries, `requestChildFocus : focusPos is : ${focusPos}`)
+        focusControl.requestFocus(HIPPY_COMPONENT_KEY_PREFIX + this.tag + '_LIST_' + focusPos)
+        console.log(TAG_MediaSeries,
+          `requestChildFocus : focusPos is : ${HIPPY_COMPONENT_KEY_PREFIX + this.tag + '_LIST_' + focusPos}`)
         break;
     }
 

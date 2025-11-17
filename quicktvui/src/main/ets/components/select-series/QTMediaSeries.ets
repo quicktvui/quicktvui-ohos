@@ -119,6 +119,7 @@ export struct QTMediaSeries {
             .onBlur(() => {
               this.renderView.focusStr = undefined;
             })
+            .key(HIPPY_COMPONENT_KEY_PREFIX + this.renderView.tag + '_LIST_' + index)
           }, (item: string) => item)
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On
@@ -252,7 +253,6 @@ export struct QTMediaSeries {
 
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({ width: $$.cssWidth, height: $$.cssHeight })
@@ -275,7 +275,7 @@ function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //tv basic
-  .key($$.name)
+  .key($$.name || HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .id($$.sid)
   .visibility($$.visibility)
 }
