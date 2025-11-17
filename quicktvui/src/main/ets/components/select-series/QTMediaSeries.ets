@@ -116,6 +116,9 @@ export struct QTMediaSeries {
               this.renderView.focusStr = item.key;
               this.renderView.isSelectedButton = true;
             })
+            .onBlur(()=>{
+              this.renderView.focusStr = undefined;
+            })
           }, (item: string) => item)
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On
@@ -175,13 +178,7 @@ export struct QTMediaSeries {
                       top: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
                       bottom: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
                     })
-                    .onClick(() => {
-                    })
-                    .onFocus(() => {
-                      console.log(TAG_MediaSeries, 'onFocus Text', item.key);
-                      this.renderView.focusStr = item.key;
-                      this.renderView.isSelectedButton = false;
-                    })
+
                   Text(' ')
                     .width(px2vp(40))
                     .height(px2vp(5))
@@ -205,16 +202,24 @@ export struct QTMediaSeries {
                     clearInterval(_itv)
                     //console.log(TAG_MediaSeries, `QTMediaSeriesView:setInterval:${this.renderView.listData.totalCount()} - ${index} - ${index*this.renderView.initParam.groupSize}}`);
                     this.renderView.scroller.scrollToIndex(index * this.renderView.initParam.groupSize);
+                    this.renderView.currentTitleId = index
                   }
                 }, 100)
               })
 
               .onFocus(() => {
+                console.log(TAG_MediaSeries, 'onFocus Text ~~', item.key);
+                this.renderView.focusStr = item.key;
                 let event = new HippyViewEvent("onGroupItemFocused")
                 let params = new Map<string, number>()
                 params.set('position', index)
                 event.send(this.renderView.ctx, this.renderView.tag, params)
               })
+
+              .onBlur(()=>{
+                this.renderView.focusStr = undefined;
+              })
+
             }, (item: GeneratePageData) => JSON.stringify(item.title))
           }
           // .height(px2vp(this.renderView.initParamGroup.itemHeight))
