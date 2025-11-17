@@ -222,15 +222,12 @@ export struct QTMediaSeries {
 
             }, (item: GeneratePageData) => JSON.stringify(item.title))
           }
-          // .height(px2vp(this.renderView.initParamGroup.itemHeight))
+          .height(px2vp(this.renderView.initParamGroup.itemHeight))
           .scrollBar(BarState.Off)
           .listDirection(Axis.Horizontal)
-          .margin({
-            top: px2vp(this.renderView.initParamGroup.itemGap)
-          })
           .padding({
-            left: px2vp(60),
-            right: px2vp(60),
+            left: px2vp(this.renderView.initParamGroup.itemGap)/2,
+            right: px2vp(this.renderView.initParamGroup.itemGap)/2,
           })
         }
 
