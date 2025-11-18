@@ -259,6 +259,9 @@ export class QTTabsView extends QTRenderBaseView{
 
   viewAboutToAppear(){
     //console.error(TAG_TABS,`viewAboutToAppear`)
+    setTimeout(()=>{
+      this.controller.setTabBarTranslate({ x: 0, y: 80 });
+    })
   }
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
@@ -492,7 +495,7 @@ export struct  QTTabs {
         return ''+index
       })
     }
-    .barPosition(BarPosition.End)
+
     .barMode(BarMode.Scrollable)
     // .barOverlap(true)
     .barBackgroundColor(Color.White)
