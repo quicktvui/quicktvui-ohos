@@ -35,7 +35,6 @@ export struct  QTFallback {
         ContentSlot(this.renderView.childSlot)
       }
       .applyRenderViewBaseAttr(this.renderView)
-      .backgroundColor(Color.Pink)
       .onClick((event=>{
         FastListUtils.handleItemClick(this.renderView)
       }))
