@@ -26,7 +26,7 @@ import {
 import {HippyMap,HippyAny} from 'hippy'
 import {ItemView,getItemType, ItemTemplate} from './ItemView'
 import assertNull from '@ohos/hypium/src/main/module/assert/assertNull';
-import {buildRenderViewTraverse, gatherToUpdateMap, gatherToUpdateMapTraverse, PathUpdate} from './TemplateViewManager'
+import {PathUpdate, PendingPathUpdate, TemplateViewManager} from './TemplateViewManager'
 import { NodeUtils } from '../../utils/NodeUtils';
 import { QTItemRootView } from './QTItemRootView';
 import { QTBaseComponentView } from '../QTBaseComponentView';
@@ -68,12 +68,14 @@ export class FastListDataSource implements IDataSource {
   private lastEventPosition = -1;
 
   private itemStore : QTView | null = null;
+  templateViewManager : TemplateViewManager ;
 
   constructor(ctx : NativeRenderContext,dataList:HippyObservedArray<QTView>) {
     this.ctx = ctx;
     assertNull(ctx) ?? 'ctx is null'
     // this.mockData()
     this.dataList = dataList;
+    this.templateViewManager = new TemplateViewManager();
   }
 
   public static getItemStoreFromParentList(parentList:QTFastListView) : QTView | null{
@@ -296,8 +298,10 @@ export class FastListDataSource implements IDataSource {
           fi.decoration.bottom = HRValueUtils.getNumberValue('bottom',decoration,0)
           QTPixelUtil.devPadding2Vp(fi.decoration)
         }
+      fi.itemData = item.raw
     }
     fi.dataPosition = position
+
     if(!item.id){
       item.id = item.position +''
       console.error(TAG_QUICKTVUI,`put fallback id :${item.position}`)
@@ -320,32 +324,34 @@ export class FastListDataSource implements IDataSource {
               rv.parentView.removeSubView(rv)
             }
             this.fillContent(type,rv,fi)
-            gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,true)
+            this.templateViewManager.gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,true)
             //只处理tv-item的pending props
             // let u = gatherToUpdateMap(rv,it.props!!,item.raw!!,null)
             // if(u){
             //   updates.push(u)
             // }
-            updates.map((p)=>{
-              QTLog.d(TAG_FASTLIST,`singleTon update viewType:${p.renderView.viewType},props:${p.props}`)
-            })
+            // updates.map((p)=>{
+            //   QTLog.d(TAG_FASTLIST,`singleTon update viewType:${p.renderView.viewType},props:${p.props}`)
+            // })
           }else{
             QTLog.fatal(TAG_FASTLIST,`singleton itemView error view is null`)
           }
         }else{
           if(fi.contentView){
             if(fi.contentType == type){
-              QTLog.d(TAG_FASTLIST,`buildItem use cached View`)
+              // QTLog.d(TAG_REUSE,`buildItem use cached View pos:${position}`)
               //updates = fi.updates;
               rv = fi.contentView;
-              gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,false)
+              // this.templateViewManager.gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,false)
             }else{
-              rv = buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
+              fi.pendingUpdates = []
+              rv = this.templateViewManager.buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
               this.fillContent(type,rv!!,fi)
               // fi.updates = updates;
             }
           }else{
-            rv = buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
+            fi.pendingUpdates = []
+            rv = this.templateViewManager.buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
             this.fillContent(type,rv!!,fi)
             // fi.updates = updates;
           }
@@ -371,6 +377,7 @@ export class FastListDataSource implements IDataSource {
         //1. 遍历模板和数据，生成根布局
         // let wrapped = this.wrappedItemIfNeed(rv!!,item);
         //2. 预先执行所有update
+
         updates?.map((p)=>{
           //更新尺寸
           // let layout = new HRRect(p.layout[0],p.layout[1],p.layout[2],p.layout[3]);
@@ -381,6 +388,10 @@ export class FastListDataSource implements IDataSource {
           // }else{
           //   QTPixelUtil.setScaledRenderViewFrame(p.renderView,layout,null)
           // }
+          if(p.pendingProps){
+            let pendingProp = new PendingPathUpdate(p.renderView,p.pendingProps)
+            fi.pendingUpdates.push(pendingProp)
+          }
           if(p.renderView instanceof  QTBaseComponentView){
             p.renderView.aboutToUpdate()
           }
@@ -392,24 +403,7 @@ export class FastListDataSource implements IDataSource {
         //item.renderView = wrapped;
 
         //3. 执行所有props
-        updates?.map((p)=>{
-          p.props.forEach((value,key)=>{
-            if(key == 'text'){
-              console.log(TAG_FASTLIST,`updates p :${p.renderView.viewType},prop:${key},value:${value},position:${position}`)
-            }
-            //更新所有属性
-            let handle = false
-            switch (key){
-              case 'showIf':
-                p.renderView.cssVisibility = value ? Visibility.Visible : Visibility.Hidden
-                handle = true;
-                break;
-            }
-            if(!handle){
-              p.renderView.setProp(key,value)
-            }
-          })
-        })
+        TemplateViewManager.applyPatchUpdate(updates)
 
         if(fi && rv){
           if(fi instanceof QTItemRootView){
@@ -456,6 +450,17 @@ export class FastListDataSource implements IDataSource {
 
   }
 
+  public static updateItem(from: QTItemRootView,to: QTItemRootView){
+    let updates:Array<PathUpdate> = []
+    let rv : QTView | null = from.children[0];
+
+    // gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,true)
+  }
+
+  public getItemFromDataList(index : number){
+
+  }
+
   public getData(index: number): QTItemRootView {
     let fi = this.dataList[index] as QTItemRootView
     let item: ItemView = fi.itemView!!
@@ -469,9 +474,9 @@ export class FastListDataSource implements IDataSource {
       }
       fi.updateDirty = false;
     }
-    QTLog.d(TAG_LAYOUT,`getData index:${index},data:${fi},this listView:${ExtendUtil.debugView(this.listView)},width:${fi.cssWidth},height:${fi.cssHeight}`)
+    // QTLog.d(TAG_LAYOUT,`getData index:${index},data:${fi},this listView:${ExtendUtil.debugView(this.listView)},width:${fi.cssWidth},height:${fi.cssHeight}`)
     // console.log(TAG_FASTLIST,`getData index:${index}`)
-    // console.log(TAG_REUSE,`getData index:${index}`)
+    console.log(TAG_REUSE,`getData index:${index}`)
     if(fi.cssWidth < 1 || fi.cssHeight < 1){
       console.error(TAG_LAYOUT,`getData layout Error index:${index}`)
     }

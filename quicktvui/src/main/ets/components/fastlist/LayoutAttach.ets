@@ -25,6 +25,8 @@ export class LayoutAttach extends QTAttach{
 
   //others
   virtualExtra : VirtualExtra = new VirtualExtra();
+  pendingProps = new Map<string, HippyAny>()
+
 
   private style() : QTNativeLayout{
     if(!this.styleNode){

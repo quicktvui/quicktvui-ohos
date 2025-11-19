@@ -47,6 +47,10 @@ export class ItemView{
   }
 }
 
+export interface ItemViewParams{
+  itemView :ItemView
+}
+
 
 
 // @Builder

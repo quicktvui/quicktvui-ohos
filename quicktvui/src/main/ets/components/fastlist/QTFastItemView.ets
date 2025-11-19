@@ -6,15 +6,10 @@ import {
   HippyRenderCallback,
   buildHippyRenderView,
 } from 'hippy'
-import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
 import { QTPendingListView, QTView } from '../../QTTypes';
-import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListUtils } from './FastListUtils';
-import { ItemView } from './ItemView';
-import { LayoutAttach } from './LayoutAttach';
-import { applyLayoutTraverse, applyLayoutTraverseWithSkip, PathUpdate } from './TemplateViewManager';
 
 
 @Observed
@@ -26,7 +21,7 @@ export class QTFastItemView extends QTRenderBaseView{
   }
 
   onAboutToReuse(){
-
+    
   }
 
 
@@ -80,7 +75,7 @@ export class QTFastItemView extends QTRenderBaseView{
   }
 }
 
-@Reusable
+// @Reusable
 @Component
 export struct QTFastItem {
   @ObjectLink renderView: QTFastItemView

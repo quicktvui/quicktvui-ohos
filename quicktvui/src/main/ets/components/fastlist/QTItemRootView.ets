@@ -1,3 +1,4 @@
+import { LogUtil } from '@ohos/lottie';
 import {
   HippyObservedArray,
   NativeRenderContext,
@@ -7,7 +8,8 @@ import {
   buildHippyRenderView,
 } from 'hippy'
 import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
-import { QTPendingListView, QTView } from '../../QTTypes';
+import { QTAny, QTMap, QTPendingListView, QTView } from '../../QTTypes';
+import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
@@ -17,7 +19,7 @@ import { FastListUtils } from './FastListUtils';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
 import { QTFastListView } from './QTFastListView';
-import { applyLayoutTraverse, applyLayoutTraverseWithSkip, PathUpdate } from './TemplateViewManager';
+import { PathUpdate, PendingPathUpdate, TemplateViewManager } from './TemplateViewManager';
 
 export class ElementNode{
   template:QTView | null = null;
@@ -29,13 +31,25 @@ export class ElementNode{
 @Observed
 export class QTItemRootView extends QTRenderBaseView{
 
+  reuse(view: QTItemRootView) {
+    QTLog.e(TAG_REUSE,`reuse this:${this.dataPosition} ,data:${CommonUtils.hippyMap2String(view.itemData)}`)
+      // setTimeout(()=>{
+        if(view.itemData) {
+          this.updateItemPendingProps(view.itemData)
+        }
+      // },100)
+  }
+
 
   itemView:ItemView |  null = null;
   parentList : QTPendingListView | null = null;
   dataPosition : number = -1;
   decoration :Padding = { top: 0, right: 0, bottom: 0, left: 0 }
+  itemData : QTMap | null = null;
   //
   updateTimes = 0
+
+  viewType: string = 'QTItemRootView'
 
   updateDirty = true;
   contentType : number = -1;
@@ -44,6 +58,7 @@ export class QTItemRootView extends QTRenderBaseView{
 
   // rootNode : ElementNode | null = null;
   updates:Array<PathUpdate> = []
+  pendingUpdates:Array<PendingPathUpdate> = []
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -80,7 +95,7 @@ export class QTItemRootView extends QTRenderBaseView{
       LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(child).getWidth())
       LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(child).getHeight())
       //这里跳过changedView，解决文本通知parent变化，parent变化再让文本变化，导致死循环
-      applyLayoutTraverseWithSkip(this,changedView)
+      TemplateViewManager.applyLayoutTraverseWithSkip(this,changedView)
       // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
       QTPixelUtil.setRenderViewLayout(this,[0,0,child.cssWidth,child.cssHeight]);
 
@@ -118,7 +133,7 @@ export class QTItemRootView extends QTRenderBaseView{
       }
       LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
       LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
-      applyLayoutTraverse(this)
+      TemplateViewManager.applyLayoutTraverse(this)
       // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
       if(flexLayout){
         QTPixelUtil.setRenderViewLayout(this,[childView.cssPositionX,childView.cssPositionY,childView.cssWidth,childView.cssHeight]);
@@ -130,12 +145,23 @@ export class QTItemRootView extends QTRenderBaseView{
 
 
   }
-  onAboutToReuse(){
+  onAboutToReuse(params: Record<string, Object>){
     if(this.children[0]){
       QTPixelUtil.setRenderViewLayout(this,[this.children[0].cssPositionX,this.children[0].cssPositionY,this.children[0].cssWidth,this.children[0].cssHeight]);
       QTPixelUtil.setRenderViewLayout(this.children[0],[0,0,this.children[0].cssWidth,this.children[0].cssHeight]);
     }
     this.updateDirty = true;
+    // let item = this.parentList?.dataSource.
+    //this.pendingUpdates
+  }
+
+  updateItemPendingProps(itemData: QTMap){
+    QTLog.d(TAG_REUSE,`updateItemPendingProps pendingUpdates size:${this.pendingUpdates.length}`)
+    if(this.pendingUpdates){
+      this.pendingUpdates.forEach((p)=>{
+        TemplateViewManager.applyPendingProp(p.renderView,p.pendingProps,itemData)
+      })
+    }
   }
 
 
@@ -200,8 +226,16 @@ export struct QTItemRoot {
   }
 
   aboutToReuse(params: Record<string, Object>): void {
-    console.warn(TAG_REUSE,`++aboutToReuse dataPosition:${this.renderView.dataPosition}`)
-    this.renderView.onAboutToReuse()
+    console.warn(TAG_REUSE,`++aboutToReuse dataPosition:${this.renderView.dataPosition}，itemView:${params['itemView']}`)
+
+    let view = params['renderView'] as QTView
+    console.warn(TAG_REUSE,`aboutToReuse view:${ExtendUtil.debugView(view)}`);
+
+    //this.renderView.onAboutToReuse(params)
+    if(view instanceof QTItemRootView){
+      this.renderView.reuse(view)
+    }
+
   }
 }
 

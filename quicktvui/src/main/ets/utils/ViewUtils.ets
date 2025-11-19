@@ -2,12 +2,14 @@ import {HippyMap} from 'hippy'
 import { FastListUtils } from '../components/fastlist/FastListUtils';
 import { LayoutAttach } from '../components/fastlist/LayoutAttach';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
-import { TAG_CLICK, TAG_QUICKTVUI } from '../Constant';
+import { TAG_CLICK, TAG_FASTLIST, TAG_QUICKTVUI } from '../Constant';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from './ExtendUtil';
 import { QTLog } from './QTLog';
 import { ArkTSUtils } from '@kit.ArkTS';
 import { MeasureUtils, UIUtils } from '@kit.ArkUI';
+import { QTFastItemView } from '../components/fastlist/QTFastItemView';
+import { QTItemRootView } from '../components/fastlist/QTItemRootView';
 
 export class ViewUtils{
   static getTextGravity(gs : string) : TextAlign{
@@ -28,11 +30,20 @@ export class ViewUtils{
 
   static handleClickEvent(event:ClickEvent,clickView:QTView){
     let handle = false;
+    if(clickView.parentView instanceof QTItemRootView){
+      QTLog.i(TAG_CLICK,`handleClickEvent clickView handle by parent QTItemRootView`)
+      FastListUtils.handleItemClick(clickView.parentView)
+      return;
+    }
     if(clickView instanceof QTBaseComponentView){
       if(clickView.isVirtual){
         FastListUtils.handleItemClick(clickView)
         handle = true;
+      }else{
+        QTLog.w(TAG_CLICK,`handleClickEvent no handle view ! is Virtual :${ExtendUtil.debugView(clickView)}`)
       }
+    }else{
+      QTLog.w(TAG_CLICK,`handleClickEvent !clickView instanceof QTBaseComponentView:${ExtendUtil.debugView(clickView)}`)
     }
     if(!handle){
       QTLog.d(TAG_CLICK,`handleClickEvent view:${ExtendUtil.debugView(clickView)},eventClick:${clickView.eventClick}`)
