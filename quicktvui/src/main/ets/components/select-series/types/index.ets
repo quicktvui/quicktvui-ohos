@@ -51,7 +51,6 @@ export interface InitParam {
   contentWidth: number;
   contentHeight: number;
   itemGap: number;
-  enableGroup: boolean;
   groupSize: number;
   groupHeight: number;
   groupTopMargin: number;
@@ -84,7 +83,6 @@ export interface MyComponentParams {
 
 export interface GeneratePageData {
   key: string;
-  list: number[];
   title: string;
 };
 

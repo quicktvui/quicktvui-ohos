@@ -116,9 +116,10 @@ export struct QTMediaSeries {
               this.renderView.focusStr = item.key;
               this.renderView.isSelectedButton = true;
             })
-            .onBlur(()=>{
+            .onBlur(() => {
               this.renderView.focusStr = undefined;
             })
+            .key(HIPPY_COMPONENT_KEY_PREFIX + this.renderView.tag + '_LIST_' + index)
           }, (item: string) => item)
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On
@@ -139,7 +140,7 @@ export struct QTMediaSeries {
           event.send(this.renderView.ctx, this.renderView.tag, params)
         })
         .onScrollIndex((_, __, index) => {
-          if (!this.renderView.initParam.enableGroup) {
+          if (!this.renderView.enableGroup) {
             return
           }
 
@@ -149,7 +150,7 @@ export struct QTMediaSeries {
         //.backgroundColor(Color.Orange)
 
 
-        if (this.renderView.initParam.enableGroup) {
+        if (this.renderView.enableGroup) {
 
           List({ scroller: this.renderView.navTitleScroller }) {
             ForEach(this.renderView.generatePageData, (item: GeneratePageData, index: number) => {
@@ -216,27 +217,27 @@ export struct QTMediaSeries {
                 event.send(this.renderView.ctx, this.renderView.tag, params)
               })
 
-              .onBlur(()=>{
+              .onBlur(() => {
                 this.renderView.focusStr = undefined;
               })
 
             }, (item: GeneratePageData) => JSON.stringify(item.title))
           }
-          // .height(px2vp(this.renderView.initParamGroup.itemHeight))
+          .height(px2vp(this.renderView.initParamGroup.itemHeight + px2vp(this.renderView.initParamGroup.itemGap) / 2))
           .scrollBar(BarState.Off)
           .listDirection(Axis.Horizontal)
-          .margin({
-            top: px2vp(this.renderView.initParamGroup.itemGap)
-          })
           .padding({
-            left: px2vp(60),
-            right: px2vp(60),
+            left: px2vp(this.renderView.initParamGroup.itemGap) / 2,
+            right: px2vp(this.renderView.initParamGroup.itemGap) / 2
           })
         }
 
         ForEach(this.children, (item: HippyRenderBaseView) => {
           buildHippyRenderView(item, null)
         }, (item: HippyRenderBaseView) => item.tag + '')
+
+        ContentSlot(this.renderView.childSlot)
+
       }.alignItems(HorizontalAlign.Start)
     }
     .applyRenderViewBaseAttr(this.renderView)
@@ -252,7 +253,6 @@ export struct QTMediaSeries {
 
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({ width: $$.cssWidth, height: $$.cssHeight })
@@ -275,7 +275,7 @@ function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //tv basic
-  .key($$.name)
+  .key($$.name || HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .id($$.sid)
   .visibility($$.visibility)
 }

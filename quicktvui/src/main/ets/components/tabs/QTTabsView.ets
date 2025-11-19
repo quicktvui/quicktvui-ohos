@@ -82,10 +82,6 @@ export class QTTabsView extends QTRenderBaseView{
     console.warn(TAG_TABS,'create QTTabsView')
     super(ctx)
     this.dataSource = new TabsDataSource(ctx,this.tabsData)
-    // this.controller.setTabBarTranslate({
-    //   x:100,
-    //   y:-300
-    // })
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
@@ -263,10 +259,6 @@ export class QTTabsView extends QTRenderBaseView{
 
   viewAboutToAppear(){
     //console.error(TAG_TABS,`viewAboutToAppear`)
-    // this.controller.setTabBarTranslate({
-    //   x:100,
-    //   y:300
-    // })
     setTimeout(()=>{
       this.controller.setTabBarTranslate({ x: 0, y: 80 });
     })
@@ -503,6 +495,7 @@ export struct  QTTabs {
         return ''+index
       })
     }
+
     .barMode(BarMode.Scrollable)
     // .barOverlap(true)
     .barBackgroundColor(Color.White)
