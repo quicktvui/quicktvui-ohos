@@ -12,7 +12,8 @@ export class QTPixelUtil{
     let scalePx = 2560 / QTPixelUtil.DEV_WIDTH
     // console.log(TAG_QUICKTVUI,`dp2px getDensityScale :${PixelUtil.getDensityScale()},getDensity:${PixelUtil.getDensity()},scalePx:${scalePx},screenWidthDP:${screenWidthDP}`)
     //Fixme 这里暂未实现适配
-    return (value * 0.59)  ;
+    // screenWidthDP :1280  display.getDefaultDisplaySync().width is 1920
+    return (value * (screenWidthDP/QTPixelUtil.DEV_WIDTH));
   }
 
   public static vp2Vp(value: number): number{
@@ -24,11 +25,11 @@ export class QTPixelUtil{
   }
 
   public static getScreenDevWidth(){
-    return 1137
+    return PixelUtil.px2dp(display.getDefaultDisplaySync().width)
   }
 
   public static getScreenDevHeight(){
-    return 640
+    return PixelUtil.px2dp(display.getDefaultDisplaySync().height)
   }
 
   public static devPadding2Vp(padding: Padding){
