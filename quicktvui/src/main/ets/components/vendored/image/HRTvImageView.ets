@@ -508,7 +508,10 @@ export class HRTvImageView extends QTBaseComponentView {
       || this.cssSrc.startsWith(HRTvImageView.ASSETS_PREFIX)
     ) {
       this.src = this.convertToLocalPath(this.cssSrc)
-      this.src = $rawfile(this.src)
+      //
+      if (!this.src.startsWith(HRTvImageView.INTERNET_IMAGE_PREFIX)) {
+        this.src = $rawfile(this.src)
+      }
       return
     } else if (UrlUtils.isWebUrl(this.cssSrc)) {
       LogUtils.d(this.TAG,
