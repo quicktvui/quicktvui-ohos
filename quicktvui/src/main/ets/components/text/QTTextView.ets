@@ -28,12 +28,22 @@ export class QTTextView extends QTRenderBaseView{
   letterSpacing: number = 0
   textAlign: TextAlign = TextAlign.Start
   ellipsisMode: EllipsisMode = EllipsisMode.END
+  textOverflow: TextOverflow = TextOverflow.Clip
 
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
 
+  private showOnState() {
+    if (this.showonstate == 'selected') {
+      //选中显示，未选中隐藏
+      this.visibility = Visibility[this.selected?'Visible':'Hidden']
+    } else if (this.showonstate == 'focused') {
+      //聚焦显示，失焦隐藏
+      this.visibility = Visibility[this.focus?'Visible':'Hidden']
+    }
+  }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey){
@@ -45,6 +55,10 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "typeface":
 
+        return true;
+      case 'showOnState':
+        this.showonstate = HRValueUtils.getString(propValue as HippyAny);
+        this.showOnState();
         return true;
       case "textSpan":
 
@@ -75,6 +89,7 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "ellipsizeMode":
         this.ellipsisMode = HRValueUtils.getNumber(propValue)
+        this.textOverflow = TextOverflow.Ellipsis;
         return true;
       case "lines":
         this.maxLines = HRValueUtils.getNumber(propValue)
@@ -84,7 +99,8 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "textColor":
       case "color":
-        this.fontColor = HRValueUtils.getNumber(propValue)
+        let colorVal = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+        this.fontColor = '#' + colorVal
         return true;
       case "lineHeight":
         this.lineHeight = HRValueUtils.getNumber(propValue)
@@ -189,6 +205,8 @@ export struct  QTText {
       .lineHeight(this.renderView.lineHeight)
       .maxLines(this.renderView.maxLines)
       .textAlign(this.renderView.textAlign)
+      .textOverflow({ overflow: this.renderView.textOverflow })
+      .ellipsisMode(this.renderView.ellipsisMode)
   }
 
   aboutToAppear(): void {
