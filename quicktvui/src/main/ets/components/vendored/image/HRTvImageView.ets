@@ -70,6 +70,7 @@ enum TvTintColorBlendMode {
 export class HRTvImageView extends QTBaseComponentView {
   private static readonly BASE64_IMAGE_PREFIX = "data:image"
   private static readonly RAW_IMAGE_PREFIX = "hpfile://"
+  private static readonly FILE_IMAGE_PREFIX = "file://"
   private static readonly ASSETS_PREFIX = "assets://"
   private static readonly INTERNET_IMAGE_PREFIX = "http"
   private readonly TAG = "HRTvImageView"
@@ -502,12 +503,19 @@ export class HRTvImageView extends QTBaseComponentView {
     if (this.cssSrc.startsWith(HRTvImageView.BASE64_IMAGE_PREFIX)) {
       this.src = this.cssSrc
       return
-    } else if (this.cssSrc.startsWith(HRTvImageView.RAW_IMAGE_PREFIX)) {
+    } else if (this.cssSrc.startsWith(HRTvImageView.RAW_IMAGE_PREFIX)
+      || this.cssSrc.startsWith(HRTvImageView.FILE_IMAGE_PREFIX)
+      || this.cssSrc.startsWith(HRTvImageView.ASSETS_PREFIX)
+    ) {
       this.src = this.convertToLocalPath(this.cssSrc)
-      this.src = $rawfile(this.src)
+      //
+      if (!this.src.startsWith(HRTvImageView.INTERNET_IMAGE_PREFIX)) {
+        this.src = $rawfile(this.src)
+      }
       return
     } else if (UrlUtils.isWebUrl(this.cssSrc)) {
-      LogUtils.d(this.TAG, `fetchImage. isWebUrl cssSrc: ${JSON.stringify(this.cssSrc)}, currentSrc: ${JSON.stringify(this.src)}`)
+      LogUtils.d(this.TAG,
+        `fetchImage. isWebUrl cssSrc: ${JSON.stringify(this.cssSrc)}, currentSrc: ${JSON.stringify(this.src)}`)
       this.src = this.cssSrc
       return
     }
@@ -529,11 +537,14 @@ export class HRTvImageView extends QTBaseComponentView {
   }
 
   getImage() {
-    LogUtils.d(this.TAG,"getImage")
+    LogUtils.d(this.TAG, "getImage")
     if (typeof this.cssSrc == 'string') {
       if (this.cssSrc.startsWith(HRTvImageView.BASE64_IMAGE_PREFIX)) {
         return this.cssSrc
-      } else if (this.cssSrc.startsWith(HRTvImageView.RAW_IMAGE_PREFIX)) {
+      } else if (this.cssSrc.startsWith(HRTvImageView.RAW_IMAGE_PREFIX)
+        || this.cssSrc.startsWith(HRTvImageView.FILE_IMAGE_PREFIX)
+        || this.cssSrc.startsWith(HRTvImageView.ASSETS_PREFIX)
+      ) {
         this.cssSrc = this.convertToLocalPath(this.cssSrc)
         LogUtils.d(this.TAG, "getImage: cssSrc= " + this.cssSrc)
         return $rawfile(this.cssSrc)
@@ -543,14 +554,53 @@ export class HRTvImageView extends QTBaseComponentView {
   }
 
   convertToLocalPath(uri: string): string {
-    // hpfile://./assets/file_banner02.jpg
-    if (uri != null && uri.startsWith("hpfile://")) {
-      let relativePath = uri.replace("hpfile://./", "");
-      let bundlePath = this.ctx.getNativeRender().getBundlePath()
-      bundlePath = bundlePath.replace("asset:/", "")
-      return bundlePath.substring(0, bundlePath.lastIndexOf("/") + 1) + relativePath
+    if (!uri) {
+      return uri
     }
+    // 1) 获取 bundle 基础目录（去掉 asset:/ 前缀）
+    let bundlePath =
+      this.ctx.getNativeRender().getBundlePath() // e.g. asset:/entry/src/main/js/default/
+    bundlePath = bundlePath.replace("asset:/", "") // entry/src/main/js/default/
+
+    // 2) 获取目录路径（去掉文件名）
+    const bundleDir = bundlePath.substring(0, bundlePath.lastIndexOf("/") + 1)
+
+    let relativePath = uri
+    // -----------------------------
+    // 处理 1: hpfile://./assets/xxx
+    // -----------------------------
+    if (uri.startsWith("hpfile://")) {
+      relativePath = uri.replace("hpfile://./", "") // assets/xxx
+      return bundleDir + relativePath
+    }
+
+    // -----------------------------
+    // 处理 2: file://assets/xxx
+    // -----------------------------
+    if (uri.startsWith("file://")) {
+      relativePath = uri.replace("file://", "") // assets/xxx
+      return bundleDir + relativePath
+    }
+
+    // -----------------------------
+    // 处理 3: assets/xxx 纯相对路径
+    // -----------------------------
+    if (uri.startsWith("assets/")) {
+      return bundleDir + uri
+    }
+    // -----------------------------
+    // 默认: 原样返回（http 等）
+    // -----------------------------
     return uri
+
+    // hpfile://./assets/file_banner02.jpg
+    //   if (uri != null && uri.startsWith("hpfile://")) {
+    //     let relativePath = uri.replace("hpfile://./", "");
+    //     let bundlePath = this.ctx.getNativeRender().getBundlePath()
+    //     bundlePath = bundlePath.replace("asset:/", "")
+    //     return bundlePath.substring(0, bundlePath.lastIndexOf("/") + 1) + relativePath
+    //   }
+    //   return uri
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
