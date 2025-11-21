@@ -40,6 +40,8 @@ export class QTItemRootView extends QTRenderBaseView{
       // },100)
   }
 
+  static __idx:number = 0;
+  __serialNumber: string = '';
 
   itemView:ItemView |  null = null;
   parentList : QTPendingListView | null = null;
@@ -62,6 +64,7 @@ export class QTItemRootView extends QTRenderBaseView{
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+    this.__serialNumber = QTItemRootView.__idx++ +'';
   }
 
   init(parent : QTPendingListView,item:ItemView): QTItemRootView{
@@ -189,7 +192,7 @@ export struct QTItemRoot {
       Stack() {
         ForEach(this.children, (item: QTView) => {
           buildHippyRenderView(item, null)
-        }, (item: QTView,index:number) => item.tag + ''+index)
+        }, (item: QTView,index:number) => this.renderView.__serialNumber)
       }
       .applyRenderViewBaseAttr(this.renderView)
       .onAttach(()=>{
@@ -205,7 +208,7 @@ export struct QTItemRoot {
       Stack() {
         ForEach(this.children, (item: QTView) => {
           buildHippyRenderView(item, null)
-        }, (item: QTView,index:number) => item.tag + ''+index)
+        }, (item: QTView,index:number) => this.renderView.__serialNumber)
       }
       .applyRenderViewBaseAttr(this.renderView)
       // .width(this.renderView.contentView?.cssWidth)

@@ -29,7 +29,7 @@ export class QTFastListView extends QTRenderBaseView{
   autofocusPosition: number = -1;
   dataSource: FastListDataSource | null = null;
   isNativeCreate = false;
-
+  __ForEachIdx = 0
   // private customTemplate: QTView | null = null;
 
   private endBatchCallback: HippyEndBatchCallback | null = null
@@ -559,12 +559,14 @@ export class QTFastListView extends QTRenderBaseView{
           }
           break;
         case 'setListData':
-          console.error(TAG_FASTLIST,`setListData!!`)
+          console.error(TAG_FASTLIST, `setListData!!`)
+          params.forEach(each => (each as HippyMap).set('__ForEachIdx', this.__ForEachIdx++ + ''))
           let data = HRValueUtils.getArray(params)
           this.setListWithPrams(data,null)
           break;
         case 'addListData':
-          this.appendItem(params,0)
+          params.forEach(each => (each as HippyMap).set('__ForEachIdx', this.__ForEachIdx++ + ''))
+          this.appendItem(params, 0)
           break;
         case 'addListDataWithParams':
           this.appendItem(params[0] as HippyArray,params[1] as number)
