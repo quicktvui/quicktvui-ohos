@@ -39,7 +39,12 @@ export struct  QTFastList {
 
 
   keyGenerate(item : QTView,index : number) : string{
-    if(item instanceof QTItemRootView){
+    if (item instanceof QTItemRootView && item.itemView){
+      return item.itemView.getItemForEachKey();
+    } else{
+      return 'view-' + index
+    }
+    /*if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid
       if(id){
         QTLog.d(TAG_REUSE,`keyGenerate id from sid:${id}`)
@@ -58,7 +63,7 @@ export struct  QTFastList {
     }else{
       // QTLog.d(TAG_REUSE,`keyGenerate use fallback -:${index}`)
     }
-    return 'view-'+index
+    return 'view-'+index*/
   }
 
 
