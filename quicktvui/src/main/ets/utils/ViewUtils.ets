@@ -10,9 +10,13 @@ import { ArkTSUtils } from '@kit.ArkTS';
 import { MeasureUtils, UIUtils } from '@kit.ArkUI';
 import { QTFastItemView } from '../components/fastlist/QTFastItemView';
 import { QTItemRootView } from '../components/fastlist/QTItemRootView';
+import { QTTextView } from '../components/text/QTTextView';
 
 export class ViewUtils{
   static getTextGravity(gs : string) : TextAlign{
+    //gs:  left|centerVertical
+    //gs:  top|centerHorizontal
+
     switch (gs){
       case  'center':
         return TextAlign.Center;
@@ -27,6 +31,84 @@ export class ViewUtils{
         return TextAlign.Start
     }
   }
+
+  static configGravity(gs : string,tx : QTTextView){
+
+    if(gs == 'center'){
+      tx.textAlign = TextAlign.Center
+      tx.verticalAlign = Alignment.Center
+    }else{
+      let hAlign : TextAlign | null = null;
+      let vAlign : Alignment | null  = null;
+      if(gs.indexOf('|') > -1){
+        //包括
+        let aligns = gs.split('|')
+        aligns.map((align)=>{
+          if(align == 'center'){
+            hAlign = TextAlign.Center
+            vAlign = Alignment.Center
+          }else{
+            if(!hAlign){
+              hAlign = ViewUtils.getTextHorizontalGravity(align)
+            }
+            if(!vAlign){
+              vAlign = ViewUtils.getTextVerticalGravity(align)
+            }
+          }
+        })
+
+      }else{
+        if(!hAlign){
+          hAlign = ViewUtils.getTextHorizontalGravity(gs)
+        }
+        if(!vAlign){
+          vAlign = ViewUtils.getTextVerticalGravity(gs)
+        }
+      }
+      if(hAlign){
+        tx.textAlign = hAlign
+      }
+      if(vAlign){
+        tx.verticalAlign = vAlign
+      }
+      QTLog.i('DebugTextView',`configGravity gs:${gs} hAlign:${hAlign},vAlign:${vAlign},text:${tx.text}`)
+
+
+    }
+
+
+  }
+
+  static getTextVerticalGravity(gs : string) : Alignment | null{
+    //gs:  left|centerVertical
+    //gs:  top|centerHorizontal
+
+    switch (gs){
+      case  'centerVertical':
+        return Alignment.Center;
+      case 'top':
+        return Alignment.TopStart
+      case 'bottom':
+        return Alignment.BottomEnd
+    }
+    return null;
+  }
+
+  static getTextHorizontalGravity(gs : string) : TextAlign | null{
+    //gs:  left|centerVertical
+    //gs:  top|centerHorizontal
+
+    switch (gs){
+      case 'left':
+        return TextAlign.Start;
+      case 'right':
+        return TextAlign.End
+      case 'centerHorizontal':
+        return TextAlign.Center;
+    }
+    return null;
+  }
+
 
   static handleClickEvent(event:ClickEvent,clickView:QTView){
     let handle = false;

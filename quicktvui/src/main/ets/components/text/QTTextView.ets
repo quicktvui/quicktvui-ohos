@@ -27,6 +27,7 @@ export class QTTextView extends QTRenderBaseView{
 
   letterSpacing: number = 0
   textAlign: TextAlign = TextAlign.Start
+  verticalAlign :Alignment = Alignment.TopStart
   ellipsisMode: EllipsisMode = EllipsisMode.END
   textOverflow: TextOverflow = TextOverflow.Clip
 
@@ -72,7 +73,8 @@ export class QTTextView extends QTRenderBaseView{
       case "gravity":
       case "textAlign":
         // this. = HRValueUtils.getNumber(propValue)
-        this.textAlign = ViewUtils.getTextGravity(HRValueUtils.getString(propValue))
+        //this.textAlign = ViewUtils.getTextGravity(HRValueUtils.getString(propValue))
+        ViewUtils.configGravity(HRValueUtils.getString(propValue),this)
         return true;
       case "fontSize":
         this.fontSize = QTPixelUtil.dev2Vp(HRValueUtils.getNumber(propValue));
@@ -213,6 +215,7 @@ export struct  QTText {
       .textAlign(this.renderView.textAlign)
       .textOverflow({ overflow: this.renderView.textOverflow })
       .ellipsisMode(this.renderView.ellipsisMode)
+      .align(this.renderView.verticalAlign)
   }
 
   aboutToAppear(): void {
