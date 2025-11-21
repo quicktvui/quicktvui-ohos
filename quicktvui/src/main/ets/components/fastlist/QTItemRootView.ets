@@ -84,21 +84,21 @@ export class QTItemRootView extends QTRenderBaseView{
 
 
   notifyChildSizeChanged(child: QTView, changedView: QTView, width: number, height: number): void {
-    // console.info(TAG_LAYOUT,`notifyChildSizeChanged on FastItem,isVirtual${this.isVirtual} changeViewType:${changedView.viewType},width:${width},height:${height},child width:${LayoutAttach.obtainLayoutAttach(child).fixedWidth}`)
     //主里直接阻断向上，只处理一层
     //super.notifyChildSizeChanged
-    let changed = child.cssWidth != this.cssWidth
-    if(!changed){
-      changed = child.cssHeight != this.cssHeight
-    }
-    if(changed){
+    // let changed = child.cssWidth != this.cssWidth
+    // if(!changed){
+    //   changed = child.cssHeight != this.cssHeight
+    // }
+    // console.info(TAG_LAYOUT,`notifyChildSizeChanged on FastItem,isVirtual${this.isVirtual} changeViewType:${changedView.viewType},width:${width},height:${height},child width:${LayoutAttach.obtainLayoutAttach(child).fixedWidth},changed:${changed}`)
+    if(true){
+      this.calculateLayout()
       LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(child).getWidth())
       LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(child).getHeight())
       //这里跳过changedView，解决文本通知parent变化，parent变化再让文本变化，导致死循环
-      TemplateViewManager.applyLayoutTraverseWithSkip(this,changedView)
+      TemplateViewManager.applyLayoutTraverse4AutoSize(this,changedView)
       // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
       QTPixelUtil.setRenderViewLayout(this,[0,0,child.cssWidth,child.cssHeight]);
-
       //QTLog.e(TAG_LAYOUT,`notifyChildSizeChanged parentView:${ExtendUtil.debugView(this.parentList)},dataPosition:${this.dataPosition},this.cssWidth:${this.cssWidth}`)
       // if(this.parentList instanceof QTFastListView && this.dataPosition){
       //   this.parentList.notifyItemChanged(this.dataPosition)
@@ -115,7 +115,14 @@ export class QTItemRootView extends QTRenderBaseView{
     }
   }
 
-
+  calculateLayout(){
+    if(this.parentView){
+      LayoutAttach.obtainLayoutAttach(this).calculateLayout(this.parentView.cssWidth,this.parentView.cssHeight)
+    }else{
+      //fixme 暂时写死
+      LayoutAttach.obtainLayoutAttach(this).calculateLayout(1920,1080)
+    }
+  }
 
   layoutItem(childView:QTView ,flexLayout: boolean,singleton:boolean | undefined){
     if(singleton){
@@ -125,12 +132,7 @@ export class QTItemRootView extends QTRenderBaseView{
         QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
         QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
     }else{
-      if(this.parentView){
-        LayoutAttach.obtainLayoutAttach(this).calculateLayout(this.parentView.cssWidth,this.parentView.cssHeight)
-      }else{
-        //fixme 暂时写死
-        LayoutAttach.obtainLayoutAttach(this).calculateLayout(1920,1080)
-      }
+      this.calculateLayout()
       LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
       LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
       TemplateViewManager.applyLayoutTraverse(this)

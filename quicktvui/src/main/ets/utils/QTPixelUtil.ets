@@ -20,6 +20,12 @@ export class QTPixelUtil{
     return value
   }
 
+  public static vp2Dev(value:number) : number{
+    let screenWidthDP = PixelUtil.px2dp(display.getDefaultDisplaySync().width)
+    let scalePx =  QTPixelUtil.DEV_WIDTH / screenWidthDP
+    return scalePx * value
+  }
+
   public static devRect2Vp(rect : HRRect){
     return new HRRect(QTPixelUtil.dev2Vp(rect.x),QTPixelUtil.dev2Vp(rect.y),QTPixelUtil.dev2Vp(rect.width),QTPixelUtil.dev2Vp(rect.height))
   }
@@ -39,7 +45,7 @@ export class QTPixelUtil{
     padding.bottom = QTPixelUtil.dev2Vp(padding.bottom ? padding.bottom as number : 0)
   }
 
-  public static setScaledRenderViewFrame(view : HippyRenderBaseView | null, rect : HRRect | null, padding : HRPadding | null){
+  public static setRenderViewFrameDevSize(view : HippyRenderBaseView | null, rect : HRRect | null, padding : HRPadding | null){
     if(view && rect){
       view.setRenderViewFrame(QTPixelUtil.devRect2Vp(rect),padding)
     }
@@ -56,6 +62,7 @@ export class QTPixelUtil{
       view.setRenderViewFrame(QTPixelUtil.devRect2Vp(new HRRect(layout[0],layout[1],layout[2],layout[3])),null)
     }
   }
+
 
   public static setRenderViewLayout(view : HippyRenderBaseView | null, layout : number[] ){
     if(view){

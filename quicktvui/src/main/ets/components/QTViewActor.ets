@@ -17,19 +17,34 @@ export class QTViewActor{
 
   hostView : QTView
 
-  notifyChildSizeChanged(child:QTView,changedView:QTView,width: number, height: number){
-    // QTLog.i(TAG_LAYOUT,'notifyChildSizeChanged by QTActorHost child:'+ExtendUtil.debugView(child)+",width:"+width+",height:"+height+",this:"+ExtendUtil.debugView(this.hostView))
+  notifyChildSizeChanged(child:QTView,changedView:QTView,childWidth: number, childHeight: number){
+    //QTLog.i(TAG_LAYOUT,'notifyChildSizeChanged by QTActorHost child:'+ExtendUtil.debugView(child)+",childWidth:"+childWidth+",childHeight:"+childHeight+",this:"+ExtendUtil.debugView(this.hostView))
 
     let la = LayoutAttach.findLayoutAttach(this.hostView)
+    // let childLa = LayoutAttach.obtainLayoutAttach(child)
     // QTLog.i(TAG_LAYOUT,`notifyChildSizeChanged styleWidth:${la?.getStyleWidth()},styleHeight:${la?.getStyleHeight()},this:${this.hostView}`)
+    let width = childWidth
+    let height = childHeight
     if(la){
-      if(la.isAutoWidth || (!la.getStyleWidth()) || la.getStyleWidth() < 1 ){
-        la.setFixedWidth(child.cssWidth + la.getPaddingLeft() + la.getPaddingRight())
-        QTPixelUtil.setRenderViewLayout(this.hostView,[this.hostView.cssPositionX,this.hostView.cssPositionY,la.fixedWidth,this.hostView.cssHeight])
-      }
-      if(la.isAutoHeight || (!la.getStyleHeight()) || la.getStyleHeight() < 1){
-        la.setFixedHeight(child.cssHeight + la.getPaddingTop() + la.getPaddingBottom())
-        QTPixelUtil.setRenderViewLayout(this.hostView,[this.hostView.cssPositionX,this.hostView.cssPositionY,this.hostView.cssWidth,la.fixedHeight])
+      if(la.isAutoWidth && la.isAutoHeight){
+        la.setFixedWidth(childWidth + la.getPaddingLeft() + la.getPaddingRight())
+        la.setFixedHeight(childHeight + la.getPaddingTop() + la.getPaddingBottom())
+        width= la.fixedWidth
+        height = la.fixedHeight
+        //QTPixelUtil.setRenderViewLayout(this.hostView,[this.hostView.cssPositionX,this.hostView.cssPositionY,la.fixedWidth,la.fixedHeight])
+      }else{
+        if(la.isAutoWidth || (!la.getStyleWidth()) || la.getStyleWidth() < 1 ){
+          la.setFixedWidth(childWidth + la.getPaddingLeft() + la.getPaddingRight())
+          width = la.fixedWidth
+          let fixedHeight = QTPixelUtil.vp2Dev(this.hostView.cssHeight)
+          //QTPixelUtil.setRenderViewLayout(this.hostView,[this.hostView.cssPositionX,this.hostView.cssPositionY,la.fixedWidth,fixedHeight])
+        }
+        if(la.isAutoHeight || (!la.getStyleHeight()) || la.getStyleHeight() < 1){
+          la.setFixedHeight(childHeight + la.getPaddingTop() + la.getPaddingBottom())
+          height = la.fixedHeight
+          let fixedWidth = QTPixelUtil.vp2Dev(this.hostView.cssWidth)
+          //QTPixelUtil.setRenderViewLayout(this.hostView,[this.hostView.cssPositionX,this.hostView.cssPositionY,fixedWidth,la.fixedHeight])
+        }
       }
     }
     if(this.hostView?.parentView){

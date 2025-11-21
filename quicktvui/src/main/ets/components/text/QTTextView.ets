@@ -28,6 +28,9 @@ export class QTTextView extends QTRenderBaseView{
   letterSpacing: number = 0
   textAlign: TextAlign = TextAlign.Start
   ellipsisMode: EllipsisMode = EllipsisMode.END
+  skipTextureMeasure = true;
+
+  updateDirty = true;
 
 
   constructor(ctx: NativeRenderContext) {
@@ -57,10 +60,14 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "gravity":
       case "textAlign":
-        // this. = HRValueUtils.getNumber(propValue)
+        // let textAlign =  HRValueUtils.getNumber(propValue)
         this.textAlign = ViewUtils.getTextGravity(HRValueUtils.getString(propValue))
+       // QTLog.d('DebugTextView',`textAlign value:${propValue},result:${this.textAlign}`)
         return true;
       case "fontSize":
+        if(HRValueUtils.getNumber(propValue) != this.fontSize){
+          this.updateDirty = true;
+        }
         this.fontSize = QTPixelUtil.dev2Vp(HRValueUtils.getNumber(propValue));
         return true;
       case "paddingRect":
@@ -68,16 +75,24 @@ export class QTTextView extends QTRenderBaseView{
         this.qtPadding = { top: HRValueUtils.getNumber(padding[1]), right: HRValueUtils.getNumber(padding[2]), bottom: HRValueUtils.getNumber(padding[3]), left: HRValueUtils.getNumber(padding[0]) }
         return true;
       case "textAlignment":
-
+        let textAlignment =  HRValueUtils.getNumber(propValue)
+        //QTLog.d('DebugTextView',`textAlignment:${textAlignment}`)
         return true;
       case "textSpan":
 
         return true;
       case "ellipsizeMode":
+        if(HRValueUtils.getNumber(propValue) != this.ellipsisMode){
+          this.updateDirty = true;
+        }
         this.ellipsisMode = HRValueUtils.getNumber(propValue)
         return true;
       case "lines":
+        if(HRValueUtils.getNumber(propValue) != this.maxLines){
+          this.updateDirty = true;
+        }
         this.maxLines = HRValueUtils.getNumber(propValue)
+
         return true;
       case "maxLines":
         this.maxLines = HRValueUtils.getNumber(propValue)
@@ -105,8 +120,12 @@ export class QTTextView extends QTRenderBaseView{
 
         return true;
       case "text":
-        QTLog.d(TAG_REUSE,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
-        this.text = HRValueUtils.getString(propValue)
+        //QTLog.d(TAG_REUSE,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
+        let newText = HRValueUtils.getString(propValue)
+        if(this.text != newText){
+          this.updateDirty = true;
+        }
+        this.text = newText
         return true;
     }
     return super.setProp(propKey, propValue)
@@ -160,30 +179,35 @@ export struct  QTText {
 
   build(): void {
     Text(this.renderView.text)
+      .applyRenderViewBaseAttr(this.renderView)
       .width(this.renderView.cssWidth > 0 ? this.renderView.cssWidth : this.textSize.width)
       .height(this.renderView.cssHeight > 0 ? this.renderView.cssHeight :  this.textSize.height)
       .padding(this.renderView.qtPadding)
       .onAreaChange((oldValue: Area, newValue: Area) => {
         if(newValue.width != oldValue.width || newValue.height != oldValue.height){
           if(this.renderView.parentView instanceof QTBaseComponentView){
+            let newWidth = 0
+            let newHeight= 0;
             if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight){
               if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth){
-                LayoutAttach.obtainLayoutAttach(this.renderView).setWidth(Number(newValue.width))
-                this.renderView.cssWidth = Number(newValue.width)
+                newWidth = QTPixelUtil.vp2Dev(Number(newValue.width))
+
+                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedWidth(newWidth)
+                // this.renderView.cssWidth = Number(newValue.width)
               }else{
-                LayoutAttach.obtainLayoutAttach(this.renderView).setHeight(Number(newValue.height))
-                this.renderView.cssHeight = Number(newValue.height)
+                newHeight = QTPixelUtil.vp2Dev(Number(newValue.height))
+                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
+                // this.renderView.cssHeight = Number(newValue.height)
               }
               // QTPixelUtil.setRenderViewLayout(this.renderView,[0,])
-              // QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
-              this.renderView.parentView.notifyChildSizeChanged(this.renderView,this.renderView,Number(newValue.width),Number(newValue.height))
+              //QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
+              this.renderView.parentView.notifyChildSizeChanged(this.renderView,this.renderView,newWidth,newHeight)
             }
           }else{
             QTLog.d(TAG_LAYOUT,`parent is not QTRenderBaseView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
           }
         }
       })
-      .applyRenderViewBaseAttr(this.renderView)
       .fontSize(this.renderView.fontSize)
       .fontColor(this.renderView.fontColor)
       .lineHeight(this.renderView.lineHeight)

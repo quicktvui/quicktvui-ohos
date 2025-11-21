@@ -9,7 +9,7 @@ import { LayoutAttach } from './LayoutAttach';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTFastFlexView } from './QTFastFlexView';
 import { QTLog } from '../../utils/QTLog';
-import { TAG_FASTLIST, TAG_REUSE } from '../../Constant';
+import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
 import { QTFastItemView } from './QTFastItemView';
 import { QTMap, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -152,28 +152,59 @@ export class TemplateViewManager{
     }
   }
 
-  static applyLayoutTraverseWithSkip(renderView:HippyRenderBaseView | null,skipView:HippyRenderBaseView | null){
+  static applyLayoutTraverse4AutoSize(renderView:HippyRenderBaseView | null,skipView:HippyRenderBaseView | null){
     if(renderView == null){
       return;
     }
-    if(skipView != renderView){
-      TemplateViewManager.applyLayout(renderView);
-    }
+    TemplateViewManager.applyLayout4AutoSize(renderView,skipView);
     if(renderView.children){
       renderView.children.map((child)=>{
-        TemplateViewManager.applyLayoutTraverse(child)
+        TemplateViewManager.applyLayoutTraverse4AutoSize(child,skipView)
       })
     }
   }
 
+  static applyPositionTraverse(renderView:HippyRenderBaseView | null){
+    if(renderView == null){
+      return;
+    }
+    TemplateViewManager.applyPosition(renderView);
+    if(renderView.children){
+      renderView.children.map((child)=>{
+        TemplateViewManager.applyPositionTraverse(child)
+      })
+    }
+  }
+
+  static applyPosition(renderView: HippyRenderBaseView) {
+    let attach = LayoutAttach.obtainLayoutAttach(renderView);
+    // let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
+    // // let layout : number[]= [attach.getLeft(),attach.getTop(), attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight()];
+    // QTLog.i(TAG_LAYOUT,`applyLayout:type:${attach.viewType},name:${attach.name},layout:[${layout.x},${layout.y},${layout.width},${layout.height}],this:${ExtendUtil.debugView(renderView)}`)
+    // // QTPixelUtil.setRenderViewLayout(renderView,layout)
+    // QTPixelUtil.setScaledRenderViewFrame(renderView,layout,null)
+    renderView.cssPositionX = attach.getLeft()
+    renderView.cssPositionY = attach.getTop()
+  }
 
 
   static applyLayout(renderView:HippyRenderBaseView){
     let attach = LayoutAttach.obtainLayoutAttach(renderView);
     let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
-    // let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(), attach.getWidth(),attach.getHeight());
-    // console.info(TAG_LAYOUT,`applyLayout:type:${attach.viewType},name:${attach.name},layout:[${layout.x},${layout.y},${layout.width},${layout.height}]`)
-    QTPixelUtil.setScaledRenderViewFrame(renderView,layout,null)
+    // let layout : number[]= [attach.getLeft(),attach.getTop(), attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight()];
+    //QTLog.i(TAG_LAYOUT,`applyLayout:type:${attach.viewType},name:${attach.name},layout:[${layout.x},${layout.y},${layout.width},${layout.height}],this:${ExtendUtil.debugView(renderView)}`)
+    //由于attach里存放的都是dev尺寸，所以这里要进行缩放
+    QTPixelUtil.setRenderViewFrameDevSize(renderView,layout,null)
+  }
+
+  static applyLayout4AutoSize(renderView:QTView,changedView : QTView | null){
+    let attach = LayoutAttach.obtainLayoutAttach(renderView);
+    let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
+    // let layout : number[]= [attach.getLeft(),attach.getTop(), attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight()];
+    //QTLog.i(TAG_LAYOUT,`applyLayout:type:${attach.viewType},name:${attach.name},layout:[${layout.x},${layout.y},${layout.width},${layout.height}],this:${ExtendUtil.debugView(renderView)}`)
+    // QTPixelUtil.setRenderViewLayout(renderView,layout)
+    //由于attach里存放的都是dev尺寸，所以这里要进行缩放
+    QTPixelUtil.setRenderViewFrameDevSize(renderView,layout,null)
   }
 
   applyInit(renderView : HippyRenderBaseView,template: HippyRenderBaseView,templateProps:HippyMap,childIndex:number) : HippyRenderBaseView{
