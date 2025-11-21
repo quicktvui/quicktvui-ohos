@@ -28,15 +28,22 @@ export class QTTextView extends QTRenderBaseView{
   letterSpacing: number = 0
   textAlign: TextAlign = TextAlign.Start
   ellipsisMode: EllipsisMode = EllipsisMode.END
-  skipTextureMeasure = true;
-
-  updateDirty = true;
+  textOverflow: TextOverflow = TextOverflow.Clip
 
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
 
+  private showOnState() {
+    if (this.showonstate == 'selected') {
+      //选中显示，未选中隐藏
+      this.visibility = Visibility[this.selected?'Visible':'Hidden']
+    } else if (this.showonstate == 'focused') {
+      //聚焦显示，失焦隐藏
+      this.visibility = Visibility[this.focus?'Visible':'Hidden']
+    }
+  }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey){
@@ -49,6 +56,10 @@ export class QTTextView extends QTRenderBaseView{
       case "typeface":
 
         return true;
+      case 'showOnState':
+        this.showonstate = HRValueUtils.getString(propValue as HippyAny);
+        this.showOnState();
+        return true;
       case "textSpan":
 
         return true;
@@ -60,14 +71,10 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "gravity":
       case "textAlign":
-        // let textAlign =  HRValueUtils.getNumber(propValue)
+        // this. = HRValueUtils.getNumber(propValue)
         this.textAlign = ViewUtils.getTextGravity(HRValueUtils.getString(propValue))
-       // QTLog.d('DebugTextView',`textAlign value:${propValue},result:${this.textAlign}`)
         return true;
       case "fontSize":
-        if(HRValueUtils.getNumber(propValue) != this.fontSize){
-          this.updateDirty = true;
-        }
         this.fontSize = QTPixelUtil.dev2Vp(HRValueUtils.getNumber(propValue));
         return true;
       case "paddingRect":
@@ -75,31 +82,25 @@ export class QTTextView extends QTRenderBaseView{
         this.qtPadding = { top: HRValueUtils.getNumber(padding[1]), right: HRValueUtils.getNumber(padding[2]), bottom: HRValueUtils.getNumber(padding[3]), left: HRValueUtils.getNumber(padding[0]) }
         return true;
       case "textAlignment":
-        let textAlignment =  HRValueUtils.getNumber(propValue)
-        //QTLog.d('DebugTextView',`textAlignment:${textAlignment}`)
+
         return true;
       case "textSpan":
 
         return true;
       case "ellipsizeMode":
-        if(HRValueUtils.getNumber(propValue) != this.ellipsisMode){
-          this.updateDirty = true;
-        }
         this.ellipsisMode = HRValueUtils.getNumber(propValue)
+        this.textOverflow = TextOverflow.Ellipsis;
         return true;
       case "lines":
-        if(HRValueUtils.getNumber(propValue) != this.maxLines){
-          this.updateDirty = true;
-        }
         this.maxLines = HRValueUtils.getNumber(propValue)
-
         return true;
       case "maxLines":
         this.maxLines = HRValueUtils.getNumber(propValue)
         return true;
       case "textColor":
       case "color":
-        this.fontColor = HRValueUtils.getNumber(propValue)
+        let colorVal = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+        this.fontColor = '#' + colorVal
         return true;
       case "lineHeight":
         this.lineHeight = HRValueUtils.getNumber(propValue)
@@ -120,12 +121,8 @@ export class QTTextView extends QTRenderBaseView{
 
         return true;
       case "text":
-        //QTLog.d(TAG_REUSE,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
-        let newText = HRValueUtils.getString(propValue)
-        if(this.text != newText){
-          this.updateDirty = true;
-        }
-        this.text = newText
+        QTLog.d(TAG_REUSE,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
+        this.text = HRValueUtils.getString(propValue)
         return true;
     }
     return super.setProp(propKey, propValue)
@@ -208,11 +205,14 @@ export struct  QTText {
           }
         }
       })
+      .applyRenderViewBaseAttr(this.renderView)
       .fontSize(this.renderView.fontSize)
       .fontColor(this.renderView.fontColor)
       .lineHeight(this.renderView.lineHeight)
       .maxLines(this.renderView.maxLines)
       .textAlign(this.renderView.textAlign)
+      .textOverflow({ overflow: this.renderView.textOverflow })
+      .ellipsisMode(this.renderView.ellipsisMode)
   }
 
   aboutToAppear(): void {
