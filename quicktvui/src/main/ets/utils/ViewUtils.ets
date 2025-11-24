@@ -2,7 +2,7 @@ import {HippyMap} from 'hippy'
 import { FastListUtils } from '../components/fastlist/FastListUtils';
 import { LayoutAttach } from '../components/fastlist/LayoutAttach';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
-import { TAG_CLICK, TAG_FASTLIST, TAG_QUICKTVUI } from '../Constant';
+import { TAG_CLICK, TAG_FASTLIST, TAG_LAYOUT, TAG_QUICKTVUI } from '../Constant';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from './ExtendUtil';
 import { QTLog } from './QTLog';
@@ -43,10 +43,30 @@ export class ViewUtils{
       if(gs.indexOf('|') > -1){
         //包括
         let aligns = gs.split('|')
-        aligns.map((align)=>{
+        aligns.map((align,index)=>{
           if(align == 'center'){
-            hAlign = TextAlign.Center
-            vAlign = Alignment.Center
+            // hAlign = TextAlign.Center
+            // vAlign = Alignment.Center
+            let otherIndex = 1 - index
+            let otherAlignString = aligns[otherIndex]
+
+            // if(otherAlign == 'start'){
+            //   hAlign = TextAlign.Start
+            // }else if(otherAlign == 'end'){
+            //   hAlign = TextAlign.End
+            // }
+            let hOtherAlign = ViewUtils.getTextHorizontalGravity(otherAlignString)
+            if(hOtherAlign){
+              //水平方向，center纵向生效
+              hAlign = hOtherAlign
+              vAlign = Alignment.Center
+            }
+            let vOtherAlign = ViewUtils.getTextVerticalGravity(otherAlignString)
+            if(vOtherAlign){
+              //纵向方法，center横向生效
+              hAlign = TextAlign.Center
+              vAlign = vOtherAlign
+            }
           }else{
             if(!hAlign){
               hAlign = ViewUtils.getTextHorizontalGravity(align)
@@ -56,6 +76,7 @@ export class ViewUtils{
             }
           }
         })
+
 
       }else{
         if(!hAlign){
