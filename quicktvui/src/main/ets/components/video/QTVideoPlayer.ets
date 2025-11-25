@@ -30,6 +30,7 @@ export struct QTVideoPlayer {
   private loop: boolean = false;
   private render: QTPlayerRenderView = QTPlayerRenderView.NONE;
   private availableBitrates: Array<number> = [];
+  private currentVolume: number = 1.0;
   //
   @State surfaceW: number = 1;
   @State surfaceH: number = 1;
@@ -144,9 +145,13 @@ export struct QTVideoPlayer {
         break;
       }
       case QTPlayerOp.SET_LEFT_VOLUME: {
+        const volume = params[0] as number;
+        this.setVolume(volume);
         break;
       }
       case QTPlayerOp.SET_RIGHT_VOLUME: {
+        const volume = params[0] as number;
+        this.setVolume(volume);
         break;
       }
       case QTPlayerOp.SET_VOLUME: {
@@ -312,7 +317,7 @@ export struct QTVideoPlayer {
      * 播放进度
      */
     this.videoPlayer.on('timeUpdate', (time: number) => {
-      LogUtils.d(this.TAG, "=========timeUpdate=====>>>>" + time)
+      // LogUtils.d(this.TAG, "=========timeUpdate=====>>>>" + time)
       // this.currentTime = time;
     });
 
@@ -544,7 +549,12 @@ export struct QTVideoPlayer {
   }
 
   setVolume(volume: number): void {
+    LogUtils.d(this.TAG, 'setVolume ' + volume + ', current ' + this.currentVolume);
+    if (volume == this.currentVolume)
+      return;
+
     if (this.videoPlayer) {
+      this.currentVolume = volume;
       this.videoPlayer.setVolume(volume);
     }
   }

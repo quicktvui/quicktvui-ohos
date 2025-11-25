@@ -5,6 +5,8 @@ import {
   HippyAny,
   HIPPY_COMPONENT_KEY_PREFIX,
   HippyRenderCallback,
+  LogUtils,
+  HippyViewEvent,
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { ColorMetrics } from '@kit.ArkUI';
@@ -69,6 +71,11 @@ export class QTSliderView extends QTBaseComponentView {
       }
     }
     return super.setProp(propKey, propValue)
+  }
+
+  sendEvent(eventName: string, params: HippyAny) {
+    let event = new HippyViewEvent(eventName)
+    event.send(this.ctx, this.tag, params)
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
@@ -173,6 +180,7 @@ export class QTSliderView extends QTBaseComponentView {
 
 @Component
 export struct QTSlider {
+  private readonly TAG = "QTSlider"
   @ObjectLink renderView: QTSliderView
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
@@ -223,6 +231,25 @@ export struct QTSlider {
         this.renderView.blockDrawable = this.renderView.thumbInactivatedDrawable;
         this.renderView.blockBorderColor = this.renderView.thumbInactivatedBorderColor;
         this.renderView.blockBorderWidth = this.renderView.thumbInactivatedBorderWidth;
+      })
+      .onChange((value: number, mode: SliderChangeMode)=>{
+        switch (mode) {
+          case SliderChangeMode.Begin:
+            LogUtils.d(this.TAG, "=========onChange=====>>>>" + value + ' 开始')
+            break
+          case SliderChangeMode.Moving:
+            LogUtils.d(this.TAG, "=========onChange=====>>>>" + value + ' 移动')
+            break
+          case SliderChangeMode.End:
+            LogUtils.d(this.TAG, "=========onChange=====>>>>" + value + ' 结束')
+            const map = new Map<string, HippyAny>()
+            map.set('progress', value)
+            this.renderView.sendEvent('onSeekBarChange', map)
+            break
+          case SliderChangeMode.Click:
+            LogUtils.d(this.TAG, "=========onChange=====>>>>" + value + ' 点击')
+            break
+        }
       })
   }
 }
