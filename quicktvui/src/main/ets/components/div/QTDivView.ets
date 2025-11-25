@@ -228,7 +228,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .id($$.sid)
   .visibility($$.visibility)
   //div
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .tabStop($$.cssFocusable)
   .border($$.focus ? $$.setBorder() : $$.border)
   .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果

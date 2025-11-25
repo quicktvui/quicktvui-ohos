@@ -207,8 +207,8 @@ export struct QTSlider {
       .blockStyle({ type: this.renderView.thumbType, image: this.renderView.blockUrl, shape: new Ellipse(this.renderView.thumbDrawable) }) // 滑块的样式
       .blockBorderColor(this.renderView.blockBorderColor) // 滑块的边框颜色
       .blockBorderWidth(this.renderView.blockBorderWidth) // 滑块的边框宽度
-      .focusable(this.renderView.focusable) // 是否获焦
-      .focusBox({ strokeColor: this.renderView.enableFocusBorder?ColorMetrics.rgba(0, 0, 255, 1):ColorMetrics.rgba(0, 0, 0, 0) }) // 获焦之后的样式
+      // .focusable(this.renderView.focusable) // 是否获焦
+      // .focusBox({ strokeColor: this.renderView.enableFocusBorder?ColorMetrics.rgba(0, 0, 255, 1):ColorMetrics.rgba(0, 0, 0, 0) }) // 获焦之后的样式
       .showTips(this.renderView.showTips) // 是否显示气泡
       .onFocus(() => {
         // 失去焦点是激活的初始值
@@ -239,7 +239,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)

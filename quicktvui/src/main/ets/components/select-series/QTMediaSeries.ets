@@ -44,7 +44,7 @@ export struct QTMediaSeries {
                   .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
                   .focusable(true)
                   .defaultFocus(this.renderView.focusStr == item.key)
-                  .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
+                  // .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
                   Text(item.title)
                     .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
@@ -165,7 +165,7 @@ export struct QTMediaSeries {
                     Color.Black :
                       (this.renderView.currentTitleId === index && this.renderView.isSelectedButton) ? Color.White :
                       this.renderView.initParamGroup.textColor.normal)
-                    .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
+                    // .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                     .backgroundColor(this.renderView.focusStr == item.key ? Color.White : Color.Transparent)
                     .borderRadius({
                       topLeft: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[0]),
@@ -261,7 +261,7 @@ function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
   .visibility(($$ as QTMediaSeriesView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
