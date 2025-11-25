@@ -33,6 +33,8 @@ export class QTFastListView extends QTRenderBaseView{
   __ForEachIdx = 0
   // private customTemplate: QTView | null = null;
 
+  eventItemClick: ((index:number,clickedView:QTView) => void) | null = null
+
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   constructor(ctx: NativeRenderContext) {
@@ -42,6 +44,7 @@ export class QTFastListView extends QTRenderBaseView{
 
   exeScroll(){
     this.scroller.scrollToIndex(this.initialPosition)
+    
   }
 
   getTemplate() : HippyObservedArray<QTView>{

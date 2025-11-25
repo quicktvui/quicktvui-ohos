@@ -211,6 +211,10 @@ export class QTTabsView extends QTRenderBaseView{
     super.addSubRenderView(subView,index)
     if(subView instanceof QTFastListView){
       this.tabList = subView;
+      this.tabList.eventItemClick = ((index,clickedView)=>{
+        //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
+        this.controller.changeIndex(index)
+      })
     }
     if(subView instanceof InnerViewPagerView){
       this.viewpager = subView;
@@ -274,7 +278,7 @@ export class QTTabsView extends QTRenderBaseView{
       if(this.tabList){
         this.tabList.setListWithPrams(data,null)
       }
-      this.singleTabMode = true;
+      // this.singleTabMode = true;
     }
     // //测试用
     // setTimeout(()=>{
@@ -495,7 +499,7 @@ function buildPage(item: TabPageData, index: number){
 
 @Builder
 function buildTabList(tabsView:QTTabsView){
-    if(tabsView.tabList && !tabsView.singleTabMode){
+    if(tabsView.tabList){
       QTFastList({
         renderView:tabsView.tabList,
         children : tabsView.tabList.children
@@ -542,7 +546,6 @@ export struct  QTTabs {
           return ''+index
         })
       }
-
       // .barMode(BarMode.Scrollable)
       // .barOverlap(true)\
       .barHeight(0)

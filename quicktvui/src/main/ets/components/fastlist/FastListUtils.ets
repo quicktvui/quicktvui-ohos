@@ -30,11 +30,17 @@ export class FastListUtils{
       }
       let parentList : QTPendingListView | null = FastListUtils.findListParent(fastItem)
       let itemPosition  = -1
+
       if(parentList){
         itemPosition = parentList.itemIndexOfDataList(fastItem)
       }else{
         QTLog.e(TAG_CLICK,`handleItemClick error find pendingList null ,itemView parent:${itemView.renderView?.parentView}`)
       }
+
+      if(parentList instanceof QTFastListView){
+        parentList.eventItemClick?.(itemPosition,clickView)
+      }
+
       let itemRaw = itemView.raw
       let name = LayoutAttach.obtainLayoutAttach(clickView).name
       let sid = LayoutAttach.obtainLayoutAttach(clickView).sid

@@ -1,14 +1,10 @@
-import {HippyMap} from 'hippy'
 import { FastListUtils } from '../components/fastlist/FastListUtils';
-import { LayoutAttach } from '../components/fastlist/LayoutAttach';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
 import { TAG_CLICK, TAG_FASTLIST, TAG_LAYOUT, TAG_QUICKTVUI } from '../Constant';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from './ExtendUtil';
 import { QTLog } from './QTLog';
-import { ArkTSUtils } from '@kit.ArkTS';
-import { MeasureUtils, UIUtils } from '@kit.ArkUI';
-import { QTFastItemView } from '../components/fastlist/QTFastItemView';
+
 import { QTItemRootView } from '../components/fastlist/QTItemRootView';
 import { QTTextView } from '../components/text/QTTextView';
 
@@ -77,7 +73,6 @@ export class ViewUtils{
           }
         })
 
-
       }else{
         if(!hAlign){
           hAlign = ViewUtils.getTextHorizontalGravity(gs)
@@ -99,6 +94,7 @@ export class ViewUtils{
 
 
   }
+
 
   static getTextVerticalGravity(gs : string) : Alignment | null{
     //gs:  left|centerVertical
