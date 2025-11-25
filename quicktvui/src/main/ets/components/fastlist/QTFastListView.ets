@@ -14,6 +14,7 @@ import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
 import { QTItemRootView } from './QTItemRootView';
 import { QTFastList } from './QTFastList';
+const PREFIX_KEY = "FASTLIST"
 
 
 @Observed
@@ -560,12 +561,12 @@ export class QTFastListView extends QTRenderBaseView{
           break;
         case 'setListData':
           console.error(TAG_FASTLIST, `setListData!!`)
-          params.forEach(each => (each as HippyMap).set('__ForEachIdx', this.__ForEachIdx++ + ''))
+          params.forEach(each => (each as HippyMap).set('__ForEachIdx', PREFIX_KEY + this.__ForEachIdx++))
           let data = HRValueUtils.getArray(params)
           this.setListWithPrams(data,null)
           break;
         case 'addListData':
-          params.forEach(each => (each as HippyMap).set('__ForEachIdx', this.__ForEachIdx++ + ''))
+          params.forEach(each => (each as HippyMap).set('__ForEachIdx', PREFIX_KEY + this.__ForEachIdx++))
           this.appendItem(params, 0)
           break;
         case 'addListDataWithParams':

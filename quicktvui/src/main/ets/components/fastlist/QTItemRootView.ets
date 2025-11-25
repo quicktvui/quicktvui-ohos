@@ -20,6 +20,7 @@ import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
 import { QTFastListView } from './QTFastListView';
 import { PathUpdate, PendingPathUpdate, TemplateViewManager } from './TemplateViewManager';
+const PREFIX_KEY = "ITEMROOT"
 
 export class ElementNode{
   template:QTView | null = null;
@@ -64,7 +65,7 @@ export class QTItemRootView extends QTRenderBaseView{
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
-    this.__serialNumber = QTItemRootView.__idx++ +'';
+    this.__serialNumber = PREFIX_KEY + QTItemRootView.__idx++;
   }
 
   init(parent : QTPendingListView,item:ItemView): QTItemRootView{

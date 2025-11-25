@@ -34,7 +34,8 @@ import { QTFastList } from './fastlist/QTFastList';
 import { QTMediaSeriesView } from './select-series/QTMediaSeriesView.ets';
 import { QTMediaSeries } from './select-series/QTMediaSeries.ets';
 
-import { QTVideoPlayer, QTVideoPlayerView } from './video/QTVideoPlayerView';
+import { QTVideoPlayerView } from './video/QTVideoPlayerView';
+import { QTVideoPlayer } from './video/QTVideoPlayer';
 import { QTPageRouter, QTPageRouterView } from './router/QTPageRouterView';
 import { QTPage, QTPageView } from './router/QTPageView';
 import { HRTvList } from './vendored/list/HRTvList';
