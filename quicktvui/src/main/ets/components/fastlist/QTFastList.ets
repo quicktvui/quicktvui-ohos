@@ -82,6 +82,7 @@ export struct  QTFastList {
               .margin(item.decoration)
             }, this.keyGenerate)
           }
+          .scrollBar(BarState.Off)
           .alignItems(GridItemAlignment.STRETCH)
           .rowsTemplate(this.renderView.spanCount)
           //.direction(this.renderView.isHorizontal ? Axis.Horizontal : Axis.Vertical)
@@ -90,6 +91,7 @@ export struct  QTFastList {
           // ContentSlot(this.renderView.childSlot)
         }
         .applyRenderViewBaseAttr(this.renderView)
+
       }else{
         Stack() {
           Grid(this.renderView.scroller){
@@ -103,11 +105,13 @@ export struct  QTFastList {
               .margin(item.decoration)
             }, this.keyGenerate)
           }
+
           .alignItems(GridItemAlignment.STRETCH)
           .columnsTemplate(this.renderView.spanCount)
           //.direction(this.renderView.isHorizontal ? Axis.Horizontal : Axis.Vertical)
           .width('100%')
           .height('100%')
+          .scrollBar(BarState.Off)
           // ContentSlot(this.renderView.childSlot)
         }
         .applyRenderViewBaseAttr(this.renderView)
@@ -136,6 +140,7 @@ export struct  QTFastList {
         .onScrollVisibleContentChange(()=>{
           this.renderView.dataSource?.makeBindEventDirty()
         })
+        .scrollBar(BarState.Off)
         // ContentSlot(this.renderView.childSlot)
       }
       .applyRenderViewBaseAttr(this.renderView)
