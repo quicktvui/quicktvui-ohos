@@ -76,6 +76,7 @@ export class QTTabsView extends QTRenderBaseView{
   enableDrawerAnimation = false;
   autoChangePageByNative = true;
 
+
   public tabsData: HippyObservedArray<TabPageData> = new HippyObservedArray()
 
   constructor(ctx: NativeRenderContext) {
@@ -90,6 +91,7 @@ export class QTTabsView extends QTRenderBaseView{
       case "tabs":
         return true;
       case "hideOnSingleTab":
+        this.hideOnSingleTab = HRValueUtils.getBoolean(propValue,false)
         return true;
       case "speedPerPixel":
         this.speedPerPixel = propValue as number
@@ -221,9 +223,10 @@ export class QTTabsView extends QTRenderBaseView{
     }
   }
 
-  updateTabsData(tabList : QTArray){
+  updateTabsData(data : QTArray){
+    QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)}`)
     this.tabsData = []
-    tabList.forEach((item: QTAny,index:number)=>{
+    data.forEach((item: QTAny,index:number)=>{
         let p :TabPageData = new TabPageData()
       if(item instanceof Map){
         if(item.has('text')){
@@ -248,20 +251,44 @@ export class QTTabsView extends QTRenderBaseView{
       if(item){
         p.tabItem = item as QTMap
       }
+      // if(index == 0){
+      //   this.tabsData.push(p)
+      // }
       this.tabsData.push(p)
     })
 
     this.tryLoadPageData(this.defaultPosition)
-    console.log(TAG_TABS,`updateTabsData tabList:${tabList?.length},tabsData length:${this.tabsData.length}`)
+    console.log(TAG_TABS,`updateTabsData tabList:${data?.length},tabsData length:${this.tabsData.length}`)
     this.dataSource.notifyReload()
+
+    if(this.hideOnSingleTab && data.length < 2){
+      this.singleTabMode = true;
+      this.tabList?.setListWithPrams([],null)
+      if(this.tabList){
+        this.tabList.visibility = Visibility.None
+      }
+    }else{
+      if(this.tabList){
+        this.tabList.visibility = Visibility.Visible
+      }
+      if(this.tabList){
+        this.tabList.setListWithPrams(data,null)
+      }
+      this.singleTabMode = true;
+    }
+    // //测试用
+    // setTimeout(()=>{
+    //   this.singleTabMode = true;
+    // },10)
+
   }
 
 
   viewAboutToAppear(){
     //console.error(TAG_TABS,`viewAboutToAppear`)
-    setTimeout(()=>{
-      this.controller.setTabBarTranslate({ x: 0, y: 80 });
-    })
+    // setTimeout(()=>{
+    //   this.controller.setTabBarTranslate({ x: 0, y: 80 });
+    // })
   }
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
@@ -339,16 +366,19 @@ export class QTTabsView extends QTRenderBaseView{
 
   setPageData(pageIndex: number,params:QTMap,dataArray : QTArray){
     console.log(TAG_TABS,`setPageData :${pageIndex},dataArray:${dataArray?.length},params:${CommonUtils.hippyMap2String(params)}`)
-      this.updateDataOnly(pageIndex,params,dataArray)
+
       let pd = this.getTabData(pageIndex)
-      if(pd?.contentView){
-        if(!this.contentTemplate){
-          console.error(TAG_TABS,`setPageData error contentTemplate is null`)
-          return;
+      if(pd?.dataState != 1){
+        this.updateDataOnly(pageIndex,params,dataArray)
+        if(pd?.contentView){
+          if(!this.contentTemplate){
+            console.error(TAG_TABS,`setPageData error contentTemplate is null`)
+            return;
+          }
+          QTLog.d(TAG_TABS,`setPageData tag:${this.contentTemplate.tag} `)
+          pd.contentView.nativeSetupIfNeed(this.contentTemplate.tag,this.contentTemplate)
+          pd.contentView.updateSections(dataArray,pd.contentParams)
         }
-        QTLog.d(TAG_TABS,`setPageData tag:${this.contentTemplate.tag} `)
-        pd.contentView.nativeSetupIfNeed(this.contentTemplate.tag,this.contentTemplate)
-        pd.contentView.updateSections(dataArray,pd.contentParams)
       }
   }
 
@@ -463,6 +493,22 @@ function buildPage(item: TabPageData, index: number){
 
 }
 
+@Builder
+function buildTabList(tabsView:QTTabsView){
+    if(tabsView.tabList && !tabsView.singleTabMode){
+      QTFastList({
+        renderView:tabsView.tabList,
+        children : tabsView.tabList.children
+      })
+        // .width(200)
+        // .height(50)
+        // .backgroundColor(Color.Blue)
+    }else{
+      // Stack({
+      // }).opacity(0)
+    }
+}
+
 
 
 @Component
@@ -484,24 +530,29 @@ export struct  QTTabs {
   // }
 
   build(): void {
-    Tabs({barPosition: this.renderView.barPosition,index: this.renderView.currentIndex,controller: this.renderView.controller}){
-      ForEach(this.renderView.tabsData, (item: TabPageData, index: number) => {
-        TabContent() {
-          buildPage(item,index)
-        }
-        // .tabBar(this.tabBuilder(item.title!!,index))
-        .tabBar(item.title)
-      },(item:TabPageData,index:number)=>{
-        return ''+index
+    Stack(){
+      Tabs({barPosition: this.renderView.barPosition,index: this.renderView.currentIndex,controller: this.renderView.controller}){
+        ForEach(this.renderView.tabsData, (item: TabPageData, index: number) => {
+          TabContent() {
+            buildPage(item,index)
+          }
+          // .tabBar(this.tabBuilder(item.title!!,index))
+          .tabBar(item.title)
+        },(item:TabPageData,index:number)=>{
+          return ''+index
+        })
+      }
+
+      // .barMode(BarMode.Scrollable)
+      // .barOverlap(true)\
+      .barHeight(0)
+      .barBackgroundColor(Color.White)
+      .onContentWillChange((currentIndex:number,comingIndex:number)=>{
+        return this.renderView.onTabsContentWillChangeCallback(currentIndex,comingIndex)
       })
+      buildTabList(this.renderView )
     }
 
-    .barMode(BarMode.Scrollable)
-    // .barOverlap(true)
-    .barBackgroundColor(Color.White)
-    .onContentWillChange((currentIndex:number,comingIndex:number)=>{
-      return this.renderView.onTabsContentWillChangeCallback(currentIndex,comingIndex)
-    })
     // .backgroundColor(Color.Black)
 
   }
@@ -511,7 +562,7 @@ export struct  QTTabs {
   }
 }
 
-@Extend(Tabs)
+@Extend(Stack)
 function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
