@@ -180,6 +180,8 @@ export struct QTDiv {
         //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
         //custom
         .attributeModifier(this.colorModifier)
+        .alignContent(Alignment.Center)
+        .align(Alignment.Center)
         .onClick((event=>{
           ViewUtils.handleClickEvent(event,this.renderView)
         }))
@@ -191,6 +193,8 @@ export struct QTDiv {
         }
         .applyRenderViewBaseAttr(this.renderView)
         .attributeModifier(this.colorModifier)
+        .alignContent(Alignment.Center)
+        .align(Alignment.Center)
         // .onClick((event=>{
         //   ViewUtils.handleClickEvent(event,this.renderView)
         // }))

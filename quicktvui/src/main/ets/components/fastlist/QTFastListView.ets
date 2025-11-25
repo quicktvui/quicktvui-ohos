@@ -1,6 +1,6 @@
 
 import {HippyObservedArray,NativeRenderContext,HippyAny,HippyRenderCallback,HippyArray,HippyMap,HippyEndBatchCallback} from 'hippy'
-import { TAG_FASTLIST } from '../../Constant';
+import { TAG_FASTLIST, TAG_REUSE } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
@@ -14,6 +14,7 @@ import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
 import { QTItemRootView } from './QTItemRootView';
 import { QTFastList } from './QTFastList';
+const PREFIX_KEY = "FASTLIST"
 
 
 @Observed
@@ -29,7 +30,7 @@ export class QTFastListView extends QTRenderBaseView{
   autofocusPosition: number = -1;
   dataSource: FastListDataSource | null = null;
   isNativeCreate = false;
-
+  __ForEachIdx = 0
   // private customTemplate: QTView | null = null;
 
   private endBatchCallback: HippyEndBatchCallback | null = null
@@ -124,7 +125,7 @@ export class QTFastListView extends QTRenderBaseView{
 
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_FASTLIST,`FastList:propKey:${propKey},value:${propValue}`)
+    console.log(TAG_REUSE,`FastList:propKey:${propKey},value:${propValue}`)
     // if(propKey === 'attributes'){
     //   CommonUtils.printObject(propValue,'FastList setAttributes')
     // }
@@ -559,12 +560,14 @@ export class QTFastListView extends QTRenderBaseView{
           }
           break;
         case 'setListData':
-          console.error(TAG_FASTLIST,`setListData!!`)
+          console.error(TAG_FASTLIST, `setListData!!`)
+          params.forEach(each => (each as HippyMap).set('__ForEachIdx', PREFIX_KEY + this.__ForEachIdx++))
           let data = HRValueUtils.getArray(params)
           this.setListWithPrams(data,null)
           break;
         case 'addListData':
-          this.appendItem(params,0)
+          params.forEach(each => (each as HippyMap).set('__ForEachIdx', PREFIX_KEY + this.__ForEachIdx++))
+          this.appendItem(params, 0)
           break;
         case 'addListDataWithParams':
           this.appendItem(params[0] as HippyArray,params[1] as number)

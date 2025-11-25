@@ -1,11 +1,12 @@
 import { QTFastListView } from "./QTFastListView"
 import {HippyObservedArray,HRDiv,HIPPY_COMPONENT_KEY_PREFIX,HippyRenderBaseView,buildHippyRenderView,HippyMap,HippyEndBatchCallback} from 'hippy'
-import { TAG_FASTLIST, TAG_LAYOUT } from "../../Constant";
+import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from "../../Constant";
 import { FastListDataSource } from "./FastListDataSource";
 import { NodeUtils } from "../../utils/NodeUtils";
 import { QTView } from "../../QTTypes";
 import { QTItemRoot, QTItemRootView } from "./QTItemRootView";
 import { LayoutAttach } from "./LayoutAttach";
+import { QTLog } from "../../utils/QTLog";
 
 @Component
 export struct  QTFastList {
@@ -38,22 +39,31 @@ export struct  QTFastList {
 
 
   keyGenerate(item : QTView,index : number) : string{
-    if(item instanceof QTItemRootView){
+    if (item instanceof QTItemRootView && item.itemView){
+      return item.itemView.getItemForEachKey();
+    } else{
+      return 'view-' + index
+    }
+    /*if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid
       if(id){
-        // console.debug(TAG_FASTLIST,`keyGenerate id from sid:${id}`)
+        QTLog.d(TAG_REUSE,`keyGenerate id from sid:${id}`)
         return id +'-'+ item.updateTimes
       }
       if(item.itemView){
         id =  item.itemView.getItemId()
         if(id){
-          // console.debug(TAG_FASTLIST,`keyGenerate id by item:${id}`)
+          QTLog.d(TAG_REUSE,`keyGenerate id by item:${id}`)
           return LayoutAttach.obtainLayoutAttach(item).virtualExtra.itemType + ''+ id + '-'+item.updateTimes;
+        }else{
+          // QTLog.d(TAG_REUSE,`keyGenerate id with fi-:${index}-${item.updateTimes}`)
         }
         return `fi-:${index}-${item.updateTimes}`
       }
+    }else{
+      // QTLog.d(TAG_REUSE,`keyGenerate use fallback -:${index}`)
     }
-    return 'view-'+index
+    return 'view-'+index*/
   }
 
 
@@ -69,8 +79,10 @@ export struct  QTFastList {
                   children: item.children,
                 }).reuseId(item.getReuseId())
               }
+              .margin(item.decoration)
             }, this.keyGenerate)
           }
+          .scrollBar(BarState.Off)
           .alignItems(GridItemAlignment.STRETCH)
           .rowsTemplate(this.renderView.spanCount)
           //.direction(this.renderView.isHorizontal ? Axis.Horizontal : Axis.Vertical)
@@ -79,6 +91,7 @@ export struct  QTFastList {
           // ContentSlot(this.renderView.childSlot)
         }
         .applyRenderViewBaseAttr(this.renderView)
+
       }else{
         Stack() {
           Grid(this.renderView.scroller){
@@ -89,13 +102,16 @@ export struct  QTFastList {
                   children: item.children,
                 }).reuseId(item.getReuseId())
               }
+              .margin(item.decoration)
             }, this.keyGenerate)
           }
+
           .alignItems(GridItemAlignment.STRETCH)
           .columnsTemplate(this.renderView.spanCount)
           //.direction(this.renderView.isHorizontal ? Axis.Horizontal : Axis.Vertical)
           .width('100%')
           .height('100%')
+          .scrollBar(BarState.Off)
           // ContentSlot(this.renderView.childSlot)
         }
         .applyRenderViewBaseAttr(this.renderView)
@@ -108,7 +124,8 @@ export struct  QTFastList {
               QTItemRoot({
                 renderView:item as QTItemRootView,
                 children: item.children,
-              }).reuseId(item.getReuseId())
+              })
+                .reuseId(item.getReuseId())
             }
             .margin(item.decoration)
           }, this.keyGenerate)
@@ -123,6 +140,7 @@ export struct  QTFastList {
         .onScrollVisibleContentChange(()=>{
           this.renderView.dataSource?.makeBindEventDirty()
         })
+        .scrollBar(BarState.Off)
         // ContentSlot(this.renderView.childSlot)
       }
       .applyRenderViewBaseAttr(this.renderView)

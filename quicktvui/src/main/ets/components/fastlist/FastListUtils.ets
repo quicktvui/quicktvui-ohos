@@ -8,6 +8,7 @@ import { QTFastListView } from './QTFastListView'
 import { QTPendingListView, QTView } from '../../QTTypes'
 import { CommonUtils } from '../../utils/CommonUtils'
 import { QTItemRootView } from './QTItemRootView'
+import { QTLog } from '../../utils/QTLog'
 
 export class FastListUtils{
 
@@ -18,13 +19,13 @@ export class FastListUtils{
   static EVENT_DETACH = 'onDetachedFromWindow'
 
   static handleItemClick(clickView :QTView){
-    console.info(TAG_CLICK,`onClick rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId}`)
+    QTLog.d(TAG_CLICK,`onClick rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId}`)
     let rootListId = LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId
     if(rootListId != -1){
       let fastItem : QTItemRootView | null = FastListUtils.findItemView(clickView)
       let itemView :ItemView | null | undefined = fastItem?.itemView
       if(!itemView){
-        console.error(TAG_CLICK,"handleItemClick error findItemView null ")
+        QTLog.e(TAG_CLICK,"handleItemClick error findItemView null ")
         return;
       }
       let parentList : QTPendingListView | null = FastListUtils.findListParent(fastItem)
@@ -32,12 +33,15 @@ export class FastListUtils{
       if(parentList){
         itemPosition = parentList.itemIndexOfDataList(fastItem)
       }else{
-        console.error(TAG_CLICK,`handleItemClick error find pendingList null ,itemView parent:${itemView.renderView?.parentView}`)
+        QTLog.e(TAG_CLICK,`handleItemClick error find pendingList null ,itemView parent:${itemView.renderView?.parentView}`)
       }
       let itemRaw = itemView.raw
       let name = LayoutAttach.obtainLayoutAttach(clickView).name
       let sid = LayoutAttach.obtainLayoutAttach(clickView).sid
       let index = clickView.parentView?.children.indexOf(clickView)
+      if(!index && clickView instanceof QTItemRootView){
+        index = clickView.dataPosition
+      }
       let map = new Map<string,HippyAny>()
       let parentPosition = -1;
       if(parentList){
@@ -45,7 +49,7 @@ export class FastListUtils{
         if(parentItem){
             parentPosition = FastListUtils.findItemPosition(parentItem)
         }else{
-          console.warn(TAG_CLICK,"handleItemClick find parentItem null ")
+          QTLog.w(TAG_CLICK,"handleItemClick find parentItem null ")
         }
       }
       //basic
@@ -57,10 +61,10 @@ export class FastListUtils{
         map.set('item',itemRaw)
       }
       map.set('parentPosition',parentPosition)
-      console.log(TAG_CLICK,`sendd onItemClick data:${CommonUtils.hippyMap2String(map)} `)
+      QTLog.d(TAG_CLICK,`sendd onItemClick data:${CommonUtils.hippyMap2String(map)} `)
       ExtendUtil.sendUIEvent(clickView.ctx,rootListId,FastListUtils.EVENT_CLICK,map)
     }else{
-      console.error(TAG_CLICK,`handleItemClick error rootListId is -1 clickView:${ExtendUtil.debugView(clickView)}`)
+      QTLog.e(TAG_CLICK,`handleItemClick error rootListId is -1 clickView:${ExtendUtil.debugView(clickView)}`)
     }
   }
 
