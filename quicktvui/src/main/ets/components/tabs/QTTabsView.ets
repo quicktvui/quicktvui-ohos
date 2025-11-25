@@ -76,7 +76,6 @@ export class QTTabsView extends QTRenderBaseView{
   enableDrawerAnimation = false;
   autoChangePageByNative = true;
 
-
   public tabsData: HippyObservedArray<TabPageData> = new HippyObservedArray()
 
   constructor(ctx: NativeRenderContext) {
@@ -576,7 +575,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .visibility(($$ as QTView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)

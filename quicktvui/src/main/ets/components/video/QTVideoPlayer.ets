@@ -30,6 +30,8 @@ export struct QTVideoPlayer {
   private loop: boolean = false;
   private render: QTPlayerRenderView = QTPlayerRenderView.NONE;
   private availableBitrates: Array<number> = [];
+  private currentVolume: number = 1.0;
+  private url: string = '';
   //
   @State surfaceW: number = 1;
   @State surfaceH: number = 1;
@@ -45,7 +47,7 @@ export struct QTVideoPlayer {
     // LogUtils.i(this.TAG, `call method ${method} params: ${params}`);
     switch (method) {
       case QTPlayerOp.INIT: {
-        this.isInitialized = true
+        // this.isInitialized = true
         return true;
       }
       case QTPlayerOp.PLAY: {
@@ -67,7 +69,9 @@ export struct QTVideoPlayer {
         this.loop = extraMap.get('loop') as boolean;
         this.render = extraMap.get('render') as number;
 
-        this.play(url)
+        this.url = url;
+        this.isInitialized = true
+
         break;
       }
       case QTPlayerOp.START: {
@@ -144,9 +148,13 @@ export struct QTVideoPlayer {
         break;
       }
       case QTPlayerOp.SET_LEFT_VOLUME: {
+        const volume = params[0] as number;
+        this.setVolume(volume);
         break;
       }
       case QTPlayerOp.SET_RIGHT_VOLUME: {
+        const volume = params[0] as number;
+        this.setVolume(volume);
         break;
       }
       case QTPlayerOp.SET_VOLUME: {
@@ -198,7 +206,10 @@ export struct QTVideoPlayer {
 
   aboutToAppear() {
     this.renderView.videoPlayer = this
-    this.isInitialized = true
+    // this.isInitialized = true
+    const map = new Map<string, HippyAny>()
+    map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.INITIALIZE_SUCCESS)
+    this.renderView.sendEvent(QTPlayerEvent.ON_PLAYER_STATUS_CHANGED, map)
   }
 
   aboutToDisappear() {
@@ -312,7 +323,7 @@ export struct QTVideoPlayer {
      * 播放进度
      */
     this.videoPlayer.on('timeUpdate', (time: number) => {
-      LogUtils.d(this.TAG, "=========timeUpdate=====>>>>" + time)
+      // LogUtils.d(this.TAG, "=========timeUpdate=====>>>>" + time)
       // this.currentTime = time;
     });
 
@@ -544,7 +555,12 @@ export struct QTVideoPlayer {
   }
 
   setVolume(volume: number): void {
+    LogUtils.d(this.TAG, 'setVolume ' + volume + ', current ' + this.currentVolume);
+    if (volume == this.currentVolume)
+      return;
+
     if (this.videoPlayer) {
+      this.currentVolume = volume;
       this.videoPlayer.setVolume(volume);
     }
   }
@@ -590,7 +606,7 @@ export struct QTVideoPlayer {
   CoverXComponent() {
     XComponent({
       id: 'xComponent',
-      type: XComponentType.SURFACE,
+      type: this.render == QTPlayerRenderView.TEXTURE ? XComponentType.TEXTURE : XComponentType.SURFACE,
       controller: this.xComponentController
     }).id('VideoView')// .visibility(this.XComponentFlag ? Visibility.Visible : Visibility.Hidden)
       .onLoad(() => {
@@ -598,9 +614,10 @@ export struct QTVideoPlayer {
         this.surfaceId = this.xComponentController.getXComponentSurfaceId();
         //
         if (this.surfaceId) {
-          const map = new Map<string, HippyAny>()
-          map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.INITIALIZE_SUCCESS)
-          this.renderView.sendEvent(QTPlayerEvent.ON_PLAYER_STATUS_CHANGED, map)
+          // const map = new Map<string, HippyAny>()
+          // map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.INITIALIZE_SUCCESS)
+          // this.renderView.sendEvent(QTPlayerEvent.ON_PLAYER_STATUS_CHANGED, map)
+          this.play(this.url)
         } else {
           const map = new Map<string, HippyAny>()
           map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.INITIALIZE_ERROR)

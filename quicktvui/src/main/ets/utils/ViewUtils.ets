@@ -38,8 +38,10 @@ export class ViewUtils{
       let vAlign : Alignment | null  = null;
       if(gs.indexOf('|') > -1){
         //包括
-        let aligns = gs.split('|')
-        aligns.map((align,index)=>{
+        let aligns = gs.split('|');
+        hAlign = ViewUtils.getTextHorizontalGravity(aligns[0]);
+        vAlign = ViewUtils.getTextVerticalGravity(aligns[1]);
+        /*aligns.map((align,index)=>{
           if(align == 'center'){
             // hAlign = TextAlign.Center
             // vAlign = Alignment.Center
@@ -71,7 +73,7 @@ export class ViewUtils{
               vAlign = ViewUtils.getTextVerticalGravity(align)
             }
           }
-        })
+        })*/
 
       }else{
         if(!hAlign){
@@ -101,6 +103,7 @@ export class ViewUtils{
     //gs:  top|centerHorizontal
 
     switch (gs){
+      case  'center':
       case  'centerVertical':
         return Alignment.Center;
       case 'top':
@@ -116,6 +119,7 @@ export class ViewUtils{
     //gs:  top|centerHorizontal
 
     switch (gs){
+      case 'start':
       case 'left':
         return TextAlign.Start;
       case 'right':

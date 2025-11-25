@@ -383,11 +383,11 @@ export class TemplateViewManager{
       case 'width':
         // (p.renderView.attachedInfo as StyleAttach).style().setStyles()
         // p.layout[2] = HRValueUtils.getNumber(value);
-        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(QTPixelUtil.getDimensionValue(value))
+        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(QTPixelUtil.vp2Dev(QTPixelUtil.getDimensionValue(value)))
         return true;
       case 'height':
         //p.layout[3] = HRValueUtils.getNumber(value);
-        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(QTPixelUtil.getDimensionValue(value))
+        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(QTPixelUtil.vp2Dev(QTPixelUtil.getDimensionValue(value)))
         return true;
       case 'translation':
         let ts = value as number[]

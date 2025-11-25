@@ -140,7 +140,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .visibility(($$ as HippyRenderBaseView).cssVisibility)
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)

@@ -50,7 +50,7 @@ export class QTVideoPlayerView extends QTBaseComponentView {
     if (method == "getEsInfo") {
       if (callback) {
         const info = new Map<string, HippyAny>()
-        info.set("isSupportAsyncInit", true)
+        info.set("isSupportAsyncInit", false)
         callback(info)
       }
     }
