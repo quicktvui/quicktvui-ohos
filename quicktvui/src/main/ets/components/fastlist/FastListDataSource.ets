@@ -483,10 +483,12 @@ export class FastListDataSource implements IDataSource {
     // if(item.renderView){
     //   NodeUtils.printViewTreePretty(item.renderView,'',false)
     // }
-    if(this.bindEventDirty || this.lastEventPosition != index){
-      FastListUtils.handleItemEvent(fi,FastListUtils.EVENT_BIND,true,index,this.listView!!)
-      this.lastEventPosition = index;
-      this.bindEventDirty = false;
+    if(this.listView instanceof QTFastListView && this.listView.listenBoundEvent){
+      if( this.bindEventDirty || this.lastEventPosition != index){
+        FastListUtils.handleItemEvent(fi,FastListUtils.EVENT_BIND,true,index,this.listView!!)
+        this.lastEventPosition = index;
+        this.bindEventDirty = false;
+      }
     }
 
     return fi as QTItemRootView

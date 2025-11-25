@@ -33,6 +33,8 @@ export class QTFastListView extends QTRenderBaseView{
   __ForEachIdx = 0
   // private customTemplate: QTView | null = null;
 
+  public listenBoundEvent : boolean = false;
+
   eventItemClick: ((index:number,clickedView:QTView) => void) | null = null
 
   private endBatchCallback: HippyEndBatchCallback | null = null
@@ -319,6 +321,9 @@ export class QTFastListView extends QTRenderBaseView{
         }
         console.error(TAG_FASTLIST,`FastList set spanCount:${this.spanCount}:${ExtendUtil.debugView(this)}`)
         return true;
+     case "listenBoundEvent":
+        this.listenBoundEvent == HRValueUtils.getBoolean(propValue,true)
+     return true;
 
     }
     //不支持或者不处理的key
@@ -326,7 +331,7 @@ export class QTFastListView extends QTRenderBaseView{
       case "display":
       case "setData":
       case "suspendUpdateTaskOnPause":
-      case "listenBoundEvent":
+
       case "verticalScrollBarEnabled":
       case "horizontalScrollBarEnabled":
       case "checkScrollOffsetOnStateChanged":
