@@ -37,10 +37,12 @@ export class QTTextView extends QTRenderBaseView{
   }
 
   private showOnState() {
-    if (this.showonstate == 'selected') {
+    if (this.showonstate.includes('normal') ) {
+      this.visibility = Visibility.Visible
+    }else if (this.showonstate.includes('selected') ) {
       //选中显示，未选中隐藏
       this.visibility = Visibility[this.selected?'Visible':'Hidden']
-    } else if (this.showonstate == 'focused') {
+    } else if (this.showonstate.includes('focused')) {
       //聚焦显示，失焦隐藏
       this.visibility = Visibility[this.focus?'Visible':'Hidden']
     }
@@ -58,7 +60,7 @@ export class QTTextView extends QTRenderBaseView{
 
         return true;
       case 'showOnState':
-        this.showonstate = HRValueUtils.getString(propValue as HippyAny);
+        this.showonstate = HRValueUtils.getString(propValue as HippyAny) || (HRValueUtils.getArray(propValue as HippyArray)||[]).join('|');
         this.showOnState();
         return true;
       case "textSpan":
