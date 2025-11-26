@@ -7,6 +7,9 @@ import MeasureText from '@ohos.measure';
 import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTView } from '../../QTTypes';
+import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
+import { QTLog } from '../../utils/QTLog';
 
 
 @Observed
@@ -24,13 +27,26 @@ export class QTTextView extends QTRenderBaseView{
 
   letterSpacing: number = 0
   textAlign: TextAlign = TextAlign.Start
+  verticalAlign :Alignment = Alignment.TopStart
   ellipsisMode: EllipsisMode = EllipsisMode.END
+  textOverflow: TextOverflow = TextOverflow.Clip
 
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
 
+  private showOnState() {
+    if (this.showonstate.includes('normal') ) {
+      this.visibility = Visibility.Visible
+    }else if (this.showonstate.includes('selected') ) {
+      //选中显示，未选中隐藏
+      this.visibility = Visibility[this.selected?'Visible':'Hidden']
+    } else if (this.showonstate.includes('focused')) {
+      //聚焦显示，失焦隐藏
+      this.visibility = Visibility[this.focus?'Visible':'Hidden']
+    }
+  }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey){
@@ -42,6 +58,10 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "typeface":
 
+        return true;
+      case 'showOnState':
+        this.showonstate = HRValueUtils.getString(propValue as HippyAny) || (HRValueUtils.getArray(propValue as HippyArray)||[]).join('|');
+        this.showOnState();
         return true;
       case "textSpan":
 
@@ -55,7 +75,8 @@ export class QTTextView extends QTRenderBaseView{
       case "gravity":
       case "textAlign":
         // this. = HRValueUtils.getNumber(propValue)
-        this.textAlign = ViewUtils.getTextGravity(HRValueUtils.getString(propValue))
+        //this.textAlign = ViewUtils.getTextGravity(HRValueUtils.getString(propValue))
+        ViewUtils.configGravity(HRValueUtils.getString(propValue),this)
         return true;
       case "fontSize":
         this.fontSize = QTPixelUtil.dev2Vp(HRValueUtils.getNumber(propValue));
@@ -72,6 +93,7 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "ellipsizeMode":
         this.ellipsisMode = HRValueUtils.getNumber(propValue)
+        this.textOverflow = TextOverflow.Ellipsis;
         return true;
       case "lines":
         this.maxLines = HRValueUtils.getNumber(propValue)
@@ -81,7 +103,8 @@ export class QTTextView extends QTRenderBaseView{
         return true;
       case "textColor":
       case "color":
-        this.fontColor = HRValueUtils.getNumber(propValue)
+        let colorVal = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+        this.fontColor = '#' + colorVal
         return true;
       case "lineHeight":
         this.lineHeight = HRValueUtils.getNumber(propValue)
@@ -102,8 +125,8 @@ export class QTTextView extends QTRenderBaseView{
 
         return true;
       case "text":
+        QTLog.d(TAG_REUSE,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
         this.text = HRValueUtils.getString(propValue)
-        // console.log(QUICKTVUI_TAG,`setText:${this.text}`)
         return true;
     }
     return super.setProp(propKey, propValue)
@@ -157,23 +180,31 @@ export struct  QTText {
 
   build(): void {
     Text(this.renderView.text)
+      .applyRenderViewBaseAttr(this.renderView)
       .width(this.renderView.cssWidth > 0 ? this.renderView.cssWidth : this.textSize.width)
       .height(this.renderView.cssHeight > 0 ? this.renderView.cssHeight :  this.textSize.height)
       .padding(this.renderView.qtPadding)
       .onAreaChange((oldValue: Area, newValue: Area) => {
         if(newValue.width != oldValue.width || newValue.height != oldValue.height){
-          if(this.renderView.parentView instanceof QTRenderBaseView){
+          if(this.renderView.parentView instanceof QTBaseComponentView){
+            let newWidth = 0
+            let newHeight= 0;
             if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight){
               if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth){
-                LayoutAttach.obtainLayoutAttach(this.renderView).setWidth(Number(newValue.width))
-                this.renderView.cssWidth = Number(newValue.width)
+                newWidth = QTPixelUtil.vp2Vp(Number(newValue.width))
+                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedWidth(newWidth)
+                // this.renderView.cssWidth = Number(newValue.width)
               }else{
-                LayoutAttach.obtainLayoutAttach(this.renderView).setHeight(Number(newValue.height))
-                this.renderView.cssHeight = Number(newValue.height)
+                newHeight = QTPixelUtil.vp2Vp(Number(newValue.height))
+                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
+                // this.renderView.cssHeight = Number(newValue.height)
               }
               // QTPixelUtil.setRenderViewLayout(this.renderView,[0,])
-              this.renderView.parentView.notifyChildSizeChanged(this.renderView,this.renderView,Number(newValue.width),Number(newValue.height))
+              //QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
+              this.renderView.parentView.notifyChildSizeChanged(this.renderView,this.renderView,newWidth,newHeight)
             }
+          }else{
+            QTLog.d(TAG_LAYOUT,`parent is not QTRenderBaseView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
           }
         }
       })
@@ -183,6 +214,9 @@ export struct  QTText {
       .lineHeight(this.renderView.lineHeight)
       .maxLines(this.renderView.maxLines)
       .textAlign(this.renderView.textAlign)
+      .textOverflow({ overflow: this.renderView.textOverflow })
+      .ellipsisMode(this.renderView.ellipsisMode)
+      .align(this.renderView.verticalAlign)
   }
 
   aboutToAppear(): void {
@@ -190,7 +224,7 @@ export struct  QTText {
 }
 
 @Extend(Text)
-function applyRenderViewBaseAttr($$: QTView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
@@ -199,7 +233,7 @@ function applyRenderViewBaseAttr($$: QTView) {
   .visibility(($$ as QTView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
@@ -212,5 +246,8 @@ function applyRenderViewBaseAttr($$: QTView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }
 

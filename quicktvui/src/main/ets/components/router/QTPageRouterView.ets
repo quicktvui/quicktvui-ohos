@@ -49,9 +49,10 @@ export struct QTPageRouter {
 
   build(): void {
     Stack() {
-      ForEach(this.children, (item: HippyRenderBaseView) => {
+      // ForEach(this.children, (item: HippyRenderBaseView) => {
+      ForEach([this.children[this.children.length - 1]], (item: HippyRenderBaseView) => {
         buildHippyRenderView(item, null)
-      }, (item: HippyRenderBaseView) => item.tag + '')
+      }, (item: HippyRenderBaseView) => item ? item.tag + '' : '')
       ContentSlot(this.renderView.childSlot)
     }
     .applyRenderViewBaseAttr(this.renderView)
@@ -70,7 +71,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)

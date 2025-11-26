@@ -5,12 +5,15 @@ import {
   HippyAny,
   HIPPY_COMPONENT_KEY_PREFIX,
   HippyRenderCallback,
+  HippyViewEvent,
 } from 'hippy'
 import { webview } from '@kit.ArkWeb';
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 @Observed
 export class QTWebView extends QTBaseComponentView {
+  public web: QTWeb | null = null
   public url: string | null = null;
 
   constructor(ctx: NativeRenderContext) {
@@ -28,8 +31,29 @@ export class QTWebView extends QTBaseComponentView {
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    if (method == "loadUrl") {
-      this.url = params[0] as string;
+    // if (method == "loadUrl") {
+    //   this.url = params[0] as string;
+    // }
+    if (this.web && this.web.call(method, params, callback)) {
+      return;
+    }
+    super.call(method, params, callback)
+  }
+}
+
+class Js2Vue {
+  private view: QTWebView | null = null
+
+  constructor(renderView: QTWebView) {
+    this.view = renderView
+  }
+
+  js2Vue(value: string): void {
+    if (this.view != null) {
+      let event = new HippyViewEvent("onJs2Vue")
+      let params = new Map<string, string>()
+      params.set('js2VueValue', value)
+      event.send(this.view.ctx, this.view.tag, params)
     }
   }
 }
@@ -39,20 +63,103 @@ export struct QTWeb {
   @ObjectLink renderView: QTWebView
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
   private webviewController: WebviewController = new webview.WebviewController()
+  private js2Vue: Js2Vue = new Js2Vue(this.renderView);
+  @State private url: string | null = null;
+  private isControllerAttached: boolean = false
+  private localHtmlUrl = "resource://rawfile/local.html"
 
   aboutToAppear() {
+    this.renderView.web = this
   }
 
   aboutToDisappear() {
+  }
 
+  public call(method: string, params: Array<HippyAny>,
+    callback: HippyRenderCallback | null): boolean {
+    switch (method) {
+      case 'loadUrl': {
+        this.url = params[0] as string;
+        if (this.isControllerAttached) {
+          try {
+            this.webviewController.loadUrl(this.url);
+          } catch (error) {
+            console.error(`ErrorCode: ${(error as BusinessError).code},  Message: ${(error as BusinessError).message}`);
+          }
+        }
+        return true
+      }
+      case 'evaluateJavascript': {
+        const script: string = params[0] as string;
+        this.webviewController.runJavaScript(script)
+          .then((ret) => {
+            if (callback != null) {
+              callback(ret)
+            }
+          })
+          .catch((e: BusinessError) => {
+            if (callback != null) {
+              callback(null)
+            }
+          });
+        return true
+      }
+      default:
+        return false
+    }
   }
 
   build() {
     Web({
-      src: this.renderView.url,
+      src: $rawfile("local.html"),
       controller: this.webviewController,
       renderMode: RenderMode.ASYNC_RENDER
-    }).applyRenderViewBaseAttr(this.renderView)
+    })
+      .javaScriptAccess(true)
+      .fileAccess(true)
+      .onControllerAttached(() => {
+        this.isControllerAttached = true
+        try {
+          this.webviewController.registerJavaScriptProxy(this.js2Vue, "Js2Vue", ["js2Vue"], [], '')
+        } catch (error) {
+          console.error(`ErrorCode: ${(error as BusinessError).code},Message: ${(error as BusinessError).message}`);
+        }
+        if (this.url != null) {
+          try {
+            this.webviewController.loadUrl(this.url);
+          } catch (error) {
+            console.error(`ErrorCode: ${(error as BusinessError).code},  Message: ${(error as BusinessError).message}`);
+          }
+        }
+      })
+      .onPageBegin(e => {
+        if (this.localHtmlUrl == e.url) {
+          return
+        }
+        let event = new HippyViewEvent("onPageStarted")
+        let params = new Map<string, string>()
+        params.set('url', e.url)
+        event.send(this.renderView.ctx, this.renderView.tag, params)
+      })
+      .onPageEnd(e => {
+        if (this.localHtmlUrl == e.url) {
+          return
+        }
+        let event = new HippyViewEvent("onPageFinished")
+        let params = new Map<string, string>()
+        params.set('url', e.url)
+        event.send(this.renderView.ctx, this.renderView.tag, params)
+      })
+      .onResourceLoad(e => {
+        if (this.localHtmlUrl == e.url) {
+          return
+        }
+        let event = new HippyViewEvent("onLoadResource")
+        let params = new Map<string, string>()
+        params.set('url', e.url)
+        event.send(this.renderView.ctx, this.renderView.tag, params)
+      })
+      .applyRenderViewBaseAttr(this.renderView)
   }
 }
 
@@ -68,7 +175,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)

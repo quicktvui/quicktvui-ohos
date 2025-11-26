@@ -27,6 +27,10 @@ export class ItemView{
     this.raw = raw
   }
 
+  getItemForEachKey():string{
+    return this.raw?.get('__ForEachIdx') as string
+  }
+
   getItemId():string | null{
     let id : QTAny | null = null
     if(this.raw){
@@ -45,6 +49,10 @@ export class ItemView{
     }
     return null
   }
+}
+
+export interface ItemViewParams{
+  itemView :ItemView
 }
 
 

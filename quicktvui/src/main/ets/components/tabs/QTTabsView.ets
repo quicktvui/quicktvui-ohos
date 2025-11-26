@@ -1,11 +1,12 @@
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
-import { InnerViewPagerView, QTFastList,QTFastListView } from '../../../../../Index';
+import { InnerViewPagerView, QTBaseComponentView, QTFastList,QTFastListView } from '../../../../../Index';
 import { TAG_FASTLIST, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { TabsDataSource } from './TabsDataSource';
@@ -84,11 +85,12 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_TABS,`tabs:setProp propKey:${propKey},propValue:${CommonUtils.hippyAny2String(propValue)}`)
+    QTLog.d(TAG_TABS,`tabs:setProp propKey:${propKey},propValue:${CommonUtils.hippyAny2String(propValue)}`)
     switch (propKey) {
       case "tabs":
         return true;
       case "hideOnSingleTab":
+        this.hideOnSingleTab = HRValueUtils.getBoolean(propValue,false)
         return true;
       case "speedPerPixel":
         this.speedPerPixel = propValue as number
@@ -197,7 +199,7 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   onPageTemplateReady(template:QTView){
-    console.log(TAG_TABS,`onPageTemplateReady:${template}`)
+    QTLog.d(TAG_TABS,`onPageTemplateReady:${ExtendUtil.debugView(template)}`)
     this.contentTemplate = template;
     // this.tabsData.forEach((value)=>{
     //   value.contentView?.setcus
@@ -208,6 +210,10 @@ export class QTTabsView extends QTRenderBaseView{
     super.addSubRenderView(subView,index)
     if(subView instanceof QTFastListView){
       this.tabList = subView;
+      this.tabList.eventItemClick = ((index,clickedView)=>{
+        //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
+        this.controller.changeIndex(index)
+      })
     }
     if(subView instanceof InnerViewPagerView){
       this.viewpager = subView;
@@ -220,9 +226,10 @@ export class QTTabsView extends QTRenderBaseView{
     }
   }
 
-  updateTabsData(tabList : QTArray){
+  updateTabsData(data : QTArray){
+    QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)}`)
     this.tabsData = []
-    tabList.forEach((item: QTAny,index:number)=>{
+    data.forEach((item: QTAny,index:number)=>{
         let p :TabPageData = new TabPageData()
       if(item instanceof Map){
         if(item.has('text')){
@@ -242,26 +249,53 @@ export class QTTabsView extends QTRenderBaseView{
         wl.templateView = this.viewpager?.templateListView as QTView
       }
       p.contentView = wl
-      QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth,this.cssHeight])
-      // console.log(TAG_TABS,`updateTabsData this width:${this.cssWidth},height:${this.cssHeight}`)
+      QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])
+      // QTLog.d(TAG_TABS,`updateTabsData this width:${this.cssWidth},height:${this.cssHeight}`)
       if(item){
         p.tabItem = item as QTMap
       }
+      // if(index == 0){
+      //   this.tabsData.push(p)
+      // }
       this.tabsData.push(p)
     })
 
     this.tryLoadPageData(this.defaultPosition)
-    console.log(TAG_TABS,`updateTabsData tabList:${tabList?.length},tabsData length:${this.tabsData.length}`)
+    QTLog.d(TAG_TABS,`updateTabsData tabList:${data?.length},tabsData length:${this.tabsData.length}`)
     this.dataSource.notifyReload()
+
+    if(this.hideOnSingleTab && data.length < 2){
+      this.singleTabMode = true;
+      this.tabList?.setListWithPrams([],null)
+      if(this.tabList){
+        this.tabList.visibility = Visibility.None
+      }
+    }else{
+      if(this.tabList){
+        this.tabList.visibility = Visibility.Visible
+      }
+      if(this.tabList){
+        this.tabList.setListWithPrams(data,null)
+      }
+      // this.singleTabMode = true;
+    }
+    // //测试用
+    // setTimeout(()=>{
+    //   this.singleTabMode = true;
+    // },10)
+
   }
 
 
   viewAboutToAppear(){
     //console.error(TAG_TABS,`viewAboutToAppear`)
+    // setTimeout(()=>{
+    //   this.controller.setTabBarTranslate({ x: 0, y: 80 });
+    // })
   }
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
-    console.log(TAG_TABS,`onTabsContentWillChangeCallback currentIndex  :${currentIndex},comingIndex:${comingIndex}`)
+    QTLog.d(TAG_TABS,`onTabsContentWillChangeCallback currentIndex  :${currentIndex},comingIndex:${comingIndex}`)
     this.tryLoadPageData(comingIndex)
     return true;
   }
@@ -329,21 +363,25 @@ export class QTTabsView extends QTRenderBaseView{
     map.set('pageIndex',page)
     map.set('data',item)
     map.set('useDiff',false)
-    console.log(TAG_TABS,`---send onLoadPageData pageIndex:${page}, map:${CommonUtils.hippyMap2String(map)}`)
+    QTLog.d(TAG_TABS,`---send onLoadPageData pageIndex:${page}, map:${CommonUtils.hippyMap2String(map)}`)
     ExtendUtil.sendUIEvent(this.ctx,this.tag,'onLoadPageData',map)
   }
 
   setPageData(pageIndex: number,params:QTMap,dataArray : QTArray){
-    console.log(TAG_TABS,`setPageData :${pageIndex},dataArray:${dataArray?.length},params:${CommonUtils.hippyMap2String(params)}`)
-      this.updateDataOnly(pageIndex,params,dataArray)
+    QTLog.d(TAG_TABS,`setPageData :${pageIndex},dataArray:${dataArray?.length},params:${CommonUtils.hippyMap2String(params)}`)
+
       let pd = this.getTabData(pageIndex)
-      if(pd?.contentView){
-        if(!this.contentTemplate){
-          console.error(TAG_TABS,`setPageData error contentTemplate is null`)
-          return;
+      if(pd?.dataState != 1){
+        this.updateDataOnly(pageIndex,params,dataArray)
+        if(pd?.contentView){
+          if(!this.contentTemplate){
+            console.error(TAG_TABS,`setPageData error contentTemplate is null`)
+            return;
+          }
+          QTLog.d(TAG_TABS,`setPageData tag:${this.contentTemplate.tag} `)
+          pd.contentView.nativeSetupIfNeed(this.contentTemplate.tag,this.contentTemplate)
+          pd.contentView.updateSections(dataArray,pd.contentParams)
         }
-        pd.contentView.nativeSetupIfNeed(this.contentTemplate.tag,this.contentTemplate)
-        pd.contentView.updateSections(dataArray,pd.contentParams)
       }
   }
 
@@ -362,7 +400,7 @@ export class QTTabsView extends QTRenderBaseView{
 
   }
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    console.log(TAG_TABS,`tabs:call function:${method},params:${CommonUtils.hippyAny2String(params)}`)
+    QTLog.d(TAG_TABS,`tabs:call function:${method},params:${CommonUtils.hippyAny2String(params)}`)
     switch (method){
       case 'setTabsData':
         let initParam : QTMap = params[0] as QTMap
@@ -458,27 +496,66 @@ function buildPage(item: TabPageData, index: number){
 
 }
 
+@Builder
+function buildTabList(tabsView:QTTabsView){
+    if(tabsView.tabList){
+      QTFastList({
+        renderView:tabsView.tabList,
+        children : tabsView.tabList.children
+      })
+        // .width(200)
+        // .height(50)
+        // .backgroundColor(Color.Blue)
+    }else{
+      // Stack({
+      // }).opacity(0)
+    }
+}
+
+
+
 @Component
 export struct  QTTabs {
   @ObjectLink renderView: QTTabsView
   @ObjectLink children: HippyObservedArray<QTView>
 
+  // @Builder tabBuilder(title: string, targetIndex: number) {
+  //   Column() {
+  //     // Image(this.renderView.currentIndex === targetIndex ? selectedImg : normalImg)
+  //     //   .size({ width: 25, height: 25 })
+  //     Text(title)
+  //       .fontColor(this.renderView.selectedIndex === targetIndex ? '#1698CE' : '#6B6B6B')
+  //   }
+  //   .margin({left:20,right:20,top:40})
+  //   .height(180)
+  //   .backgroundColor(Color.White)
+  //   .justifyContent(FlexAlign.Start)
+  // }
+
   build(): void {
-    Tabs({barPosition: this.renderView.barPosition,index: this.renderView.currentIndex,controller: this.renderView.controller}){
-      ForEach(this.renderView.tabsData, (item: TabPageData, index: number) => {
-        TabContent() {
-          buildPage(item,index)
-        }
-        .tabBar(`${item.title}`)
-      },(item:TabPageData,index:number)=>{
-        return ''+index
+    Stack(){
+      Tabs({barPosition: this.renderView.barPosition,index: this.renderView.currentIndex,controller: this.renderView.controller}){
+        ForEach(this.renderView.tabsData, (item: TabPageData, index: number) => {
+          TabContent() {
+            buildPage(item,index)
+          }
+          // .tabBar(this.tabBuilder(item.title!!,index))
+          .tabBar(item.title)
+        },(item:TabPageData,index:number)=>{
+          return ''+index
+        })
+      }
+      // .barMode(BarMode.Scrollable)
+      // .barOverlap(true)\
+      .barHeight(0)
+      .barBackgroundColor(Color.White)
+      .onContentWillChange((currentIndex:number,comingIndex:number)=>{
+        return this.renderView.onTabsContentWillChangeCallback(currentIndex,comingIndex)
       })
+      buildTabList(this.renderView )
     }
-    .barPosition(BarPosition.Start)
-    .onContentWillChange((currentIndex:number,comingIndex:number)=>{
-      return this.renderView.onTabsContentWillChangeCallback(currentIndex,comingIndex)
-    })
-    .backgroundColor(Color.Black)
+
+    // .backgroundColor(Color.Black)
 
   }
 
@@ -487,8 +564,8 @@ export struct  QTTabs {
   }
 }
 
-@Extend(Tabs)
-function applyRenderViewBaseAttr($$: QTView) {
+@Extend(Stack)
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
@@ -498,7 +575,7 @@ function applyRenderViewBaseAttr($$: QTView) {
   .visibility(($$ as QTView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
@@ -511,6 +588,10 @@ function applyRenderViewBaseAttr($$: QTView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //quicktvui tv basic
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }
 
 @Observed

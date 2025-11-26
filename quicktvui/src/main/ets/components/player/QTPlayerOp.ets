@@ -46,4 +46,11 @@ export enum QTPlayerOp {
 
   SET_VOLUME = "setVolume",
 
+  GET_M3U8_DEFINITION_INFO = "getM3U8DefinitionInfo",
+  SET_M3U8_DEFINITION = "setM3U8Definition",
+
+  GET_TRACK_INFO = "getTrackInfo",
+  SELECT_TRACK = "selectTrack",
+  DE_SELECT_TRACK = "deselectTrack",
+  GET_SELECT_TRACK = "getSelectTrack",
 }

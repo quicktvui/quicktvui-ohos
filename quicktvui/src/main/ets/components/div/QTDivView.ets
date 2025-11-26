@@ -19,10 +19,12 @@
  */
 import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
+import {  TAG_QUICKTVUI } from '../../Constant';
+import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
-import { FastListUtils } from '../fastlist/FastListUtils';
-import { LayoutAttach } from '../fastlist/LayoutAttach';
-import { HRTvDivView} from '../vendored/view/HRTvDivView';
+import { QTLog } from '../../utils/QTLog';
+import { ViewUtils } from '../../utils/ViewUtils';
+import { HRTvDivView } from '../vendored/view/HRTvDivView';
 
 
 const HippyGestureTag = 'HippyGestureTag'
@@ -51,14 +53,14 @@ class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
   }
   applyNormalAttribute(instance: StackAttribute): void {
     if (this.isVisible == "visibile") {
-      console.log("HRTvDivView","visible")
+      QTLog.d("HRTvDivView","visible")
       instance.visibility(Visibility.Visible)
     } else if (this.isVisible == "invisible") {
       instance.visibility(Visibility.Hidden)
-      console.log("HRTvDivView","invisible")
+      QTLog.d("HRTvDivView","invisible")
     } else {
       instance.visibility(Visibility.None)
-      console.log("HRTvDivView","none")
+      QTLog.d("HRTvDivView","none")
     }
   }
 }
@@ -71,6 +73,44 @@ export class QTDivView extends HRTvDivView {
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
+    switch (propKey){
+      case 'gradientBackground':
+        let map = HRValueUtils.getMap(propValue)
+        if(map){
+          let type = map.get('type')
+          if(type && type != 0){
+            QTLog.fatal(TAG_QUICKTVUI,'set gradientBackground error ohos only support LINEAR_GRADIENT(0) ,type:'+type)
+            return true;
+          }
+          let shape = map.get('shape')
+          if(shape){
+            QTLog.w(TAG_QUICKTVUI,'set gradientBackground , ohos cant set shape')
+          }
+          let orientation = map.get('orientation')
+          let direction = GradientDirection.Bottom
+          if(typeof orientation == 'number'){
+            direction = ViewUtils.getGradientDirection(orientation)
+          }
+          let colorStringArray = map.get("colors")
+          let colorArray : [ResourceColor, number][] = []
+          if(colorStringArray instanceof Array){
+            let count = colorStringArray.length
+            for(let i = 0; i < colorStringArray.length; i ++){
+              let colorStr = colorStringArray[i] as string
+              colorArray[i] = [ViewUtils.colorStringToNumber(colorStr),1/count * i]
+              //QTLog.i(TAG_QUICKTVUI,`gradientBackground color :`+colorArray[i])
+            }
+          }
+          this.cssLinearGradient = {
+            direction : direction,
+            colors:colorArray
+          }
+        }else{
+          this.cssLinearGradient = null
+        }
+
+        return true;
+    }
     return super.setProp(propKey, propValue)
   }
 
@@ -96,8 +136,6 @@ export struct QTDiv {
 
   }
 
-
-
   shouldAddGesture() {
     return deviceInfo.sdkApiVersion >= 11 && (
       this.renderView.eventLongPress != null ||
@@ -111,9 +149,9 @@ export struct QTDiv {
     )
   }
 
-  isEventClick(){
-    return this.renderView.isVirtual && LayoutAttach.obtainLayoutAttach(this.renderView).virtualExtra.eventClick
-  }
+  // isEventClick(){
+  //   return this.renderView.isVirtual && LayoutAttach.obtainLayoutAttach(this.renderView).virtualExtra.eventClick
+  // }
 
   aboutToAppear() {
     if (this.renderView.eventAttachedToWindow) {
@@ -128,8 +166,7 @@ export struct QTDiv {
   }
 
   build() {
-    if(this.shouldAddGesture()){
-      if(this.isEventClick()){
+    if(this.shouldAddGesture() || this.renderView.isEventClick()){
         Stack() {
           ForEach(this.children, (item: QTView) => {
             buildHippyRenderView(item, null)
@@ -140,23 +177,12 @@ export struct QTDiv {
         //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
         //custom
         .attributeModifier(this.colorModifier)
+        .alignContent(Alignment.Center)
+        .align(Alignment.Center)
         .onClick((event=>{
-          FastListUtils.handleItemClick(this.renderView)
+          ViewUtils.handleClickEvent(event,this.renderView)
         }))
-      }else{
-        Stack() {
-          ForEach(this.children, (item: QTView) => {
-            buildHippyRenderView(item, null)
-          }, (item: QTView) => item.tag + '')
-        }
-        .applyRenderViewBaseAttr(this.renderView)
-        .applyGestures(this.renderView)
-        //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
-        .attributeModifier(this.colorModifier)
-      }
     }else {
-      if(this.isEventClick()){
-        //from super
         Stack() {
           ForEach(this.children, (item: QTView) => {
             buildHippyRenderView(item, null)
@@ -164,18 +190,11 @@ export struct QTDiv {
         }
         .applyRenderViewBaseAttr(this.renderView)
         .attributeModifier(this.colorModifier)
-        .onClick((event=>{
-          FastListUtils.handleItemClick(this.renderView)
-        }))
-      }else{
-        Stack() {
-          ForEach(this.children, (item: QTView) => {
-            buildHippyRenderView(item, null)
-          }, (item: QTView) => item.tag + '')
-        }
-        .applyRenderViewBaseAttr(this.renderView)
-        .attributeModifier(this.colorModifier)
-      }
+        .alignContent(Alignment.Center)
+        .align(Alignment.Center)
+        // .onClick((event=>{
+        //   ViewUtils.handleClickEvent(event,this.renderView)
+        // }))
     }
   }
 }
@@ -203,14 +222,16 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //edit by tv
-  .focusable($$.cssFocusable)
-  .tabStop($$.cssFocusable)
-  .border($$.focus ? $$.setBorder() : $$.border)
+  //basic
   .key($$.name)
   .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
   .clip($$.clipChildren)
   .id($$.sid)
   .visibility($$.visibility)
+  //div
+  // .focusable($$.cssFocusable)
+  .tabStop($$.cssFocusable)
+  .border($$.focus ? $$.setBorder() : $$.border)
   .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
   .onFocus(() => {
     $$.focus = true

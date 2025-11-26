@@ -7,6 +7,7 @@ import { QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 
 import { TAG_QUICKTVUI } from '../../Constant';
+import { QTPixelUtil } from '../../utils/QTPixelUtil';
 
 // constexpr static const char * PADDING_LEFT = "paddingLeft";
 // constexpr static const char * PADDING_RIGHT = "paddingRight";
@@ -25,6 +26,8 @@ export class LayoutAttach extends QTAttach{
 
   //others
   virtualExtra : VirtualExtra = new VirtualExtra();
+  pendingProps = new Map<string, HippyAny>()
+
 
   private style() : QTNativeLayout{
     if(!this.styleNode){
@@ -63,6 +66,14 @@ export class LayoutAttach extends QTAttach{
     this.fixedWidth = value;
     this.setWidth(value)
   }
+
+  // setFixedWidthVP(value:number){
+  //   this.setFixedWidth(QTPixelUtil.vp2Dev(value))
+  // }
+  //
+  // setFixedHeightVP(value:number){
+  //   this.setFixedHeight(QTPixelUtil.vp2Dev(value))
+  // }
 
   setFixedHeight(value:number){
     this.fixedHeight = value;

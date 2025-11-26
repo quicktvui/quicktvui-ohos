@@ -440,7 +440,6 @@ export struct HRTvDiv {
       .applyRenderViewBaseAttr(this.renderView)
       .applyGestures(this.renderView)
       //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
-      .focusBox(this.renderView.focusBoxStyle)
       .focusable(this.renderView.focusable)
       .border(this.renderView.focus ? this.renderView.setBorder() : this.renderView.border)
       .key(this.renderView.name)
@@ -468,7 +467,7 @@ export struct HRTvDiv {
         }, (item: HippyRenderBaseView) => item.tag + '')
       }
       .applyRenderViewBaseAttr(this.renderView)
-      .focusBox(this.renderView.focusBoxStyle)
+      // .focusBox(this.renderView.focusBoxStyle)
       .focusable(this.renderView.focusable)
       .border(this.renderView.focus ? this.renderView.setBorder() : this.renderView.border)
       .key(this.renderView.name)
@@ -504,7 +503,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)

@@ -47,18 +47,37 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   }
 
+  isEventClick() : boolean{
+    return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventClick
+  }
+
   setProp(propKey: string, propValue: HippyAny): boolean {
     // console.info(TAG_QUICKTVUI,`QTRenderBaseView setProp:${propKey},propValue:${propValue}`)
     switch (propKey){
       case 'sid':
-        LayoutAttach.obtainLayoutAttach(this).sid = HRValueUtils.getString(propValue)
+        let sid = HRValueUtils.getString(propValue)
+        LayoutAttach.obtainLayoutAttach(this).sid = sid
+        if(sid){
+          this.sid = sid;
+        }else{
+          this.sid = ''
+        }
         return true;
       case 'name':
-        LayoutAttach.obtainLayoutAttach(this).name = HRValueUtils.getString(propValue)
+        let name = HRValueUtils.getString(propValue)
+        LayoutAttach.obtainLayoutAttach(this).name = name
+        if(name){
+          this.name = name;
+        }else{
+          this.name = ''
+        }
         return true;
       case "clipChildren":
         this.cssOverflow = HRValueUtils.getBoolean(propValue,true)
         return true;
+        // case 'showOnState':
+        //
+        //   return true;
     }
     return super.setProp(propKey, propValue)
   }

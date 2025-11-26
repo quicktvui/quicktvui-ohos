@@ -6,6 +6,9 @@ export enum QTPlayerEvent {
   //
   ON_PLAYER_INFO = "onPlayerInfo",
 
+  ON_BUFFERING_PERCENT = "onBufferingPercent",
+  ON_CACHED_POSITIONS = "onCachedPositions",
+
   //播放速率
   ON_PLAYER_RATE_LIST_CHANGED = "onAllPlayRateChanged",
   ON_PLAYER_RATE_CHANGED = "onPlayRateChanged",

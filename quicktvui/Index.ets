@@ -10,6 +10,10 @@ export { QTQRCodeView, QTQRCode } from './src/main/ets/components/qrcode/QTQRCod
 
 export { QTWebView, QTWeb } from './src/main/ets/components/web/QTWebView'
 
+
+export { QTMediaSeriesView } from './src/main/ets/components/select-series/QTMediaSeriesView'
+export { QTMediaSeries } from './src/main/ets/components/select-series/QTMediaSeries'
+
 export { QTSliderView, QTSlider } from './src/main/ets/components/slider/QTSliderView'
 
 export { QTBaseComponentView } from './src/main/ets/components/QTBaseComponentView'

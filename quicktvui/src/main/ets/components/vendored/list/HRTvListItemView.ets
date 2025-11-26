@@ -26,9 +26,10 @@ import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils';
 import { HRValueUtils } from 'hippy/src/main/ets/renderer_native/utils/HRValueUtils';
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
 import { buildHippyRenderView } from 'hippy'
+import { QTBaseComponentView } from '../../QTBaseComponentView';
 
 @Observed
-export class HRTvListItemView extends HippyRenderBaseView {
+export class HRTvListItemView extends QTBaseComponentView {
   private readonly TAG = "HRTvListItemView"
   public type: string = ""
   public sticky: boolean = false
@@ -137,7 +138,7 @@ export struct HRTvListItem {
 
 // base props for all components
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
@@ -147,7 +148,7 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
@@ -160,4 +161,8 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //quicktvui tv basic
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }

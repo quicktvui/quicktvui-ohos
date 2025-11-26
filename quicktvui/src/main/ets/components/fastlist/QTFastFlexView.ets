@@ -11,24 +11,27 @@ import {
 import { TAG_FASTLIST } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
-import { CommonUtils } from '../../utils/CommonUtils';
-import { NodeUtils } from '../../utils/NodeUtils';
+import { QTLog } from '../../utils/QTLog';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListDataSource } from './FastListDataSource';
 import { ItemView, renderItem } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
-import { QTFastItem, QTFastItemView } from './QTFastItemView';
+import { QTItemRoot, QTItemRootView } from './QTItemRootView';
 
 
 @Observed
 export class QTFastFlexView extends QTRenderBaseView {
   public virtualChildren: HippyObservedArray<QTView> = new HippyObservedArray()
   dataSource: FastListDataSource | null = null;
-
   constructor(ctx: NativeRenderContext) {
     super(ctx)
     this.dataSource = new FastListDataSource(ctx,this.virtualChildren)
     this.dataSource.listView = this;
+  }
+
+  setRootListID(rootListID:number){
+    this.dataSource!!.rootListId = rootListID;
+    this.dataSource!!.registerParentItemStore()
   }
 
   onChildInserted(childTag: number, childViewName: string, childIndex: number): void {
@@ -44,29 +47,32 @@ export class QTFastFlexView extends QTRenderBaseView {
 
   aboutToUpdate(): void {
     let children = this.templateView?.children
-    console.error(TAG_FASTLIST,`QTFastFlexView aboutToUpdate!! children size:${children?.length}`)
-    NodeUtils.printViewTreePretty(this,'',false)
-    children?.map((c,index)=>{
-      if(c.tag != -1){
-        console.log(TAG_FASTLIST,`QTFastFlexView template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.ctx,c.tag))
-        this.dataSource?.registerTemplate(this.templateView!!,c,index,this.isVirtual)
-      }else{
-        console.error(TAG_FASTLIST,`QTFastFlexView registerTemplate error child id is -1`)
-      }
-    })
+    // console.error(TAG_FASTLIST,`QTFastFlexView aboutToUpdate!! children size:${children?.length}`)
+    // NodeUtils.printViewTreePretty(this,'',false)
+    // children?.map((c,index)=>{
+    //   if(c.tag != -1){
+    //     QTLog.d(TAG_FASTLIST,`QTFastFlexView template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.ctx,c.tag))
+    //     this.dataSource?.registerTemplate(c,this.isVirtual)
+    //   }else{
+    //     console.error(TAG_FASTLIST,`QTFastFlexView registerTemplate error child id is -1`)
+    //   }
+    // })
+    if(children){
+      this.dataSource?.registerTemplates(children,this.isVirtual)
+    }
   }
 
   onDataChanged(data : HippyArray | null){
-    console.log(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
+    QTLog.d(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
+    this.virtualChildren = []
     if(this.dataSource && data && data.length > 0){
       for(let  i = 0; i < data.length; i++){
         let item : ItemView = new ItemView(i,data[i] as HippyMap);
         // this.dataSource?.buildItem(item,i)
-        let fi : QTFastItemView=  new QTFastItemView(this.ctx).init(this,item)
-        this.dataSource.rootListId = LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId
+        let fi : QTItemRootView =  new QTItemRootView(this.ctx).init(this,item)
         this.dataSource.buildItem(fi,i)
         this.virtualChildren.push(fi)
-        CommonUtils.printMapPretty(item.raw as HippyMap,'FastFlex:',false)
+        //CommonUtils.printMapPretty(item.raw as HippyMap,'FastFlex:',false)
       }
       // this.dataList.push(...
       //   data?.map((item,index)=>{
@@ -79,7 +85,7 @@ export class QTFastFlexView extends QTRenderBaseView {
   }
 
   keyGenerate(item : QTView,index : number) : string{
-    if(item instanceof QTFastItemView){
+    if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid
       if(id){
         console.debug(TAG_FASTLIST,`FastFlex:keyGenerate id from sid:${id}`)
@@ -99,21 +105,21 @@ export class QTFastFlexView extends QTRenderBaseView {
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey) {
       case "cachePool":
-        console.log(TAG_FASTLIST,`FastFlex:setCachePool :${propValue}`)
+        QTLog.d(TAG_FASTLIST,`FastFlex:setCachePool :${propValue}`)
         return true;
       case "firstFocusChild":
-        console.log(TAG_FASTLIST,`FastFlex:firstFocusChild :${propValue}`)
+        QTLog.d(TAG_FASTLIST,`FastFlex:firstFocusChild :${propValue}`)
         return true;
       case "list":
         if(propValue instanceof Array){
-          console.log(TAG_FASTLIST,`FastFlex:setListData:${HRValueUtils.getArray(propValue)}`)
+          QTLog.d(TAG_FASTLIST,`FastFlex:setListData:${HRValueUtils.getArray(propValue)}`)
           this.onDataChanged(HRValueUtils.getArray(propValue))
         }else{
           console.error(TAG_FASTLIST,`FastFlex:setListData error list is not array propValue:${propValue}`)
         }
         return true;
       case "sharedItemStore":
-        console.log(TAG_FASTLIST,`FastFlex:sharedItemStore :${propValue}`)
+        QTLog.d(TAG_FASTLIST,`FastFlex:sharedItemStore :${propValue}`)
         return true;
 
     }
@@ -196,30 +202,29 @@ export struct QTFastFlex {
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   private handleOnChildrenUpdated() {
-    console.log(TAG_FASTLIST,`QTFastFlexView: handleOnChildrenUpdated children:${this.children.length}`)
+    QTLog.d(TAG_FASTLIST,`QTFastFlexView: handleOnChildrenUpdated children:${this.children.length}`)
 
   }
 
   build(): void {
     Row() {
-      ForEach(this.renderView.virtualChildren,(item : QTFastItemView)=>{
-        QTFastItem({
-          renderView:item as QTFastItemView,
+      ForEach(this.renderView.virtualChildren,(item : QTItemRootView)=>{
+        QTItemRoot({
+          renderView:item as QTItemRootView,
           children: item.children,
         }).reuseId(item.getReuseId())
-      },(item : QTFastItemView,index)=>{
+      },(item : QTItemRootView,index)=>{
         return this.renderView.keyGenerate(item,index)
       })
       // ContentSlot(this.renderView.childSlot)
     }
-    .backgroundColor(Color.Blue)
     .applyRenderViewBaseAttr(this.renderView)
+    // .backgroundColor(Color.Blue)
   }
 
 
 
   aboutToAppear(): void {
-    console.error(TAG_FASTLIST,`QTFastFlex aboutToAppear`)
     // this.endBatchCallback = () =>{
     // }
     // this.renderView.ctx.getNativeRender().addEndBatchCallback(this.renderView.ctx.getRootId(),this.endBatchCallback)
@@ -248,7 +253,7 @@ function applyRenderViewBaseAttr($$: QTFastFlexView) {
   .visibility(($$ as QTFastFlexView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  .focusable($$.cssFocusable)
+  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
@@ -261,4 +266,8 @@ function applyRenderViewBaseAttr($$: QTFastFlexView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //tv basic
+  .key($$.name)
+  .id($$.sid)
+  .visibility($$.visibility)
 }
