@@ -24,6 +24,15 @@ export class QTVideoPlayerView extends QTBaseComponentView {
    * 发送事件
    */
   sendEvent(eventName: string, params: HippyAny) {
+    LogUtils.d(this.TAG, 'sendEvent：' + eventName);
+    if (params instanceof Map) {
+      (params as Map<string, HippyAny>).forEach((value: HippyAny, key: string, map: Map<string, HippyAny>) => {
+        LogUtils.d(this.TAG, 'sendEvent：' + key + ' ' + value);
+      });;
+    } else {
+      LogUtils.d(this.TAG, 'sendEvent：' + params);
+    }
+
     let event = new HippyViewEvent(eventName)
     event.send(this.ctx, this.tag, params)
   }

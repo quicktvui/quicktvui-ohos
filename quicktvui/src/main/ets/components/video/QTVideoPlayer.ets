@@ -291,32 +291,35 @@ export struct QTVideoPlayer {
      * 缓冲进度
      */
     this.videoPlayer.on('bufferingUpdate', (type: media.BufferingInfoType, value: number) => {
-      // const map = new Map<string, HippyAny>()
-      // map.set(QTPlayerEventProp.BUFFER_PERCENT, value)
-
+      let params: HippyAny
+      let eventName: string
       switch (type) {
         case media.BufferingInfoType.BUFFERING_START:
-          LogUtils.e(this.TAG, "=========bufferingStart=====>>>>" + value)
+          LogUtils.i(this.TAG, "=========bufferingStart=====>>>>" + value)
+          eventName = QTPlayerEvent.ON_PLAYER_STATUS_CHANGED
+          params = new Map<string, HippyAny>()
+          params.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.BUFFER_START)
           break;
         case media.BufferingInfoType.BUFFERING_END:
-          LogUtils.e(this.TAG, "=========bufferingEnd=====>>>>" + value)
+          LogUtils.i(this.TAG, "=========bufferingEnd=====>>>>" + value)
+          eventName = QTPlayerEvent.ON_PLAYER_STATUS_CHANGED;
+          params = new Map<string, HippyAny>()
+          params.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.BUFFER_END)
           break;
         case media.BufferingInfoType.BUFFERING_PERCENT:
-          LogUtils.e(this.TAG, "=========bufferingPercent=====>>>>" + value)
+          LogUtils.i(this.TAG, "=========bufferingPercent=====>>>>" + value)
+          eventName = QTPlayerEvent.ON_BUFFERING_PERCENT;
+          params = value
           break;
         case media.BufferingInfoType.CACHED_DURATION:
-          LogUtils.e(this.TAG, "=========cachedDuration=====>>>>" + value)
+          LogUtils.d(this.TAG, "=========cachedDuration=====>>>>" + value)
+          eventName = QTPlayerEvent.ON_CACHED_POSITIONS;
+          params = new Array(1)
+          params.push('0:' + value)
           break;
       }
 
-      // if (type == media.BufferingInfoType.BUFFERING_START) {
-      //   map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.BUFFER_START)
-      // } else if (type == media.BufferingInfoType.BUFFERING_END) {
-      //   map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.BUFFER_END)
-      // } else if (type == media.BufferingInfoType.BUFFERING_PERCENT) {
-      //   map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.BUFFERING_PERCENT)
-      // }
-      // this.renderView.sendEvent(QTPlayerEvent.ON_PLAYER_STATUS_CHANGED, map)
+      this.renderView.sendEvent(eventName, params)
     })
 
     /**
@@ -449,6 +452,10 @@ export struct QTVideoPlayer {
   seekTo(progress: number) {
     if (this.videoPlayer) {
       this.videoPlayer.seek(progress)
+
+      const map = new Map<string, HippyAny>()
+      map.set(QTPlayerEventProp.PLAYER_STATE, QTPlayerState.SEEK_START)
+      this.renderView.sendEvent(QTPlayerEvent.ON_PLAYER_STATUS_CHANGED, map)
     }
   }
 
