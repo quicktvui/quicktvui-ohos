@@ -38,7 +38,10 @@ export class ViewUtils{
       let vAlign : Alignment | null  = null;
       if(gs.indexOf('|') > -1){
         //包括
-        let aligns = gs.split('|');
+        let aligns = gs.split('|'); // aligns[0]控制水平方向位置: left|start|right  aligns[0]控制垂直方向位置 top|center|bottom
+        if(aligns[0] == "center"){
+          aligns.reverse()//兼容 gravity="center|start"
+        }
         hAlign = ViewUtils.getTextHorizontalGravity(aligns[0]);
         vAlign = ViewUtils.getTextVerticalGravity(aligns[1]);
         /*aligns.map((align,index)=>{
