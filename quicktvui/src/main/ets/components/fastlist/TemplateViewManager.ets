@@ -14,6 +14,7 @@ import { QTFastItemView } from './QTFastItemView';
 import { QTMap, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTTextView } from '../text/QTTextView';
+import { CommonUtils } from '../../utils/CommonUtils';
 
 
 export class BuildResult{
@@ -190,26 +191,35 @@ export class TemplateViewManager{
 
   static applyLayout(renderView:HippyRenderBaseView){
     let attach = LayoutAttach.obtainLayoutAttach(renderView);
-    let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
-    // let layout : number[]= [attach.getLeft(),attach.getTop(), attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight()];
+    // let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
+    // QTPixelUtil.setRenderViewFrameDevSize(renderView,layout,null)
+    let layout : number[]= [attach.getLeft(),attach.getTop(), attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight()];
+    QTPixelUtil.setRenderViewLayout(renderView,layout)
     //QTLog.i(TAG_LAYOUT,`applyLayout:type:${attach.viewType},name:${attach.name},layout:[${layout.x},${layout.y},${layout.width},${layout.height}],this:${ExtendUtil.debugView(renderView)}`)
     //由于attach里存放的都是dev尺寸，所以这里要进行缩放
-    QTPixelUtil.setRenderViewFrameDevSize(renderView,layout,null)
+
   }
 
   static applyLayout4AutoSize(renderView:QTView,changedView : QTView | null){
     let attach = LayoutAttach.obtainLayoutAttach(renderView);
-    let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
-    // let layout : number[]= [attach.getLeft(),attach.getTop(), attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight()];
-    //QTLog.i(TAG_LAYOUT,`applyLayout:type:${attach.viewType},name:${attach.name},layout:[${layout.x},${layout.y},${layout.width},${layout.height}],this:${ExtendUtil.debugView(renderView)}`)
-    // QTPixelUtil.setRenderViewLayout(renderView,layout)
+    // let layout : HRRect= new HRRect(attach.getLeft(),attach.getTop(),attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight());
+    // QTPixelUtil.setRenderViewFrameDevSize(renderView,layout,null)
+    let layout : number[]= [attach.getLeft(),attach.getTop(), attach.fixedWidth > 0 ? attach.fixedWidth: attach.getWidth(),attach.fixedHeight > 0 ? attach.fixedHeight :  attach.getHeight()];
+    QTPixelUtil.setRenderViewLayout(renderView,layout)
     //由于attach里存放的都是dev尺寸，所以这里要进行缩放
-    QTPixelUtil.setRenderViewFrameDevSize(renderView,layout,null)
+    // if(renderView instanceof QTTextView){
+    //   QTLog.d(TAG_LAYOUT,`applyLayout4AutoSize on Text:${renderView.text},width${layout[2]}`)
+    // }
+
   }
 
   applyInit(renderView : HippyRenderBaseView,template: HippyRenderBaseView,templateProps:HippyMap,childIndex:number) : HippyRenderBaseView{
     const attach  = LayoutAttach.obtainLayoutAttach(renderView);
     // renderView.attachedInfo = attach;
+    if(template instanceof QTTextView){
+      QTLog.i(TAG_LAYOUT,`applyInit copy style node template templateProps:${CommonUtils.hippyAny2String(templateProps)}`)
+    }
+
     attach.copyStyleNode(template.ctx.getInstanceId(),template.ctx.getRootId(),template.tag)
     renderView.viewType = template.viewType
     attach.viewType = renderView.viewType;
@@ -332,14 +342,14 @@ export class TemplateViewManager{
             // console.info(QUICKTVUI_TAG,`++put pendingProp key:${key},dataFromValue:${dataFromValue},pendingProp:${pendingProp} ,value:${value},data:${CommonUtils.hippyAny2String(dataFromValue)}`)
             //从${xx}取出dataFromValue数据
             patch.pendingProps.set(key,pendingProp as string)
-            if(!this.handleCustomProps(key,dataFromValue,patch)){
+            if(!this.handleCustomProps(key,dataFromValue,patch,true)){
               toUpdate.set(key,dataFromValue)
             }
           }else{
             // console.log(QUICKTVUI_TAG,`--gatherToUpdateMap discard key:${key},data:${CommonUtils.hippyAny2String(value)}`)
             // toUpdate.set(key,value)
             //原数据没有${xx}，直接按value处理
-            if(!this.handleCustomProps(key,value,patch)){
+            if(!this.handleCustomProps(key,value,patch,false)){
               toUpdate.set(key,value)
             }
           }
@@ -363,7 +373,7 @@ export class TemplateViewManager{
             let dataFromValue = TemplateCodeParser.getValueFromCode(itemData,pendingProp)
             // console.info(QUICKTVUI_TAG,`++put pendingProp key:${key},dataFromValue:${dataFromValue},pendingProp:${pendingProp} ,value:${value},data:${CommonUtils.hippyAny2String(dataFromValue)}`)
             //从${xx}取出dataFromValue数据
-            if(!this.handleCustomProps(key,dataFromValue,patch)){
+            if(!this.handleCustomProps(key,dataFromValue,patch,false)){
               toUpdate.set(key,dataFromValue)
             }
           }else{
@@ -378,63 +388,57 @@ export class TemplateViewManager{
     return patch
   }
 
-  handleCustomProps(key:String,value:HippyAny,p:PathUpdate) : boolean{
+  /**
+   *
+   * @param key
+   * @param value
+   * @param p
+   * @param needDev2Vp ！！这里重点关注这个值，目前FastList类似${width},这种获取的数据，都需要转换成vp，而原始的例如从template拷贝出来的，都不需要转换，因为在vue层已经转换过，所以这里添加这个参数来区分
+   * @returns
+   */
+  handleCustomProps(key:String,value:HippyAny,p:PathUpdate,needDev2Vp : boolean) : boolean{
+
     switch (key){
       case 'width':
-        // (p.renderView.attachedInfo as StyleAttach).style().setStyles()
-        // p.layout[2] = HRValueUtils.getNumber(value);
-        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(QTPixelUtil.vp2Dev(QTPixelUtil.getDimensionValue(value)))
+        let width = QTPixelUtil.dev2VpIfNeed(value,needDev2Vp)
+        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(width)
         return true;
       case 'height':
-        //p.layout[3] = HRValueUtils.getNumber(value);
-        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(QTPixelUtil.vp2Dev(QTPixelUtil.getDimensionValue(value)))
+        let height = QTPixelUtil.dev2VpIfNeed(value,needDev2Vp)
+        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(height)
         return true;
       case 'translation':
         let ts = value as number[]
-        // if(ts){
-        //   p.layout[0] = ts[0]
-        //   p.layout[1] = ts[1]
-        // }
-        LayoutAttach.obtainLayoutAttach(p.renderView).setPosition(QTPixelUtil.vp2Vp(ts[0]),QTPixelUtil.vp2Vp(ts[1]))
+        let x = QTPixelUtil.dev2VpIfNeed(ts[0],needDev2Vp)
+        let y = QTPixelUtil.dev2VpIfNeed(ts[1],needDev2Vp)
+        LayoutAttach.obtainLayoutAttach(p.renderView).setPosition(x,y)
         return true;
       case 'style':
       case 'flexStyle':
-        // console.log(TAG_LAYOUT,`updateLayoutStyle key:${key},value:${CommonUtils.hippyAny2String(value)},viewType:${p.renderView.viewType}`)
         let style = HRValueUtils.getMap(value)
-        // if(style){
-        //   style.forEach((value,key)=>{
-        //     console.log(TAG_LAYOUT,`handleCustomProps style key:${key},value:${CommonUtils.hippyAny2String(value)}`)
-        //   })
-        // }
         if(style){
-          LayoutAttach.obtainLayoutAttach(p.renderView).setStyles(style)
+          let toStyle = needDev2Vp ? QTPixelUtil.styleDev2Vp(style) : style
+          LayoutAttach.obtainLayoutAttach(p.renderView).setStyles(toStyle)
         }
         return true;
       case 'layout':
         let array = value as number[]
-        // if(array){
-        //   for(let i = 0; i < 4; i ++){
-        //     p.layout[i] = array[i]
-        //   }
-        // }else{
-        //   console.warn(QUICKTVUI_TAG,`setLayout error array:${array},value:${value},viewType:${p.renderView.viewType}`)
-        // }
         if(array && array.length == 4 && LayoutAttach.obtainLayoutAttach(p.renderView)){
-          LayoutAttach.obtainLayoutAttach(p.renderView).setPosition(QTPixelUtil.vp2Vp(array[0]),QTPixelUtil.vp2Vp(array[1]))
-          LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(QTPixelUtil.vp2Vp(array[2]))
-          LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(QTPixelUtil.vp2Vp(array[3]))
+          let x = QTPixelUtil.dev2VpIfNeed(array[0],needDev2Vp)
+          let y = QTPixelUtil.dev2VpIfNeed(array[1],needDev2Vp)
+          let width = QTPixelUtil.dev2VpIfNeed(array[2],needDev2Vp)
+          let height = QTPixelUtil.dev2VpIfNeed(array[3],needDev2Vp)
+          LayoutAttach.obtainLayoutAttach(p.renderView).setPosition(x,y)
+          LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(width)
+          LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(height)
         }
         return true;
       case 'size':
         let size = value as number[]
-        // if(size){
-        //   p.layout[2] = size[0]
-        //   p.layout[3] = size[1]
-        // }else{
-        //   console.warn(QUICKTVUI_TAG,`setSize error array:${size},value:${value},viewType:${p.renderView.viewType}`)
-        // }
-        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(QTPixelUtil.vp2Vp(size[0]))
-        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(QTPixelUtil.vp2Vp(size[1]))
+        let sw = QTPixelUtil.dev2VpIfNeed(size[0],needDev2Vp)
+        let sh = QTPixelUtil.dev2VpIfNeed(size[1],needDev2Vp)
+        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedWidth(sw)
+        LayoutAttach.obtainLayoutAttach(p.renderView).setFixedHeight(sh)
         return true;
       case 'autoWidth':
         LayoutAttach.obtainLayoutAttach(p.renderView).isAutoWidth = true;

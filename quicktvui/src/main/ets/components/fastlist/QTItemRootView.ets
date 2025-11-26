@@ -197,10 +197,10 @@ export struct QTItemRoot {
       }
       .applyRenderViewBaseAttr(this.renderView)
       .onAttach(()=>{
-        console.log(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
+        QTLog.i(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
       })
       .onDetach(()=>{
-        console.log(TAG_REUSE,`--onDetach position:${this.renderView.dataPosition}`)
+        QTLog.i(TAG_REUSE,`--onDetach position:${this.renderView.dataPosition}`)
       })
       .onClick((event=>{
         FastListUtils.handleItemClick(this.renderView)
@@ -215,10 +215,10 @@ export struct QTItemRoot {
       // .width(this.renderView.contentView?.cssWidth)
       // .height(this.renderView.contentView?.cssHeight)
       .onAttach(()=>{
-        console.log(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
+        QTLog.i(TAG_REUSE,`++onItemAttach position:${this.renderView.dataPosition}`)
       })
       .onDetach(()=>{
-        console.log(TAG_REUSE,`--onDetach position:${this.renderView.dataPosition}`)
+        QTLog.i(TAG_REUSE,`--onDetach position:${this.renderView.dataPosition}`)
       })
     }
   }
@@ -228,7 +228,7 @@ export struct QTItemRoot {
   }
 
   aboutToRecycle(): void {
-    console.log(TAG_REUSE,`--aboutToRecycle dataPosition:${this.renderView.dataPosition}`)
+    QTLog.i(TAG_REUSE,`--aboutToRecycle dataPosition:${this.renderView.dataPosition}`)
   }
 
   aboutToReuse(params: Record<string, Object>): void {

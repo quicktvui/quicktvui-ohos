@@ -1,6 +1,7 @@
 import {HippyMap,HippyAny} from 'hippy'
 import { TAG_QUICKTVUI } from '../Constant'
 import { QTMap } from '../QTTypes';
+import { QTLog } from './QTLog';
 
 interface MapEntry {
   key: string;
@@ -43,7 +44,7 @@ export  class CommonUtils{
     if(obj instanceof Map){
       printMapPretty(obj,indent,false)
     }else{
-      console.log(TAG_QUICKTVUI,`${indent}${JSON.stringify(obj)}`)
+      QTLog.d(TAG_QUICKTVUI,`${indent}${JSON.stringify(obj)}`)
     }
   }
 
@@ -119,11 +120,11 @@ function printMapPretty(
     let linePrefix = prefix + branch;
 
     if (entry.value instanceof Map) {
-      console.log(TAG_QUICKTVUI,linePrefix + entry.key);
+      QTLog.d(TAG_QUICKTVUI,linePrefix + entry.key);
       let nextPrefix = prefix + (isLastEntry ? '   ' : '│  ');
       printMapPretty(entry.value as HippyMap, nextPrefix, true);
     } else {
-      console.log(TAG_QUICKTVUI,linePrefix + entry.key + ': ' + String(entry.value));
+      QTLog.d(TAG_QUICKTVUI,linePrefix + entry.key + ': ' + String(entry.value));
     }
   }
 }

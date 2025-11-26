@@ -75,6 +75,9 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
       case "clipChildren":
         this.cssOverflow = HRValueUtils.getBoolean(propValue,true)
         return true;
+        // case 'showOnState':
+        //
+        //   return true;
     }
     return super.setProp(propKey, propValue)
   }

@@ -189,12 +189,11 @@ export struct  QTText {
             let newHeight= 0;
             if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight){
               if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth){
-                newWidth = QTPixelUtil.vp2Dev(Number(newValue.width))
-
+                newWidth = QTPixelUtil.vp2Vp(Number(newValue.width))
                 LayoutAttach.obtainLayoutAttach(this.renderView).setFixedWidth(newWidth)
                 // this.renderView.cssWidth = Number(newValue.width)
               }else{
-                newHeight = QTPixelUtil.vp2Dev(Number(newValue.height))
+                newHeight = QTPixelUtil.vp2Vp(Number(newValue.height))
                 LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
                 // this.renderView.cssHeight = Number(newValue.height)
               }

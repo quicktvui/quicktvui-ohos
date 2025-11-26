@@ -19,15 +19,12 @@
  */
 import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
-import { TAG_CLICK, TAG_FASTLIST, TAG_QUICKTVUI } from '../../Constant';
+import {  TAG_QUICKTVUI } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
-import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { ViewUtils } from '../../utils/ViewUtils';
-import { FastListUtils } from '../fastlist/FastListUtils';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
-import { ColorMetrics } from '@kit.ArkUI';
 
 
 const HippyGestureTag = 'HippyGestureTag'
@@ -56,14 +53,14 @@ class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
   }
   applyNormalAttribute(instance: StackAttribute): void {
     if (this.isVisible == "visibile") {
-      console.log("HRTvDivView","visible")
+      QTLog.d("HRTvDivView","visible")
       instance.visibility(Visibility.Visible)
     } else if (this.isVisible == "invisible") {
       instance.visibility(Visibility.Hidden)
-      console.log("HRTvDivView","invisible")
+      QTLog.d("HRTvDivView","invisible")
     } else {
       instance.visibility(Visibility.None)
-      console.log("HRTvDivView","none")
+      QTLog.d("HRTvDivView","none")
     }
   }
 }

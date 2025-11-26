@@ -81,7 +81,7 @@ export class FastListUtils{
       map.set('position',position)
       map.set('name',LayoutAttach.obtainLayoutAttach(listView).name)
       ExtendUtil.sendUIEvent(fi.ctx,rootListId,eventName,map)
-      console.log(TAG_FAST_EVENT,`handleItemEvent eventName:${eventName}, rootID:${rootListId},position:${position} data:${CommonUtils.hippyMap2String(map)} `)
+      QTLog.d(TAG_FAST_EVENT,`handleItemEvent eventName:${eventName}, rootID:${rootListId},position:${position} data:${CommonUtils.hippyMap2String(map)} `)
       if(templateEventEnable){
         let templateView = fi.itemView?.template?.templateView
         if(templateView){
@@ -89,7 +89,7 @@ export class FastListUtils{
           ExtendUtil.sendUIEvent(fi.ctx,templateView.tag,eventName,map)
         }
       }
-      // console.log(TAG_FAST_EVENT,`handleItemEvent eventName:${eventName}, rootID:${rootListId},position:${position} data:${CommonUtils.hippyMap2String(map)} `)
+      // QTLog.d(TAG_FAST_EVENT,`handleItemEvent eventName:${eventName}, rootID:${rootListId},position:${position} data:${CommonUtils.hippyMap2String(map)} `)
     }else{
       console.error(TAG_FAST_EVENT,`handleItemEvent error rootListId is -1 eventName:${eventName}`)
     }

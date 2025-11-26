@@ -11,6 +11,7 @@ import {
 import { TAG_FASTLIST } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
+import { QTLog } from '../../utils/QTLog';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListDataSource } from './FastListDataSource';
 import { ItemView, renderItem } from './ItemView';
@@ -50,7 +51,7 @@ export class QTFastFlexView extends QTRenderBaseView {
     // NodeUtils.printViewTreePretty(this,'',false)
     // children?.map((c,index)=>{
     //   if(c.tag != -1){
-    //     console.log(TAG_FASTLIST,`QTFastFlexView template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.ctx,c.tag))
+    //     QTLog.d(TAG_FASTLIST,`QTFastFlexView template: viewType：`+c.viewType+",node:"+NodeUtils.getNodeById(this.ctx,c.tag))
     //     this.dataSource?.registerTemplate(c,this.isVirtual)
     //   }else{
     //     console.error(TAG_FASTLIST,`QTFastFlexView registerTemplate error child id is -1`)
@@ -62,7 +63,7 @@ export class QTFastFlexView extends QTRenderBaseView {
   }
 
   onDataChanged(data : HippyArray | null){
-    console.log(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
+    QTLog.d(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
     this.virtualChildren = []
     if(this.dataSource && data && data.length > 0){
       for(let  i = 0; i < data.length; i++){
@@ -104,21 +105,21 @@ export class QTFastFlexView extends QTRenderBaseView {
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey) {
       case "cachePool":
-        console.log(TAG_FASTLIST,`FastFlex:setCachePool :${propValue}`)
+        QTLog.d(TAG_FASTLIST,`FastFlex:setCachePool :${propValue}`)
         return true;
       case "firstFocusChild":
-        console.log(TAG_FASTLIST,`FastFlex:firstFocusChild :${propValue}`)
+        QTLog.d(TAG_FASTLIST,`FastFlex:firstFocusChild :${propValue}`)
         return true;
       case "list":
         if(propValue instanceof Array){
-          console.log(TAG_FASTLIST,`FastFlex:setListData:${HRValueUtils.getArray(propValue)}`)
+          QTLog.d(TAG_FASTLIST,`FastFlex:setListData:${HRValueUtils.getArray(propValue)}`)
           this.onDataChanged(HRValueUtils.getArray(propValue))
         }else{
           console.error(TAG_FASTLIST,`FastFlex:setListData error list is not array propValue:${propValue}`)
         }
         return true;
       case "sharedItemStore":
-        console.log(TAG_FASTLIST,`FastFlex:sharedItemStore :${propValue}`)
+        QTLog.d(TAG_FASTLIST,`FastFlex:sharedItemStore :${propValue}`)
         return true;
 
     }
@@ -201,7 +202,7 @@ export struct QTFastFlex {
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   private handleOnChildrenUpdated() {
-    console.log(TAG_FASTLIST,`QTFastFlexView: handleOnChildrenUpdated children:${this.children.length}`)
+    QTLog.d(TAG_FASTLIST,`QTFastFlexView: handleOnChildrenUpdated children:${this.children.length}`)
 
   }
 

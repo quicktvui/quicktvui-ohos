@@ -5,6 +5,7 @@ import { TAG_QUICKTVUI, TAG_TABS } from '../../Constant';
 import { QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTLog } from '../../utils/QTLog';
 import QTRenderBaseView from '../QTRenderBaseView';
 
 
@@ -20,7 +21,7 @@ export class InnerViewPagerView extends QTRenderBaseView{
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_TABS,`viewpager:setProp propKey:${propKey},propValue:${CommonUtils.hippyAny2String(propValue)}`)
+    QTLog.d(TAG_TABS,`viewpager:setProp propKey:${propKey},propValue:${CommonUtils.hippyAny2String(propValue)}`)
     switch (propKey) {
       case "direction":
         return true;
@@ -73,7 +74,7 @@ export class InnerViewPagerView extends QTRenderBaseView{
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    console.log(TAG_TABS,`viewpager:call function:${method},params:${CommonUtils.hippyAny2String(params)}`)
+    QTLog.d(TAG_TABS,`viewpager:call function:${method},params:${CommonUtils.hippyAny2String(params)}`)
     switch (method){
       case 'setPageData':
         break;

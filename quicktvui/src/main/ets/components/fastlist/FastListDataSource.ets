@@ -362,7 +362,7 @@ export class FastListDataSource implements IDataSource {
           //   //更新尺寸
           //   let attach = LayoutAttach.obtainLayoutAttach(p.renderView);
           //   let layout = new HRRect(attach.getLeft(),attach.getTop(),attach.getWidth(),attach.getHeight());
-          //   console.log(TAG_LAYOUT,`post update layout:layout:x:${layout.x},y:${layout.y},width:${layout.width},height:${layout.height} renderView:${p.renderView.viewType}:name:${attach.name}`)
+          //   QTLog.d(TAG_LAYOUT,`post update layout:layout:x:${layout.x},y:${layout.y},width:${layout.width},height:${layout.height} renderView:${p.renderView.viewType}:name:${attach.name}`)
           //   if(p.renderView === rv){
           //     //根view
           //     let rect = new HRRect(0,0,attach.getWidth(),attach.getHeight())
@@ -475,8 +475,8 @@ export class FastListDataSource implements IDataSource {
       fi.updateDirty = false;
     }
     // QTLog.d(TAG_LAYOUT,`getData index:${index},data:${fi},this listView:${ExtendUtil.debugView(this.listView)},width:${fi.cssWidth},height:${fi.cssHeight}`)
-    // console.log(TAG_FASTLIST,`getData index:${index}`)
-    console.log(TAG_REUSE,`getData index:${index}`)
+    // QTLog.d(TAG_FASTLIST,`getData index:${index}`)
+    QTLog.d(TAG_REUSE,`getData index:${index}`)
     if(fi.cssWidth < 1 || fi.cssHeight < 1){
       console.error(TAG_LAYOUT,`getData layout Error index:${index}`)
     }
@@ -515,7 +515,7 @@ export class FastListDataSource implements IDataSource {
   // }
 
   public totalCount(): number {
-    // console.log(TAG_FASTLIST,`dataSource:totalCount:${this.dataList.length},this:${ExtendUtil.debugView(this.listView)}`)
+    // QTLog.d(TAG_FASTLIST,`dataSource:totalCount:${this.dataList.length},this:${ExtendUtil.debugView(this.listView)}`)
     return this.dataList.length
   }
 

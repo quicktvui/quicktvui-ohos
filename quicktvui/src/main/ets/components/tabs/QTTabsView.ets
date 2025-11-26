@@ -85,7 +85,7 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_TABS,`tabs:setProp propKey:${propKey},propValue:${CommonUtils.hippyAny2String(propValue)}`)
+    QTLog.d(TAG_TABS,`tabs:setProp propKey:${propKey},propValue:${CommonUtils.hippyAny2String(propValue)}`)
     switch (propKey) {
       case "tabs":
         return true;
@@ -199,7 +199,7 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   onPageTemplateReady(template:QTView){
-    console.log(TAG_TABS,`onPageTemplateReady:${ExtendUtil.debugView(template)}`)
+    QTLog.d(TAG_TABS,`onPageTemplateReady:${ExtendUtil.debugView(template)}`)
     this.contentTemplate = template;
     // this.tabsData.forEach((value)=>{
     //   value.contentView?.setcus
@@ -250,7 +250,7 @@ export class QTTabsView extends QTRenderBaseView{
       }
       p.contentView = wl
       QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])
-      // console.log(TAG_TABS,`updateTabsData this width:${this.cssWidth},height:${this.cssHeight}`)
+      // QTLog.d(TAG_TABS,`updateTabsData this width:${this.cssWidth},height:${this.cssHeight}`)
       if(item){
         p.tabItem = item as QTMap
       }
@@ -261,7 +261,7 @@ export class QTTabsView extends QTRenderBaseView{
     })
 
     this.tryLoadPageData(this.defaultPosition)
-    console.log(TAG_TABS,`updateTabsData tabList:${data?.length},tabsData length:${this.tabsData.length}`)
+    QTLog.d(TAG_TABS,`updateTabsData tabList:${data?.length},tabsData length:${this.tabsData.length}`)
     this.dataSource.notifyReload()
 
     if(this.hideOnSingleTab && data.length < 2){
@@ -295,7 +295,7 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
-    console.log(TAG_TABS,`onTabsContentWillChangeCallback currentIndex  :${currentIndex},comingIndex:${comingIndex}`)
+    QTLog.d(TAG_TABS,`onTabsContentWillChangeCallback currentIndex  :${currentIndex},comingIndex:${comingIndex}`)
     this.tryLoadPageData(comingIndex)
     return true;
   }
@@ -363,12 +363,12 @@ export class QTTabsView extends QTRenderBaseView{
     map.set('pageIndex',page)
     map.set('data',item)
     map.set('useDiff',false)
-    console.log(TAG_TABS,`---send onLoadPageData pageIndex:${page}, map:${CommonUtils.hippyMap2String(map)}`)
+    QTLog.d(TAG_TABS,`---send onLoadPageData pageIndex:${page}, map:${CommonUtils.hippyMap2String(map)}`)
     ExtendUtil.sendUIEvent(this.ctx,this.tag,'onLoadPageData',map)
   }
 
   setPageData(pageIndex: number,params:QTMap,dataArray : QTArray){
-    console.log(TAG_TABS,`setPageData :${pageIndex},dataArray:${dataArray?.length},params:${CommonUtils.hippyMap2String(params)}`)
+    QTLog.d(TAG_TABS,`setPageData :${pageIndex},dataArray:${dataArray?.length},params:${CommonUtils.hippyMap2String(params)}`)
 
       let pd = this.getTabData(pageIndex)
       if(pd?.dataState != 1){
@@ -400,7 +400,7 @@ export class QTTabsView extends QTRenderBaseView{
 
   }
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    console.log(TAG_TABS,`tabs:call function:${method},params:${CommonUtils.hippyAny2String(params)}`)
+    QTLog.d(TAG_TABS,`tabs:call function:${method},params:${CommonUtils.hippyAny2String(params)}`)
     switch (method){
       case 'setTabsData':
         let initParam : QTMap = params[0] as QTMap

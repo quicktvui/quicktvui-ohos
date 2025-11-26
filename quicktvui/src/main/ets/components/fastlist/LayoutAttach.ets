@@ -67,13 +67,13 @@ export class LayoutAttach extends QTAttach{
     this.setWidth(value)
   }
 
-  setFixedWidthVP(value:number){
-    this.setFixedWidth(QTPixelUtil.vp2Dev(value))
-  }
-
-  setFixedHeightVP(value:number){
-    this.setFixedHeight(QTPixelUtil.vp2Dev(value))
-  }
+  // setFixedWidthVP(value:number){
+  //   this.setFixedWidth(QTPixelUtil.vp2Dev(value))
+  // }
+  //
+  // setFixedHeightVP(value:number){
+  //   this.setFixedHeight(QTPixelUtil.vp2Dev(value))
+  // }
 
   setFixedHeight(value:number){
     this.fixedHeight = value;
