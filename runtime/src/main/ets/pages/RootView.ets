@@ -1,6 +1,7 @@
 import { App } from '../App'
 import { EsData } from '../eskit/EsData'
 import { AppView } from '../eskit/ui/AppView'
+import { AppLoaderFactory } from '../eskit/ui/hippy/AppLoader'
 import { Debug } from '../pages/Debug'
 
 @Entry
@@ -10,7 +11,15 @@ struct RootView {
 
   aboutToAppear(): void {
     App.instance.nav = new NavPathStack()
-    this.esData = EsData.tryParse(App.instance.launchParams)
+    // 从启动参数里解析EsData
+    // this.esData = EsData.tryParse(App.instance.launchParams)
+
+    // 内部启动测试参数
+    this.esData = new EsData()
+    this.esData.appName = '土豆逗科普'
+    this.esData.packageName = 'es.hello.world'
+    this.esData.icon = 'https://extcdn.hsrc.tv/data_center/files/2024/05/29/3e07ff6b-cfc6-40d2-a885-843b1655348a.png'
+    this.esData.uri = `${AppLoaderFactory.FROM_ASSETS}/vue`
   }
 
   build() {

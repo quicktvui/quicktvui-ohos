@@ -1,12 +1,16 @@
 export class EsData {
+  /* 应用名称 */
+  appName?: string
+  /* icon */
+  icon?: string
   /* 包名 */
-  packageName: string | undefined
+  packageName?: string
   /* 版本 */
-  versionName: string | undefined
+  versionName?: string
   /* 启动参数 */
-  args: Map<string, object> | undefined
-  /* 自定义下载地址 */
-  url: string | undefined
+  args?: Map<string, object>
+  /* 自定义加载地址 */
+  uri?: string
 
   static tryParse(parameters?: Record<string, Object>): EsData | null {
     if (parameters?.uri) {
@@ -27,7 +31,7 @@ export class EsData {
   private static parseWithParams(params: Record<string, Object>): EsData {
     let data = new EsData()
     data.packageName = params.pkg as string
-    data.url = params.url as string
+    data.uri = params.uri as string
     return data;
   }
 }

@@ -2,9 +2,7 @@ import { App } from '../../App'
 import { AppContext } from '../AppContext'
 import { AppManager } from '../AppManager'
 import { EsData } from '../EsData'
-import { LoadStatus } from '../LoadStatus'
 import { HippyView } from './hippy/HippyView'
-import { SplashView } from './splash/SplashView'
 
 @Builder
 export function PageDebugBuilder() {
@@ -26,9 +24,9 @@ export struct AppView {
     NavDestination() {
       Stack() {
         HippyView()
-        if (this.appContext.loadResult.status != LoadStatus.SUCCESS) {
-          SplashView()
-        }
+        // if (this.appContext.loadResult.status != LoadStatus.SUCCESS) {
+        //   IconSplashView()
+        // }
       }
       .expandSafeArea()
     }.onReady((context) => {

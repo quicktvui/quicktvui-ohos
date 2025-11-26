@@ -1,4 +1,3 @@
-import { AbilityConstant } from "@kit.AbilityKit"
 
 export class App {
   // region 单例

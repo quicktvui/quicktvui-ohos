@@ -12,7 +12,13 @@ interface Data {
 export interface LoadCallback {}
 
 @Component
-export struct SplashView {
+export struct LoadingSplashView {
+  build() {
+  }
+}
+
+@Component
+export struct IconSplashView {
   @Consume('appContext')
   private appContext: AppContext
   @State iconUrl: string = ''
