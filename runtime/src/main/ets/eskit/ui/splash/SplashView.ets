@@ -1,15 +1,6 @@
-import http from '@ohos.net.http';
-import { BusinessError } from '@kit.BasicServicesKit';
-import { ResponseData } from '../../netwrok/OkHttpClient';
 import { AppContext } from '../../AppContext';
 import { LoadStatus } from '../../LoadStatus';
-
-interface Data {
-  icon: string
-  name: string
-}
-
-export interface LoadCallback {}
+import { App } from '../../../App';
 
 @Component
 export struct LoadingSplashView {
@@ -21,56 +12,68 @@ export struct LoadingSplashView {
 export struct IconSplashView {
   @Consume('appContext')
   private appContext: AppContext
-  @State iconUrl: string = ''
   @State appName: string = ''
+  @State appIcon: string = ''
+
+  aboutToAppear(): void {
+    let appInfo = App.instance.context?.applicationInfo
+    this.appName = appInfo?.label || ''
+    this.appIcon = appInfo?.icon || ''
+  }
 
   build() {
-    Stack() {
+    Stack({ alignContent: Alignment.Center }) {
       Column() {
         Row() {
-          Image(this.iconUrl).width(45).height(45)
-          Text(this.appName).margin({ left: 10 })
+          Image($r('app.media.app_icon')).width(90).height(90)
+          Text($r('app.string.EntryAbility_label')).fontSize(60).margin({ left: 15 })
         }
 
         if (this.appContext.loadResult.status == LoadStatus.FAIL) {
           Text(this.appContext.loadResult.exception.code + ' ' + this.appContext.loadResult.exception.message)
             .margin({ top: 50 })
         } else {
-          Progress({ value: 100, total: 100, type: ProgressType.Linear }).width(200).height(50)
+          LoadingProgress()
+            .color(Color.Blue)
+            .width(90)
+            .height(90)
+            .margin({ top: 10 })
         }
       }
     }
     .width('100%')
     .height('100%')
+    .backgroundColor('#FFFFFF')
     .expandSafeArea()
-    .onAppear(() => {
-      this.fetchAppInfo()
-    })
+
+    // .onAppear(() => {
+    // this.fetchAppInfo()
+    // })
   }
 
-  private fetchAppInfo() {
-    const call = http.createHttp()
-    call.request('https://api.extscreen.com/v1/client/appinfo',
-      {
-        method: http.RequestMethod.POST,
-        header: {
-          'Content-Type': 'application/json',
-          "isEncode": "false",
-        },
-        extraData: {
-          'package_name': this.appContext.data.packageName,
-          'channel': 'TCL'
-        },
-      },
-      (error: BusinessError, response: http.HttpResponse) => {
-        if (!error) {
-          let result: ResponseData<Data> = JSON.parse(response.result as string)
-          if (result && result.code == 200) {
-            this.iconUrl = result.data.icon
-            this.appName = result.data.name
-          }
-        }
-        call.destroy()
-      })
-  }
+  // private fetchAppInfo() {
+  //   const call = http.createHttp()
+  //   call.request('https://api.extscreen.com/v1/client/appinfo',
+  //     {
+  //       method: http.RequestMethod.POST,
+  //       header: {
+  //         'Content-Type': 'application/json',
+  //         "isEncode": "false",
+  //       },
+  //       extraData: {
+  //         'package_name': this.appContext.data.packageName,
+  //         'channel': 'TCL'
+  //       },
+  //     },
+  //     (error: BusinessError, response: http.HttpResponse) => {
+  //       if (!error) {
+  //         let result: ResponseData<Data> = JSON.parse(response.result as string)
+  //         if (result && result.code == 200) {
+  //           this.appName = result.data.name
+  //           this.appIcon = result.data.icon
+  //         }
+  //       }
+  //       call.destroy()
+  //     })
+  // }
 }

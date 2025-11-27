@@ -19,7 +19,7 @@ export class AssetsAppLoader implements AppLoader {
   }
 
   getAppIcon(): string {
-    return this.data.icon!
+    return this.data.appIcon!
   }
 
   getVendorJsFile(): string {

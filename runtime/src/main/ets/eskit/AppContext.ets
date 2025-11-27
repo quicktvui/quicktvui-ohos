@@ -1,12 +1,12 @@
-import { AppEngine } from "./AppEngine"
 import { EsData } from "./EsData"
+import { HippyEngine } from "hippy"
 import { LoadResult } from "./LoadResult"
 import { LoadStatus } from "./LoadStatus"
 
 export class AppContext {
   private _abilityContext: Context
   private _data: EsData | null = null
-  private _engine: AppEngine | null = null
+  private _engine: HippyEngine | null = null
   private _loadResult: LoadResult
 
   constructor(context: Context) {
@@ -16,11 +16,11 @@ export class AppContext {
     } as LoadResult
   }
 
-  set engine(value: AppEngine) {
+  set engine(value: HippyEngine) {
     this._engine = value
   }
 
-  get engine(): AppEngine {
+  get engine(): HippyEngine {
     return this._engine!
   }
 

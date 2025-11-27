@@ -2,7 +2,7 @@ export class EsData {
   /* 应用名称 */
   appName?: string
   /* icon */
-  icon?: string
+  appIcon?: string
   /* 包名 */
   packageName?: string
   /* 版本 */
