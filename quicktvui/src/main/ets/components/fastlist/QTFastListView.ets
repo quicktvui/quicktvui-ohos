@@ -35,6 +35,8 @@ export class QTFastListView extends QTRenderBaseView{
 
   public listenBoundEvent : boolean = false;
 
+  enablePlaceholder : boolean  = false;
+
   eventItemClick: ((index:number,clickedView:QTView) => void) | null = null
 
   private endBatchCallback: HippyEndBatchCallback | null = null
@@ -111,6 +113,7 @@ export class QTFastListView extends QTRenderBaseView{
     QTLog.e(TAG_FASTLIST,`setupDataSource rootListID:${rootListID} this:${ExtendUtil.debugView(this)}`)
     this.dataSource = new FastListDataSource(this.ctx,this.virtualChildren)
     this.dataSource.rootListId = rootListID
+    this.dataSource.setPlaceholderEnabled(this.enablePlaceholder)
     this.dataSource.listView = this
     this.prepareTemplate()
     this.endBatchCallback = () =>{
@@ -187,7 +190,9 @@ export class QTFastListView extends QTRenderBaseView{
         return true;
 
       case "enablePlaceholder":
-
+        let b = HRValueUtils.getBoolean(propValue,true)
+         this.dataSource?.setPlaceholderEnabled(b)
+          this.enablePlaceholder = b;
         return true;
       case "refocusType":
 
