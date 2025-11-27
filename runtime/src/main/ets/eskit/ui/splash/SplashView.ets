@@ -32,12 +32,6 @@ export struct IconSplashView {
         if (this.appContext.loadResult.status == LoadStatus.FAIL) {
           Text(this.appContext.loadResult.exception.code + ' ' + this.appContext.loadResult.exception.message)
             .margin({ top: 50 })
-        } else {
-          LoadingProgress()
-            .color(Color.Blue)
-            .width(90)
-            .height(90)
-            .margin({ top: 10 })
         }
       }
     }

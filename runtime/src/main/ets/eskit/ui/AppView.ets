@@ -35,7 +35,7 @@ struct AppView {
   private appContext: AppContext = new AppContext(App.instance.context!)
   private appLoader?: AppLoader
   private hippyViewWrapper = new HippyRootViewWrapper()
-  @State isHippyViewCreated: boolean = false
+  @State splashOpacity: number = 1.0
   @Provide('autoSize') autoSize?: number[] = []
 
   //region 生命周期
@@ -62,8 +62,9 @@ struct AppView {
   }
 
   onBackPress(): boolean | void {
-    if (this.isHippyViewCreated) {
-      this.appContext?.engine?.onBackPressed({
+    let engine = this.appContext.engine
+    if (engine) {
+      engine?.onBackPressed({
         handleBackPress() {
           console.log('Back button pressed');
         }
@@ -154,9 +155,13 @@ struct AppView {
     const view = this.appContext.engine?.loadModuleWithListener(params, {
       onLoadCompleted(statusCode: ModuleLoadStatus, msg: string) {
         console.log("loadModule", statusCode, msg)
-        setTimeout(() => {
-          viewThis.isHippyViewCreated = true
-        }, 1000)
+        animateToImmediately({
+          duration: 800,
+          delay: 1000,
+          curve: Curve.Smooth
+        }, () => {
+          viewThis.splashOpacity = 0.0
+        })
       },
       onJsException(e: HippyJsException): boolean {
         console.log('onJsException', e)
@@ -201,7 +206,9 @@ struct AppView {
   build() {
     Navigation(App.instance.nav) {
       Stack() {
-        if (this.isHippyViewCreated) {
+        if (this.splashOpacity > 0) {
+          IconSplashView().opacity(this.splashOpacity)
+        } else {
           HippyRoot({
             hippyEngine: this.appContext.engine,
             rootViewWrapper: this.hippyViewWrapper,
@@ -211,8 +218,6 @@ struct AppView {
           }).width('100%')
             .height('100%')
             .expandSafeArea()
-        } else {
-          IconSplashView()
         }
       }
       .alignContent(Alignment.Center)
