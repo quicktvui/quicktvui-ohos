@@ -91,7 +91,7 @@ export class FastListDataSource implements IDataSource {
   }
 
   setPlaceholderEnabled(b : boolean){
-    this.enablePlaceholder == b;
+    this.enablePlaceholder = b;
   }
 
   public registerParentItemStore(){
