@@ -10,7 +10,6 @@ struct RootView {
   private esData?: EsData | null
 
   aboutToAppear(): void {
-    App.instance.nav = new NavPathStack()
     // 从启动参数里解析EsData
     // this.esData = EsData.tryParse(App.instance.launchParams)
 

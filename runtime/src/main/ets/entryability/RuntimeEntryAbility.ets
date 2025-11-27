@@ -17,6 +17,7 @@ export default class RuntimeEntryAbility extends UIAbility {
     LogUtils.i(this.TAG, `onCreate: want: uri: ${want?.uri}  launchParam: ${launchParam}`)
 
     App.instance.context = this.context
+    App.instance.nav = new NavPathStack()
 
     this.launch(want, launchParam, false)
   }
@@ -54,6 +55,7 @@ export default class RuntimeEntryAbility extends UIAbility {
   onWindowStageCreate(windowStage: window.WindowStage): void {
     LogUtils.i(this.TAG, `Ability onWindowStageCreate`)
 
+    // windowStage.loadContent('pages/Main', (err) => {
     windowStage.loadContent('pages/RootView', (err) => {
       if (err.code) {
         LogUtils.i(this.TAG, `Failed to load the content. Cause: ${JSON.stringify(err) ?? ''}`)

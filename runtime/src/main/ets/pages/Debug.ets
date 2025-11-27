@@ -104,7 +104,7 @@ export struct Debug {
     this.destroyEngine()
     //
     let params = new EngineInitParams(libHippy, App.instance.context!, this.getUIContext())
-    params.coreJSAssetsPath = "vue/vendor.android.js"
+    params.coreJSAssetsPath = "vue/vendor.js"
     params.enableArkCApi = false
     params.debugServerHost = this.debugServerHost + ':38989'
     params.debugMode = this.debugMode
