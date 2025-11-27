@@ -16,12 +16,12 @@ export class AppContext {
     } as LoadResult
   }
 
-  set engine(value: HippyEngine) {
+  set engine(value: HippyEngine| null) {
     this._engine = value
   }
 
-  get engine(): HippyEngine {
-    return this._engine!
+  get engine(): HippyEngine | null {
+    return this._engine
   }
 
   set data(value: EsData) {

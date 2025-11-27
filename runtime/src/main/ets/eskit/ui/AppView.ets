@@ -45,21 +45,35 @@ struct AppView {
     AppManager.instance.addAppContext(this.appContext)
 
     this.startLoadApp()
+    this.postLifecycleEvent('onAppear')
+  }
+
+  onPageShow(): void {
+    this.postLifecycleEvent('onShown')
+  }
+
+  onPageHide(): void {
+    this.postLifecycleEvent('onHidden')
   }
 
   aboutToDisappear(): void {
+    this.postLifecycleEvent('onDisAppear')
     AppManager.instance.removeAppContext(this.appContext)
   }
 
   onBackPress(): boolean | void {
     if (this.isHippyViewCreated) {
-      this.appContext.engine.onBackPressed({
+      this.appContext?.engine?.onBackPressed({
         handleBackPress() {
           console.log('Back button pressed');
         }
       })
       return true
     }
+  }
+
+  private postLifecycleEvent(eventName: string) {
+    this.appContext.engine?.onLifecycleEvent(eventName)
   }
 
   //endregion
@@ -211,16 +225,10 @@ struct AppView {
     .hideBackButton(true)
     .mode(NavigationMode.Stack)
     .onAttach(() => {
-      console.log('')
+      this.postLifecycleEvent('onAttach')
     })
     .onDetach(() => {
-      console.log('')
-    })
-    .onAppear(() => {
-      console.log('')
-    })
-    .onDisAppear(() => {
-      console.log('')
+      this.postLifecycleEvent('onDetach')
     })
   }
 
