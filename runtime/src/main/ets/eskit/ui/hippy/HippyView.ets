@@ -5,6 +5,7 @@ import {
   HippyEngine,
   ModuleLoadParams,
   HippyRoot,
+  HippyValue,
   HippyRootViewWrapper,
   ModuleLoadStatus,
   HippyJsException
@@ -27,6 +28,7 @@ export struct HippyView {
   private hippyEngine: HippyEngine | null = null
   private hippyViewWrapper = new HippyRootViewWrapper()
   @State isHippyViewCreated: boolean = false
+  @Provide('autoSize') autoSize?: number[] = []
 
   aboutToAppear(): void {
     this.startLoadEsApp()
@@ -75,7 +77,11 @@ export struct HippyView {
       .height('100%')
     } else {
       HippyRoot({
-        rootViewWrapper: this.hippyViewWrapper
+        hippyEngine: this.hippyEngine,
+        rootViewWrapper: this.hippyViewWrapper,
+        onRenderException: (exception) => {
+          console.error('onRenderException', exception)
+        }
       }).expandSafeArea()
     }
   }
@@ -101,7 +107,7 @@ export struct HippyView {
   }
 
   private generateEngineInitParams(): EngineInitParams {
-    const params = new EngineInitParams(libHippy!, App.instance.context!, this.getUIContext())
+    const params = new EngineInitParams(libHippy, App.instance.context!, this.getUIContext())
     params.debugMode = false
     params.enableLog = true
     params.enableArkCApi = false
@@ -122,6 +128,7 @@ export struct HippyView {
     const view = this.hippyEngine?.loadModuleWithListener(params, {
       onLoadCompleted(statusCode: ModuleLoadStatus, msg: string) {
         console.log("loadModule", statusCode, msg)
+        viewThis.isHippyViewCreated = true
       },
       onJsException(exception: HippyJsException): boolean {
         return true
@@ -136,15 +143,14 @@ export struct HippyView {
 
     if (view) {
       this.hippyViewWrapper.setRootView(view)
-      viewThis.isHippyViewCreated = true
     }
   }
 
   private generateLoadModuleParams(): ModuleLoadParams {
     const params = new ModuleLoadParams('', '', '', '', null, null, null)
     params.componentName = 'EsApp'
-    params.codeCacheTag = 'EsApp'
-    // params.jsParams
+    // params.codeCacheTag = 'EsApp'
+    params.jsParams = new Map<string, HippyValue>()
     params.wrappedCustomRenderViewBuilder = wrapBuilder(buildCustomRenderView)
     if (this.appLoader instanceof AssetsAppLoader) {
       params.jsAssetsPath = this.appLoader.getIndexJsFile()
