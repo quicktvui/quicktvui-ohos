@@ -1,5 +1,19 @@
 {
   "app": {
+//    "signingConfigs": [
+//      {
+//        "name": "default",
+//        "material": {
+//          "certpath": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.cer",
+//          "keyAlias": "debugKey",
+//          "keyPassword": "0000001B76CE6EA2CBD24DF324F94DF3BE01C9F5EA793ACDACCD6C093F1DEA0BB50EBA7D20A84F177143AA",
+//          "profile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p7b",
+//          "signAlg": "SHA256withECDSA",
+//          "storeFile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p12",
+//          "storePassword": "0000001BBDC9D4A59B7CC330A6EC68AA23C77DA5475C81F048A8C383F89C00FAADF092209E1051FAA4D0BA"
+//        }
+//      }
+//    ],
     "products": [
       {
         "name": "default",
