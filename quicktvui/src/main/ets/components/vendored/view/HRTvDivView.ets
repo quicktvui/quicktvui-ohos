@@ -183,11 +183,13 @@ export class HRTvDivView extends QTBaseComponentView {
       case 'selected':
         this.selected = HRValueUtils.getBoolean(propValue as HippyAny, false);
         this.setSelectedBorder();
+        this.drawableStateChanged()
         return true;
-      case 'showOnState':
-        this.showonstate = HRValueUtils.getString(propValue as HippyAny);
-        this.showOnState();
-        return true;
+        //这里不需要了，直接在parent里处理
+      // case 'showOnState':
+      //   this.showonstate = HRValueUtils.getString(propValue as HippyAny);
+      //   this.showOnState();
+      //   return true;
       case 'sid':
         {
           this.sid = propValue as string
@@ -198,12 +200,12 @@ export class HRTvDivView extends QTBaseComponentView {
           this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
         }
         return true
-      case 'duplicateParentState':
-        {
-          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, false);
-          this.setDuplicate();
-        }
-        return true
+      // case 'duplicateParentState':
+      //   {
+      //     this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, false);
+      //     this.setDuplicate();
+      //   }
+      //   return true
       case HRNodeProps.VISIBILITY:
         let visibility = propValue as string;
         switch (visibility) {
@@ -355,10 +357,12 @@ export class HRTvDivView extends QTBaseComponentView {
 
   handleFocus(isFocused: boolean){
     LogUtils.d(this.TAG, "Get Focus Method：" + isFocused);
+    this.drawableStateChanged()
   }
 
   handleBlur(isFocused: boolean){
     LogUtils.d(this.TAG, "Get Blur Method：" + isFocused);
+    this.drawableStateChanged()
   }
 
   setBorder(): BorderOptions{

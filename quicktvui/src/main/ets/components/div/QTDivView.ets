@@ -19,9 +19,10 @@
  */
 import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
-import {  TAG_QUICKTVUI } from '../../Constant';
+import { TAG_FOCUS, TAG_QUICKTVUI } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { ViewUtils } from '../../utils/ViewUtils';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
@@ -68,8 +69,24 @@ const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invi
 
 @Observed
 export class QTDivView extends HRTvDivView {
+
+  mUserSetFocusBackgroundColor : number = Color.Transparent;
+  mUserSetSelectBackgroundColor : number = Color.Transparent;
+  mUserSetBackgroundColor : number = Color.Transparent;
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+  }
+
+  drawableStateChanged(){
+    super.drawableStateChanged()
+    // if(this.focus){
+    //   this.cssBackgroundColor = this.mUserSetFocusBackgroundColor;
+    // }else if(this.selected){
+    //   this.cssBackgroundColor = this.mUserSetSelectBackgroundColor;
+    // }else{
+    //   this.cssBackgroundColor = this.mUserSetBackgroundColor;
+    // }
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
@@ -110,6 +127,26 @@ export class QTDivView extends HRTvDivView {
         }
 
         return true;
+        case 'focusBackgroundColor':
+          this.mUserSetFocusBackgroundColor = HRValueUtils.getNumber(propValue)
+          QTLog.w(TAG_FOCUS,`mUserSetFocusBackgroundColor :${this.mUserSetFocusBackgroundColor}`)
+          this.drawableStateChanged()
+          return true;
+        case 'selectBackgroundColor':
+          this.mUserSetSelectBackgroundColor = HRValueUtils.getNumber(propValue)
+          QTLog.i(TAG_FOCUS,`mUserSetSelectBackgroundColor :${this.mUserSetSelectBackgroundColor}`)
+          this.drawableStateChanged()
+          return true;
+        case 'backgroundColor':
+          this.mUserSetBackgroundColor = HRValueUtils.getNumber(propValue)
+          QTLog.i(TAG_FOCUS,`backgroundColor :${this.mUserSetBackgroundColor}`)
+          this.drawableStateChanged()
+        break;
+      // case 'showOnState':
+      //   super.setProp(propKey, propValue)
+      //   QTLog.w(TAG_FOCUS,`div setShowOnState :${propValue},this:${ExtendUtil.debugView(this)}`)
+      //   this.handleShowOnState();
+      //   return true;
     }
     return super.setProp(propKey, propValue)
   }
@@ -177,11 +214,25 @@ export struct QTDiv {
         //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
         //custom
         .attributeModifier(this.colorModifier)
+        // .attributeModifier(this.visibilityModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
         .onClick((event=>{
           ViewUtils.handleClickEvent(event,this.renderView)
         }))
+        // .onFocus(() => {
+        //   this.renderView.focus = this.renderView.focusable
+        //   if(this.renderView.focus){
+        //     QTLog.d(TAG_FOCUS, "onFocus，name:" + ExtendUtil.debugView(this.renderView));
+        //     this.renderView.handleFocus(this.renderView.focus)
+        //   }
+        // })
+        // .onBlur(() => {
+        //   if(this.renderView.focus){
+        //     this.renderView.handleBlur(false)
+        //   }
+        //   this.renderView.focus = false
+        // })
     }else {
         Stack() {
           ForEach(this.children, (item: QTView) => {
@@ -189,9 +240,23 @@ export struct QTDiv {
           }, (item: QTView) => item.tag + '')
         }
         .applyRenderViewBaseAttr(this.renderView)
+        // .attributeModifier(this.visibilityModifier)
         .attributeModifier(this.colorModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
+        // .onFocus(() => {
+        //   this.renderView.focus = this.renderView.focusable
+        //   if(this.renderView.focus){
+        //     QTLog.d(TAG_FOCUS, "onFocus，name:" + ExtendUtil.debugView(this.renderView));
+        //     this.renderView.handleFocus(this.renderView.focus)
+        //   }
+        // })
+        // .onBlur(() => {
+        //   if(this.renderView.focus){
+        //     this.renderView.handleBlur(false)
+        //   }
+        //   this.renderView.focus = false
+        // })
         // .onClick((event=>{
         //   ViewUtils.handleClickEvent(event,this.renderView)
         // }))

@@ -1,10 +1,15 @@
 import {HippyAny,HippyRenderBaseView,EventDispatcher,HREventUtils,NativeRenderContext} from 'hippy'
 import { QTAttach } from '../components/QTAttach';
+import { QTBaseComponentView } from '../components/QTBaseComponentView';
 import { QTViewActor } from '../components/QTViewActor';
-import { QTView } from '../QTTypes';
+import { QTViewState, StateView, StateViewConstants } from '../components/StateView';
+import { TAG_FOCUS } from '../Constant';
+import { QTAny, QTView } from '../QTTypes';
 import { QTCompatUtil } from './QTCompatUtil';
+import { QTLog } from './QTLog';
 
 export class ExtendUtil{
+
   static debugView(view:QTView | null) : string{
     if(view  == null ){
       return 'null'
@@ -35,6 +40,229 @@ export class ExtendUtil{
 
   static findViewActor(view : QTView | null): QTViewActor | undefined {
      return QTCompatUtil.getQTBaseView(view)?.viewActor
+  }
+
+
+
+  // 状态常量定义 - 使用鸿蒙的状态枚举
+  static STATE_SET_SELECTED_FOCUS: number[] = [
+    QTViewState.STATE_SELECTED,
+    QTViewState.STATE_FOCUSED
+  ];
+  static STATE_SET_SELECTED: number[] = [QTViewState.STATE_SELECTED];
+  static STATE_SET_FOCUSED: number[] = [QTViewState.STATE_FOCUSED];
+
+  // 工具函数：检查状态数组是否包含特定属性
+  static stateContainsAttribute(stateSpecs: number[], attr: number | number[]): boolean {
+    if (!stateSpecs) {
+      return false;
+    }
+
+    if (Array.isArray(attr)) {
+      for (let specAttr of stateSpecs) {
+        for (let toState of attr) {
+          if (specAttr === toState || -specAttr === toState) {
+            return true;
+          }
+        }
+      }
+    } else {
+      for (let specAttr of stateSpecs) {
+        if (specAttr === attr || -specAttr === attr) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  // 工具函数：查找相反状态
+  static  findOppositeState(showOnState: number[]): number[] {
+    let result: number[];
+    if (showOnState.length === 2) {
+      // [-1，selected] 或 [-1,focused]
+      result = new Array(1);
+      for (let state of showOnState) {
+        if (state !== -1) {
+          // 因为只有这俩种可能性，所以简单的变换一下
+          // focused->selected
+          // selected->focused
+          if (state === QTViewState.STATE_FOCUSED) {
+            result[0] = QTViewState.STATE_SELECTED;
+          } else {
+            result[0] = QTViewState.STATE_FOCUSED;
+          }
+        }
+      }
+    } else {
+      // [-1] 或 [-1，selected,focused]
+      result = ExtendUtil.STATE_SET_SELECTED_FOCUS;
+    }
+    return result;
+  }
+
+  // 主函数：处理基于状态的显示逻辑
+  static handleShowOnState(view: QTBaseComponentView, states: number[], showOnState: number[]): boolean {
+   // QTLog.e(TAG_FOCUS, `handleShowOnState start - states: ${JSON.stringify(states)}, showOnState: ${JSON.stringify(showOnState)}`);
+
+    if (showOnState && showOnState.length > 0) {
+      const hasNormalState = ExtendUtil.stateContainsAttribute(showOnState, -1);
+      // QTLog.e(TAG_FOCUS, `hasNormalState: ${hasNormalState}`);
+
+      if (hasNormalState) {
+        // [normal] 相关逻辑
+       const isNormalState = !ExtendUtil.stateContainsAttribute(states, ExtendUtil.findOppositeState(showOnState));
+        view.visibility = isNormalState ? Visibility.Visible : Visibility.Hidden;
+        // QTLog.e(TAG_FOCUS, `1 handleShowOnState changeVisibility: ${view.visibility} view: ${ExtendUtil.debugView(view)}`);
+      } else {
+        // [focused,selected] 相关逻辑
+        let isShow = false;
+        let takeOver = false;
+
+        // QTLog.e(TAG_FOCUS, `showOnState.length: ${showOnState.length}`);
+
+        if (showOnState.length === 1) {
+          const containFocusAndSelect = ExtendUtil.stateContainsAttribute(showOnState, ExtendUtil.STATE_SET_SELECTED_FOCUS);
+          // QTLog.e(TAG_FOCUS, `containFocusAndSelect: ${containFocusAndSelect}, showOnState[0]: ${showOnState[0]}`);
+
+          if (containFocusAndSelect) {
+            if (showOnState[0] === StateViewConstants.STATE_FOCUS_AND_SELECT) {
+              isShow = true;
+              takeOver = true;
+              QTLog.e(TAG_FOCUS, `STATE_FOCUS_AND_SELECT matched`);
+            }
+          } else {
+            // QTLog.e(TAG_FOCUS, `Checking STATE_SELECT_NO_FOCUS and STATE_FOCUS_NO_SELECT`);
+
+            if (showOnState[0] === StateViewConstants.STATE_SELECT_NO_FOCUS) {
+              takeOver = true;
+              const hasSelected = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_SELECTED);
+              const hasFocused = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_FOCUSED);
+              // QTLog.e(TAG_FOCUS, `STATE_SELECT_NO_FOCUS - hasSelected: ${hasSelected}, hasFocused: ${hasFocused}`);
+
+              if (hasSelected && !hasFocused) {
+                isShow = true;
+              }
+            }
+
+            if (showOnState[0] === StateViewConstants.STATE_FOCUS_NO_SELECT) {
+              takeOver = true;
+              const hasFocused = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_FOCUSED);
+              const hasSelected = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_SELECTED);
+              // QTLog.e(TAG_FOCUS, `STATE_FOCUS_NO_SELECT - hasFocused: ${hasFocused}, hasSelected: ${hasSelected}`);
+
+              if (hasFocused && !hasSelected) {
+                isShow = true;
+              }
+            }
+          }
+        }
+
+        //QTLog.e(TAG_FOCUS, `takeOver: ${takeOver}, isShow: ${isShow}`);
+
+        if (takeOver) {
+          view.visibility = isShow ? Visibility.Visible : Visibility.Hidden;
+         // QTLog.e(TAG_FOCUS, `2 handleShowOnState changeVisibility: ${view.visibility} view: ${ExtendUtil.debugView(view)}`);
+        } else {
+          const contain = ExtendUtil.stateContainsAttribute(states, showOnState);
+        //  QTLog.e(TAG_FOCUS, `Final contain check: ${contain}`);
+          view.visibility = contain ? Visibility.Visible : Visibility.Hidden;
+          //QTLog.e(TAG_FOCUS, `3 handleShowOnState changeVisibility: ${contain} view: ${ExtendUtil.debugView(view)}`);
+        }
+      }
+      return true;
+    }
+
+    QTLog.e(TAG_FOCUS, `handleShowOnState return false`);
+    return false;
+  }
+
+
+  // 配置状态显示方法
+  static configureShowOnState(view: StateView, showOnStateValue : QTAny): void {
+    if (showOnStateValue instanceof Array) {
+      // 处理数组情况
+      ExtendUtil.handleArrayShowOnState(view, showOnStateValue as Array<string>);
+    } else if (typeof showOnStateValue === 'string') {
+      // 处理字符串情况
+      ExtendUtil.handleStringShowOnState(view, showOnStateValue as string);
+    }
+  }
+
+  // 处理数组类型的showOnState
+  static  handleArrayShowOnState(view: StateView, array: Array<string>): void {
+    if (!array || array.length === 0) {
+      return;
+    }
+
+    const customStates: Set<string> = new Set();
+    const states: number[] = new Array(array.length);
+
+    for (let i = 0; i < array.length; i++) {
+      const stateStr = array[i];
+      switch (stateStr) {
+        case "selected":
+          states[i] = QTViewState.STATE_SELECTED;
+          break;
+        case "focused":
+          states[i] = QTViewState.STATE_FOCUSED;
+          break;
+        case "normal":
+          states[i] = QTViewState.STATE_NORMAL;
+          break;
+        default:
+          customStates.add(stateStr);
+          break;
+      }
+    }
+
+    view.setShowOnState(states);
+
+    if (customStates.size > 0) {
+      const customStatesArray: string[] = Array.from(customStates);
+      view.setShowOnCustomState(customStatesArray);
+    } else {
+      view.setShowOnCustomState([]);
+    }
+  }
+
+  // 处理字符串类型的showOnState
+  static handleStringShowOnState(view: StateView, stateStr: string): void {
+    let customState: string | null = null;
+    const states: number[] = new Array(1);
+
+    switch (stateStr) {
+      case "selected":
+        states[0] = QTViewState.STATE_SELECTED;
+        break;
+      case "focused":
+        states[0] = QTViewState.STATE_FOCUSED;
+        break;
+      case "normal":
+        states[0] = QTViewState.STATE_NORMAL;
+        break;
+      case "selected&focused":
+      case "focused&selected":
+        states[0] = StateViewConstants.STATE_FOCUS_AND_SELECT;
+        break;
+      case "selected&!focused":
+        states[0] = StateViewConstants.STATE_SELECT_NO_FOCUS;
+        break;
+      case "focused&!selected":
+        states[0] = StateViewConstants.STATE_FOCUS_NO_SELECT;
+        break;
+      default:
+        customState = stateStr;
+        break;
+    }
+
+    view.setShowOnState(states);
+
+    if (customState === null) {
+      view.setShowOnCustomState([]);
+    } else {
+      view.setShowOnCustomState([customState]);
+    }
   }
 
 

@@ -125,23 +125,24 @@ export class HRTvImageView extends QTBaseComponentView {
   }
 
   private showOnState() {
-    if (this.showonstate == 'normal') {
-      //不做处理
-    } else if (this.showonstate == 'selected') {
-      //选中显示，未选中隐藏
-      if (this.selected === true) {
-        this.visibility = Visibility.Visible
-      } else {
-        this.visibility = Visibility.Hidden
-      }
-    } else if (this.showonstate == 'focused') {
-      //聚焦显示，失焦隐藏
-      if (this.focus === true) {
-        this.visibility = Visibility.Visible
-      } else {
-        this.visibility = Visibility.Hidden
-      }
-    }
+    // if (this.showonstate == 'normal') {
+    //   //不做处理
+    // } else if (this.showonstate == 'selected') {
+    //   //选中显示，未选中隐藏
+    //   if (this.selected === true) {
+    //     this.visibility = Visibility.Visible
+    //   } else {
+    //     this.visibility = Visibility.Hidden
+    //   }
+    // } else if (this.showonstate == 'focused') {
+    //   //聚焦显示，失焦隐藏
+    //   if (this.focus === true) {
+    //     this.visibility = Visibility.Visible
+    //   } else {
+    //     this.visibility = Visibility.Hidden
+    //   }
+    // }
+    this.drawableStateChanged()
   }
 
   private setResizeMode(pvalue: string) {
@@ -326,10 +327,10 @@ export class HRTvImageView extends QTBaseComponentView {
         this.selected = HRValueUtils.getBoolean(propValue as HippyAny, false);
         // this.setBorder();
         return true;
-      case 'showOnState':
-        this.showonstate = HRValueUtils.getString(propValue as HippyAny);
-        this.showOnState();
-        return true;
+      // case 'showOnState':
+      //   this.showonstate = HRValueUtils.getString(propValue as HippyAny);
+      //   this.showOnState();
+      //   return true;
       // case 'name':
       //   this.name = HRValueUtils.getString(propValue as HippyAny);
       //   return true;
