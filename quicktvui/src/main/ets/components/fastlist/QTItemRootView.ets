@@ -18,6 +18,7 @@ import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListUtils } from './FastListUtils';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
+import { QTFastFlexView } from './QTFastFlexView';
 import { QTFastListView } from './QTFastListView';
 import { PathUpdate, PendingPathUpdate, TemplateViewManager } from './TemplateViewManager';
 const PREFIX_KEY = "ITEMROOT"
@@ -63,6 +64,8 @@ export class QTItemRootView extends QTRenderBaseView{
   updates:Array<PathUpdate> = []
   pendingUpdates:Array<PendingPathUpdate> = []
 
+  public enablePlaceholder : boolean  = false;
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
     this.__serialNumber = PREFIX_KEY + QTItemRootView.__idx++;
@@ -99,10 +102,12 @@ export class QTItemRootView extends QTRenderBaseView{
       this.calculateLayout()
       LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(child).getWidth())
       LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(child).getHeight())
+      // LayoutAttach.obtainLayoutAttach(this).setPosition(LayoutAttach.obtainLayoutAttach(child).getLeft(),LayoutAttach.obtainLayoutAttach(child).getTop())
       //这里跳过changedView，解决文本通知parent变化，parent变化再让文本变化，导致死循环
       TemplateViewManager.applyLayoutTraverse4AutoSize(this,changedView)
       // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
-      QTPixelUtil.setRenderViewLayout(this,[0,0,child.cssWidth,child.cssHeight]);
+      //QTPixelUtil.setRenderViewLayout(this,[0,0,child.cssWidth,child.cssHeight]);
+      this.letItemMatchChildPosition(child)
       //QTLog.e(TAG_LAYOUT,`notifyChildSizeChanged parentView:${ExtendUtil.debugView(this.parentList)},dataPosition:${this.dataPosition},this.cssWidth:${this.cssWidth}`)
       // if(this.parentList instanceof QTFastListView && this.dataPosition){
       //   this.parentList.notifyItemChanged(this.dataPosition)
@@ -116,6 +121,18 @@ export class QTItemRootView extends QTRenderBaseView{
       return  `tp-${this.itemView?.template?.templateView.tag}-type-${LayoutAttach.obtainLayoutAttach(this).virtualExtra.itemType}`
     }else{
       return `type${LayoutAttach.obtainLayoutAttach(this).virtualExtra.itemType}`
+    }
+  }
+
+  letItemMatchChildPosition(childView : QTView){
+    let childLa = LayoutAttach.obtainLayoutAttach(childView)
+    let itemLa = LayoutAttach.obtainLayoutAttach(this)
+    // QTLog.w(TAG_LAYOUT,`letItemMatchChildPosition ,child left:${childLa.getLeft()},childTOp:${childLa.getTop()} childView:${ExtendUtil.debugView(childView)}`)
+    // QTLog.e(TAG_LAYOUT,`letItemMatchChildPosition ,itemLa left:${itemLa.getLeft()},TOp:${itemLa.getTop()}`)
+    if(this.parentList instanceof QTFastFlexView){
+      QTPixelUtil.setRenderViewLayout(this,[childLa.getLeft(),childLa.getTop(),itemLa.fixedWidth,itemLa.fixedHeight]);
+      // childLa.setPosition(0,0)
+      QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
     }
   }
 
@@ -137,13 +154,19 @@ export class QTItemRootView extends QTRenderBaseView{
         QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
     }else{
       this.calculateLayout()
-      LayoutAttach.obtainLayoutAttach(this).setFixedWidth(LayoutAttach.obtainLayoutAttach(childView).getWidth())
-      LayoutAttach.obtainLayoutAttach(this).setFixedHeight(LayoutAttach.obtainLayoutAttach(childView).getHeight())
+      let itemLa = LayoutAttach.obtainLayoutAttach(this)
+      let childLa = LayoutAttach.obtainLayoutAttach(childView)
+      itemLa.setFixedWidth(childLa.getWidth())
+      itemLa.setFixedHeight(childLa.getHeight())
+      // if(childLa.getLeft() > 0 && childLa.getTop() > 0){
+      //
+      // }
+      // itemLa.setPosition(childLa.getLeft(),childLa.getTop())
       TemplateViewManager.applyLayoutTraverse(this)
       // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
+      // QTLog.w(TAG_LAYOUT,`layoutItem felxLayout:${flexLayout},child left:${childLa.getLeft()},childTOp:${childLa.getTop()} childView:${ExtendUtil.debugView(childView)}`)
       if(flexLayout){
-        QTPixelUtil.setRenderViewLayout(this,[childView.cssPositionX,childView.cssPositionY,childView.cssWidth,childView.cssHeight]);
-        QTPixelUtil.setRenderViewLayout(childView,[0,0,childView.cssWidth,childView.cssHeight]);
+        this.letItemMatchChildPosition(childView)
       }else{
         QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
       }
@@ -180,7 +203,19 @@ export class QTItemRootView extends QTRenderBaseView{
 
 
   }
+
+
 }
+
+@Builder
+function buildPlaceholder(itemView: QTItemRootView){
+  if(itemView.enablePlaceholder){
+    // Stack().width(itemView.cssWidth).height(itemView.cssHeight)
+    //   .position({x:0,y:0})
+    //   .backgroundColor(Color.Gray)
+  }
+}
+
 
 @Reusable
 @Component
@@ -191,6 +226,7 @@ export struct QTItemRoot {
   build(): void {
     if(this.renderView.isEventClick()){
       Stack() {
+        buildPlaceholder(this.renderView)
         ForEach(this.children, (item: QTView) => {
           buildHippyRenderView(item, null)
         }, (item: QTView,index:number) => this.renderView.__serialNumber)
@@ -207,6 +243,7 @@ export struct QTItemRoot {
       }))
     }else{
       Stack() {
+        buildPlaceholder(this.renderView)
         ForEach(this.children, (item: QTView) => {
           buildHippyRenderView(item, null)
         }, (item: QTView,index:number) => this.renderView.__serialNumber)

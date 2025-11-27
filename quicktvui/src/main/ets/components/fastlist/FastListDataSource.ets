@@ -70,6 +70,8 @@ export class FastListDataSource implements IDataSource {
   private itemStore : QTView | null = null;
   templateViewManager : TemplateViewManager ;
 
+  public enablePlaceholder : boolean = false;
+
   constructor(ctx : NativeRenderContext,dataList:HippyObservedArray<QTView>) {
     this.ctx = ctx;
     assertNull(ctx) ?? 'ctx is null'
@@ -86,6 +88,10 @@ export class FastListDataSource implements IDataSource {
       }
     })
     return itemStore;
+  }
+
+  setPlaceholderEnabled(b : boolean){
+    this.enablePlaceholder == b;
   }
 
   public registerParentItemStore(){
@@ -284,6 +290,7 @@ export class FastListDataSource implements IDataSource {
     if(!type){
       type = FastListDataSource.DEFAULT_TYPE
     }
+    fi.enablePlaceholder = this.enablePlaceholder
     // if(!fi.updateDirty && fi.children[0]){
     //   QTLog.w(TAG_FASTLIST,`buildItem position:${position} reutrn on content not empty`)
     //   return;
