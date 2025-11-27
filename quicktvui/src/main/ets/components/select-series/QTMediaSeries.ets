@@ -29,7 +29,6 @@ export struct QTMediaSeries {
     params.set('tag', this.renderView.tag)
     event.send(this.renderView.ctx, this.renderView.tag, params)
     console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
-    this.getUIContext()?.getFocusController().activate(true)
   }
 
   build() {
@@ -43,8 +42,7 @@ export struct QTMediaSeries {
                   .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
                   .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
                   .focusable(true)
-                  .defaultFocus(this.renderView.focusStr == item.key)
-                  // .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
+                  .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
                   Text(item.title)
                     .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
@@ -75,14 +73,6 @@ export struct QTMediaSeries {
                   })
                   .fontFamily('HarmonyOS Sans')
                   .fontSize(px2vp(this.renderView.initParamTemplate.floatTitleSize))
-                Image(item.cover)
-                  .position({
-                    x: -60,
-                    y: 70
-                  })
-                  .width(30)
-                  .aspectRatio(1)
-                  .borderRadius(20)
               }
               .width(px2vp(this.renderView.initParamTemplate.width))
               .height(px2vp(this.renderView.initParamTemplate.height))
@@ -165,7 +155,7 @@ export struct QTMediaSeries {
                     Color.Black :
                       (this.renderView.currentTitleId === index && this.renderView.isSelectedButton) ? Color.White :
                       this.renderView.initParamGroup.textColor.normal)
-                    // .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
+                    .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                     .backgroundColor(this.renderView.focusStr == item.key ? Color.White : Color.Transparent)
                     .borderRadius({
                       topLeft: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[0]),
@@ -215,6 +205,7 @@ export struct QTMediaSeries {
                 let params = new Map<string, number>()
                 params.set('position', index)
                 event.send(this.renderView.ctx, this.renderView.tag, params)
+                this.renderView.isSelectedButton = false;
               })
 
               .onBlur(() => {
@@ -230,6 +221,7 @@ export struct QTMediaSeries {
             left: px2vp(this.renderView.initParamGroup.itemGap) / 2,
             right: px2vp(this.renderView.initParamGroup.itemGap) / 2
           })
+          .margin(px2vp(this.renderView.initParamGroup.itemGap))
         }
 
         ForEach(this.children, (item: HippyRenderBaseView) => {
