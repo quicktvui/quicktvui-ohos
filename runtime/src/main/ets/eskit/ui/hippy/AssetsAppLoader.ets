@@ -7,7 +7,8 @@ export class AssetsAppLoader implements AppLoader {
 
   constructor(data: EsData) {
     this.data = data
-    this.baseDir = data.uri!.replace(AppLoaderFactory.FROM_ASSETS, '')
+    let dir = data.uri!.replace(AppLoaderFactory.FROM_ASSETS, '')
+    this.baseDir = dir.startsWith('/') ? dir.slice(1) : dir;
   }
 
   async startLoad(): Promise<void> {
