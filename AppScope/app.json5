@@ -1,7 +1,7 @@
 {
   "app": {
-    "bundleName": "com.extscreen.runtime",
-    "vendor": "example",
+    "bundleName": "tv.huan.tudoudou",
+    "vendor": "huan.tv",
     "versionCode": 1000000,
     "versionName": "1.0.0",
     "icon": "$media:layered_image",
