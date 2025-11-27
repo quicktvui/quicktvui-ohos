@@ -23,10 +23,13 @@ import { QTItemRoot, QTItemRootView } from './QTItemRootView';
 export class QTFastFlexView extends QTRenderBaseView {
   public virtualChildren: HippyObservedArray<QTView> = new HippyObservedArray()
   dataSource: FastListDataSource | null = null;
+  enablePlaceholder : boolean  = false;
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
     this.dataSource = new FastListDataSource(ctx,this.virtualChildren)
     this.dataSource.listView = this;
+    this.dataSource.setPlaceholderEnabled(false)
   }
 
   setRootListID(rootListID:number){
@@ -65,12 +68,14 @@ export class QTFastFlexView extends QTRenderBaseView {
   onDataChanged(data : HippyArray | null){
     QTLog.d(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
     this.virtualChildren = []
+    this.dataSource?.setPlaceholderEnabled(this.enablePlaceholder)
     if(this.dataSource && data && data.length > 0){
       for(let  i = 0; i < data.length; i++){
         let item : ItemView = new ItemView(i,data[i] as HippyMap);
         // this.dataSource?.buildItem(item,i)
         let fi : QTItemRootView =  new QTItemRootView(this.ctx).init(this,item)
         this.dataSource.buildItem(fi,i)
+        fi.enablePlaceholder = this.enablePlaceholder
         this.virtualChildren.push(fi)
         //CommonUtils.printMapPretty(item.raw as HippyMap,'FastFlex:',false)
       }
@@ -121,6 +126,16 @@ export class QTFastFlexView extends QTRenderBaseView {
       case "sharedItemStore":
         QTLog.d(TAG_FASTLIST,`FastFlex:sharedItemStore :${propValue}`)
         return true;
+      case "enablePlaceholder":
+        QTLog.i(TAG_FASTLIST,`FastFlex:enablePlaceholder :${propValue}`)
+        this.enablePlaceholder = HRValueUtils.getBoolean(propValue,true);
+        this.dataSource?.setPlaceholderEnabled(this.enablePlaceholder)
+        this.virtualChildren?.map((fi)=>{
+          if(fi instanceof QTItemRootView){
+            fi.enablePlaceholder = this.enablePlaceholder
+          }
+        })
+      break;
 
     }
     //不支持或者不处理的key
@@ -151,6 +166,7 @@ export class QTFastFlexView extends QTRenderBaseView {
       case "useLayoutAnimation":
       case "useDiff":
       case "keyName":
+
         console.error(TAG_FASTLIST,`QTFastFlexView : 未实现propKey : ${propKey}`)
         return true;
       default:

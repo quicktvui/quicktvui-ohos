@@ -15,6 +15,7 @@ export class QTPlayMarkView extends QTBaseComponentView {
   public startColor: string = '#FFFFFF'
   public endColor: string = '#FFFFFF'
   public isSupportGradient: number = 1
+  public isAnimating: boolean = true
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -24,6 +25,9 @@ export class QTPlayMarkView extends QTBaseComponentView {
     switch (propKey) {
       case 'showType':
         this.showType = propValue as number
+        return true
+      case 'isAnimating':
+        this.isAnimating = propValue as boolean
         return true
       case 'gap':
         this.gap = propValue as number
@@ -58,11 +62,20 @@ export struct QTPlayMark {
 
   aboutToAppear() {
     this.initBars()
-    const animate = () => {
-      this.draw()
-      this.timer = setTimeout(animate, this.FRAME_INTERVAL)
+    try {
+      if (this.renderView.isAnimating) {
+        const animate = () => {
+          this.draw()
+          this.timer = setTimeout(animate, this.FRAME_INTERVAL)
+        }
+        this.timer = setTimeout(animate, this.FRAME_INTERVAL)
+      } else {
+        if (this.timer) {
+          clearTimeout(this.timer)
+        }
+      }
+    } catch (error) {
     }
-    this.timer = setTimeout(animate, this.FRAME_INTERVAL)
   }
 
   aboutToDisappear() {

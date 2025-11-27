@@ -194,133 +194,48 @@ export class QTMediaSeriesView extends QTRenderBaseView {
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     console.log(TAG_MediaSeries, `setProp ============ QTMediaSeriesView :propKey:${propKey},value:${propValue}`)
-    // if(propKey === 'attributes'){
-    //   CommonUtils.printObject(propValue,'FastList setAttributes')
-    // }
     switch (propKey) {
       case "initParam": {
-        // 图文模式
+        // type == ’leftRight‘ : 图文模式
         let initParam = HRValueUtils.getMap(propValue);
-        //测试数据：
-        // let __initParam: InitParam = {
-        //   "initPosition": 0,
-        //   "contentWidth": 1740,
-        //   "contentHeight": 160,
-        //   "itemGap": 36,
-        //
-        //   "enableGroup": true, //是否开启快速分组
-        //   "groupSize": 20, // 快速分组对应的集数
-        //   "groupHeight": 46,
-        //   "groupTopMargin": 24,
-        //
-        //   // 控制快速分组的UI
-        //   "group": {
-        //     "itemWidth": 85,
-        //     "itemHeight": 46,
-        //     "itemGap": 50,
-        //     "textSize": 30,
-        //     "textColor": {
-        //       "normal": "#80FFFFFF",
-        //       "focused": "#603314",
-        //       "selected": "#FFD97C"
-        //     },
-        //     "focusBackground": {
-        //       "orientation": "LEFT_RIGHT",
-        //       "cornerRadius": [
-        //         40,
-        //         40,
-        //         40,
-        //         40
-        //       ],
-        //       "color": [
-        //         "#FFE398",
-        //         "#EEB364"
-        //       ],
-        //       "padding": [
-        //         34,
-        //         6
-        //       ]
-        //     },
-        //     "mark": {
-        //       "color": "#FFD97C"
-        //     }
-        //   },
-        //
-        //   "template": {
-        //     "titleSize": 28,
-        //     "floatTitleSize": 20,
-        //     "isFree": false,
-        //     "type": "leftRight",
-        //     "width": 560,
-        //     "height": 160,
-        //     "focusScale": 1.1,
-        //     "extra": {
-        //       "imgWidth": 268,
-        //       "imgHeight": 160,
-        //       "textColor": {
-        //         "normal": "#80FFFFFF",
-        //         "focused": "#FFD97C",
-        //         "selected": "#FFD97C"
-        //       },
-        //       "cornerBgColor": {
-        //         "orientation": "LEFT_RIGHT",
-        //         "cornerRadius": [
-        //           4,
-        //           4,
-        //           4,
-        //           4
-        //         ],
-        //         "color": [
-        //           "#B67827",
-        //           "#DBAF5C"
-        //         ]
-        //       }
-        //     }
-        //   },
-        //   "totalCount": 100,
-        //   "pageSize": 10
-        // };
         console.log(TAG_MediaSeries, `QTMediaSeriesView ${Array.from(initParam)}`)
-        /*
-         * type == ’leftRight‘ : 图文
-         *
-         * */
         this.initParam = {
-          initPosition: initParam?.get('initPosition') as number | 0,
-          contentWidth: initParam?.get('contentWidth') as number | 1740,
-          contentHeight: initParam?.get('contentHeight') as number | 160,
-          itemGap: initParam?.get('itemGap') as number | 36,
-          groupSize: initParam?.get('groupSize') as number | 20,
-          groupHeight: initParam?.get('groupHeight') as number | 46,
-          groupTopMargin: initParam?.get('groupTopMargin') as number | 24,
-          totalCount: initParam?.get('totalCount') as number | 0,
-          pageSize: initParam?.get('pageSize') as number | 10,
+          initPosition: initParam?.get('initPosition') as number || 0,
+          contentWidth: initParam?.get('contentWidth') as number || 1740,
+          contentHeight: initParam?.get('contentHeight') as number || 160,
+          itemGap: initParam?.get('itemGap') as number || 36,
+          groupSize: initParam?.get('groupSize') as number || 20,
+          groupHeight: initParam?.get('groupHeight') as number || 46,
+          groupTopMargin: initParam?.get('groupTopMargin') as number || 24,
+          totalCount: initParam?.get('totalCount') as number || 0,
+          pageSize: initParam?.get('pageSize') as number || 10,
         };
-        this.enableGroup = initParam?.get('enableGroup') as boolean | true;
+        this.enableGroup = initParam?.get('enableGroup') as boolean || true;
         let template = initParam?.get('template');
-        let type = (template as HippyMap).get('type');
         let extra = (template as HippyMap).get('extra');
         let textColor = (extra as HippyMap).get('textColor');
         let cornerBgColor = (extra as HippyMap).get('cornerBgColor');
+        let extraCornerRadius = (cornerBgColor as HippyMap).get('cornerRadius') as number[];
         this.initParamTemplate = {
-          titleSize: (template as HippyMap).get('titleSize') as number | 28,
-          floatTitleSize: (template as HippyMap).get('floatTitleSize') as number | 20,
-          isFree: (template as HippyMap).get('isFree') as boolean | false,
-          type: (template as HippyMap).get('type') as string | 'leftRight',
-          width: (template as HippyMap).get('width') as number | 560,
-          height: (template as HippyMap).get('height') as number | 160,
-          focusScale: (template as HippyMap).get('focusScale') as number | 1.1,
+          titleSize: (template as HippyMap).get('titleSize') as number || 28,
+          floatTitleSize: (template as HippyMap).get('floatTitleSize') as number || 20,
+          isFree: (template as HippyMap).get('isFree') as boolean || false,
+          type: (template as HippyMap).get('type') as string || 'leftRight',
+          width: (template as HippyMap).get('width') as number || 560,
+          height: (template as HippyMap).get('height') as number || 160,
+          focusScale: (template as HippyMap).get('focusScale') as number || 1.1,
           extra: {
-            imgWidth: (extra as HippyMap).get('imgWidth') as number | 268,
-            imgHeight: (extra as HippyMap).get('imgHeight') as number | 160,
+            imgWidth: (extra as HippyMap).get('imgWidth') as number || 268,
+            imgHeight: (extra as HippyMap).get('imgHeight') as number || 160,
             textColor: {
-              normal: (textColor as HippyMap).get('normal') as string | '#803e3838',
-              focused: (textColor as HippyMap).get('focused') as string | '#FFD97C',
-              selected: (textColor as HippyMap).get('selected') as string | '#FFD97C',
+              normal: (textColor as HippyMap).get('normal') as string || '#803e3838',
+              focused: (textColor as HippyMap).get('focused') as string || '#FFD97C',
+              selected: (textColor as HippyMap).get('selected') as string || '#FFD97C',
             },
             cornerBgColor: {
               orientation: (cornerBgColor as HippyMap).get('orientation') as string | 'LEFT_RIGHT',
-              cornerRadius: (cornerBgColor as HippyMap).get('cornerRadius') as number[] | [4, 4, 4, 4],
+              cornerRadius: [extraCornerRadius[0] || 4, extraCornerRadius[1] || 4, extraCornerRadius[2] || 4,
+                extraCornerRadius[3] || 4],
               color: (cornerBgColor as HippyMap).get('color') as string[] | ["#B67827", "#DBAF5C"],
             }
           }
@@ -329,21 +244,24 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let groupTextColor = (group as HippyMap).get('textColor');
         let focusBackground = (group as HippyMap).get('focusBackground');
         let mark = (group as HippyMap).get('mark');
+        let focusBackgroundPadding = (focusBackground as HippyMap).get('padding') as number[];
+        let focusBackgroundCornerRadius = (focusBackground as HippyMap).get('cornerRadius') as number[];
         this.initParamGroup = {
-          itemWidth: (group as HippyMap).get('itemWidth') as number | 105,
-          itemHeight: (group as HippyMap).get('itemHeight') as number | 46,
-          itemGap: (group as HippyMap).get('itemGap') as number | 50,
-          textSize: (group as HippyMap).get('textSize') as number | 30,
+          itemWidth: (group as HippyMap).get('itemWidth') as number || 105,
+          itemHeight: (group as HippyMap).get('itemHeight') as number || 46,
+          itemGap: (group as HippyMap).get('itemGap') as number || 50,
+          textSize: (group as HippyMap).get('textSize') as number || 30,
           textColor: {
-            normal: (groupTextColor as HippyMap).get('normal') as string | '#80FFFFFF',
-            focused: (groupTextColor as HippyMap).get('focused') as string | '#603314',
-            selected: (groupTextColor as HippyMap).get('selected') as string | '#FFD97C',
+            normal: (groupTextColor as HippyMap).get('normal') as string || '#80FFFFFF',
+            focused: (groupTextColor as HippyMap).get('focused') as string || '#603314',
+            selected: (groupTextColor as HippyMap).get('selected') as string || '#FFD97C',
           },
           focusBackground: {
-            orientation: (focusBackground as HippyMap).get('orientation') as string | 'LEFT_RIGHT',
-            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[] | [40, 40, 40, 40],
-            color: (focusBackground as HippyMap).get('color') as string[] | ['#FFE398', '#EEB364'],
-            padding: (focusBackground as HippyMap).get('padding') as number[] | [34, 6],
+            orientation: (focusBackground as HippyMap).get('orientation') as string || 'LEFT_RIGHT',
+            cornerRadius: [focusBackgroundCornerRadius[0] || 40, focusBackgroundCornerRadius[1] || 40,
+              focusBackgroundCornerRadius[2] || 40, focusBackgroundCornerRadius[3] || 40],
+            color: (focusBackground as HippyMap).get('color') as string[] || ['#FFE398', '#EEB364'],
+            padding: [focusBackgroundPadding[0] || 34, focusBackgroundPadding[1] || 6],
           },
           mark: {
             color: (mark as HippyMap).get('color') as string | '#FFD97C',
@@ -359,18 +277,16 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         console.log(TAG_MediaSeries, ` initParamGroup :${JSON.stringify(this.initParamGroup)}`)
         console.log(TAG_MediaSeries, ` extra :${JSON.stringify(extra)}`)
         console.log(TAG_MediaSeries, ` generatePageData :${JSON.stringify(this.generatePageData)}`)
-
-        //this.listData = [0, 11, 2, 3, 4, 5, 6, 7, 8, 9]
         return true;
       }
       case "groupParam": {
         // 选集类型为非图文模式('leftrigth') 例如：'custom'
         let groupParam = HRValueUtils.getMap(propValue);
-
         let groupTextColor = (groupParam as HippyMap).get('textColor');
         let focusBackground = (groupParam as HippyMap).get('focusBackground');
         let mark = (groupParam as HippyMap).get('mark');
-
+        let focusBackgroundPadding = (focusBackground as HippyMap).get('padding') as number[];
+        let focusBackgroundCornerRadius = (focusBackground as HippyMap).get('cornerRadius') as number[];
         this.initParamGroup = {
           itemWidth: (groupParam as HippyMap).get('itemWidth') as number || 105,
           itemHeight: (groupParam as HippyMap).get('itemHeight') as number || 46,
@@ -383,23 +299,20 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           },
           focusBackground: {
             orientation: (focusBackground as HippyMap).get('orientation') as string || 'LEFT_RIGHT',
-            cornerRadius: (focusBackground as HippyMap).get('cornerRadius') as number[] || [40, 40, 40, 40],
+            cornerRadius: [focusBackgroundCornerRadius[0] || 40, focusBackgroundCornerRadius[1] || 40,
+              focusBackgroundCornerRadius[2] || 40, focusBackgroundCornerRadius[3] || 40],
             color: (focusBackground as HippyMap).get('color') as string[] || ['#FFE398', '#EEB364'],
-            padding: (focusBackground as HippyMap).get('padding') as number[] || [34, 6],
+            padding: [focusBackgroundPadding[0] || 34, focusBackgroundPadding[1] || 6],
           },
           mark: {
             color: (mark as HippyMap).get('color') as string || '#FFD97C',
           }
         }
-
-        console.log(TAG_MediaSeries, ` initParamGroup :${JSON.stringify(this.initParamGroup)}`)
-
+        console.log(TAG_MediaSeries, ` groupParam :${JSON.stringify(this.initParamGroup)}`)
         return true;
       }
       case "commonParam":
       //
-
-
       default:
         return true;
     }
@@ -448,13 +361,6 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           });
         })
         console.log(TAG_MediaSeries, `QTMediaSeriesView listData :${JSON.stringify(this.listData)}`)
-        if (!AppStorage.get('focus')) {
-          AppStorage.setOrCreate('focus', this.listData.getData(0)?.key)
-        }
-        setTimeout(() => {
-          this.focusStr = AppStorage.get('focus');
-        }, 400)
-        console.log(TAG_MediaSeries, `QTMediaSeriesView focusStr :${this.focusStr}`)
         break;
 
       // 自定义模式下的 数据总数

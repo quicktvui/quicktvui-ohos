@@ -89,6 +89,7 @@ export struct QTFastItem {
         }, (item: QTView,index:number) => item.tag + ''+index)
       }
       .applyRenderViewBaseAttr(this.renderView)
+      .position({x:0,y:0})
       .onClick((event=>{
         FastListUtils.handleItemClick(this.renderView)
       }))
@@ -99,6 +100,7 @@ export struct QTFastItem {
         }, (item: QTView,index:number) => item.tag + ''+index)
       }
       .applyRenderViewBaseAttr(this.renderView)
+      .position({x:0,y:0})
     }
   }
 
