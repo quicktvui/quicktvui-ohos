@@ -22,6 +22,7 @@ import { RuntimeAPIProvider } from '../../api/RuntimeAPIProvider'
 import { buildCustomRenderView, QTAPIProvider } from 'quicktvui'
 import { AssetsAppLoader } from './hippy/AssetsAppLoader'
 import { IconSplashView } from './splash/SplashView'
+import common from '@ohos.app.ability.common'
 
 @Builder
 export function PageDebugBuilder() {
@@ -67,6 +68,9 @@ struct AppView {
       engine?.onBackPressed({
         handleBackPress() {
           console.log('Back button pressed');
+          (App.instance.context as common.UIAbilityContext).terminateSelf().then(() => {
+          }).catch(() => {
+          })
         }
       })
       return true
