@@ -173,7 +173,7 @@ struct AppView {
   private generateEngineInitParams(): EngineInitParams {
     const params = new EngineInitParams(libHippy, App.instance.context!, this.getUIContext())
     params.debugMode = false
-    params.enableLog = true
+    params.enableLog = false
     params.enableArkCApi = false
     params.providers = [
       new RuntimeAPIProvider(),
