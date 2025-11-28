@@ -7,6 +7,7 @@ import {
   buildHippyRenderView,
   HippyViewEvent,
   HippyMap,
+  HippyAny,
   HippyEndBatchCallback
 } from 'hippy'
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
@@ -92,8 +93,11 @@ export struct QTMediaSeries {
             }
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
-              let params = new Map<string, number>()
+              let params = new Map<string, string | HippyAny>()
+              let dataMap = new Map<string, string>()
+              dataMap.set('id',item.id!)
               params.set('position', index)
+              params.set('data', dataMap)
               event.send(this.renderView.ctx, this.renderView.tag, params)
               this.renderView.focusStr = item.key;
             })
