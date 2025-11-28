@@ -334,6 +334,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let getArray = HRValueUtils.getArray(params as HippyArray)
         let page = getArray![0];
         let data = getArray![1] as Map<string, HippyAny>; //数据格式参考 getLRDataByPage 函数返回值
+        this.listData.removeAllData();
 
         console.log(TAG_MediaSeries, `QTMediaSeriesView:page:${method},value:${page}`)
 

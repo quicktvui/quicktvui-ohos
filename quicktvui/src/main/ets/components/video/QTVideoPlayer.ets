@@ -315,7 +315,7 @@ export struct QTVideoPlayer {
           LogUtils.d(this.TAG, "=========cachedDuration=====>>>>" + value)
           eventName = QTPlayerEvent.ON_CACHED_POSITIONS;
           params = new Array(1)
-          params.push('0:' + value)
+          params[0] = ('0:' + value)
           break;
       }
 
