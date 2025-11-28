@@ -224,11 +224,7 @@ export struct QTMediaSeries {
           .margin(px2vp(this.renderView.initParamGroup.itemGap))
         }
 
-        ForEach(this.children, (item: HippyRenderBaseView) => {
-          buildHippyRenderView(item, null)
-        }, (item: HippyRenderBaseView) => item.tag + '')
 
-        ContentSlot(this.renderView.childSlot)
 
       }.alignItems(HorizontalAlign.Start)
     }
