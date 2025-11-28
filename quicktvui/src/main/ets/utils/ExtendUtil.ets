@@ -1,10 +1,12 @@
 import {HippyAny,HippyRenderBaseView,EventDispatcher,HREventUtils,NativeRenderContext} from 'hippy'
+import { LayoutAttach } from '../components/fastlist/LayoutAttach';
 import { QTAttach } from '../components/QTAttach';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
 import { QTViewActor } from '../components/QTViewActor';
 import { QTViewState, StateView, StateViewConstants } from '../components/StateView';
-import { TAG_FOCUS } from '../Constant';
+import { TAG_FASTLIST, TAG_FOCUS } from '../Constant';
 import { QTAny, QTView } from '../QTTypes';
+import { NodeUtils } from './NodeUtils';
 import { QTCompatUtil } from './QTCompatUtil';
 import { QTLog } from './QTLog';
 
@@ -264,6 +266,39 @@ export class ExtendUtil{
       view.setShowOnCustomState([customState]);
     }
   }
+
+  static findViewByNameByParentId(ctx : NativeRenderContext,id : number,name: string) : QTView | null{
+    let view =  NodeUtils.getRenderView(ctx,id)
+    if(view){
+      return ExtendUtil.findViewByName(view,name)
+    }else{
+      QTLog.e(TAG_FASTLIST,`findViewByNameByParentId error view is null id:${id},name:${name}`)
+      return null;
+    }
+
+  }
+
+  static findViewByName(view : QTView | null ,name : string) : QTView | null{
+    if(!view){
+      return null
+    }
+    let la = LayoutAttach.obtainLayoutAttach(view)
+   // QTLog.d(TAG_FASTLIST,`findViewByName view ${ExtendUtil.debugView(view)}`)
+    if(la.name == name){
+      return view;
+    }
+    for(let i = 0; i < view.children.length; i ++){
+      let child = view.children[i]
+      let result = ExtendUtil.findViewByName(child,name)
+      if(result){
+        return result;
+      }
+    }
+    return null;
+  }
+
+
+
 
 
 }

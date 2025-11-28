@@ -74,6 +74,7 @@ export class QTDivView extends HRTvDivView {
   mUserSetSelectBackgroundColor : number = Color.Transparent;
   mUserSetBackgroundColor : number = Color.Transparent;
 
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
@@ -142,6 +143,10 @@ export class QTDivView extends HRTvDivView {
           QTLog.i(TAG_FOCUS,`backgroundColor :${this.mUserSetBackgroundColor}`)
           this.drawableStateChanged()
         break;
+        case 'autofocus':
+          this.autofocus = HRValueUtils.getBoolean(propValue,true)
+          QTLog.w(TAG_FOCUS,`set AutofocusPosition:${this.autofocus},this:${ExtendUtil.debugView(this)}`)
+          break;
       // case 'showOnState':
       //   super.setProp(propKey, propValue)
       //   QTLog.w(TAG_FOCUS,`div setShowOnState :${propValue},this:${ExtendUtil.debugView(this)}`)

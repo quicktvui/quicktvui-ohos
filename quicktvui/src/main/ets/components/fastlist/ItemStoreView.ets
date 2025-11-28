@@ -3,7 +3,11 @@ import {
   NativeRenderContext,
   HIPPY_COMPONENT_KEY_PREFIX,
 } from 'hippy'
+import { TAG_FASTLIST } from '../../Constant';
 import { QTPendingListView, QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+import { NodeUtils } from '../../utils/NodeUtils';
+import { QTLog } from '../../utils/QTLog';
 import QTRenderBaseView from '../QTRenderBaseView';
 
 
@@ -14,7 +18,23 @@ export class ItemStoreView extends QTRenderBaseView{
     super(ctx)
   }
 
+  addSubRenderView(subView: QTView, index: number): void {
+    let node = NodeUtils.getNodeById(this.ctx,subView.tag)
+    let type = node?.props?.get('type')
+    //QTLog.i(TAG_FASTLIST,`ItemStoreView add subView:${ExtendUtil.debugView(subView)},index:${index},type:${type},this:${ExtendUtil.debugView(this)}`)
+    if(typeof type == 'number'){
+      globalQTViewMap.set(type,subView)
+    }
+    super.addSubRenderView(subView,index)
+  }
+
 }
+
+export const globalQTViewMap: Map<number, QTView> = new Map()
+// export class ItemStoreCenter{
+//
+//
+// }
 
 @Component
 export struct ItemStore {

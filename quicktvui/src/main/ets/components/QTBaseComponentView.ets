@@ -35,6 +35,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   duplicateParentState: boolean = true
 
+  autofocus:boolean = false;
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
