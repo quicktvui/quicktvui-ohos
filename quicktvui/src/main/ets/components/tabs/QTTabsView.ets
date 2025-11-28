@@ -226,7 +226,13 @@ export class QTTabsView extends QTRenderBaseView{
     }
   }
 
+  // registerAllItemStore(){
+  //
+  // }
+
   updateTabsData(data : QTArray){
+    //setupItemStores
+
     QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)}`)
     this.tabsData = []
     data.forEach((item: QTAny,index:number)=>{

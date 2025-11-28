@@ -13,6 +13,7 @@ export class WaterfallListView extends QTFastListView{
 
   init(){
     LayoutAttach.obtainLayoutAttach(this).name = 'WATERFALL_LISTVIEW'
+    this.viewType = "WaterfallListView"
     this.isVirtual = true;
     this.isHorizontal = false;
   }

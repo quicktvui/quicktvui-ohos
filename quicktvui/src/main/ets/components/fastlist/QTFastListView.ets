@@ -1,6 +1,6 @@
 
 import {HippyObservedArray,NativeRenderContext,HippyAny,HippyRenderCallback,HippyArray,HippyMap,HippyEndBatchCallback} from 'hippy'
-import { TAG_FASTLIST, TAG_REUSE } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_REUSE } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
@@ -288,6 +288,7 @@ export class QTFastListView extends QTRenderBaseView{
         return true;
       case "autofocusPosition":
         this.autofocusPosition = HRValueUtils.getNumber(propValue)
+        QTLog.w(TAG_FOCUS,`set AutofocusPosition:${this.autofocusPosition},this:${ExtendUtil.debugView(this)}`)
         return true;
       case "autoscrollPosition":
         this.initialPosition = HRValueUtils.getNumber(propValue)

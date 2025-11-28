@@ -1,12 +1,13 @@
 import { FastListUtils } from '../components/fastlist/FastListUtils';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
 import { TAG_CLICK, TAG_FASTLIST, TAG_LAYOUT, TAG_QUICKTVUI } from '../Constant';
-import { QTView } from '../QTTypes';
+import { QTAny, QTView } from '../QTTypes';
 import { ExtendUtil } from './ExtendUtil';
 import { QTLog } from './QTLog';
 
 import { QTItemRootView } from '../components/fastlist/QTItemRootView';
 import { QTTextView } from '../components/text/QTTextView';
+import { HRValueUtils } from '../HRValueUtils';
 
 export class ViewUtils{
   static getTextGravity(gs : string) : TextAlign{
@@ -215,5 +216,16 @@ export class ViewUtils{
     // 转换为数字
     return parseInt(hex, 16);
   }
+
+  static getColorFromNumber(propValue:QTAny) : ResourceColor{
+    if(typeof propValue == 'string'){
+      QTLog.e(TAG_FASTLIST,`getColorFromNumber error propValue is string:${propValue},need nubmer`)
+      return Color.Transparent
+    }
+    let colorVal = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+    return '#' + colorVal
+  }
+
+
 
 }
