@@ -87,6 +87,10 @@ export struct QTMediaSeries {
                 style: BorderStyle.Solid,
                 radius: "4lpx"
               })
+              .margin({
+                left: index === 0 ? px2vp(60) : 0,
+                right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
+              })
 
               // .scale({
               //   x: this.renderView.focusStr == item.key ? 1.1 : 1,
@@ -97,7 +101,7 @@ export struct QTMediaSeries {
               let event = new HippyViewEvent("onItemClick")
               let params = new Map<string, string | HippyAny>()
               let dataMap = new Map<string, string>()
-              dataMap.set('id',item.id!)
+              dataMap.set('id', item.id!)
               params.set('position', index)
               params.set('data', dataMap)
               event.send(this.renderView.ctx, this.renderView.tag, params)
@@ -121,10 +125,6 @@ export struct QTMediaSeries {
         .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
         .height(px2vp(this.renderView.initParamTemplate.height))
-        .padding({
-          left: px2vp(60),
-          right: px2vp(60),
-        })
         .onReachEnd(() => {
           if (this.renderView.initParam.totalCount <= this.renderView.pageNum * this.renderView.initParam.pageSize) {
             return
@@ -227,7 +227,12 @@ export struct QTMediaSeries {
             left: px2vp(this.renderView.initParamGroup.itemGap) / 2,
             right: px2vp(this.renderView.initParamGroup.itemGap) / 2
           })
-          .margin(px2vp(this.renderView.initParamGroup.itemGap))
+          .margin({
+            left: px2vp(40),
+            right: px2vp(40),
+            top: px2vp(this.renderView.initParamGroup.itemGap),
+            bottom: px2vp(this.renderView.initParamGroup.itemGap),
+          })
         }
 
 
