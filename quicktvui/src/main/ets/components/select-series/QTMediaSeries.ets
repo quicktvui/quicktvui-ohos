@@ -7,6 +7,7 @@ import {
   buildHippyRenderView,
   HippyViewEvent,
   HippyMap,
+  HippyAny,
   HippyEndBatchCallback
 } from 'hippy'
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
@@ -20,12 +21,14 @@ export struct QTMediaSeries {
   @ObjectLink renderView: QTMediaSeriesView
   @ObjectLink children: HippyObservedArray<QTView>
   test: boolean = false
-  pageNum: number = 0
 
   aboutToAppear(): void {
+    if (this.renderView.listData.totalCount() != 0) {
+      return
+    }
     let event = new HippyViewEvent("onLoadPageData")
     let params = new Map<string, number>()
-    params.set('page', this.pageNum++)
+    params.set('page', this.renderView.pageNum++)
     params.set('tag', this.renderView.tag)
     event.send(this.renderView.ctx, this.renderView.tag, params)
     console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
@@ -92,8 +95,11 @@ export struct QTMediaSeries {
             }
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
-              let params = new Map<string, number>()
+              let params = new Map<string, string | HippyAny>()
+              let dataMap = new Map<string, string>()
+              dataMap.set('id',item.id!)
               params.set('position', index)
+              params.set('data', dataMap)
               event.send(this.renderView.ctx, this.renderView.tag, params)
               this.renderView.focusStr = item.key;
             })
@@ -120,12 +126,12 @@ export struct QTMediaSeries {
           right: px2vp(60),
         })
         .onReachEnd(() => {
-          if (this.renderView.initParam.totalCount <= this.pageNum * this.renderView.initParam.pageSize) {
+          if (this.renderView.initParam.totalCount <= this.renderView.pageNum * this.renderView.initParam.pageSize) {
             return
           }
           let event = new HippyViewEvent("onLoadPageData")
           let params = new Map<string, number>()
-          params.set('page', this.pageNum++)
+          params.set('page', this.renderView.pageNum++)
           params.set('tag', this.renderView.tag)
           event.send(this.renderView.ctx, this.renderView.tag, params)
         })
@@ -224,11 +230,7 @@ export struct QTMediaSeries {
           .margin(px2vp(this.renderView.initParamGroup.itemGap))
         }
 
-        ForEach(this.children, (item: HippyRenderBaseView) => {
-          buildHippyRenderView(item, null)
-        }, (item: HippyRenderBaseView) => item.tag + '')
 
-        ContentSlot(this.renderView.childSlot)
 
       }.alignItems(HorizontalAlign.Start)
     }
