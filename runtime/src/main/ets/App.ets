@@ -1,3 +1,4 @@
+import common from '@ohos.app.ability.common';
 
 export class App {
   // region 单例
@@ -16,7 +17,7 @@ export class App {
 
   // endregion
 
-  context?: Context
+  context?: common.UIAbilityContext
   launchParams?: Record<string, Object>
   nav?: NavPathStack
 }
