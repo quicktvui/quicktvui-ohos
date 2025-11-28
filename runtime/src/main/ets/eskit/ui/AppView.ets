@@ -23,6 +23,7 @@ import { buildCustomRenderView, QTAPIProvider } from 'quicktvui'
 import { AssetsAppLoader } from './hippy/AssetsAppLoader'
 import { IconSplashView } from './splash/SplashView'
 import common from '@ohos.app.ability.common'
+import { inputEventClient, KeyCode } from '@kit.InputKit'
 
 @Builder
 export function PageDebugBuilder() {
@@ -51,6 +52,38 @@ struct AppView {
 
   onPageShow(): void {
     this.postLifecycleEvent('onShown')
+    console.log('123456');
+    let keyDown: inputEventClient.KeyEvent = {
+      isPressed: true,
+      keyCode: KeyCode.KEYCODE_TAB,
+      keyDownDuration: 0,
+      isIntercepted: false
+    };
+    let keyUp: inputEventClient.KeyEvent = {
+      isPressed: false,
+      keyCode: KeyCode.KEYCODE_TAB,
+      keyDownDuration: 0,
+      isIntercepted: false
+    };
+    setTimeout(()=>{
+      try {
+        // 触发tab点击，使默认焦点组件多态样式生效
+        inputEventClient.injectEvent({ KeyEvent: keyDown });
+        inputEventClient.injectEvent({ KeyEvent: keyUp });
+        console.log('123456  123');
+      } catch (e) {
+        console.log("123456 tab key event click false")
+      }
+    },5000)
+
+    // try {
+    //   // 触发tab点击，使默认焦点组件多态样式生效
+    //   inputEventClient.injectEvent({ KeyEvent: keyDown });
+    //   inputEventClient.injectEvent({ KeyEvent: keyUp });
+    //   console.log('123456  123');
+    // } catch (e) {
+    //   console.log("123456 tab key event click false")
+    // }
   }
 
   onPageHide(): void {
