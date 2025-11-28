@@ -44,8 +44,6 @@ export struct QTMediaSeries {
                 Image(item.cover)
                   .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
                   .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
-                  .focusable(true)
-                  .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
                   Text(item.title)
                     .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
@@ -81,12 +79,7 @@ export struct QTMediaSeries {
               .height(px2vp(this.renderView.initParamTemplate.height))
               .backgroundColor('#80988787')
               .alignItems(VerticalAlign.Top)
-              .border({
-                width: 2,
-                color: this.renderView.focusStr == item.key ? Color.White : Color.Transparent,
-                style: BorderStyle.Solid,
-                radius: "4lpx"
-              })
+              .focusable(true)
               .margin({
                 left: index === 0 ? px2vp(60) : 0,
                 right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
