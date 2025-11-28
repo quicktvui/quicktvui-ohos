@@ -39,6 +39,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   navTitleScroller: Scroller = new Scroller();
   focusStr: string | undefined = undefined;
   isSelectedButton: boolean = true;
+  pageNum: number = 0;
   initParamTemplate: Template = {
     titleSize: 28,
     floatTitleSize: 20,
@@ -152,7 +153,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       };
       result.push({
         key: this.getRandomString(),
-        title: `${formatNumber(start)}-${formatNumber(end)}`,
+        title: start!==end ?`${formatNumber(start)}-${formatNumber(end)}` : `${formatNumber(start)}`,
       });
     }
     console.log(TAG_MediaSeries, `generatePageRanges is :${JSON.stringify(result)}`)
