@@ -1,19 +1,5 @@
 {
   "app": {
-//    "signingConfigs": [
-//      {
-//        "name": "default",
-//        "material": {
-//          "certpath": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B76CE6EA2CBD24DF324F94DF3BE01C9F5EA793ACDACCD6C093F1DEA0BB50EBA7D20A84F177143AA",
-//          "profile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p12",
-//          "storePassword": "0000001BBDC9D4A59B7CC330A6EC68AA23C77DA5475C81F048A8C383F89C00FAADF092209E1051FAA4D0BA"
-//        }
-//      }
-//    ],
     "products": [
       {
         "name": "default",
@@ -43,6 +29,20 @@
       },
       {
         "name": "release"
+      }
+    ],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "material": {
+          "certpath": "sign/tudoudou.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B7E310FD63717C4A8D792E83D92B4272799A61DCC22A6E10D4805180CA860C64BE28539A3338361",
+          "profile": "sign/tudoudou.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/tudoudou.p12",
+          "storePassword": "0000001B5FBAA935C66A7DADAF5BC09AE5B2F9F148F8AC360A416E4196DB23DBE4B7D9CC35EC3B34671BEB"
+        }
       }
     ]
   },
