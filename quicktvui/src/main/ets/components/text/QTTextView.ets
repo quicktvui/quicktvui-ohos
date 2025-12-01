@@ -107,7 +107,7 @@ export class QTTextView extends QTRenderBaseView{
         this.fontColor = '#' + colorVal
         return true;
       case "lineHeight":
-        this.lineHeight = HRValueUtils.getNumber(propValue)
+        this.lineHeight = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))
         return true;
       case "fallbackLineSpacing":
 
