@@ -6,7 +6,7 @@ import {
   HippyRenderCallback,
   buildHippyRenderView,
 } from 'hippy'
-import { QTPendingListView, QTView } from '../../QTTypes';
+import { QTView } from '../../QTTypes';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListUtils } from './FastListUtils';
@@ -22,6 +22,14 @@ export class QTFastItemView extends QTRenderBaseView{
 
   onAboutToReuse(){
     
+  }
+
+  getContentWidth(){
+    return this.children[0].cssWidth
+  }
+
+  getContentHeight(){
+    return this.children[0].cssHeight
   }
 
 
@@ -75,6 +83,7 @@ export class QTFastItemView extends QTRenderBaseView{
   }
 }
 
+
 // @Reusable
 @Component
 export struct QTFastItem {
@@ -90,6 +99,8 @@ export struct QTFastItem {
       }
       .applyRenderViewBaseAttr(this.renderView)
       .position({x:0,y:0})
+      .width(this.children[0].cssWidth)
+      .height(this.children[0].cssHeight)
       .onClick((event=>{
         FastListUtils.handleItemClick(this.renderView)
       }))
@@ -101,10 +112,20 @@ export struct QTFastItem {
       }
       .applyRenderViewBaseAttr(this.renderView)
       .position({x:0,y:0})
+      .width(this.children[0].cssWidth)
+      .height(this.children[0].cssHeight)
     }
   }
 
   aboutToAppear(): void {
+    if(this.children[0]){
+      if(this.renderView.cssWidth < 1){
+        this.renderView.cssWidth = this.children[0].cssWidth
+      }
+      if(this.renderView.cssHeight< 1){
+        this.renderView.cssHeight = this.children[0].cssHeight
+      }
+    }
 
   }
 

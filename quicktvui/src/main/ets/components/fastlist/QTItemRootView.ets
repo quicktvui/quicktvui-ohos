@@ -19,6 +19,7 @@ import { FastListUtils } from './FastListUtils';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
 import { QTFastFlexView } from './QTFastFlexView';
+import { QTFastItemView } from './QTFastItemView';
 import { QTFastListView } from './QTFastListView';
 import { PathUpdate, PendingPathUpdate, TemplateViewManager } from './TemplateViewManager';
 const PREFIX_KEY = "ITEMROOT"
@@ -168,7 +169,14 @@ export class QTItemRootView extends QTRenderBaseView{
       if(flexLayout){
         this.letItemMatchChildPosition(childView)
       }else{
-        QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
+        if(childView instanceof QTFastItemView){
+          itemLa.setFixedWidth(childView.getContentWidth())
+          itemLa.setFixedHeight(childView.getContentHeight())
+          QTPixelUtil.setRenderViewLayout(this,[0,0,childView.getContentWidth(),childView.getContentHeight()]);
+        }else{
+          QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
+        }
+        // this.letItemMatchChildPosition(childView)
       }
     }
 
