@@ -1,6 +1,6 @@
 {
   "app": {
-    "bundleName": "tv.huan.tudoudou",
+    "bundleName": "com.extscreen.runtime",
     "vendor": "huan.tv",
     "versionCode": 1000000,
     "versionName": "1.0.0",

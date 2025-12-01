@@ -16,11 +16,72 @@
         }
       },
       {
+        "name": "tudoudou",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "tv.huan.tudoudou",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
         "name": "xiangsheng",
         "signingConfig": "default",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
+        "bundleName": "tv.huan.xiangsheng",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "gushi",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "tv.huan.guoxuegushi",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "baduanjin",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "tv.huan.wmbdj",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "doudizhu",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "tv.huan.jjddzss",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
           "strictMode": {
@@ -72,9 +133,33 @@
           ]
         },
         {
+          "name": "tudoudou",
+          "applyToProducts": [
+            "tudoudou"
+          ]
+        },
+        {
           "name": "xiangsheng",
           "applyToProducts": [
             "xiangsheng"
+          ]
+        },
+        {
+          "name": "gushi",
+          "applyToProducts": [
+            "gushi"
+          ]
+        },
+        {
+          "name": "baduanjin",
+          "applyToProducts": [
+            "baduanjin"
+          ]
+        },
+        {
+          "name": "doudizhu",
+          "applyToProducts": [
+            "doudizhu"
           ]
         }
       ]
