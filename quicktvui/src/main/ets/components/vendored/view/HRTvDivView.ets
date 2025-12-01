@@ -18,7 +18,15 @@
  * limitations under the License.
  */
 import deviceInfo from '@ohos.deviceInfo';
-import {HippyMap, HippyValue, HippyAny, HRNodeProps, HippyRenderCallback, buildHippyRenderView, NativeRenderContext } from 'hippy';
+import {
+  HippyMap,
+  HippyValue,
+  HippyAny,
+  HRNodeProps,
+  HippyRenderCallback,
+  buildHippyRenderView,
+  NativeRenderContext
+} from 'hippy';
 import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils';
 import { HRValueUtils } from 'hippy/src/main/ets/renderer_native/utils/HRValueUtils';
 import HippyRenderBaseView, {
@@ -37,13 +45,16 @@ const HippyGestureTag = 'HippyGestureTag'
 @Observed
 class MyStackModifier implements AttributeModifier<StackAttribute> {
   public color: string
-  constructor(color:string) {
+
+  constructor(color: string) {
     this.color = color
   }
+
   applyNormalAttribute(instance: StackAttribute): void {
     this.color && instance.backgroundColor(`${this.color}`);
   }
 }
+
 const modifier: MyStackModifier = new MyStackModifier('');
 
 
@@ -54,19 +65,21 @@ class MyStackModifierVisible implements AttributeModifier<StackAttribute> {
   constructor(isVisible: string) {
     this.isVisible = isVisible
   }
+
   applyNormalAttribute(instance: StackAttribute): void {
     if (this.isVisible == "visible") {
-      console.log("HRTvDivView","visible")
+      console.log("HRTvDivView", "visible")
       instance.visibility(Visibility.Visible)
     } else if (this.isVisible == "invisible") {
       instance.visibility(Visibility.Hidden)
-      console.log("HRTvDivView","invisible")
+      console.log("HRTvDivView", "invisible")
     } else {
       instance.visibility(Visibility.None)
-      console.log("HRTvDivView","none")
+      console.log("HRTvDivView", "none")
     }
   }
 }
+
 const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invisible");
 
 @Observed
@@ -75,22 +88,26 @@ export class HRTvDivView extends QTBaseComponentView {
   public uiCtx: UIContext | null = null
   // TV扩展
   name: string = ''
-  focusable: boolean = false//是否可获焦
+  focusable: boolean = false //是否可获焦
   focus: boolean = false //当前是否处于聚焦状态
-  enableFocusBorder: boolean = false//是否显示focusBox
-  focusBoxStyle: FocusBoxStyle = {}//focusBox样式
-  focusScale: number = 1.1//聚焦时候放大倍数
+  enableFocusBorder: boolean = false //是否显示focusBox
+  focusBoxStyle: FocusBoxStyle = {} //focusBox样式
+  focusScale: number = 1.1 //聚焦时候放大倍数
   sid: string = ''
   clipChildren: boolean = false
   duplicateParentState: boolean = true
   visibility: Visibility = Visibility.Visible
   showonstate: string = 'normal'
-  border: BorderOptions = {}   //模拟selected选中效果
+  border: BorderOptions = {} //模拟selected选中效果
   selected: boolean = false
   visible: boolean = false
   nextFocus: Optional<FocusMovement> = {}
   focusMemory: boolean = false
-  focusAbility : string = ""
+  focusAbility: string = ""
+  borderTopLeftRadius: number = 0
+  borderTopRightRadius: number = 0
+  borderBottomLeftRadius: number = 0
+  borderBottomRightRadius: number = 0
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -127,9 +144,10 @@ export class HRTvDivView extends QTBaseComponentView {
       }
     }
   }
+
   // 暂时把focusable、selected赋初值，具体逻辑待定
   private setDuplicate() {
-    if(this.duplicateParentState = false) {
+    if (this.duplicateParentState = false) {
       this.focusable = false;
       this.selected = false;
     } else {
@@ -137,11 +155,11 @@ export class HRTvDivView extends QTBaseComponentView {
     }
   }
 
-  private findFocusable(children: Array<HippyRenderBaseView>):boolean {
+  private findFocusable(children: Array<HippyRenderBaseView>): boolean {
     const stack = [...children];
     while (stack.length > 0) {
       const child = stack.pop();
-      if ((child as HRTvDivView).focusable && (child as HRTvDivView).visibility ===  Visibility.Visible) {
+      if ((child as HRTvDivView).focusable && (child as HRTvDivView).visibility === Visibility.Visible) {
         return true;
       }
       if ((child as HRTvDivView).children?.length > 0) {
@@ -162,43 +180,38 @@ export class HRTvDivView extends QTBaseComponentView {
       case 'name':
         this.name = HRValueUtils.getString(propValue as HippyAny);
         return true;
-      case 'focusable':
-        {
-          this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
-          this.cssFocusable = this.focusable
-          QTLog.i(TAG_FOCUS,`set focusable ${this.focusable} view:`+ExtendUtil.debugView(this))
-        }
+      case 'focusable': {
+        this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
+        this.cssFocusable = this.focusable
+        QTLog.i(TAG_FOCUS, `set focusable ${this.focusable} view:` + ExtendUtil.debugView(this))
+      }
         return true
-      case 'enableFocusBorder':
-        {
-          this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, false)
-          this.setFocusBoxStyle();//预设focusBox样式
-        }
+      case 'enableFocusBorder': {
+        this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, false)
+        this.setFocusBoxStyle(); //预设focusBox样式
+      }
         return true
-      case 'focusScale':
-        {
-          this.focusScale = HRValueUtils.getNumber(propValue as HippyAny)
-        }
+      case 'focusScale': {
+        this.focusScale = HRValueUtils.getNumber(propValue as HippyAny)
+      }
         return true
       case 'selected':
         this.selected = HRValueUtils.getBoolean(propValue as HippyAny, false);
         this.setSelectedBorder();
         this.drawableStateChanged()
         return true;
-        //这里不需要了，直接在parent里处理
+      //这里不需要了，直接在parent里处理
       // case 'showOnState':
       //   this.showonstate = HRValueUtils.getString(propValue as HippyAny);
       //   this.showOnState();
       //   return true;
-      case 'sid':
-        {
-          this.sid = propValue as string
-        }
+      case 'sid': {
+        this.sid = propValue as string
+      }
         return true
-      case 'clipChildren':
-        {
-          this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
-        }
+      case 'clipChildren': {
+        this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
+      }
         return true
       // case 'duplicateParentState':
       //   {
@@ -256,6 +269,18 @@ export class HRTvDivView extends QTBaseComponentView {
       case 'focusMemory':
         this.focusMemory = HRValueUtils.getBoolean(propValue as HippyAny, false);
         return true;
+      case 'borderTopLeftRadius':
+        this.borderTopLeftRadius = HRValueUtils.getNumber(propValue as HippyAny);
+        break;
+      case 'borderTopRightRadius':
+        this.borderTopRightRadius = HRValueUtils.getNumber(propValue as HippyAny);
+        break;
+      case 'borderBottomLeftRadius':
+        this.borderBottomLeftRadius = HRValueUtils.getNumber(propValue as HippyAny);
+        break;
+      case 'borderBottomRightRadius':
+        this.borderBottomRightRadius = HRValueUtils.getNumber(propValue as HippyAny);
+        break;
       default:
         break
     }
@@ -265,22 +290,21 @@ export class HRTvDivView extends QTBaseComponentView {
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
     LogUtils.d(this.TAG, "call. method: " + JSON.stringify(method) + ", params: " + JSON.stringify(params))
     switch (method) {
-        case "setFocus":
-          {
-            const focus = params[0] as boolean;
-            const id = params[1] as string;
-            if (focus) {
-              focusControl.requestFocus(this.name);
-              LogUtils.d(this.TAG, "requestFocus:"+focusControl.requestFocus(this.name));
-            } else {
-              this.uiCtx?.getFocusController().clearFocus()
-            }
-            this.showOnState();
-          }
-          break;
+      case "setFocus": {
+        const focus = params[0] as boolean;
+        const id = params[1] as string;
+        if (focus) {
+          focusControl.requestFocus(this.name);
+          LogUtils.d(this.TAG, "requestFocus:" + focusControl.requestFocus(this.name));
+        } else {
+          this.uiCtx?.getFocusController().clearFocus()
+        }
+        this.showOnState();
+      }
+        break;
       case "hasFocus":
         let hasFocusRes = new Map<string, HippyValue>() as HippyMap;
-        hasFocusRes.set("value", (this.focusable || this.findFocusable(this.children) ));
+        hasFocusRes.set("value", (this.focusable || this.findFocusable(this.children)));
         callback && callback(hasFocusRes)
         break;
       case "isFocused":
@@ -288,39 +312,34 @@ export class HRTvDivView extends QTBaseComponentView {
         isFocusedRes.set("value", this.focus);
         callback && callback(isFocusedRes)
         break;
-      case "requestFocus":
-        {
-          const id = params[0] as string;
-          focusControl.requestFocus(id);
-          LogUtils.d(this.TAG, "requestFocus："+focusControl.requestFocus(id));
-        }
+      case "requestFocus": {
+        const id = params[0] as string;
+        focusControl.requestFocus(id);
+        LogUtils.d(this.TAG, "requestFocus：" + focusControl.requestFocus(id));
+      }
         break;
       case "clearFocus":
         this.uiCtx?.getFocusController().clearFocus();
         break;
-      case "focus":
-        {
-          const isFocused = params[0] as boolean;
-          this.handleFocus(isFocused);
-          LogUtils.d(this.TAG, "receive focus：" + isFocused);
-        }
+      case "focus": {
+        const isFocused = params[0] as boolean;
+        this.handleFocus(isFocused);
+        LogUtils.d(this.TAG, "receive focus：" + isFocused);
+      }
         break;
-      case "blur":
-        {
-          const isFocused = params[0] as boolean;
-          this.handleBlur(isFocused);
-          LogUtils.d(this.TAG, "receive blur：" + isFocused);
-        }
+      case "blur": {
+        const isFocused = params[0] as boolean;
+        this.handleBlur(isFocused);
+        LogUtils.d(this.TAG, "receive blur：" + isFocused);
+      }
         break;
-      case "requestFocusDirectly":
-        {
-          const direction = params[0] as string;
-          focusControl.requestFocus(direction.toString());
-          console.log(this.TAG, "requestFocusDirectly：" + direction);
-        }
+      case "requestFocusDirectly": {
+        const direction = params[0] as string;
+        focusControl.requestFocus(direction.toString());
+        console.log(this.TAG, "requestFocusDirectly：" + direction);
+      }
         break;
-      case "setBackgroundColor":
-      {
+      case "setBackgroundColor": {
         const focusAbility = params[0] as string;
         const name = params[1] as string;
         this.focusAbility = focusAbility
@@ -328,13 +347,12 @@ export class HRTvDivView extends QTBaseComponentView {
         modifier.color = focusAbility;
         break;
       }
-      case "setVisibility":
-        {
-          const Visibility = params[0] as string;
-          console.log(this.TAG, "receive setVisibilityVisible：" + Visibility);
-          visibleModifier.isVisible = Visibility;
-          break;
-        }
+      case "setVisibility": {
+        const Visibility = params[0] as string;
+        console.log(this.TAG, "receive setVisibilityVisible：" + Visibility);
+        visibleModifier.isVisible = Visibility;
+        break;
+      }
       default:
     }
   }
@@ -355,17 +373,17 @@ export class HRTvDivView extends QTBaseComponentView {
     }
   }
 
-  handleFocus(isFocused: boolean){
+  handleFocus(isFocused: boolean) {
     LogUtils.d(this.TAG, "Get Focus Method：" + isFocused);
     this.drawableStateChanged()
   }
 
-  handleBlur(isFocused: boolean){
+  handleBlur(isFocused: boolean) {
     LogUtils.d(this.TAG, "Get Blur Method：" + isFocused);
     this.drawableStateChanged()
   }
 
-  setBorder(): BorderOptions{
+  setBorder(): BorderOptions {
     return {
       width: 2,
       color: Color.Blue
@@ -404,7 +422,7 @@ export struct HRTvDiv {
         this.renderView.eventTouchDown != null ||
         this.renderView.eventTouchMove != null ||
         this.renderView.eventTouchCancel != null ||
-        this.renderView.flagInterceptPullUp
+      this.renderView.flagInterceptPullUp
     )
   }
 
@@ -424,9 +442,9 @@ export struct HRTvDiv {
   }
 
   build() {
-    if(this.shouldAddGesture()){
-      Stack(){
-        Column(){
+    if (this.shouldAddGesture()) {
+      Stack() {
+        Column() {
           Text("visibile测试1")
         }
         .height(100)

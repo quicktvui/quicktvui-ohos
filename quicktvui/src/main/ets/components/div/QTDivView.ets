@@ -303,6 +303,12 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .tabStop($$.cssFocusable)
   .border($$.focus ? $$.setBorder() : $$.border)
   .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
+  .borderRadius({
+    topLeft: $$.borderTopLeftRadius,
+    topRight: $$.borderTopRightRadius,
+    bottomLeft: $$.borderBottomLeftRadius,
+    bottomRight: $$.borderBottomRightRadius,
+  })
   .onFocus(() => {
     $$.focus = true
     $$.handleFocus($$.focus)
