@@ -4,8 +4,9 @@ import { QTAttach } from '../components/QTAttach';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
 import { QTViewActor } from '../components/QTViewActor';
 import { QTViewState, StateView, StateViewConstants } from '../components/StateView';
-import { TAG_FASTLIST, TAG_FOCUS } from '../Constant';
+import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_FOCUS } from '../Constant';
 import { QTAny, QTView } from '../QTTypes';
+import { CommonUtils } from './CommonUtils';
 import { NodeUtils } from './NodeUtils';
 import { QTCompatUtil } from './QTCompatUtil';
 import { QTLog } from './QTLog';
@@ -34,9 +35,11 @@ export class ExtendUtil{
   }
 
   static sendUIEvent(ctx: NativeRenderContext,nodeId:number,eventName:string,params:HippyAny){
+    QTLog.i(TAG_FAST_EVENT,`sendUIEvent node${nodeId},eventName:${eventName},params:${CommonUtils.hippyAny2String(params)}`)
     HREventUtils.sendComponentEvent(ctx,nodeId,eventName,params)
   }
   static sendViewEvent(view:QTView,eventName:string,params:HippyAny){
+    QTLog.i(TAG_FAST_EVENT,`sendUIEvent view${ExtendUtil.debugView(view)},eventName:${eventName},params:${CommonUtils.hippyAny2String(params)}`)
     HREventUtils.sendComponentEvent(view.ctx,view.tag,eventName,params)
   }
 
