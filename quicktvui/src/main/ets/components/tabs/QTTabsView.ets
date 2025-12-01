@@ -253,7 +253,7 @@ export class QTTabsView extends QTRenderBaseView{
       wl.pageIndex = index
       wl.isVirtual = true
       if(this.viewpager?.templateListView){
-        wl.templateView = this.viewpager?.templateListView as QTView
+        wl.setCustomTemplate(this.viewpager?.templateListView as QTView)
       }
       p.contentView = wl
       QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])

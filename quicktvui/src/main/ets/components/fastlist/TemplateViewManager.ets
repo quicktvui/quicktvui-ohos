@@ -15,6 +15,7 @@ import { QTMap, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTTextView } from '../text/QTTextView';
 import { CommonUtils } from '../../utils/CommonUtils';
+import { QTFastListView } from './QTFastListView';
 
 
 export class BuildResult{
@@ -289,6 +290,11 @@ export class TemplateViewManager{
         patch.renderView.setRootListID(rootListId)
       }else{
         QTLog.fatal(TAG_FASTLIST,`buildRenderViewTraverse fastFlexView error rootListID is -1`)
+      }
+    }
+    if(patch.renderView instanceof QTFastListView){
+      if(rootListId){
+        patch.renderView.mHandleEventNodeId = rootListId
       }
     }
     LayoutAttach.obtainLayoutAttach(patch.renderView).virtualExtra.rootListId = rootListId;

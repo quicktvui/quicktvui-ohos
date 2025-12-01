@@ -1,6 +1,6 @@
 
 import {HippyObservedArray,NativeRenderContext,HippyAny,HippyRenderCallback,HippyArray,HippyMap,HippyEndBatchCallback} from 'hippy'
-import { TAG_FASTLIST, TAG_FOCUS, TAG_REUSE } from '../../Constant';
+import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_FOCUS, TAG_REUSE } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
@@ -14,11 +14,85 @@ import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
 import { QTItemRootView } from './QTItemRootView';
 import { QTFastList } from './QTFastList';
+import { QTPixelUtil } from '../../utils/QTPixelUtil';
+import System from '@ohos/zxing/src/main/ets/core/util/System';
+
 const PREFIX_KEY = "FASTLIST"
 
 
 @Observed
 export class QTFastListView extends QTRenderBaseView{
+  onDidScroll(scrollOffset: number, scrollState: ScrollState) {
+    //QTLog.i(TAG_FAST_EVENT,`onScrollIndex start:${start},end:${end},center:${center}`)
+
+    if(this.mScrollEventEnable && System.currentTimeMillis() - this.lastCallTime > 100){
+      let offset = new Map<string,number>()
+      offset.set('x',QTPixelUtil.vp2Dev(this.onScrolledOffset))
+      offset.set('y',QTPixelUtil.vp2Dev(this.onScrolledOffset))
+      let map = new Map<string,QTAny>()
+      map.set('contentOffset',offset)
+      ExtendUtil.sendUIEvent(this.ctx,this.getHandleEventNodeId(), 'onScroll',map)
+    }
+    this.handleScrollValue(false,scrollOffset)
+
+    if(scrollState != this.lastScrollState){
+      //不要太快
+      let state = new Map<string,QTAny>()
+      state.set('oldState',this.lastScrollState)
+      state.set('newState',scrollState)
+      let offset = new Map<string,number>()
+      offset.set('x',QTPixelUtil.vp2Dev(this.onScrolledOffset))
+      offset.set('y',QTPixelUtil.vp2Dev(this.onScrolledOffset))
+      let map = new Map<string,QTAny>()
+      map.set('state',state)
+      map.set('contentOffset',offset)
+      map.set('sid',LayoutAttach.obtainLayoutAttach(this).sid)
+      ExtendUtil.sendUIEvent(this.ctx,this.getHandleEventNodeId(), 'onScrollStateChanged',map)
+      if(scrollState == ScrollState.Idle){
+        this.handleScrollValue(true,scrollOffset)
+      }
+    }
+
+    //更新数据
+    this.onScrolledOffset += scrollOffset;
+    this.lastScrollState = scrollState
+    this.lastCallTime = System.currentTimeMillis()
+  }
+
+  handleScrollValue(force:boolean ,sy : number){
+    let vector = sy > 0 ? 1 : -1;
+    if(this.scrollYGreaterReferenceValue > -1 && vector > 0){
+        if(sy >= this.scrollYGreaterReferenceValue && (force || (this.scrollYGreaterCheckPoint <= this.scrollYGreaterReferenceValue))){
+          this.scrollYGreaterCheckPoint = sy;
+          this.scrollYLesserCheckPoint = sy;
+          //TODO dispatchTriggerTask
+          ExtendUtil.sendUIEvent(this.ctx,this.getHandleEventNodeId(),'onScrollYGreaterReference',null)
+        }
+    }
+    if(this.scrollYLesserReferenceValue > -1 && vector < 0){
+      if (sy <= this.scrollYLesserReferenceValue && (force || (this.scrollYLesserCheckPoint >= this.scrollYLesserReferenceValue))) {
+        this.scrollYLesserCheckPoint = sy;
+        this.scrollYGreaterCheckPoint = sy;
+        //TODO dispatchTriggerTask
+        ExtendUtil.sendUIEvent(this.ctx,this.getHandleEventNodeId(),'onScrollYLesserReference',null)
+      }
+    }
+  }
+
+  onScrollIndex(start: number, end: number, center: number) {
+    //QTLog.i(TAG_FAST_EVENT,`onScrollIndex start:${start},end:${end},center:${center}`)
+  }
+  onScrollStop() {
+    QTLog.e(TAG_FAST_EVENT,`------onScrollStop------`)
+  }
+  onScrollStart() {
+    QTLog.w(TAG_FAST_EVENT,`------onScrollStart------`)
+  }
+
+  getHandleEventNodeId() : number{
+    return this.mHandleEventNodeId > -1  ? this.mHandleEventNodeId : this.tag;
+  }
+
 
   public virtualChildren: HippyObservedArray<QTView> = new HippyObservedArray()
   isHorizontal : boolean = false;
@@ -31,6 +105,13 @@ export class QTFastListView extends QTRenderBaseView{
   dataSource: FastListDataSource | null = null;
   isNativeCreate = false;
   __ForEachIdx = 0
+
+  //scroll 相关
+  onScrolledOffset : number = 0;
+  lastScrollState : number = ScrollState.Idle;
+  lastCallTime : number = 0;
+  scrollYGreaterCheckPoint = 0;
+  scrollYLesserCheckPoint = 0;
   // private customTemplate: QTView | null = null;
 
   public listenBoundEvent : boolean = false;
@@ -38,6 +119,13 @@ export class QTFastListView extends QTRenderBaseView{
   enablePlaceholder : boolean  = false;
 
   eventItemClick: ((index:number,clickedView:QTView) => void) | null = null
+
+  mScrollEventEnable : boolean = false;
+
+  scrollYLesserReferenceValue : number = -1;
+  scrollYGreaterReferenceValue : number = -1;
+
+  mHandleEventNodeId : number = -1;
 
   private endBatchCallback: HippyEndBatchCallback | null = null
 
@@ -55,8 +143,12 @@ export class QTFastListView extends QTRenderBaseView{
     return this.templateView ? this.templateView.children : this.children
   }
 
+
   setCustomTemplate(customTemplate: QTView | null){
     this.templateView = customTemplate;
+    if(customTemplate){
+      this.mHandleEventNodeId = customTemplate.tag
+    }
   }
 
   public prepareTemplate() {
@@ -198,13 +290,13 @@ export class QTFastListView extends QTRenderBaseView{
 
         return true;
       case "onScrollEnable":
-
+        this.mScrollEventEnable = HRValueUtils.getBoolean(propValue,false)
         return true;
       case "scrollYLesserReferenceValue":
-
+        this.scrollYLesserReferenceValue = QTPixelUtil.getDimensionValue(propValue)
         return true;
       case "scrollYGreaterReferenceValue":
-
+        this.scrollYGreaterReferenceValue = QTPixelUtil.getDimensionValue(propValue)
         return true;
       case "layoutTargetPosition":
 
