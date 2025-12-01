@@ -1,6 +1,10 @@
 {
   "string": [
     {
+      "name": "bundle_name",
+      "value": "com.a.b"
+    },
+    {
       "name": "app_name",
       "value": "土豆逗科普"
     }

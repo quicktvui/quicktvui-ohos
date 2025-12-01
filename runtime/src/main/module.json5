@@ -17,9 +17,11 @@
     "routerMap": "$profile:router_map",
     "abilities": [
       {
-        "name": "RuntimeEntryAbility",
+        "name": "default",
         "srcEntry": "./ets/entryability/RuntimeEntryAbility.ets",
         "description": "demo",
+        "icon": "$media:layered_image",
+        "label": "$string:app_name",
         "startWindowIcon": "$media:layered_image",
         "startWindowBackground": "$color:start_window_background",
         "exported": true,
@@ -72,6 +74,12 @@
             "domainVerify": true
           }
         ]
+      },
+      {
+        "name": "xiangsheng",
+        "srcEntry": "./ets/entryability/RuntimeEntryAbility.ets",
+        "startWindowIcon": "$media:layered_image",
+        "startWindowBackground": "$color:start_window_background"
       }
     ],
     "requestPermissions": [
