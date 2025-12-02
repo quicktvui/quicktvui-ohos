@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 import deviceInfo  from '@ohos.deviceInfo';
-import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderBaseView,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
+import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderCallback,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { TAG_FOCUS, TAG_QUICKTVUI } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
@@ -90,6 +90,12 @@ export class QTDivView extends HRTvDivView {
     // }
   }
 
+  requestFocus(){
+    //TODO
+    QTLog.e(TAG_FOCUS,`requestFocus focusable:${this.cssFocusable} ,this :`+ExtendUtil.debugView(this))
+    focusControl.requestFocus(ViewUtils.getViewUid(this));
+  }
+
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey){
       case 'gradientBackground':
@@ -156,6 +162,15 @@ export class QTDivView extends HRTvDivView {
     return super.setProp(propKey, propValue)
   }
 
+  call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
+    switch (method){
+      case 'requestFocus':
+        this.requestFocus()
+        return;
+    }
+    super.call(method,params,callback)
+  }
+
   notifyChildSizeChanged(child:QTView,changedView:QTView,width: number, height: number){
 
     super.notifyChildSizeChanged(child,changedView,width,height)
@@ -196,6 +211,7 @@ export struct QTDiv {
   // }
 
   aboutToAppear() {
+    //QTLog.i(TAG_FOCUS,`div about to Appear virtual${this.renderView.isVirtual}, uid:${ViewUtils.getViewUid(this.renderView)}`)
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
@@ -225,19 +241,6 @@ export struct QTDiv {
         .onClick((event=>{
           ViewUtils.handleClickEvent(event,this.renderView)
         }))
-        // .onFocus(() => {
-        //   this.renderView.focus = this.renderView.focusable
-        //   if(this.renderView.focus){
-        //     QTLog.d(TAG_FOCUS, "onFocus，name:" + ExtendUtil.debugView(this.renderView));
-        //     this.renderView.handleFocus(this.renderView.focus)
-        //   }
-        // })
-        // .onBlur(() => {
-        //   if(this.renderView.focus){
-        //     this.renderView.handleBlur(false)
-        //   }
-        //   this.renderView.focus = false
-        // })
     }else {
         Stack() {
           ForEach(this.children, (item: QTView) => {
@@ -249,22 +252,6 @@ export struct QTDiv {
         .attributeModifier(this.colorModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
-        // .onFocus(() => {
-        //   this.renderView.focus = this.renderView.focusable
-        //   if(this.renderView.focus){
-        //     QTLog.d(TAG_FOCUS, "onFocus，name:" + ExtendUtil.debugView(this.renderView));
-        //     this.renderView.handleFocus(this.renderView.focus)
-        //   }
-        // })
-        // .onBlur(() => {
-        //   if(this.renderView.focus){
-        //     this.renderView.handleBlur(false)
-        //   }
-        //   this.renderView.focus = false
-        // })
-        // .onClick((event=>{
-        //   ViewUtils.handleClickEvent(event,this.renderView)
-        // }))
     }
   }
 }
@@ -296,7 +283,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .key($$.name)
   .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
   .clip($$.clipChildren)
-  .id($$.sid)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
   //div
   // .focusable($$.cssFocusable)

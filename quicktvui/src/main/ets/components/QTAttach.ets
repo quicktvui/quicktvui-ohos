@@ -7,6 +7,8 @@ export class QTAttach{
   name: string | null = null;
   viewType:string | null = null;
   private extra: Map<string,QTAny> | null = null;
+  //全局唯一id
+  uid:string | null = null;
 
   putExtra(key:string,value:QTAny){
     if(!this.extra){

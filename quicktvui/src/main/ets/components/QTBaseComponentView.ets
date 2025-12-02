@@ -24,6 +24,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   // TV扩展
   visibility: Visibility = Visibility.Visible
   sid: string = ''
+  uid:string = ''
   name: string = ''
   selected: boolean = false
   showonstate: string = 'normal' //

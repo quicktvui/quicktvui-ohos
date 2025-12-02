@@ -10,6 +10,7 @@ import { CommonUtils } from './CommonUtils';
 import { NodeUtils } from './NodeUtils';
 import { QTCompatUtil } from './QTCompatUtil';
 import { QTLog } from './QTLog';
+import { ViewUtils } from './ViewUtils';
 
 export class ExtendUtil{
 
@@ -21,6 +22,7 @@ export class ExtendUtil{
     let sid = 'null'
     let name = 'null'
     let attach = QTAttach.findQTAttach(view);
+    let uid = ViewUtils.getViewUid(view)
     if(attach){
       if(attach.sid){
         sid = attach.sid;
@@ -30,7 +32,7 @@ export class ExtendUtil{
       }
     }
     let desc = -1;
-    return `${className}{ ${view.tag} ${sid} ${name} [${view.cssPositionX},${view.cssPositionY},${view.cssWidth},${view.cssHeight}] [${view.cssVisibility}] }
+    return `${className}{ tag:${view.tag},uid:${uid},name: ${name} sid:${sid} [${view.cssPositionX},${view.cssPositionY},${view.cssWidth},${view.cssHeight}] [${view.cssVisibility}] }
     `
   }
 
