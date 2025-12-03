@@ -216,6 +216,12 @@ export class QTTabsView extends QTRenderBaseView{
         this.controller.changeIndex(index)
         this.notifyPageBringToFront(index,this.resumeTaskDelay)
       })
+      this.tabList.eventItemFocus = ((index,focusView)=>{
+        //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
+        this.notifyPageChange(index)
+        this.controller.changeIndex(index)
+        this.notifyPageBringToFront(index,this.resumeTaskDelay)
+      })
     }
     if(subView instanceof InnerViewPagerView){
       this.viewpager = subView;

@@ -60,6 +60,11 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     this.viewActor.notifyChildSizeChanged(child,changedView, width, height)
   }
 
+  /**
+   * 通知parent，子view内部请求焦点
+   * @param child
+   * @param focusedView
+   */
   notifyChildRequestFocus(child:QTView,focusedView: QTView){
     if(this.parentView instanceof QTBaseComponentView){
       this.parentView.notifyChildRequestFocus(this,focusedView)
@@ -137,6 +142,10 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   isEventClick() : boolean{
     return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventClick
+  }
+
+  isEventFocus() : boolean{
+    return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventFocus
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {

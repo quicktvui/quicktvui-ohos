@@ -21,10 +21,12 @@ import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderCallback,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { TAG_FOCUS, TAG_QUICKTVUI } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
-import { QTView } from '../../QTTypes';
+import { QTAny, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { ViewUtils } from '../../utils/ViewUtils';
+import { FastListUtils } from '../fastlist/FastListUtils';
+import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
 
@@ -183,11 +185,34 @@ export class QTDivView extends HRTvDivView {
         this.parentView.notifyChildRequestFocus(this,this)
       }
     }
+    if(this.cssFocusable){
+      this.onFocusChanged(true)
+    }
     super.handleFocus(isFocused)
+  }
+
+  /**
+   * 可获焦view，isFocused状态改变
+   * @param isFocused
+   */
+  onFocusChanged(isFocused:boolean){
+    if(!this.isVirtual){
+      let map = new Map<string,QTAny>()
+      map.set('isFocused',isFocused)
+      let sid = LayoutAttach.obtainLayoutAttach(this).sid
+      map.set('sid',sid)
+      ExtendUtil.sendViewEvent(this,'onFocus',map)
+    }
+    if(isFocused && this.isEventFocus()){
+      FastListUtils.handleItemFocus(this)
+    }
   }
 
   handleBlur(isFocused: boolean): void {
     QTLog.i(TAG_FOCUS,`---handle blur this:${ExtendUtil.debugView(this)}`)
+    if(this.cssFocusable){
+      this.onFocusChanged(false)
+    }
     super.handleBlur(isFocused)
   }
 }
