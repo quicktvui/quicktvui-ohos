@@ -262,6 +262,9 @@ struct AppView {
       .height('100%')
       .backgroundColor('#000000')
       .expandSafeArea()
+      .onKeyEvent((event) => {
+        this.appContext.engine?.onKeyEvent(event)
+      })
     }
     .hideToolBar(true)
     .hideBackButton(true)
