@@ -39,6 +39,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   navTitleScroller: Scroller = new Scroller();
   focusStr: string | undefined = undefined;
   isSelectedButton: boolean = true;
+  pageNum: number = 0;
   initParamTemplate: Template = {
     titleSize: 28,
     floatTitleSize: 20,
@@ -152,7 +153,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       };
       result.push({
         key: this.getRandomString(),
-        title: `${formatNumber(start)}-${formatNumber(end)}`,
+        title: start!==end ?`${formatNumber(start)}-${formatNumber(end)}` : `${formatNumber(start)}`,
       });
     }
     console.log(TAG_MediaSeries, `generatePageRanges is :${JSON.stringify(result)}`)
@@ -333,6 +334,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let getArray = HRValueUtils.getArray(params as HippyArray)
         let page = getArray![0];
         let data = getArray![1] as Map<string, HippyAny>; //数据格式参考 getLRDataByPage 函数返回值
+        //this.listData.removeAllData();
 
         console.log(TAG_MediaSeries, `QTMediaSeriesView:page:${method},value:${page}`)
 
@@ -358,6 +360,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
               height: HRValueUtils.getMap('vipTitleStyle')?.get('height') as number,
             },
             index2: HRValueUtils.getStringValue('index2', value as HippyMap, null)!,
+            id: HRValueUtils.getStringValue('id', value as HippyMap, null)!,
           });
         })
         console.log(TAG_MediaSeries, `QTMediaSeriesView listData :${JSON.stringify(this.listData)}`)

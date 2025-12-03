@@ -15,6 +15,8 @@ import { QTMap, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTTextView } from '../text/QTTextView';
 import { CommonUtils } from '../../utils/CommonUtils';
+import { QTFastListView } from './QTFastListView';
+import { VirtualViewRegistry } from './VirtualViewRegistry';
 
 
 export class BuildResult{
@@ -125,7 +127,8 @@ export class TemplateViewManager{
     if(!rv){
       return null;
     }
-     this.applyInit(rv,template,templateProps,index)
+    VirtualViewRegistry.getInstance().registerView(rv)
+    this.applyInit(rv,template,templateProps,index)
     let style = new Map<String,HippyAny>()
     // toUpdate.forEach((value,key)=>{
     //   console.log(QUICKTVUI_TAG,`gatherToUpdateMap viewType:${rv?.viewType} key:${key},value:${CommonUtils.hippyAny2String(value)}`)
@@ -231,6 +234,7 @@ export class TemplateViewManager{
       renderView.templateView = template;
       renderView.onCreateByTemplate(template)
     }
+    attach.isVirtual = true;
     // CommonUtils.printObject(templateProps,'applyBasicStyle')
     return renderView
   }
@@ -289,6 +293,11 @@ export class TemplateViewManager{
         patch.renderView.setRootListID(rootListId)
       }else{
         QTLog.fatal(TAG_FASTLIST,`buildRenderViewTraverse fastFlexView error rootListID is -1`)
+      }
+    }
+    if(patch.renderView instanceof QTFastListView){
+      if(rootListId){
+        patch.renderView.mHandleEventNodeId = rootListId
       }
     }
     LayoutAttach.obtainLayoutAttach(patch.renderView).virtualExtra.rootListId = rootListId;

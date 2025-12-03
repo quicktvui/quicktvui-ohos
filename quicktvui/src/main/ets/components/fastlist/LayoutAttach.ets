@@ -27,7 +27,7 @@ export class LayoutAttach extends QTAttach{
   //others
   virtualExtra : VirtualExtra = new VirtualExtra();
   pendingProps = new Map<string, HippyAny>()
-
+  isVirtual: boolean = false;;
 
   private style() : QTNativeLayout{
     if(!this.styleNode){
@@ -45,10 +45,10 @@ export class LayoutAttach extends QTAttach{
     style?.forEach((value,key)=>{
       switch (key){
         case 'width':
-          this.fixedWidth = HRValueUtils.getNumber(value);
+          this.setFixedWidth(QTPixelUtil.getDimensionValue(value))
           break;
         case 'height':
-          this.fixedHeight = HRValueUtils.getNumber(value);
+          this.setFixedHeight(QTPixelUtil.getDimensionValue(value))
           break;
       }
     })

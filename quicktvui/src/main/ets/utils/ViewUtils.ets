@@ -1,12 +1,14 @@
 import { FastListUtils } from '../components/fastlist/FastListUtils';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
 import { TAG_CLICK, TAG_FASTLIST, TAG_LAYOUT, TAG_QUICKTVUI } from '../Constant';
-import { QTView } from '../QTTypes';
+import { QTAny, QTView } from '../QTTypes';
 import { ExtendUtil } from './ExtendUtil';
 import { QTLog } from './QTLog';
 
 import { QTItemRootView } from '../components/fastlist/QTItemRootView';
 import { QTTextView } from '../components/text/QTTextView';
+import { HRValueUtils } from '../HRValueUtils';
+import { LayoutAttach } from '../components/fastlist/LayoutAttach';
 
 export class ViewUtils{
   static getTextGravity(gs : string) : TextAlign{
@@ -215,5 +217,40 @@ export class ViewUtils{
     // 转换为数字
     return parseInt(hex, 16);
   }
+
+  static getColorFromNumber(propValue:QTAny) : ResourceColor{
+    if(typeof propValue == 'string'){
+      QTLog.e(TAG_FASTLIST,`getColorFromNumber error propValue is string:${propValue},need nubmer`)
+      return Color.Transparent
+    }
+    let colorVal = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+    return '#' + colorVal
+  }
+
+  static getViewUid(view : QTView | null) : string | null{
+    //virtual_ or real_
+    if(!view){
+      return null;
+    }
+    if(view instanceof QTBaseComponentView){
+      if(view.uid){
+        return view.uid;
+      }
+    }
+    if(LayoutAttach.obtainLayoutAttach(view).uid){
+      return LayoutAttach.obtainLayoutAttach(view)?.uid
+    }
+    if(view){
+      if(view.tag > -1){
+        return `real_${view.tag}`
+      }else{
+        //return LayoutAttach.obtainLayoutAttach(view)?.uid
+        QTLog.e(TAG_FASTLIST,`getViewUid error invalid tag`)
+      }
+    }
+    return null;
+  }
+
+
 
 }

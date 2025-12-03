@@ -7,6 +7,7 @@ import {
   buildHippyRenderView,
   HippyViewEvent,
   HippyMap,
+  HippyAny,
   HippyEndBatchCallback
 } from 'hippy'
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
@@ -20,12 +21,14 @@ export struct QTMediaSeries {
   @ObjectLink renderView: QTMediaSeriesView
   @ObjectLink children: HippyObservedArray<QTView>
   test: boolean = false
-  pageNum: number = 0
 
   aboutToAppear(): void {
+    if (this.renderView.listData.totalCount() != 0) {
+      return
+    }
     let event = new HippyViewEvent("onLoadPageData")
     let params = new Map<string, number>()
-    params.set('page', this.pageNum++)
+    params.set('page', this.renderView.pageNum++)
     params.set('tag', this.renderView.tag)
     event.send(this.renderView.ctx, this.renderView.tag, params)
     console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
@@ -41,8 +44,6 @@ export struct QTMediaSeries {
                 Image(item.cover)
                   .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
                   .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
-                  .focusable(true)
-                  .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                 Column() {
                   Text(item.title)
                     .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
@@ -78,11 +79,10 @@ export struct QTMediaSeries {
               .height(px2vp(this.renderView.initParamTemplate.height))
               .backgroundColor('#80988787')
               .alignItems(VerticalAlign.Top)
-              .border({
-                width: 2,
-                color: this.renderView.focusStr == item.key ? Color.White : Color.Transparent,
-                style: BorderStyle.Solid,
-                radius: "4lpx"
+              .focusable(true)
+              .margin({
+                left: index === 0 ? px2vp(60) : 0,
+                right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
               })
 
               // .scale({
@@ -92,8 +92,11 @@ export struct QTMediaSeries {
             }
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
-              let params = new Map<string, number>()
+              let params = new Map<string, string | HippyAny>()
+              let dataMap = new Map<string, string>()
+              dataMap.set('id', item.id!)
               params.set('position', index)
+              params.set('data', dataMap)
               event.send(this.renderView.ctx, this.renderView.tag, params)
               this.renderView.focusStr = item.key;
             })
@@ -115,17 +118,13 @@ export struct QTMediaSeries {
         .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
         .height(px2vp(this.renderView.initParamTemplate.height))
-        .padding({
-          left: px2vp(60),
-          right: px2vp(60),
-        })
         .onReachEnd(() => {
-          if (this.renderView.initParam.totalCount <= this.pageNum * this.renderView.initParam.pageSize) {
+          if (this.renderView.initParam.totalCount <= this.renderView.pageNum * this.renderView.initParam.pageSize) {
             return
           }
           let event = new HippyViewEvent("onLoadPageData")
           let params = new Map<string, number>()
-          params.set('page', this.pageNum++)
+          params.set('page', this.renderView.pageNum++)
           params.set('tag', this.renderView.tag)
           event.send(this.renderView.ctx, this.renderView.tag, params)
         })
@@ -221,14 +220,15 @@ export struct QTMediaSeries {
             left: px2vp(this.renderView.initParamGroup.itemGap) / 2,
             right: px2vp(this.renderView.initParamGroup.itemGap) / 2
           })
-          .margin(px2vp(this.renderView.initParamGroup.itemGap))
+          .margin({
+            left: px2vp(40),
+            right: px2vp(40),
+            top: px2vp(this.renderView.initParamGroup.itemGap),
+            bottom: px2vp(this.renderView.initParamGroup.itemGap),
+          })
         }
 
-        ForEach(this.children, (item: HippyRenderBaseView) => {
-          buildHippyRenderView(item, null)
-        }, (item: HippyRenderBaseView) => item.tag + '')
 
-        ContentSlot(this.renderView.childSlot)
 
       }.alignItems(HorizontalAlign.Start)
     }

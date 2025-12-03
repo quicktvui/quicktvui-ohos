@@ -59,10 +59,10 @@ export class QTTextView extends QTRenderBaseView{
       case "typeface":
 
         return true;
-      case 'showOnState':
-        this.showonstate = HRValueUtils.getString(propValue as HippyAny) || (HRValueUtils.getArray(propValue as HippyArray)||[]).join('|');
-        this.showOnState();
-        return true;
+      // case 'showOnState':
+      //   this.showonstate = HRValueUtils.getString(propValue as HippyAny) || (HRValueUtils.getArray(propValue as HippyArray)||[]).join('|');
+      //   this.showOnState();
+      //   return true;
       case "textSpan":
 
         return true;
@@ -107,7 +107,7 @@ export class QTTextView extends QTRenderBaseView{
         this.fontColor = '#' + colorVal
         return true;
       case "lineHeight":
-        this.lineHeight = HRValueUtils.getNumber(propValue)
+        this.lineHeight = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))
         return true;
       case "fallbackLineSpacing":
 
@@ -159,10 +159,6 @@ export class QTTextView extends QTRenderBaseView{
 
   }
 
-  setRenderViewFrame(frame: HRRect, padding: HRPadding | null): void {
-    // console.error(TAG_QUICKTVUI,`QTText setRenderViewFrame width:${frame.width},height:${frame.height}`)
-    super.setRenderViewFrame(frame,padding)
-  }
 
 }
 

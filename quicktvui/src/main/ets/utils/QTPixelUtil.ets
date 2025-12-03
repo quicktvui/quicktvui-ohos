@@ -67,7 +67,12 @@ export class QTPixelUtil{
         case 'x':
         case 'y':
         case 'fontSize':
-        toStyle.set(key,QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(value)))
+        case 'spacing':
+          if (typeof value == 'number' || typeof value == 'string') {
+            toStyle.set(key,QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(value)))
+          }else{
+            QTLog.e(TAG_LAYOUT,`styleDev2Vp error value not valid:${key},value:${value}`)
+          }
           break;
         case 'style':
           let map = HRValueUtils.getMap(value)

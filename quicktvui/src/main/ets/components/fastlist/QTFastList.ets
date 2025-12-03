@@ -112,9 +112,13 @@ export struct  QTFastList {
           .width('100%')
           .height('100%')
           .scrollBar(BarState.Off)
+          .onDidScroll((scrollOffset: number, scrollState: ScrollState) => {
+            this.renderView.onDidScroll(scrollOffset,scrollState)
+          })
           // ContentSlot(this.renderView.childSlot)
         }
         .applyRenderViewBaseAttr(this.renderView)
+
       }
     }else{
       Stack() {
@@ -137,10 +141,25 @@ export struct  QTFastList {
           console.error(TAG_FASTLIST,`List on Aattch!!`)
           // this.renderView.scroller.scrollToIndex(5)
         })
+        .onDidScroll((scrollOffset: number, scrollState: ScrollState) => {
+          this.renderView.onDidScroll(scrollOffset,scrollState)
+        })
         .onScrollVisibleContentChange(()=>{
           this.renderView.dataSource?.makeBindEventDirty()
         })
         .scrollBar(BarState.Off)
+        // .onScrollStart(()=>{
+        //   this.renderView.onScrollStart()
+        // })
+        // .onScrollStop(()=>{
+        //   this.renderView.onScrollStop()
+        // })
+        // .onScrollIndex((start,end,center)=>{
+        //   this.renderView.onScrollIndex(start,end,center)
+        // })
+        .onDidScroll((scrollOffset: number, scrollState: ScrollState) => {
+          this.renderView.onDidScroll(scrollOffset,scrollState)
+        })
         // ContentSlot(this.renderView.childSlot)
       }
       .applyRenderViewBaseAttr(this.renderView)

@@ -212,7 +212,9 @@ export class QTTabsView extends QTRenderBaseView{
       this.tabList = subView;
       this.tabList.eventItemClick = ((index,clickedView)=>{
         //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
+        this.notifyPageChange(index)
         this.controller.changeIndex(index)
+        this.notifyPageBringToFront(index,this.resumeTaskDelay)
       })
     }
     if(subView instanceof InnerViewPagerView){
@@ -226,11 +228,16 @@ export class QTTabsView extends QTRenderBaseView{
     }
   }
 
+  // registerAllItemStore(){
+  //
+  // }
+
   updateTabsData(data : QTArray){
+    //setupItemStores
     QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)}`)
     this.tabsData = []
     data.forEach((item: QTAny,index:number)=>{
-        let p :TabPageData = new TabPageData()
+      let p :TabPageData = new TabPageData()
       if(item instanceof Map){
         if(item.has('text')){
           p.title = item.get('text') as string
@@ -242,13 +249,14 @@ export class QTTabsView extends QTRenderBaseView{
         p.title = `请设定text:${index}`
       }
       p.pageIndex = index
-      let wl = new WaterfallListView(this.ctx)
+      let wl = new WaterfallListView(this.ctx,this)
       wl.pageIndex = index
       wl.isVirtual = true
       if(this.viewpager?.templateListView){
-        wl.templateView = this.viewpager?.templateListView as QTView
+        wl.setCustomTemplate(this.viewpager?.templateListView as QTView)
       }
       p.contentView = wl
+      // this.addSubRenderView(wl,2+index)
       QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])
       // QTLog.d(TAG_TABS,`updateTabsData this width:${this.cssWidth},height:${this.cssHeight}`)
       if(item){
@@ -261,6 +269,12 @@ export class QTTabsView extends QTRenderBaseView{
     })
 
     this.tryLoadPageData(this.defaultPosition)
+    // let map = new Map<string,QTAny>()
+    // map.set('page',this.defaultPosition)
+    // ExtendUtil.sendViewEvent(this,'onPageBringToFront',map)
+    // QTLog.e(TAG_TABS,`send event id:${this.tag},map:${CommonUtils.hippyMap2String(map)}`)
+    this.notifyPageChange(this.defaultPosition)
+    this.notifyPageBringToFront(this.defaultPosition,this.firstResumeTaskDelay)
     QTLog.d(TAG_TABS,`updateTabsData tabList:${data?.length},tabsData length:${this.tabsData.length}`)
     this.dataSource.notifyReload()
 
@@ -296,6 +310,7 @@ export class QTTabsView extends QTRenderBaseView{
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
     QTLog.d(TAG_TABS,`onTabsContentWillChangeCallback currentIndex  :${currentIndex},comingIndex:${comingIndex}`)
+    this.notifyPageChange(comingIndex)
     this.tryLoadPageData(comingIndex)
     return true;
   }
@@ -383,6 +398,31 @@ export class QTTabsView extends QTRenderBaseView{
           pd.contentView.updateSections(dataArray,pd.contentParams)
         }
       }
+  }
+
+  notifyPageBringToFront(page: number,delay : number){
+    setTimeout(()=>{
+      let map = new Map<string,QTAny>()
+      map.set('page',page)
+      ExtendUtil.sendViewEvent(this,'onPageBringToFront',map)
+    },delay)
+  }
+
+  notifyPageChange(page:number){
+    let map = new Map<string,QTAny>()
+    map.set('pageIndex',page)
+    map.set('itemPosition',page)
+    let tabPageData = this.tabsData[page]
+    map.set('data',tabPageData?.tabItem)
+    ExtendUtil.sendViewEvent(this,'onPageChanged',map)
+    this.sendTabsEvent('onTabChanged',map)
+  }
+
+  sendTabsEvent(eventName:string,map : QTMap){
+    let params = new Map<string,QTAny>()
+    params.set('eventName',eventName)
+    params.set('params',map)
+    ExtendUtil.sendViewEvent(this,'onTabsEvent', params)
   }
 
   updateDataOnly(pageIndex: number,params:QTMap,data : QTAny){
@@ -496,6 +536,8 @@ function buildPage(item: TabPageData, index: number){
 
 }
 
+
+
 @Builder
 function buildTabList(tabsView:QTTabsView){
     if(tabsView.tabList){
@@ -550,6 +592,7 @@ export struct  QTTabs {
       .barHeight(0)
       .barBackgroundColor(Color.White)
       .onContentWillChange((currentIndex:number,comingIndex:number)=>{
+
         return this.renderView.onTabsContentWillChangeCallback(currentIndex,comingIndex)
       })
       buildTabList(this.renderView )

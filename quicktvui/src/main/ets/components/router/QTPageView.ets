@@ -7,11 +7,18 @@ import {
   HIPPY_COMPONENT_KEY_PREFIX,
   buildHippyRenderView
 } from 'hippy'
+import { TAG_FOCUS } from '../../Constant';
+import { QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+import { FocusUtils } from '../../utils/FocusUtils';
+import { QTLog } from '../../utils/QTLog';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 
 @Observed
 export class QTPageView extends QTBaseComponentView {
   public event: QTPage | null = null
+  focusedView : QTView | null = null;
+  savedFocus :QTView | null= null;
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -27,6 +34,31 @@ export class QTPageView extends QTBaseComponentView {
     }
     super.call(method, params, callback)
   }
+
+  notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
+    this.focusedView = focusedView;
+    QTLog.e(TAG_FOCUS,`QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
+  }
+
+  saveFocus(){
+    this.savedFocus = this.focusedView;
+  }
+
+  restoreFocus(){
+    if(this.savedFocus != null){
+     FocusUtils.requestFocus(this.savedFocus)
+      this.savedFocus = null;
+    }
+  }
+
+  aboutToDisappear(){
+    this.saveFocus()
+  }
+
+  aboutToAppear(){
+    this.restoreFocus()
+  }
+
 }
 
 @Component
@@ -40,11 +72,15 @@ export struct QTPage {
   }
 
   aboutToAppear(): void {
+    // QTLog.e(TAG_FOCUS,`+++page aboutToAppear this:${ExtendUtil.debugView(this.renderView)}`)
     this.renderView.event = this
+    this.renderView.aboutToAppear()
   }
 
   aboutToDisappear() {
+    // QTLog.e(TAG_FOCUS,`---page aboutToDisappear this:${ExtendUtil.debugView(this.renderView)}`)
     this.renderView.event = null
+    this.renderView.aboutToDisappear()
   }
 
   build(): void {
@@ -55,12 +91,13 @@ export struct QTPage {
       ContentSlot(this.renderView.childSlot)
     }
     .applyRenderViewBaseAttr(this.renderView)
+
   }
 }
 
 // base props for all components
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyRenderViewBaseAttr($$: QTPageView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
@@ -82,6 +119,5 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .scale($$.cssScale)
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
-  .onClick($$.eventClick)
 }
 

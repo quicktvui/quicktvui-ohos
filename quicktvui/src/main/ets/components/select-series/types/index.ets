@@ -79,6 +79,7 @@ export interface MyComponentParams {
   vip?: VipInfo; // <-- 这里直接使用你定义的类型
   vipTitleStyle?: vipTitleStyle;
   index2?: string;
+  id?: string;
 };
 
 export interface GeneratePageData {

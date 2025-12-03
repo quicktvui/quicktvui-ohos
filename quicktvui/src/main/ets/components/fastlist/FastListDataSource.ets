@@ -39,8 +39,7 @@ import { QTFastFlexView } from './QTFastFlexView';
 import { QTFastListView } from './QTFastListView';
 import { QTLog } from '../../utils/QTLog';
 import { ExtendUtil } from '../../utils/ExtendUtil';
-
-
+import { globalQTViewMap, ItemStoreView } from './ItemStoreView';
 
 
 // class ItemEntry{
@@ -83,6 +82,7 @@ export class FastListDataSource implements IDataSource {
   public static getItemStoreFromParentList(parentList:QTFastListView) : QTView | null{
     let itemStore : QTView | null = null;
     parentList.children?.map((child)=>{
+      // QTLog.i(TAG_FASTLIST,`getItemStoreFromParentList child:${ExtendUtil.debugView(child)},parentList:${ExtendUtil.debugView(parentList)}`)
       if(child.viewType == 'ItemStoreView'){
         itemStore = child;
       }
@@ -94,16 +94,21 @@ export class FastListDataSource implements IDataSource {
     this.enablePlaceholder = b;
   }
 
+
+
   public registerParentItemStore(){
-    QTLog.fatal(TAG_FASTLIST,`regist item registerParentItemStore ${ExtendUtil.debugView(this.listView)}`)
+    QTLog.fatal(TAG_FASTLIST,`regist item registerParentItemStore ${ExtendUtil.debugView(this.listView)} rootListId:${this.rootListId}`)
     if(this.listView){
       if(this.listView?.isVirtual && this.rootListId ==  -1){
         QTLog.fatal(TAG_FASTLIST,`regist item rootListID不可为空,return`)
         return;
       }
+      // this.registerAllItemStore(this.listView)
       if(this.listView.isVirtual && this.rootListId){
         let parentList = NodeUtils.getRenderView(this.ctx,this.rootListId)
+
         if(parentList instanceof QTFastListView){
+
           let itemStore=  FastListDataSource.getItemStoreFromParentList(parentList)
           if(!itemStore){
             QTLog.e(TAG_FASTLIST,`regist item itemStore :${itemStore},this rootListID:${this.rootListId},parentList:${ExtendUtil.debugView(parentList)}`)
@@ -139,10 +144,59 @@ export class FastListDataSource implements IDataSource {
           this.registerTemplate(c,true)
         })
     }else{
+      this.registerAllItemStore()
       this.registerParentItemStore()
+      // let rootView = NodeUtils.getRenderView(this.ctx,10)
+      // if(rootView){
+      //   this.registerAllItemStore()
+      // }
+      // this.notifyReload()
     }
-    // this.notifyReload()
 
+
+  }
+
+  // registerItemStore(itemStore:QTView | null){
+  //   // QTLog.d(TAG_FASTLIST,`registerItemStore called  children length:${itemStore?.children.length}`)
+  //   itemStore?.children.map((c)=>{
+  //     // QTLog.d(TAG_FASTLIST,`register itemStore child:${c.viewType}`)
+  //     this.registerTemplate(c,true)
+  //   })
+  // }
+
+  registerAllItemStore(){
+    // if(parentView){
+    //   if(parentView instanceof QTFastListView ){
+    //     if(parentView.viewType == "WaterfallListView"){
+    //       let itemStore = parentView.dataSource?.itemStore
+    //       QTLog.i(TAG_FASTLIST,`registerAllItemStore itemStore:${itemStore}`)
+    //       if(itemStore){
+    //         this.registerItemStore(itemStore)
+    //       }
+    //     }
+    //   }else{
+    //     QTLog.i(TAG_FASTLIST,`registerAllItemStore parentView:${ExtendUtil.debugView(parentView)}`)
+    //   }
+    //   this.registerAllItemStore(parentView.parentView)
+    // }
+    //let waterfallView = ExtendUtil.findViewByNameByParentId(this.ctx,10,'WaterfallListView')
+    //QTLog.i(TAG_FASTLIST,`registerAllItemStore waterfallView:${ExtendUtil.debugView(waterfallView)}`)
+    // if(view instanceof  ItemStoreView){
+    //   QTLog.i(TAG_FASTLIST,`registerAllItemStore :${ExtendUtil.debugView(view)}`)
+    //   this.registerItemStore(view)
+    // }
+    // view?.children.map((child)=>{
+    //   this.registerAllItemStore(child)
+    // })
+    //fixme 临时逻辑，从全局里面拿注册的itemStore
+    if(this.listView?.isVirtual){
+      globalQTViewMap.forEach((value,key)=>{
+        if(!this.templatesMap.has(key)){
+          QTLog.i(TAG_FASTLIST,`registerAllItemStore from globalQTViewMap:key ${key}`)
+          this.registerTemplate(value,true)
+        }
+      })
+    }
   }
 
   public itemIndexOfDataList(itemView:QTItemRootView) : number{
