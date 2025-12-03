@@ -25,6 +25,7 @@ import { QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { ViewUtils } from '../../utils/ViewUtils';
+import { QTBaseComponentView } from '../QTBaseComponentView';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
 
 
@@ -91,7 +92,6 @@ export class QTDivView extends HRTvDivView {
   }
 
   requestFocus(){
-    //TODO
     QTLog.e(TAG_FOCUS,`requestFocus focusable:${this.cssFocusable} ,this :`+ExtendUtil.debugView(this))
     focusControl.requestFocus(ViewUtils.getViewUid(this));
   }
@@ -174,6 +174,21 @@ export class QTDivView extends HRTvDivView {
   notifyChildSizeChanged(child:QTView,changedView:QTView,width: number, height: number){
 
     super.notifyChildSizeChanged(child,changedView,width,height)
+  }
+
+  handleFocus(isFocused: boolean): void {
+    QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
+    if(this.parentView instanceof QTBaseComponentView){
+      if(this.cssFocusable){
+        this.parentView.notifyChildRequestFocus(this,this)
+      }
+    }
+    super.handleFocus(isFocused)
+  }
+
+  handleBlur(isFocused: boolean): void {
+    QTLog.i(TAG_FOCUS,`---handle blur this:${ExtendUtil.debugView(this)}`)
+    super.handleBlur(isFocused)
   }
 }
 

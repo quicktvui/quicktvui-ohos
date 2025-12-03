@@ -10,6 +10,7 @@ import { HRValueUtils } from '../HRValueUtils';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
 import { QTLog } from '../utils/QTLog';
+import { ViewUtils } from '../utils/ViewUtils';
 import { LayoutAttach } from './fastlist/LayoutAttach';
 import { QTActorHost } from './QTActorHost';
 import { QTViewActor } from './QTViewActor';
@@ -58,6 +59,15 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   notifyChildSizeChanged(child: QTView, changedView: QTView, width: number, height: number): void {
     this.viewActor.notifyChildSizeChanged(child,changedView, width, height)
   }
+
+  notifyChildRequestFocus(child:QTView,focusedView: QTView){
+    if(this.parentView instanceof QTBaseComponentView){
+      this.parentView.notifyChildRequestFocus(this,focusedView)
+    }else{
+      QTLog.w(TAG_FOCUS,`notifyChildRequestFocus fail parent:${ExtendUtil.debugView(this.parentView)},this:${ExtendUtil.debugView(this)}`)
+    }
+  }
+
 
   // 更新状态数组的值
   private updateStateArray(): void {
