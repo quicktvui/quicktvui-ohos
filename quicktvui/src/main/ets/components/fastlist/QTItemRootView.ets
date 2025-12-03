@@ -7,7 +7,7 @@ import {
   HippyRenderCallback,
   buildHippyRenderView,
 } from 'hippy'
-import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
+import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_FOCUS, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
 import { QTAny, QTMap, QTPendingListView, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -115,6 +115,14 @@ export class QTItemRootView extends QTRenderBaseView{
       // }
     }
 
+  }
+
+  notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
+    if(this.parentList instanceof QTBaseComponentView){
+      this.parentList.notifyChildRequestFocus(this,focusedView)
+    }else{
+      QTLog.w(TAG_FOCUS,`notifyChildRequestFocus fail parent:${ExtendUtil.debugView(this.parentList)},this:${ExtendUtil.debugView(this)}`)
+    }
   }
 
   getReuseId():string | null{

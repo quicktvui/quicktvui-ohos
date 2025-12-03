@@ -249,13 +249,14 @@ export class QTTabsView extends QTRenderBaseView{
         p.title = `请设定text:${index}`
       }
       p.pageIndex = index
-      let wl = new WaterfallListView(this.ctx)
+      let wl = new WaterfallListView(this.ctx,this)
       wl.pageIndex = index
       wl.isVirtual = true
       if(this.viewpager?.templateListView){
         wl.setCustomTemplate(this.viewpager?.templateListView as QTView)
       }
       p.contentView = wl
+      // this.addSubRenderView(wl,2+index)
       QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])
       // QTLog.d(TAG_TABS,`updateTabsData this width:${this.cssWidth},height:${this.cssHeight}`)
       if(item){
