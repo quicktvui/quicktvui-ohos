@@ -26,7 +26,7 @@ export struct IconSplashView {
       Column() {
         Row() {
           Image($r('app.media.app_icon')).width(90).height(90)
-          Text($r('app.string.EntryAbility_label')).fontSize(60).margin({ left: 15 })
+          Text($r('app.string.app_name')).fontSize(60).margin({ left: 15 })
         }
 
         if (this.appContext.loadResult.status == LoadStatus.FAIL) {

@@ -15,6 +15,7 @@ import { QTView } from "../../QTTypes";
 import { GeneratePageData, MyComponentParams } from './types/index';
 import { TAG_MediaSeries } from '../../Constant';
 import { ColorMetrics } from "@kit.ArkUI";
+import { inputEventClient, KeyCode } from "@kit.InputKit";
 
 @Component
 export struct QTMediaSeries {
@@ -32,6 +33,28 @@ export struct QTMediaSeries {
     params.set('tag', this.renderView.tag)
     event.send(this.renderView.ctx, this.renderView.tag, params)
     console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
+    let keyDown: inputEventClient.KeyEvent = {
+      isPressed: true,
+      keyCode: KeyCode.KEYCODE_TAB,
+      keyDownDuration: 0,
+      isIntercepted: false
+    };
+    let keyUp: inputEventClient.KeyEvent = {
+      isPressed: false,
+      keyCode: KeyCode.KEYCODE_TAB,
+      keyDownDuration: 0,
+      isIntercepted: false
+    };
+
+    console.log('123456');
+      try {
+        // 触发tab点击，使默认焦点组件多态样式生效
+        inputEventClient.injectEvent({ KeyEvent: keyDown });
+        inputEventClient.injectEvent({ KeyEvent: keyUp });
+        console.log('123456  123');
+      } catch (e) {
+        console.log("123456 tab key event click false")
+      }
   }
 
   build() {

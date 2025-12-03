@@ -12,10 +12,8 @@
       "name": "debug",
       "debuggable": true,
       "arkOptions": {
-
         "obfuscation": {
           "ruleOptions": {
-
             "enable": false,
             "files": [
               "./obfuscation-rules.txt"
@@ -29,7 +27,6 @@
       "arkOptions": {
         "obfuscation": {
           "ruleOptions": {
-
             "enable": true,
             "files": [
               "./obfuscation-rules.txt"
@@ -42,10 +39,51 @@
   "targets": [
     {
       "name": "default",
-
     },
     {
-      "name": "ohosTest",
+      "name": "tudoudou",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/tudoudou/resources"
+        ]
+      }
+    },
+    {
+      "name": "xiangsheng",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/xiangsheng/resources"
+        ]
+      }
+    },
+    {
+      "name": "gushi",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/gushi/resources"
+        ]
+      }
+    },
+    {
+      "name": "baduanjin",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/baduanjin/resources"
+        ]
+      }
+    },
+    {
+      "name": "doudizhu",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/doudizhu/resources"
+        ]
+      }
     }
   ]
 }
