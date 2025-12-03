@@ -1,13 +1,13 @@
 
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
-import { QTDivView } from '../div/QTDivView';
+import { QTDiv, QTDivView } from '../div/QTDivView';
 import { FastListUtils } from '../fastlist/FastListUtils';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 
 
 @Observed
-export class QTFallbackView extends QTRenderBaseView{
+export class QTFallbackView extends QTDivView{
   cssFocusable: boolean | null = true;
   constructor(ctx: NativeRenderContext) {
     super(ctx)
