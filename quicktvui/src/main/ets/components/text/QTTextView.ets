@@ -84,6 +84,7 @@ export class QTTextView extends QTRenderBaseView{
       case "paddingRect":
         let padding = propValue as HippyArray
         this.qtPadding = { top: HRValueUtils.getNumber(padding[1]), right: HRValueUtils.getNumber(padding[2]), bottom: HRValueUtils.getNumber(padding[3]), left: HRValueUtils.getNumber(padding[0]) }
+        QTPixelUtil.devPadding2Vp(this.qtPadding)
         return true;
       case "textAlignment":
 

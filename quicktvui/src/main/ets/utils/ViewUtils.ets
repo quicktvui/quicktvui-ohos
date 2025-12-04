@@ -128,6 +128,7 @@ export class ViewUtils{
       case 'left':
         return TextAlign.Start;
       case 'right':
+      case 'end':
         return TextAlign.End
       case 'centerHorizontal':
         return TextAlign.Center;
