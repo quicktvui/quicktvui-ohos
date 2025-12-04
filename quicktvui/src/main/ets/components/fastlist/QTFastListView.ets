@@ -119,6 +119,7 @@ export class QTFastListView extends QTRenderBaseView{
   enablePlaceholder : boolean  = false;
 
   eventItemClick: ((index:number,clickedView:QTView) => void) | null = null
+  eventItemFocus: ((index:number,clickedView:QTView) => void) | null = null
 
   mScrollEventEnable : boolean = false;
 
