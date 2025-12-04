@@ -95,7 +95,7 @@ export class HRTvDivView extends QTBaseComponentView {
   focusScale: number = 1.1 //聚焦时候放大倍数
   sid: string = ''
   clipChildren: boolean = false
-  duplicateParentState: boolean = true
+  duplicateParentState: boolean = false
   visibility: Visibility = Visibility.Visible
   showonstate: string = 'normal'
   border: BorderOptions = {} //模拟selected选中效果
@@ -213,12 +213,12 @@ export class HRTvDivView extends QTBaseComponentView {
         this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
       }
         return true
-      // case 'duplicateParentState':
-      //   {
-      //     this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, false);
-      //     this.setDuplicate();
-      //   }
-      //   return true
+      case 'duplicateParentState':
+        {
+          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, false);
+          // this.setDuplicate();
+        }
+        return true
       case HRNodeProps.VISIBILITY:
         let visibility = propValue as string;
         switch (visibility) {

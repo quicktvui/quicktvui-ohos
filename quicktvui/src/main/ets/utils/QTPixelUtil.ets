@@ -67,7 +67,6 @@ export class QTPixelUtil{
         case 'x':
         case 'y':
         case 'fontSize':
-        case 'spacing':
           if (typeof value == 'number' || typeof value == 'string') {
             toStyle.set(key,QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(value)))
           }else{

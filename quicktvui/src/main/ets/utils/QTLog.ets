@@ -1,7 +1,7 @@
 import { TAG_QUICKTVUI } from "../Constant";
 
 export class QTLog {
-  static DEBUG = false;
+  static DEBUG = true;
   static setDebug(b : boolean){
     QTLog.DEBUG = b;
   }

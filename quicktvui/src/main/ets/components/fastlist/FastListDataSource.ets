@@ -40,6 +40,7 @@ import { QTFastListView } from './QTFastListView';
 import { QTLog } from '../../utils/QTLog';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { globalQTViewMap, ItemStoreView } from './ItemStoreView';
+import { CommonUtils } from '../../utils/CommonUtils';
 
 
 // class ItemEntry{
@@ -539,7 +540,7 @@ export class FastListDataSource implements IDataSource {
     // QTLog.d(TAG_FASTLIST,`getData index:${index}`)
     QTLog.d(TAG_REUSE,`getData index:${index}`)
     if(fi.cssWidth < 1 || fi.cssHeight < 1){
-      console.error(TAG_LAYOUT,`getData layout Error index:${index}`)
+      console.error(TAG_LAYOUT,`getData layout Error index:${index},item:${CommonUtils.hippyAny2String(item.raw)}`)
     }
     // if(item.renderView){
     //   NodeUtils.printViewTreePretty(item.renderView,'',false)

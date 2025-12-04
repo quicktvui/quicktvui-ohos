@@ -35,7 +35,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   border: BorderOptions = {}   //模拟selected选中效果
   private currentStates: number[] = []
 
-  duplicateParentState: boolean = true
+  duplicateParentState: boolean = false
 
   autofocus:boolean = false;
 
@@ -140,6 +140,14 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   }
 
+  isFocused(){
+    return this.focus && this.cssFocusable
+  }
+
+  isSelected(){
+    return this.selected;
+  }
+
   isEventClick() : boolean{
     return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventClick
   }
@@ -183,7 +191,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         //   return true;
       case 'duplicateParentState':
         {
-          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, false);
+          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, true);
           // this.setDuplicate();
         }
         return true
