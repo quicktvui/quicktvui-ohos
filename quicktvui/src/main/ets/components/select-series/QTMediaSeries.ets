@@ -108,6 +108,7 @@ export struct QTMediaSeries {
               event.send(this.renderView.ctx, this.renderView.tag, params)
               this.renderView.focusStr = item.key;
               this.renderView.isSelectedButton = true;
+              this.renderView.scroller.scrollToIndex(index,true,ScrollAlign.CENTER)
             })
             .onBlur(() => {
               this.renderView.focusStr = undefined;
@@ -196,7 +197,6 @@ export struct QTMediaSeries {
                   }
                 }, 100)
               })
-
               .onFocus(() => {
                 console.log(TAG_MediaSeries, 'onFocus Text ~~', item.key);
                 this.renderView.focusStr = item.key;
@@ -205,8 +205,8 @@ export struct QTMediaSeries {
                 params.set('position', index)
                 event.send(this.renderView.ctx, this.renderView.tag, params)
                 this.renderView.isSelectedButton = false;
+                this.renderView.scroller.scrollToIndex(index,true,ScrollAlign.CENTER)
               })
-
               .onBlur(() => {
                 this.renderView.focusStr = undefined;
               })
@@ -227,9 +227,6 @@ export struct QTMediaSeries {
             bottom: px2vp(this.renderView.initParamGroup.itemGap),
           })
         }
-
-
-
       }.alignItems(HorizontalAlign.Start)
     }
     .applyRenderViewBaseAttr(this.renderView)
