@@ -57,6 +57,7 @@ export class QTFastListView extends QTRenderBaseView{
     this.onScrolledOffset += scrollOffset;
     this.lastScrollState = scrollState
     this.lastCallTime = System.currentTimeMillis()
+    this.eventOnScroll?.(this.onScrolledOffset)
   }
 
   handleScrollValue(force:boolean ,sy : number){
@@ -120,6 +121,7 @@ export class QTFastListView extends QTRenderBaseView{
 
   eventItemClick: ((index:number,clickedView:QTView) => void) | null = null
   eventItemFocus: ((index:number,clickedView:QTView) => void) | null = null
+  eventOnScroll: ((onScrolledOffset:number) => void) | null = null
 
   mScrollEventEnable : boolean = false;
 
@@ -259,8 +261,7 @@ export class QTFastListView extends QTRenderBaseView{
         }
         return true;
 
-      case "enableItemAnimator":
-        return true;
+
       case "disableScrollOnFirstScreen":
 
         return true;
@@ -451,6 +452,7 @@ export class QTFastListView extends QTRenderBaseView{
       case "autoscrollInfiniteMode":
       case "autoSelectPosition":
       case "useLayoutAnimation":
+      case "enableItemAnimator":
         console.error(TAG_FASTLIST,`QTFastListView : 未实现propKey : ${propKey}`)
         return true;
       // default :
@@ -569,6 +571,10 @@ export class QTFastListView extends QTRenderBaseView{
 
   public notifyItemChanged(pos : number){
     this.dataSource?.notifyDataChange(pos)
+  }
+
+  public scrollToTop(){
+    this.scroller.scrollToIndex(0)
   }
 
   aboutToUpdate(): void {

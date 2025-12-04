@@ -219,6 +219,7 @@ export class QTTabsView extends QTRenderBaseView{
       this.tabList.eventItemFocus = ((index,focusView)=>{
         //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
         this.notifyPageChange(index)
+        this.scrollContentToTop(index)
         this.controller.changeIndex(index)
         this.notifyPageBringToFront(index,this.resumeTaskDelay)
       })
@@ -234,9 +235,20 @@ export class QTTabsView extends QTRenderBaseView{
     }
   }
 
+  scrollContentToTop(pageIndex: number){
+    let t = this.tabsData[pageIndex]
+    if(t){
+      t.contentView?.scrollToTop()
+    }
+  }
+
   // registerAllItemStore(){
   //
   // }
+
+  onContentScroll(pageIndex:number,scrolledValue:number){
+    QTLog.i(TAG_TABS,`onContentScroll pageIndex:${pageIndex},scrolledValue:${scrolledValue}`)
+  }
 
   updateTabsData(data : QTArray){
     //setupItemStores
@@ -258,9 +270,13 @@ export class QTTabsView extends QTRenderBaseView{
       let wl = new WaterfallListView(this.ctx,this)
       wl.pageIndex = index
       wl.isVirtual = true
+      wl.eventOnScroll = ((scrolled)=>{
+        this.onContentScroll(index,scrolled)
+      })
       if(this.viewpager?.templateListView){
         wl.setCustomTemplate(this.viewpager?.templateListView as QTView)
       }
+      wl.mHandleEventNodeId = this.tag
       p.contentView = wl
       // this.addSubRenderView(wl,2+index)
       QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])
@@ -316,6 +332,7 @@ export class QTTabsView extends QTRenderBaseView{
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
     QTLog.d(TAG_TABS,`onTabsContentWillChangeCallback currentIndex  :${currentIndex},comingIndex:${comingIndex}`)
+    this.scrollContentToTop(currentIndex)
     this.notifyPageChange(comingIndex)
     this.tryLoadPageData(comingIndex)
     return true;
