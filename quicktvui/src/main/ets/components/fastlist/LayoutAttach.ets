@@ -134,15 +134,15 @@ export class LayoutAttach extends QTAttach{
     return this.style().GetPadding(3);
   }
 
-  setPadding(top:number,left:number,right:number,bottom:number){
-    let style: Map<string, HippyAny> = new Map()
-    style.set('paddingLeft',left)
-    style.set('paddingTop',top)
-    style.set('paddingRight',right)
-    style.set('paddingBottom',bottom)
-    // console.info(TAG_LAYOUT,`setPadding:${CommonUtils.hippyMap2String(style)}`)
-    this.setStyles(style)
-  }
+  // setPadding(top:number,left:number,right:number,bottom:number){
+  //   let style: Map<string, HippyAny> = new Map()
+  //   style.set('paddingLeft',left)
+  //   style.set('paddingTop',top)
+  //   style.set('paddingRight',right)
+  //   style.set('paddingBottom',bottom)
+  //   // console.info(TAG_LAYOUT,`setPadding:${CommonUtils.hippyMap2String(style)}`)
+  //   this.setStyles(style)
+  // }
 
 
   getMarginLeft():number{

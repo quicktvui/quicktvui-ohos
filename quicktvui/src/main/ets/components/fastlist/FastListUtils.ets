@@ -13,10 +13,69 @@ import { QTLog } from '../../utils/QTLog'
 export class FastListUtils{
 
   static EVENT_CLICK = 'onItemClick'
+  static EVENT_FOCUS = 'onItemFocused'
   static EVENT_BIND = 'onBindItem'
   static EVENT_UNBIND = 'onItemRecycled'
   static EVENT_ATTACH = 'onAttachedToWindow'
   static EVENT_DETACH = 'onDetachedFromWindow'
+
+  static handleItemFocus(clickView : QTView){
+    QTLog.d(TAG_CLICK,`onFocus rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId}`)
+    let rootListId = LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId
+    if(rootListId != -1){
+      let fastItem : QTItemRootView | null = FastListUtils.findItemView(clickView)
+      let itemView :ItemView | null | undefined = fastItem?.itemView
+      if(!itemView){
+        QTLog.e(TAG_CLICK,"handleItemFocus error findItemView null ")
+        return;
+      }
+      let parentList : QTPendingListView | null = FastListUtils.findListParent(fastItem)
+      let itemPosition  = -1
+
+      if(parentList){
+        itemPosition = parentList.itemIndexOfDataList(fastItem)
+      }else{
+        QTLog.e(TAG_CLICK,`handleItemFocus error find pendingList null ,itemView parent:${itemView.renderView?.parentView}`)
+      }
+
+      if(parentList instanceof QTFastListView){
+        parentList.eventItemFocus?.(itemPosition,clickView)
+      }
+
+      let itemRaw = itemView.raw
+      let name = LayoutAttach.obtainLayoutAttach(clickView).name
+      let sid = LayoutAttach.obtainLayoutAttach(clickView).sid
+      let index = clickView.parentView?.children.indexOf(clickView)
+      if(!index && clickView instanceof QTItemRootView){
+        index = clickView.dataPosition
+      }
+      let map = new Map<string,HippyAny>()
+      let parentPosition = -1;
+      if(parentList){
+        let parentItem : QTItemRootView | null = FastListUtils.findItemView(parentList as QTView)
+        if(parentItem){
+          parentPosition = FastListUtils.findItemPosition(parentItem)
+        }else{
+          QTLog.w(TAG_CLICK,"handleItemFocus find parentItem null ")
+        }
+      }
+      //basic
+      map.set('index',index)
+      map.set('sid',sid)
+      map.set('position',itemPosition)
+      map.set('name',name)
+      if(itemRaw){
+        map.set('item',itemRaw)
+      }
+      map.set('parentPosition',parentPosition)
+      QTLog.d(TAG_CLICK,`sendd handleItemFocus data:${CommonUtils.hippyMap2String(map)} `)
+      ExtendUtil.sendUIEvent(clickView.ctx,rootListId,FastListUtils.EVENT_FOCUS,map)
+    }else{
+      QTLog.e(TAG_CLICK,`handleItemFocus error rootListId is -1 clickView:${ExtendUtil.debugView(clickView)}`)
+    }
+
+
+  }
 
   static handleItemClick(clickView :QTView){
     QTLog.d(TAG_CLICK,`onClick rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId}`)

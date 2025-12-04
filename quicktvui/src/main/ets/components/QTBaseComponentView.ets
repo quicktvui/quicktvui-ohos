@@ -35,7 +35,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   border: BorderOptions = {}   //模拟selected选中效果
   private currentStates: number[] = []
 
-  duplicateParentState: boolean = true
+  duplicateParentState: boolean = false
 
   autofocus:boolean = false;
 
@@ -60,6 +60,11 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     this.viewActor.notifyChildSizeChanged(child,changedView, width, height)
   }
 
+  /**
+   * 通知parent，子view内部请求焦点
+   * @param child
+   * @param focusedView
+   */
   notifyChildRequestFocus(child:QTView,focusedView: QTView){
     if(this.parentView instanceof QTBaseComponentView){
       this.parentView.notifyChildRequestFocus(this,focusedView)
@@ -135,8 +140,20 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   }
 
+  isFocused(){
+    return this.focus && this.cssFocusable
+  }
+
+  isSelected(){
+    return this.selected;
+  }
+
   isEventClick() : boolean{
     return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventClick
+  }
+
+  isEventFocus() : boolean{
+    return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventFocus
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
@@ -174,7 +191,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         //   return true;
       case 'duplicateParentState':
         {
-          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, false);
+          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, true);
           // this.setDuplicate();
         }
         return true
