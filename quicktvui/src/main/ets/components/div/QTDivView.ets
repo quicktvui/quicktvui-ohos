@@ -293,6 +293,9 @@ export struct QTDiv {
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
+    setTimeout(()=>{
+      console.error("ESLogModuleTAG", `QTDiv --renderView.sid is: ${this.renderView.sid} , -- renderView.eventClick is:${this.renderView.eventClick} -- ${this.renderView.isEventClick()}}` );
+    },200)
   }
 
   aboutToDisappear() {
@@ -366,7 +369,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .visibility($$.visibility)
   //div
   // .focusable($$.cssFocusable)
-  .tabStop($$.cssFocusable)
+  //.tabStop($$.cssFocusable)  设置了tabStop的容器节点获焦后 按OK键 不会触发OnClick，而是跳到容器内部寻找可获焦节点
   .border($$.focus ? $$.setBorder() : $$.border)
   .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
   .borderRadius({
