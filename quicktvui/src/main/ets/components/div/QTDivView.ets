@@ -293,9 +293,7 @@ export struct QTDiv {
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
-    setTimeout(()=>{
-      console.error("ESLogModuleTAG", `QTDiv --renderView.sid is: ${this.renderView.sid} , -- renderView.eventClick is:${this.renderView.eventClick} -- ${this.renderView.isEventClick()}}` );
-    },200)
+
   }
 
   aboutToDisappear() {
