@@ -78,7 +78,7 @@ export class HRTvImageView extends QTBaseComponentView {
   private imageLoader: HRDownloadUtils = new HRDownloadUtils
   tempDir:string = getContext().tempDir
 
-  src: string | PixelMap | Resource
+  src: string | PixelMap | Resource | null
   cssSrc: string | Resource | null = null
   cssAlt: string | Resource | null = null
   cssResizeMode: ImageFit = ImageFit.Fill
@@ -498,9 +498,12 @@ export class HRTvImageView extends QTBaseComponentView {
 
   fetchImage() {
     LogUtils.d(this.TAG, `fetchImage enter.`)
-    if (!this.cssSrc || typeof this.cssSrc !== 'string') {
+    // 1. 如果 cssSrc 为空、null 或者空字符串，说明要清空图片
+    if (!this.cssSrc || typeof this.cssSrc !== 'string' || this.cssSrc.length === 0) {
+      this.src = null // 显式地将 UI 绑定的 src 设置为空字符串，这样界面上的图片就会消失
       return
     }
+
     if (this.cssSrc.startsWith(HRTvImageView.BASE64_IMAGE_PREFIX)) {
       this.src = this.cssSrc
       return
@@ -652,27 +655,60 @@ export struct HRTvImage {
   }
 
   build() {
-    Image(this.renderView.src)
-      .applyRenderViewBaseAttr(this.renderView)
-      .alt(this.renderView.cssAlt)
-      .objectFit(this.renderView.cssResizeMode)
-      .objectRepeat(this.renderView.imageRepeat)
-      .colorFilter(this.renderView.cssColorFilter)
-      .resizable(this.renderView.resizable)
-      .draggable(this.renderView.draggable)
-      .onComplete(this.renderView.onCompleteCallback)
-      .onError(this.renderView.onErrorCallback)
-      .visibility(this.renderView.visibility)
-      .id(this.renderView.sid)
-      .key(this.renderView.name)
-      // .border(this.renderView.border)
-      .onFocus(()=>{
-        LogUtils.d(this.TAG, "onFocus，name:"+this.renderView.name);
-      })
-      .onBlur(()=>{
-        LogUtils.d(this.TAG, "onBlur，name:"+this.renderView.name);
-      })
+    if (this.renderView.src) {
+      Image(this.renderView.src)
+        .applyRenderViewBaseAttr(this.renderView)
+        .alt(this.renderView.cssAlt)
+        .objectFit(this.renderView.cssResizeMode)
+        .objectRepeat(this.renderView.imageRepeat)
+        .colorFilter(this.renderView.cssColorFilter)
+        .resizable(this.renderView.resizable)
+        .draggable(this.renderView.draggable)
+        .onComplete(this.renderView.onCompleteCallback)
+        .onError(this.renderView.onErrorCallback)
+        .visibility(this.renderView.visibility)
+        .id(this.renderView.sid)
+        .key(this.renderView.name)
+        // .border(this.renderView.border)
+        .onFocus(() => {
+          LogUtils.d(this.TAG, "onFocus，name:" + this.renderView.name);
+        })
+        .onBlur(() => {
+          LogUtils.d(this.TAG, "onBlur，name:" + this.renderView.name);
+        })
+    } else {
+      // 当没有图片时，渲染一个空的组件来占位并承载背景色/边框等样式
+      // 这样可以保证 layout 不会塌陷，背景色也能显示
+      Column().applyColumnRenderViewBaseAttr(this.renderView)
+    }
   }
+}
+
+// base props for all components
+@Extend(Column)
+function applyColumnRenderViewBaseAttr($$: HippyRenderBaseView) {
+  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+  .backgroundColor($$.cssBackgroundColor)
+  .position({x: $$.cssPositionX, y: $$.cssPositionY})
+  .size({width:$$.cssWidth, height: $$.cssHeight})
+  .opacity($$.cssOpacity)
+  .clip($$.cssOverflow)
+  .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
+  .zIndex($$.cssZIndex)
+  .accessibilityText($$.cssAccessibilityLabel)
+  // .focusable($$.cssFocusable)
+  .border($$.cssBorder)
+  .shadow($$.cssShadow)
+  .linearGradient($$.cssLinearGradient)
+  .backgroundImage($$.cssBackgroundImage)
+  .backgroundImageSize($$.cssBackgroundImageSize)
+  .backgroundImagePosition($$.cssBackgroundImagePosition)
+  .transform($$.cssMatrix)
+  .rotate($$.cssRotate)
+  .scale($$.cssScale)
+  .translate($$.cssTranslate)
+  .hitTestBehavior($$.hitTestBehavior)
+  .onClick($$.eventClick)
 }
 
 // base props for all components
