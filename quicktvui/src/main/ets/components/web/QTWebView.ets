@@ -11,10 +11,33 @@ import { webview } from '@kit.ArkWeb';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { BusinessError } from '@kit.BasicServicesKit';
 
+// 定义一个接口来描述缓存的指令结构
+interface PendingCall {
+  method: string;
+  params: Array<HippyAny>;
+  callback: HippyRenderCallback | null;
+}
+
 @Observed
 export class QTWebView extends QTBaseComponentView {
   public web: QTWeb | null = null
   public url: string | null = null;
+  // 1. 新增：用于缓存未执行指令的队列
+  private pendingCalls: Array<PendingCall> = [];
+
+  public bindComponent(web: QTWeb) {
+    this.web = web;
+    if (this.pendingCalls.length > 0) {
+      this.pendingCalls.forEach(req => {
+        this.call(req.method, req.params, req.callback);
+      });
+      this.pendingCalls = [];
+    }
+  }
+
+  public unbindComponent() {
+    this.web = null;
+  }
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -31,13 +54,18 @@ export class QTWebView extends QTBaseComponentView {
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    // if (method == "loadUrl") {
-    //   this.url = params[0] as string;
-    // }
-    if (this.web && this.web.call(method, params, callback)) {
-      return;
+    if (this.web) {
+      if (this.web.call(method, params, callback)) {
+        return;
+      }
+      super.call(method, params, callback)
+    } else {
+      this.pendingCalls.push({
+        method: method,
+        params: params,
+        callback: callback
+      });
     }
-    super.call(method, params, callback)
   }
 }
 
@@ -69,10 +97,11 @@ export struct QTWeb {
   private localHtmlUrl = "resource://rawfile/local.html"
 
   aboutToAppear() {
-    this.renderView.web = this
+    this.renderView.bindComponent(this);
   }
 
   aboutToDisappear() {
+    this.renderView.unbindComponent()
   }
 
   public call(method: string, params: Array<HippyAny>,
@@ -126,7 +155,9 @@ export struct QTWeb {
         }
         if (this.url != null) {
           try {
-            this.webviewController.loadUrl(this.url);
+            setTimeout(() => {
+              this.webviewController.loadUrl(this.url);
+            }, 0)
           } catch (error) {
             console.error(`ErrorCode: ${(error as BusinessError).code},  Message: ${(error as BusinessError).message}`);
           }
