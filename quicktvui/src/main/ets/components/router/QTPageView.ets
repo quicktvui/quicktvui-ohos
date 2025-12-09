@@ -22,6 +22,8 @@ export class QTPageView extends QTBaseComponentView {
   savedFocus :QTView | null= null;
 
   focusManager: FocusManager = new FocusManager(this)
+  uiContext : UIContext | null = null;
+  isFront : boolean = false;
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -44,8 +46,12 @@ export class QTPageView extends QTBaseComponentView {
   }
 
   dispatchKeyEvent(event: KeyEvent): boolean {
-    this.focusManager.dispatchKeyEvent(event)
-    return true;
+    if(this.isFront){
+      this.focusManager.dispatchKeyEvent(event)
+      return true;
+    }else{
+      return false;
+    }
   }
 
   saveFocus(){
@@ -60,11 +66,18 @@ export class QTPageView extends QTBaseComponentView {
   }
 
   aboutToDisappear(){
+    this.isFront = false;
     this.saveFocus()
   }
 
   aboutToAppear(){
+    this.isFront = true;
     this.restoreFocus()
+  }
+
+  setPageUIContext(uiContext : UIContext){
+    this.uiContext = uiContext;
+    this.focusManager.uiContext = uiContext;
   }
 
 }
@@ -83,6 +96,7 @@ export struct QTPage {
     // QTLog.e(TAG_FOCUS,`+++page aboutToAppear this:${ExtendUtil.debugView(this.renderView)}`)
     this.renderView.event = this
     this.renderView.aboutToAppear()
+    this.renderView.setPageUIContext(this.getUIContext())
   }
 
   aboutToDisappear() {

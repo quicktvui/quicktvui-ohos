@@ -3,6 +3,7 @@ import { TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
 import { ExtendUtil } from "./ExtendUtil";
 import { QTLog } from "./QTLog";
+import { ViewUtils } from "./ViewUtils";
 
 // Rect类实现
 class Rect {
@@ -157,10 +158,10 @@ class Rect {
 }
 
 export class FocusFinder {
-  static DIRECTION_LEFT = 0;
-  static DIRECTION_RIGHT = 1;
-  static DIRECTION_UP = 2;
-  static DIRECTION_DOWN = 3;
+  static DIRECTION_LEFT = 1;
+  static DIRECTION_RIGHT = 2;
+  static DIRECTION_UP = 3;
+  static DIRECTION_DOWN = 4;
 
   // 临时Rect对象，避免频繁创建
   private static mFocusedRect = new Rect();
@@ -168,140 +169,133 @@ export class FocusFinder {
   private static mBestCandidateRect = new Rect();
   private static mTempRect = new Rect(); // 新增的临时Rect
 
-  static findNextFocus(focusedView: QTView | null, root: QTView, direction: number): QTView | null {
+  static findNextFocus(uiContext: UIContext, focusedView: QTView | null, root: QTView, direction: number): QTView | null {
     const views: QTView[] = [];
     FocusFinder.addAllFocusable(views, root, direction);
-    QTLog.i(TAG_FOCUS,`findNextFocus search views length : ${views.length}`)
-    views.map((v)=>{
-      QTLog.d(TAG_FOCUS,`findNextFocus  view to search view:${ExtendUtil.debugView(v)}`)
-    })
+
+    QTLog.i(TAG_FOCUS, `findNextFocus search views length: ${views.length}`);
+    QTLog.i(TAG_FOCUS, `findNextFocus current focused: ${focusedView ? ExtendUtil.debugView(focusedView) : 'null'}`);
+
+    if (views.length === 0) {
+      QTLog.i(TAG_FOCUS, `findNextFocus no focusable views found`);
+      return null;
+    }
+
     // 如果有当前焦点视图，找到下一个焦点
     if (focusedView) {
       // 获取焦点视图的矩形
-      const focusedRect = FocusFinder.getViewRectInRoot(focusedView, root);
+      const focusedRect = FocusFinder.getViewRectInRoot(uiContext, focusedView, root);
+
+      // 如果当前焦点视图的矩形无效，按没有焦点处理
+      if (!focusedRect) {
+        QTLog.w(TAG_FOCUS, `Current focused view has invalid rect, treat as no focus`);
+        return FocusFinder.findFirstFocusableByDirection(uiContext, views, root, direction);
+      }
+
+      QTLog.i(TAG_FOCUS, `findNextFocus current focused rect: ${focusedRect.toString()}`);
+
       // 找到最佳候选视图
-      return FocusFinder.findBestCandidate(views, root, focusedView, focusedRect, direction);
+      const bestCandidate = FocusFinder.findBestCandidate(uiContext, views, root, focusedView, focusedRect, direction);
+      QTLog.i(TAG_FOCUS, `findNextFocus best candidate: ${bestCandidate ? ExtendUtil.debugView(bestCandidate) : 'null'}`);
+
+      return bestCandidate;
     } else {
-      // 如果没有当前焦点，根据方向返回第一个或最后一个可获取焦点的视图
-      // switch (direction) {
-      //   case FocusFinder.DIRECTION_RIGHT:
-      //   case FocusFinder.DIRECTION_DOWN:
-      //     return views[0];
-      //   case FocusFinder.DIRECTION_LEFT:
-      //   case FocusFinder.DIRECTION_UP:
-      //     return views[views.length - 1];
-      //   default:
-      //     return null;
-      // }
-      return FocusFinder.findFirstFocusableByDirection(views, root, direction);
+      // 如果没有当前焦点，根据方向找到最合适的初始焦点
+      QTLog.i(TAG_FOCUS, `findNextFocus no current focus, finding initial focus`);
+      return FocusFinder.findInitialFocus(uiContext, views, root, direction);
     }
   }
 
+  // 新增方法：找到初始焦点
+  private static findInitialFocus(uiContext: UIContext, views: QTView[], root: QTView, direction: number): QTView | null {
+    // 首先尝试找屏幕左上角附近的可获取焦点视图
+    const screenWidth = root.cssWidth;
+    const screenHeight = root.cssHeight;
+
+    let bestView: QTView | null = null;
+    let bestDistance = Number.MAX_VALUE;
+
+    for (let i = 0; i < views.length; i++) {
+      const view = views[i];
+      const viewRect = FocusFinder.getViewRectInRoot(uiContext, view, root);
+
+      if (!viewRect) {
+        continue;
+      }
+
+      // 计算到屏幕左上角的距离
+      const distance = Math.sqrt(
+        Math.pow(viewRect.left, 2) +
+        Math.pow(viewRect.top, 2)
+      );
+
+      if (bestView === null || distance < bestDistance) {
+        bestView = view;
+        bestDistance = distance;
+      }
+    }
+
+    return bestView;
+  }
+
   // 新增方法：根据方向找到位置最靠前/靠上的可获取焦点视图
-  private static findFirstFocusableByDirection(views: QTView[], root: QTView, direction: number): QTView | null {
+  private static findFirstFocusableByDirection(uiContext: UIContext, views: QTView[], root: QTView, direction: number): QTView | null {
     if (views.length === 0) {
       return null;
     }
 
-    // 获取根视图的中心点作为参考点
-    const rootCenterX = root.cssWidth / 2;
-    const rootCenterY = root.cssHeight / 2;
+    QTLog.i(TAG_FOCUS, `findFirstFocusableByDirection direction: ${direction}, views: ${views.length}`);
 
     let bestView: QTView | null = null;
-    let bestDistance = Number.MAX_VALUE;
-    let bestPrimaryAxisValue = 0;
+    let bestScore = Number.MAX_VALUE;
 
     for (let i = 0; i < views.length; i++) {
       const view = views[i];
-      const viewRect = FocusFinder.getViewRectInRoot(view, root);
+      const viewRect = FocusFinder.getViewRectInRoot(uiContext, view, root);
 
-      let candidateDistance = 0;
-      let primaryAxisValue = 0;
-      let isValidCandidate = true;
-
-      switch (direction) {
-        case FocusFinder.DIRECTION_DOWN:
-          // 对于向下，找top值最小（最靠上）的视图
-          primaryAxisValue = viewRect.top;
-          // 视图必须在参考点下方
-          if (viewRect.top < rootCenterY) {
-            isValidCandidate = false;
-            break;
-          }
-          // 计算与参考点的距离（使用加权距离）
-          candidateDistance = FocusFinder.getWeightedDistanceFor(
-            Math.abs(viewRect.top - rootCenterY),
-            Math.abs(viewRect.centerX() - rootCenterX)
-          );
-          break;
-
-        case FocusFinder.DIRECTION_UP:
-          // 对于向上，找bottom值最大（最靠下）的视图
-          primaryAxisValue = viewRect.bottom;
-          // 视图必须在参考点上方
-          if (viewRect.bottom > rootCenterY) {
-            isValidCandidate = false;
-            break;
-          }
-          // 计算与参考点的距离（使用加权距离）
-          candidateDistance = FocusFinder.getWeightedDistanceFor(
-            Math.abs(viewRect.bottom - rootCenterY),
-            Math.abs(viewRect.centerX() - rootCenterX)
-          );
-          break;
-
-        case FocusFinder.DIRECTION_RIGHT:
-          // 对于向右，找left值最小（最靠左）的视图
-          primaryAxisValue = viewRect.left;
-          // 视图必须在参考点右侧
-          if (viewRect.left < rootCenterX) {
-            isValidCandidate = false;
-            break;
-          }
-          // 计算与参考点的距离（使用加权距离）
-          candidateDistance = FocusFinder.getWeightedDistanceFor(
-            Math.abs(viewRect.left - rootCenterX),
-            Math.abs(viewRect.centerY() - rootCenterY)
-          );
-          break;
-
-        case FocusFinder.DIRECTION_LEFT:
-          // 对于向左，找right值最大（最靠右）的视图
-          primaryAxisValue = viewRect.right;
-          // 视图必须在参考点左侧
-          if (viewRect.right > rootCenterX) {
-            isValidCandidate = false;
-            break;
-          }
-          // 计算与参考点的距离（使用加权距离）
-          candidateDistance = FocusFinder.getWeightedDistanceFor(
-            Math.abs(viewRect.right - rootCenterX),
-            Math.abs(viewRect.centerY() - rootCenterY)
-          );
-          break;
-      }
-
-      if (!isValidCandidate) {
+      // 跳过无效矩形
+      if (!viewRect) {
         continue;
       }
 
-      // 选择最佳视图：优先选择在方向上最靠近参考点的，如果距离相同选择主轴值更优的
-      if (bestView === null ||
-        candidateDistance < bestDistance ||
-        (candidateDistance === bestDistance && FocusFinder.isBetterPrimaryAxisValue(direction, primaryAxisValue, bestPrimaryAxisValue))) {
+      let score = 0;
+
+      // 根据方向计算得分，得分越小越好
+      switch (direction) {
+        case FocusFinder.DIRECTION_DOWN:
+          // 对于向下，优先选择top最小的（最靠上），其次left最小的（最靠左）
+          score = viewRect.top * 1000 + viewRect.left;
+          QTLog.d(TAG_FOCUS, `findFirstFocusableByDirection DOWN candidate: ${ExtendUtil.debugView(view)}, top: ${viewRect.top}, left: ${viewRect.left}, score: ${score}`);
+          break;
+
+        case FocusFinder.DIRECTION_UP:
+          // 对于向上，优先选择bottom最大的（最靠下），其次left最小的
+          score = (10000 - viewRect.bottom) * 1000 + viewRect.left;
+          QTLog.d(TAG_FOCUS, `findFirstFocusableByDirection UP candidate: ${ExtendUtil.debugView(view)}, bottom: ${viewRect.bottom}, left: ${viewRect.left}, score: ${score}`);
+          break;
+
+        case FocusFinder.DIRECTION_RIGHT:
+          // 对于向右，优先选择left最小的（最靠左），其次top最小的
+          score = viewRect.left * 1000 + viewRect.top;
+          QTLog.d(TAG_FOCUS, `findFirstFocusableByDirection RIGHT candidate: ${ExtendUtil.debugView(view)}, left: ${viewRect.left}, top: ${viewRect.top}, score: ${score}`);
+          break;
+
+        case FocusFinder.DIRECTION_LEFT:
+          // 对于向左，优先选择right最大的（最靠右），其次top最小的
+          score = (10000 - viewRect.right) * 1000 + viewRect.top;
+          QTLog.d(TAG_FOCUS, `findFirstFocusableByDirection LEFT candidate: ${ExtendUtil.debugView(view)}, right: ${viewRect.right}, top: ${viewRect.top}, score: ${score}`);
+          break;
+      }
+
+      // 选择得分最小的视图
+      if (bestView === null || score < bestScore) {
         bestView = view;
-        bestDistance = candidateDistance;
-        bestPrimaryAxisValue = primaryAxisValue;
+        bestScore = score;
+        QTLog.d(TAG_FOCUS, `findFirstFocusableByDirection new best: ${ExtendUtil.debugView(view)}, score: ${score}`);
       }
     }
 
-
-    // 如果没有找到符合方向条件的视图，返回最近的一个
-    if (bestView === null && views.length > 0) {
-      // 简单返回第一个视图
-      return views[0];
-    }
-
+    QTLog.i(TAG_FOCUS, `findFirstFocusableByDirection final best: ${bestView ? ExtendUtil.debugView(bestView) : 'null'}, score: ${bestScore}`);
     return bestView;
   }
 
@@ -339,15 +333,48 @@ export class FocusFinder {
     }
   }
 
-  private static getViewRectInRoot(view: QTView, root: QTView): Rect {
-    const rect = new Rect();
-    rect.left = view.cssPositionX;
-    rect.top = view.cssPositionY;
-    rect.right = rect.left + view.cssWidth;
-    rect.bottom = rect.top + view.cssHeight;
+  private static getViewRectInRoot(uiContext: UIContext, view: QTView, root: QTView): Rect | null {
+    try {
+      let uid = ViewUtils.getViewUid(view);
+      // 检查uid是否有效
+      if (!uid) {
+        QTLog.w(TAG_FOCUS, `getViewRectInRoot view has no uid: ${ExtendUtil.debugView(view)}`);
+        return null;
+      }
 
-    // 转换坐标到根视图坐标系
-    return FocusFinder.offsetRectToRootCoords(view, root, rect);
+      let c = uiContext.getComponentUtils().getRectangleById(uid);
+
+      // 检查c是否有效
+      if (!c) {
+        QTLog.w(TAG_FOCUS, `getViewRectInRoot getRectangleById returned null for uid: ${uid}`);
+        return null;
+      }
+
+      // 检查视图的宽度和高度是否为0（或接近0）
+      if (!c.size || c.size.width <= 0.1 || c.size.height <= 0.1) {
+        QTLog.i(TAG_FOCUS, `getViewRectInRoot view has zero/small size, skip: ${ExtendUtil.debugView(view)} size:${c.size?.width}x${c.size?.height}`);
+        return null;
+      }
+
+      // 检查windowOffset是否有效
+      if (!c.windowOffset) {
+        QTLog.w(TAG_FOCUS, `getViewRectInRoot no windowOffset for uid: ${uid}`);
+        return null;
+      }
+
+      const rect = new Rect();
+      rect.left = c.windowOffset.x;
+      rect.top = c.windowOffset.y;
+      rect.right = rect.left + c.size.width;
+      rect.bottom = rect.top + c.size.height;
+
+      QTLog.i(TAG_FOCUS, `getViewRectInRoot view:${ExtendUtil.debugView(view)} rect: ${rect.toString()} uid:${uid}`);
+
+      return rect;
+    } catch (e) {
+      QTLog.e(TAG_FOCUS, `getViewRectInRoot error: ${e}`);
+      return null;
+    }
   }
 
   private static offsetRectToRootCoords(view: QTView, root: QTView, rect: Rect): Rect {
@@ -372,6 +399,7 @@ export class FocusFinder {
   }
 
   private static findBestCandidate(
+    uiContext: UIContext,
     focusables: QTView[],
     root: QTView,
     focused: QTView,
@@ -381,40 +409,57 @@ export class FocusFinder {
     let bestCandidate: QTView | null = null;
     FocusFinder.mBestCandidateRect.setFrom(focusedRect);
 
+    QTLog.i(TAG_FOCUS, `findBestCandidate start, focusedRect: ${focusedRect.toString()}, direction: ${direction}, candidates: ${focusables.length}`);
+
     // 初始化最佳候选矩形为不可能的位置（在相反方向）
     switch (direction) {
-      case FocusFinder.DIRECTION_LEFT:
-        FocusFinder.mBestCandidateRect.offset(focusedRect.width + 1, 0);
-        break;
-      case FocusFinder.DIRECTION_RIGHT:
-        FocusFinder.mBestCandidateRect.offset(-(focusedRect.width + 1), 0);
+      case FocusFinder.DIRECTION_DOWN:
+        // 对于向下，初始化为当前焦点上方很远的位置
+        FocusFinder.mBestCandidateRect.offset(0, -(focusedRect.height + 1000));
         break;
       case FocusFinder.DIRECTION_UP:
-        FocusFinder.mBestCandidateRect.offset(0, focusedRect.height + 1);
+        // 对于向上，初始化为当前焦点下方很远的位置
+        FocusFinder.mBestCandidateRect.offset(0, focusedRect.height + 1000);
         break;
-      case FocusFinder.DIRECTION_DOWN:
-        FocusFinder.mBestCandidateRect.offset(0, -(focusedRect.height + 1));
+      case FocusFinder.DIRECTION_RIGHT:
+        // 对于向右，初始化为当前焦点左侧很远的位置
+        FocusFinder.mBestCandidateRect.offset(-(focusedRect.width + 1000), 0);
+        break;
+      case FocusFinder.DIRECTION_LEFT:
+        // 对于向左，初始化为当前焦点右侧很远的位置
+        FocusFinder.mBestCandidateRect.offset(focusedRect.width + 1000, 0);
         break;
     }
+
+    QTLog.i(TAG_FOCUS, `findBestCandidate initial bestRect: ${FocusFinder.mBestCandidateRect.toString()}`);
 
     for (let i = 0; i < focusables.length; i++) {
       const candidate = focusables[i];
 
       // 跳过当前焦点视图和根视图
       if (candidate === focused || candidate === root) {
+        QTLog.d(TAG_FOCUS, `findBestCandidate skip self or root: ${ExtendUtil.debugView(candidate)}`);
         continue;
       }
 
-      // 获取候选视图的矩形
-      FocusFinder.mOtherRect = FocusFinder.getViewRectInRoot(candidate, root);
+      // 获取候选视图的矩形（可能返回null）
+      const candidateRect = FocusFinder.getViewRectInRoot(uiContext, candidate, root);
+      if (!candidateRect) {
+        QTLog.d(TAG_FOCUS, `findBestCandidate skip invalid rect: ${ExtendUtil.debugView(candidate)}`);
+        continue;
+      }
+
+      QTLog.d(TAG_FOCUS, `findBestCandidate candidate ${i}: ${ExtendUtil.debugView(candidate)}, rect: ${candidateRect.toString()}`);
 
       // 检查是否更好的候选者
-      if (FocusFinder.isBetterCandidate(direction, focusedRect, FocusFinder.mOtherRect, FocusFinder.mBestCandidateRect)) {
-        FocusFinder.mBestCandidateRect.setFrom(FocusFinder.mOtherRect);
+      if (FocusFinder.isBetterCandidate(direction, focusedRect, candidateRect, FocusFinder.mBestCandidateRect)) {
+        QTLog.i(TAG_FOCUS, `findBestCandidate found better candidate: ${ExtendUtil.debugView(candidate)}`);
+        FocusFinder.mBestCandidateRect.setFrom(candidateRect);
         bestCandidate = candidate;
       }
     }
 
+    QTLog.i(TAG_FOCUS, `findBestCandidate final best: ${bestCandidate ? ExtendUtil.debugView(bestCandidate) : 'null'}`);
     return bestCandidate;
   }
 

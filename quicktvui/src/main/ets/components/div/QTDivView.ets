@@ -232,7 +232,7 @@ export class QTDivView extends HRTvDivView {
   }
 
   handleFocus(isFocused: boolean): void {
-    QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
+    // QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
     if(this.parentView instanceof QTBaseComponentView){
       if(this.cssFocusable){
         this.parentView.notifyChildRequestFocus(this,this)
@@ -264,7 +264,7 @@ export class QTDivView extends HRTvDivView {
 
 
   handleBlur(isFocused: boolean): void {
-    QTLog.i(TAG_FOCUS,`---handle blur this:${ExtendUtil.debugView(this)}`)
+    // QTLog.i(TAG_FOCUS,`---handle blur this:${ExtendUtil.debugView(this)}`)
     if(this.cssFocusable){
       this.onFocusChanged(false)
     }
@@ -310,9 +310,9 @@ export struct QTDiv {
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
-    setInterval(()=>{
-      QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this.renderView)} `)
-    },5000)
+    // setInterval(()=>{
+    //   QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this.renderView)} `)
+    // },5000)
   }
 
   aboutToDisappear() {

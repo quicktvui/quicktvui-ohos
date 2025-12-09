@@ -12,7 +12,6 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 @Observed
 export class QTPageRouterView extends QTBaseComponentView {
   public event: QTPageRouter | null = null
-
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }

@@ -1,4 +1,4 @@
-import { TAG_FASTLIST, TAG_FOCUS } from "../Constant";
+import { TAG_CLICK, TAG_FASTLIST, TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
 import { ExtendUtil } from "../utils/ExtendUtil";
 import { FocusFinder } from "../utils/FocusFinder";
@@ -11,6 +11,8 @@ export class FocusManager{
 
   rootView : QTView
   private focusedView : QTView | null = null;
+  uiContext: UIContext | null = null;
+
   constructor(rootView: QTView) {
     this.rootView = rootView;
   }
@@ -30,16 +32,32 @@ export class FocusManager{
   }
 
   dispatchKeyEvent(event: KeyEvent) : boolean{
+    if(!this.uiContext){
+      QTLog.e(TAG_FOCUS,`dispatchKeyEvent error uiContext null`)
+      return false;
+    }
     if(event.type == KeyType.Down){
       let direction = FocusManager.getDirectionByKeyCode(event.keyCode)
       if(direction > 0){
-        let nextFocus = FocusFinder.findNextFocus(this.focusedView,this.rootView,direction)
+        let nextFocus = FocusFinder.findNextFocus(this.uiContext,this.focusedView,this.rootView,direction)
+        QTLog.i(TAG_FOCUS,`dispatchKeyEvent curentFocus:${ExtendUtil.debugView(this.focusedView)} ,find nextFocus :${ExtendUtil.debugView(nextFocus)}`)
         if(nextFocus){
           FocusUtils.requestFocus(nextFocus)
           this.focusedView = nextFocus;
         }
-        QTLog.i(TAG_FOCUS,`dispatchKeyEvent find nextFocus :${ExtendUtil.debugView(nextFocus)}`)
         return true;
+      }else{
+
+        switch (event.keyCode){
+          case KeyCode.KEYCODE_DPAD_CENTER:
+          case KeyCode.KEYCODE_ENTER:
+          case KeyCode.KEYCODE_NUMPAD_ENTER:
+            // this.focusedView?.eventClick?.()
+            //TODO 点击事件
+            QTLog.d(TAG_CLICK,`dispatchKeyEvent enter click focusedView :${ExtendUtil.debugView(this.focusedView)}`)
+            return true;
+        }
+        QTLog.e(TAG_FOCUS,`dispatchKeyEvent skip key :${event.keyCode}`)
       }
     }
     return false;

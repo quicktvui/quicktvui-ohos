@@ -84,12 +84,12 @@ function applyRenderViewBaseAttr($$: QTDivView) {
     bottomLeft: $$.borderBottomLeftRadius,
     bottomRight: $$.borderBottomRightRadius,
   })
-  .onFocus(() => {
-    $$.focus = true
-    $$.handleFocus($$.focus)
-  })
-  .onBlur(() => {
-    $$.focus = false
-    $$.handleBlur($$.focus)
-  })
+  // .onFocus(() => {
+  //   $$.focus = true
+  //   $$.handleFocus($$.focus)
+  // })
+  // .onBlur(() => {
+  //   $$.focus = false
+  //   $$.handleBlur($$.focus)
+  // })
 }

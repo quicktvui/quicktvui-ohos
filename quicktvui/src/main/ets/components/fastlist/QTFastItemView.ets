@@ -32,6 +32,22 @@ export class QTFastItemView extends QTRenderBaseView{
     return this.children[0].cssHeight
   }
 
+  addFocusables(views: QTView[], direction: number): boolean {
+    if(!super.addFocusables(views,direction)){
+      //证明自身是不可获焦的
+      if (this.children && this.children.length > 0) {
+        this.children.forEach((child: QTView) => {
+          if(child instanceof QTBaseComponentView){
+            child.addFocusables(views,direction)
+          }else if (child.cssFocusable === true) {
+            views.push(child);
+          }
+        });
+      }
+    }
+    return true;
+  }
+
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey) {

@@ -124,7 +124,10 @@ export class TemplateViewManager{
     if(!rv){
       return null;
     }
-    VirtualViewRegistry.getInstance().registerView(rv)
+    let uid = VirtualViewRegistry.getInstance().registerView(rv)
+     if(rv instanceof QTBaseComponentView){
+       rv.uid = uid;
+     }
     this.applyInit(rv,template,templateProps,index)
     let style = new Map<String,HippyAny>()
     // toUpdate.forEach((value,key)=>{
