@@ -116,6 +116,23 @@ export class QTDivView extends HRTvDivView {
     })
   }
 
+
+  addFocusables(views: QTView[], direction: number): boolean {
+    if(!super.addFocusables(views,direction)){
+      //证明自身是不可获焦的
+      if (this.children && this.children.length > 0) {
+        this.children.forEach((child: QTView) => {
+          if(child instanceof QTBaseComponentView){
+            child.addFocusables(views,direction)
+          }else if (child.cssFocusable === true) {
+            views.push(child);
+          }
+        });
+      }
+    }
+    return true;
+  }
+
   requestFocus(){
     QTLog.e(TAG_FOCUS,`requestFocus focusable:${this.cssFocusable} ,this :`+ExtendUtil.debugView(this))
     focusControl.requestFocus(ViewUtils.getViewUid(this));

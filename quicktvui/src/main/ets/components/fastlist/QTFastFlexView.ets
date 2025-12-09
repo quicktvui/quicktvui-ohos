@@ -12,6 +12,7 @@ import { TAG_FASTLIST } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
 import { QTLog } from '../../utils/QTLog';
+import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { FastListDataSource } from './FastListDataSource';
 import { ItemView, renderItem } from './ItemView';
@@ -105,6 +106,19 @@ export class QTFastFlexView extends QTRenderBaseView {
       }
     }
     return 'view-'+index
+  }
+
+  addFocusables(views: QTView[], direction: number): boolean {
+    if (this.virtualChildren && this.virtualChildren.length > 0) {
+      this.virtualChildren.forEach((child: QTView) => {
+        if(child instanceof QTBaseComponentView){
+          child.addFocusables(views,direction)
+        }else if (child.cssFocusable === true) {
+          views.push(child);
+        }
+      });
+    }
+    return true;
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {

@@ -1,13 +1,14 @@
 import { QTAny, QTBaseView, QTView } from "../QTTypes"
-import { QTPixelUtil } from "../utils/QTPixelUtil"
 import { LayoutAttach } from "./fastlist/LayoutAttach"
 import {HippyRenderBaseView} from 'hippy'
-import { TAG_LAYOUT, TAG_QUICKTVUI } from "../Constant"
+import { TAG_FASTLIST, TAG_FOCUS, TAG_LAYOUT, TAG_QUICKTVUI } from "../Constant"
 import { QTAttach } from "./QTAttach"
 import { ExtendUtil } from "../utils/ExtendUtil"
 import { QTLog } from "../utils/QTLog"
+import { ViewUtils } from "../utils/ViewUtils"
 
 export class QTViewActor{
+
   constructor(hostView: HippyRenderBaseView) {
     this.hostView = hostView
   }
@@ -51,7 +52,16 @@ export class QTViewActor{
 
   }
 
-
+  addFocusables(views: QTView[],direction:number) : boolean{
+    //FocusUtils.requestFocus(this.hostView)
+    let view = this.hostView
+    let canTakeFocus = view.cssFocusable
+    if(canTakeFocus){
+      views.push(this.hostView)
+      return true;
+    }
+    return false;
+  }
 
 
 

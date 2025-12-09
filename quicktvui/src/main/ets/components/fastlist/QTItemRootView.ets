@@ -90,6 +90,22 @@ export class QTItemRootView extends QTRenderBaseView{
     this.updateDirty = false;
   }
 
+  addFocusables(views: QTView[], direction: number): boolean {
+    if(!super.addFocusables(views,direction)){
+      //证明自身是不可获焦的
+      if (this.children && this.children.length > 0) {
+        this.children.forEach((child: QTView) => {
+          if(child instanceof QTBaseComponentView){
+            child.addFocusables(views,direction)
+          }else if (child.cssFocusable === true) {
+            views.push(child);
+          }
+        });
+      }
+    }
+    return true;
+  }
+
 
   notifyChildSizeChanged(child: QTView, changedView: QTView, width: number, height: number): void {
     //主里直接阻断向上，只处理一层

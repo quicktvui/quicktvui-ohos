@@ -12,13 +12,16 @@ import { QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { FocusUtils } from '../../utils/FocusUtils';
 import { QTLog } from '../../utils/QTLog';
+import { FocusManager } from '../FocusManager';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 
 @Observed
 export class QTPageView extends QTBaseComponentView {
   public event: QTPage | null = null
-  focusedView : QTView | null = null;
+
   savedFocus :QTView | null= null;
+
+  focusManager: FocusManager = new FocusManager(this)
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -36,12 +39,17 @@ export class QTPageView extends QTBaseComponentView {
   }
 
   notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
-    this.focusedView = focusedView;
+    this.focusManager.setFocusedView(focusedView)
     QTLog.e(TAG_FOCUS,`QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
   }
 
+  dispatchKeyEvent(event: KeyEvent): boolean {
+    this.focusManager.dispatchKeyEvent(event)
+    return true;
+  }
+
   saveFocus(){
-    this.savedFocus = this.focusedView;
+    this.savedFocus = this.focusManager.getFocusedView();
   }
 
   restoreFocus(){

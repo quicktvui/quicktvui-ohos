@@ -36,17 +36,6 @@ export class QTTextView extends QTRenderBaseView{
     super(ctx)
   }
 
-  private showOnState() {
-    if (this.showonstate.includes('normal') ) {
-      this.visibility = Visibility.Visible
-    }else if (this.showonstate.includes('selected') ) {
-      //选中显示，未选中隐藏
-      this.visibility = Visibility[this.selected?'Visible':'Hidden']
-    } else if (this.showonstate.includes('focused')) {
-      //聚焦显示，失焦隐藏
-      this.visibility = Visibility[this.focus?'Visible':'Hidden']
-    }
-  }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey){
@@ -79,7 +68,7 @@ export class QTTextView extends QTRenderBaseView{
         ViewUtils.configGravity(HRValueUtils.getString(propValue),this)
         return true;
       case "fontSize":
-        this.fontSize = QTPixelUtil.dev2Vp(HRValueUtils.getNumber(propValue));
+        this.fontSize = HRValueUtils.getNumber(propValue);
         return true;
       case "paddingRect":
         let padding = propValue as HippyArray
@@ -122,9 +111,9 @@ export class QTTextView extends QTRenderBaseView{
       case "gradientBackground":
 
         return true;
-      case "select":
-
-        return true;
+      // case "select":
+      //
+      //   return true;
       case "text":
         QTLog.d(TAG_REUSE,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
         this.text = HRValueUtils.getString(propValue)
@@ -138,7 +127,7 @@ export class QTTextView extends QTRenderBaseView{
     if(callback){
       switch (method){
         case 'getText':
-
+          callback(this.text)
           break;
       }
     }else{
