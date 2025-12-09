@@ -18,7 +18,7 @@ import {
 } from 'hippy'
 
 import { RuntimeAPIProvider } from '../api/RuntimeAPIProvider'
-import { QTAPIProvider } from 'quicktvui';
+import { FocusManager, QTAPIProvider } from 'quicktvui';
 import {
   buildCustomRenderView,
 } from 'quicktvui';
@@ -30,6 +30,8 @@ import { connection } from '@kit.NetworkKit';
 import { preferences } from '@kit.ArkData';
 import { BusinessError, commonEventManager, deviceInfo } from '@kit.BasicServicesKit';
 import { QTNativeLayout } from 'libquicktvui.so';
+import { QTLog } from 'quicktvui/src/main/ets/utils/QTLog';
+import { TAG_FOCUS } from 'quicktvui/src/main/ets/Constant';
 
 @Builder
 export function PageDebugBuilder(name: string, param: Object) {
@@ -50,7 +52,7 @@ struct Debug {
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
   private debugMode: boolean = true
-  @State debugServerHost: string = '192.168.40.89' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.80.76' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
@@ -78,6 +80,7 @@ struct Debug {
   private rootViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State isEngineInitialized: boolean = false
   @Provide('autoSize') autoSize?: number[] = []
+
 
   async aboutToAppear() {
     LogUtils.e(this.TAG, 'Lifecycle: aboutToAppear');
@@ -499,10 +502,14 @@ struct Debug {
         return false
       }
     })
-    .onKeyEvent((event) => {
-      this.hippyEngine?.onKeyEvent(event)
-      console.log('========onKeyEvent=========>>>' + event.type + " ====>>>> " + event.keyCode);
-    })
+    //这里注释掉，自己实现的焦点系统就作废了
+    // .onKeyEventDispatch((event)=>{
+    //   QTLog.i (TAG_FOCUS, '========onKeyEventDispatch=========>>>' + event.type + " ====>>>> " + event.keyCode);
+    //   if(this.rootViewWrapper.getRootView()){
+    //     return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!,event)
+    //   }
+    //   return false;
+    // })
   }
 }
 

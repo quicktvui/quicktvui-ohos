@@ -1,7 +1,7 @@
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
 import { InnerViewPagerView, QTBaseComponentView, QTFastList,QTFastListView } from '../../../../../Index';
-import { TAG_FASTLIST, TAG_TABS } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
@@ -204,6 +204,13 @@ export class QTTabsView extends QTRenderBaseView{
     // this.tabsData.forEach((value)=>{
     //   value.contentView?.setcus
     // })
+  }
+
+  addFocusables(views: QTView[], direction: number): boolean {
+    let pd = this.getTabData(this.currentIndex)
+    // QTLog.d(TAG_FOCUS,`Tabs addFocusables currentContent:${ExtendUtil.debugView(pd!!.contentView)}`)
+    return pd?.contentView?.addFocusables(views,direction) ? true : false;
+    return true;
   }
 
   addSubRenderView(subView: HippyRenderBaseView, index: number): void {

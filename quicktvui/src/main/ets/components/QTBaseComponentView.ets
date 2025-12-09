@@ -10,7 +10,6 @@ import { HRValueUtils } from '../HRValueUtils';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
 import { QTLog } from '../utils/QTLog';
-import { ViewUtils } from '../utils/ViewUtils';
 import { LayoutAttach } from './fastlist/LayoutAttach';
 import { QTActorHost } from './QTActorHost';
 import { QTViewActor } from './QTViewActor';
@@ -154,6 +153,15 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   isEventFocus() : boolean{
     return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventFocus
+  }
+
+  addFocusables(views: QTView[],direction:number) : boolean{
+    return this.viewActor.addFocusables(views,direction)
+  }
+
+  dispatchKeyEvent(event: KeyEvent): boolean {
+   // QTLog.i(TAG_FOCUS,`dispatchKeyEvent :${event.keyText} code:${event.keyCode} this:${ExtendUtil.debugView(this)}`)
+    return false;
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {

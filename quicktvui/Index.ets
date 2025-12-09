@@ -46,3 +46,4 @@ export { QTTabsView, QTTabs } from './src/main/ets/components/tabs/QTTabsView'
 export { InnerViewPagerView, InnerViewPager } from './src/main/ets/components/tabs/InnerViewPagerView'
 
 export { QTPlayMarkView, QTPlayMark } from './src/main/ets/components/play-mark/QTPlayMarkView'
+export { FocusManager } from './src/main/ets/components/FocusManager'
