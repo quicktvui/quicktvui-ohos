@@ -310,7 +310,9 @@ export struct QTDiv {
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
-
+    setInterval(()=>{
+      QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this.renderView)} `)
+    },5000)
   }
 
   aboutToDisappear() {
@@ -322,7 +324,6 @@ export struct QTDiv {
   build() {
     if(this.shouldAddGesture() || this.renderView.isEventClick()){
         Stack() {
-
           ForEach(this.children, (item: QTView) => {
             buildHippyRenderView(item, null)
           }, (item: QTView) => item.tag + '')
@@ -335,6 +336,14 @@ export struct QTDiv {
         // .attributeModifier(this.visibilityModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
+        .onFocus(() => {
+          this.renderView.focus = true
+          this.renderView.handleFocus(this.renderView.focus)
+        })
+        .onBlur(() => {
+          this.renderView.focus = false
+          this.renderView.handleBlur(this.renderView.focus)
+        })
         .onClick((event=>{
           ViewUtils.handleClickEvent(event,this.renderView)
         }))
@@ -393,14 +402,14 @@ function applyRenderViewBaseAttr($$: QTDivView) {
     bottomLeft: $$.borderBottomLeftRadius,
     bottomRight: $$.borderBottomRightRadius,
   })
-  .onFocus(() => {
-    $$.focus = true
-    $$.handleFocus($$.focus)
-  })
-  .onBlur(() => {
-    $$.focus = false
-    $$.handleBlur($$.focus)
-  })
+  // .onFocus(() => {
+  //   $$.focus = true
+  //   $$.handleFocus($$.focus)
+  // })
+  // .onBlur(() => {
+  //   $$.focus = false
+  //   $$.handleBlur($$.focus)
+  // })
 }
 
 @Extend(Stack)
