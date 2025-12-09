@@ -8,6 +8,7 @@ import {
   buildHippyRenderView
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { QTPageView } from './QTPageView';
 
 @Observed
 export class QTPageRouterView extends QTBaseComponentView {
@@ -46,10 +47,44 @@ export struct QTPageRouter {
     this.renderView.event = null
   }
 
+  /**
+   * 核心逻辑：获取当前应该显示的 Children 列表
+   * 从后往前找，找到第一个非 Dialog 的页面，将其以及它上面的所有页面返回
+   */
+  private getVisibleChildren(): Array<HippyRenderBaseView> {
+    if (!this.children || this.children.length === 0) {
+      return [];
+    }
+
+    let visibleStartIndex = 0;
+    const count = this.children.length;
+
+    // 倒序寻找基座（第一个非 Dialog 的页面）
+    for (let i = count - 1; i >= 0; i--) {
+      const item = this.children[i];
+      // 安全获取 isDialogMode 属性
+      let isDialog = false;
+      if (item instanceof QTPageView) {
+        isDialog = item.isDialogMode;
+      } else {
+        // 处理非 TS 类型安全的情况，或者 item 不是 QTPageView 的情况
+        isDialog = (item as QTPageView).isDialogMode === true;
+      }
+
+      if (!isDialog) {
+        visibleStartIndex = i;
+        break; // 找到了底座，停止
+      }
+    }
+
+    // 利用 slice 返回一个新的子数组（浅拷贝，item引用不变，不会影响 key 的生成）
+    // 注意：如果 HippyObservedArray 不支持 slice，可能需要用 Array.from(this.children).slice(...)
+    return this.children.slice(visibleStartIndex);
+  }
+
   build(): void {
     Stack() {
-      // ForEach(this.children, (item: HippyRenderBaseView) => {
-      ForEach([this.children[this.children.length - 1]], (item: HippyRenderBaseView) => {
+      ForEach(this.getVisibleChildren(), (item: HippyRenderBaseView) => {
         buildHippyRenderView(item, null)
       }, (item: HippyRenderBaseView) => item ? item.tag + '' : '')
       ContentSlot(this.renderView.childSlot)

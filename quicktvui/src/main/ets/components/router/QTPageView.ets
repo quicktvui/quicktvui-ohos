@@ -18,10 +18,10 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 @Observed
 export class QTPageView extends QTBaseComponentView {
   public event: QTPage | null = null
+  public savedFocus: QTView | null = null;
+  public focusManager: FocusManager = new FocusManager(this)
+  public isDialogMode: boolean = false
 
-  savedFocus :QTView | null= null;
-
-  focusManager: FocusManager = new FocusManager(this)
   uiContext : UIContext | null = null;
   isFront : boolean = false;
 
@@ -30,6 +30,12 @@ export class QTPageView extends QTBaseComponentView {
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
+    switch (propKey) {
+      case 'isDialogMode': {
+        this.isDialogMode = propValue as boolean;
+        return true;
+      }
+    }
     return super.setProp(propKey, propValue)
   }
 
@@ -42,7 +48,7 @@ export class QTPageView extends QTBaseComponentView {
 
   notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
     this.focusManager.setFocusedView(focusedView)
-    QTLog.e(TAG_FOCUS,`QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
+    QTLog.e(TAG_FOCUS, `QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
   }
 
   dispatchKeyEvent(event: KeyEvent): boolean {
@@ -54,13 +60,13 @@ export class QTPageView extends QTBaseComponentView {
     }
   }
 
-  saveFocus(){
+  saveFocus() {
     this.savedFocus = this.focusManager.getFocusedView();
   }
 
-  restoreFocus(){
-    if(this.savedFocus != null){
-     FocusUtils.requestFocus(this.savedFocus)
+  restoreFocus() {
+    if (this.savedFocus != null) {
+      FocusUtils.requestFocus(this.savedFocus)
       this.savedFocus = null;
     }
   }
