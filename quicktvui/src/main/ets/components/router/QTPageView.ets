@@ -17,14 +17,21 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 @Observed
 export class QTPageView extends QTBaseComponentView {
   public event: QTPage | null = null
-  focusedView : QTView | null = null;
-  savedFocus :QTView | null= null;
+  public focusedView: QTView | null = null;
+  public savedFocus: QTView | null = null;
+  public isDialogMode: boolean = false
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
+    switch (propKey) {
+      case 'isDialogMode': {
+        this.isDialogMode = propValue as boolean;
+        return true;
+      }
+    }
     return super.setProp(propKey, propValue)
   }
 
@@ -37,28 +44,27 @@ export class QTPageView extends QTBaseComponentView {
 
   notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
     this.focusedView = focusedView;
-    QTLog.e(TAG_FOCUS,`QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
+    QTLog.e(TAG_FOCUS, `QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
   }
 
-  saveFocus(){
+  saveFocus() {
     this.savedFocus = this.focusedView;
   }
 
-  restoreFocus(){
-    if(this.savedFocus != null){
-     FocusUtils.requestFocus(this.savedFocus)
+  restoreFocus() {
+    if (this.savedFocus != null) {
+      FocusUtils.requestFocus(this.savedFocus)
       this.savedFocus = null;
     }
   }
 
-  aboutToDisappear(){
+  aboutToDisappear() {
     this.saveFocus()
   }
 
-  aboutToAppear(){
+  aboutToAppear() {
     this.restoreFocus()
   }
-
 }
 
 @Component
