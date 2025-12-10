@@ -15,4 +15,13 @@ export class FocusUtils{
           QTLog.e(TAG_FOCUS,`requestFocus fail uid is null view :${ExtendUtil.debugView(view)}`)
         }
       }
+
+  static requestFocusById(uid : string | null){
+    if(uid){
+      QTLog.e(TAG_FOCUS,`exe requestFocus view :${uid}`)
+      focusControl.requestFocus(uid)
+    }else{
+      QTLog.e(TAG_FOCUS,`requestFocus fail uid is null view :${uid}`)
+    }
+  }
 }

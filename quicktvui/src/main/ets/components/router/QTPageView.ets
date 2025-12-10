@@ -14,11 +14,14 @@ import { FocusUtils } from '../../utils/FocusUtils';
 import { QTLog } from '../../utils/QTLog';
 import { FocusManager } from '../FocusManager';
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TVView } from '../TVView';
+import { IPage } from './IPage';
+import { PageManager } from './PageManager';
 
 @Observed
-export class QTPageView extends QTBaseComponentView {
+export class QTPageView extends QTBaseComponentView implements IPage {
   public event: QTPage | null = null
-  public savedFocus: QTView | null = null;
+  public savedFocus: TVView | null = null;
   public focusManager: FocusManager = new FocusManager(this)
   public isDialogMode: boolean = false
 
@@ -46,19 +49,21 @@ export class QTPageView extends QTBaseComponentView {
     super.call(method, params, callback)
   }
 
-  notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
+  notifyChildRequestFocus(child: QTView, focusedView: TVView): void {
     this.focusManager.setFocusedView(focusedView)
-    QTLog.e(TAG_FOCUS, `QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
+    QTLog.e(TAG_FOCUS, `QTPageView requestChildFocus focusedView:${focusedView?.uid}`)
   }
 
   dispatchKeyEvent(event: KeyEvent): boolean {
+
     if(this.isFront){
-      this.focusManager.dispatchKeyEvent(event)
-      return true;
+      return this.focusManager.dispatchKeyEvent(event)
     }else{
       return false;
     }
   }
+
+
 
   saveFocus() {
     this.savedFocus = this.focusManager.getFocusedView();
@@ -66,7 +71,7 @@ export class QTPageView extends QTBaseComponentView {
 
   restoreFocus() {
     if (this.savedFocus != null) {
-      FocusUtils.requestFocus(this.savedFocus)
+      FocusUtils.requestFocusById(this.savedFocus.uid)
       this.savedFocus = null;
     }
   }
@@ -74,10 +79,15 @@ export class QTPageView extends QTBaseComponentView {
   aboutToDisappear(){
     this.isFront = false;
     this.saveFocus()
+    setTimeout(()=>{
+      PageManager.unregisterPage(this.uid)
+    },100)
   }
 
   aboutToAppear(){
     this.isFront = true;
+    this.uid = `page-${this.tag}`
+    PageManager.registerPage(this.uid,this)
     this.restoreFocus()
   }
 
@@ -137,6 +147,7 @@ function applyRenderViewBaseAttr($$: QTPageView) {
   .accessibilityText($$.cssAccessibilityLabel)
   // .focusable($$.cssFocusable)
   .border($$.cssBorder)
+  .id(`page-${$$.tag}`)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)

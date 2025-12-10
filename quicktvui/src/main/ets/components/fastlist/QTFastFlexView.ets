@@ -8,12 +8,14 @@ import {
   HippyRenderCallback,
   HippyEndBatchCallback,
 } from 'hippy'
-import { TAG_FASTLIST } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
+import { TVView } from '../TVView';
 import { FastListDataSource } from './FastListDataSource';
 import { ItemView, renderItem } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
@@ -108,13 +110,13 @@ export class QTFastFlexView extends QTRenderBaseView {
     return 'view-'+index
   }
 
-  addFocusables(views: QTView[], direction: number): boolean {
+  addFocusables(views: TVView[], direction: number): boolean {
     if (this.virtualChildren && this.virtualChildren.length > 0) {
       this.virtualChildren.forEach((child: QTView) => {
         if(child instanceof QTBaseComponentView){
           child.addFocusables(views,direction)
         }else if (child.cssFocusable === true) {
-          views.push(child);
+          QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
         }
       });
     }

@@ -17,6 +17,7 @@ import { QTFastList } from './QTFastList';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TVView } from '../TVView';
 
 const PREFIX_KEY = "FASTLIST"
 
@@ -91,14 +92,15 @@ export class QTFastListView extends QTRenderBaseView{
     QTLog.w(TAG_FAST_EVENT,`------onScrollStart------`)
   }
 
-  addFocusables(views: QTView[], direction: number): boolean {
+  addFocusables(views: TVView[], direction: number): boolean {
     if (this.virtualChildren && this.virtualChildren.length > 0) {
       this.virtualChildren.forEach((child: QTView) => {
         QTLog.d(TAG_FOCUS,`FastList addFocusables child:${ExtendUtil.debugView(child)}`)
         if(child instanceof QTBaseComponentView){
           child.addFocusables(views,direction)
         }else if (child.cssFocusable === true) {
-          views.push(child);
+          //views.push(child);
+          QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
         }
       });
     }

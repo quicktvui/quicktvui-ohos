@@ -6,11 +6,12 @@ import { QTLog } from "../utils/QTLog";
 import { QTBaseComponentView } from "./QTBaseComponentView";
 import { KeyCode } from "@kit.InputKit";
 import { FocusUtils } from "../utils/FocusUtils";
+import { TVView } from "./TVView";
 
 export class FocusManager{
 
   rootView : QTView
-  private focusedView : QTView | null = null;
+  private focusedView : TVView | null = null;
   uiContext: UIContext | null = null;
 
   constructor(rootView: QTView) {
@@ -31,6 +32,19 @@ export class FocusManager{
       return -1;
   }
 
+  focusSearchInDescendants(focused: TVView | null , direction : number) : TVView | null{
+    for (let i = 0; i < this.rootView.children.length; i++) {
+      let child = this.rootView.children[i]
+      if(child  instanceof  QTBaseComponentView){
+        let nextFocus = child.focusSearch(focused,direction)
+        if(nextFocus != null){
+          return nextFocus;
+        }
+      }
+    }
+    return null;
+  }
+
   dispatchKeyEvent(event: KeyEvent) : boolean{
     if(!this.uiContext){
       QTLog.e(TAG_FOCUS,`dispatchKeyEvent error uiContext null`)
@@ -39,35 +53,27 @@ export class FocusManager{
     if(event.type == KeyType.Down){
       let direction = FocusManager.getDirectionByKeyCode(event.keyCode)
       if(direction > 0){
-        let nextFocus = FocusFinder.findNextFocus(this.uiContext,this.focusedView,this.rootView,direction)
-        QTLog.i(TAG_FOCUS,`dispatchKeyEvent curentFocus:${ExtendUtil.debugView(this.focusedView)} ,find nextFocus :${ExtendUtil.debugView(nextFocus)}`)
+        let nextFocus : TVView | null = null;
+        nextFocus = this.focusSearchInDescendants(this.focusedView,direction);
+        if(!nextFocus){
+          nextFocus = FocusFinder.findNextFocus(this.focusedView,this.rootView,direction)
+        }
+        QTLog.i(TAG_FOCUS,`dispatchKeyEvent curentFocus:${this.focusedView?.uid} ,find nextFocus :${nextFocus?.uid}`)
         if(nextFocus){
-          FocusUtils.requestFocus(nextFocus)
+          FocusUtils.requestFocusById(nextFocus.uid)
           this.focusedView = nextFocus;
         }
         return true;
-      }else{
-
-        switch (event.keyCode){
-          case KeyCode.KEYCODE_DPAD_CENTER:
-          case KeyCode.KEYCODE_ENTER:
-          case KeyCode.KEYCODE_NUMPAD_ENTER:
-            // this.focusedView?.eventClick?.()
-            //TODO 点击事件
-            QTLog.d(TAG_CLICK,`dispatchKeyEvent enter click focusedView :${ExtendUtil.debugView(this.focusedView)}`)
-            return true;
-        }
-        QTLog.e(TAG_FOCUS,`dispatchKeyEvent skip key :${event.keyCode}`)
       }
     }
     return false;
   }
 
-  setFocusedView(view : QTView | null){
+  setFocusedView(view : TVView | null){
     this.focusedView = view;
   }
 
-  getFocusedView() : QTView | null{
+  getFocusedView() : TVView | null{
     return this.focusedView;
   }
 

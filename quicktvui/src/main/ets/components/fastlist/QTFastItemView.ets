@@ -6,9 +6,13 @@ import {
   HippyRenderCallback,
   buildHippyRenderView,
 } from 'hippy'
+import { TAG_FOCUS } from '../../Constant';
 import { QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTLog } from '../../utils/QTLog';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
+import { TVView } from '../TVView';
 import { FastListUtils } from './FastListUtils';
 
 
@@ -32,7 +36,7 @@ export class QTFastItemView extends QTRenderBaseView{
     return this.children[0].cssHeight
   }
 
-  addFocusables(views: QTView[], direction: number): boolean {
+  addFocusables(views: TVView[], direction: number): boolean {
     if(!super.addFocusables(views,direction)){
       //证明自身是不可获焦的
       if (this.children && this.children.length > 0) {
@@ -40,7 +44,7 @@ export class QTFastItemView extends QTRenderBaseView{
           if(child instanceof QTBaseComponentView){
             child.addFocusables(views,direction)
           }else if (child.cssFocusable === true) {
-            views.push(child);
+            QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
           }
         });
       }

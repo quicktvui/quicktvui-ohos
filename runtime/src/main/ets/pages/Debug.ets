@@ -30,9 +30,6 @@ import { connection } from '@kit.NetworkKit';
 import { preferences } from '@kit.ArkData';
 import { BusinessError, commonEventManager, deviceInfo } from '@kit.BasicServicesKit';
 import { QTNativeLayout } from 'libquicktvui.so';
-import { QTLog } from 'quicktvui/src/main/ets/utils/QTLog';
-import { TAG_FOCUS } from 'quicktvui/src/main/ets/Constant';
-import { KeyCode } from '@ohos.multimodalInput.keyCode';
 
 @Builder
 export function PageDebugBuilder(name: string, param: Object) {
@@ -52,7 +49,7 @@ struct Debug {
   //----------------------------------------------------------------------------------
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
-  private debugMode: boolean = true
+  private debugMode: boolean = false
   @State debugServerHost: string = '192.168.80.76' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
@@ -503,17 +500,19 @@ struct Debug {
         return false
       }
     })
-    //这里注释掉，自己实现的焦点系统就作废了
     .onKeyPreIme((event)=>{
-      // QTLog.i (TAG_FOCUS, '========onKeyEventDispatch=========>>>' + event.type + " ====>>>> " + event.keyCode);
-      if(event.keyCode == KeyCode.KEYCODE_DPAD_LEFT
-        || event.keyCode == KeyCode.KEYCODE_DPAD_RIGHT
-        || event.keyCode == KeyCode.KEYCODE_DPAD_DOWN
-        || event.keyCode == KeyCode.KEYCODE_DPAD_UP){
+      // QTLog.i (TAG_FOCUS, '========onKeyPreIme=========>>>' + event.type + " ====>>>> " + event.keyCode);
+      if(this.rootViewWrapper.getRootView()){
         return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!,event)
       }
+      //这里return false 则
       return false;
     })
+    // 这里注释掉，自己实现的焦点系统就作废了
+    // .onKeyEventDispatch((event)=>{
+    //   // QTLog.i (TAG_FOCUS, '========onKeyEventDispatch=========>>>' + event.type + " ====>>>> " + event.keyCode);
+    //
+    // })
   }
 }
 

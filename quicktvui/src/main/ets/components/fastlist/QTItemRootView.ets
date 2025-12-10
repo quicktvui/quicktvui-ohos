@@ -15,6 +15,7 @@ import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
+import { TVView } from '../TVView';
 import { FastListUtils } from './FastListUtils';
 import { ItemView } from './ItemView';
 import { LayoutAttach } from './LayoutAttach';
@@ -90,7 +91,7 @@ export class QTItemRootView extends QTRenderBaseView{
     this.updateDirty = false;
   }
 
-  addFocusables(views: QTView[], direction: number): boolean {
+  addFocusables(views: TVView[], direction: number): boolean {
     if(!super.addFocusables(views,direction)){
       //证明自身是不可获焦的
       if (this.children && this.children.length > 0) {
@@ -98,7 +99,8 @@ export class QTItemRootView extends QTRenderBaseView{
           if(child instanceof QTBaseComponentView){
             child.addFocusables(views,direction)
           }else if (child.cssFocusable === true) {
-            views.push(child);
+            //views.push(child);
+            QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
           }
         });
       }
@@ -133,7 +135,7 @@ export class QTItemRootView extends QTRenderBaseView{
 
   }
 
-  notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
+  notifyChildRequestFocus(child: QTView, focusedView: TVView): void {
     if(this.parentList instanceof QTBaseComponentView){
       this.parentList.notifyChildRequestFocus(this,focusedView)
     }else{

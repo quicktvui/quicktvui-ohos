@@ -9,6 +9,7 @@ import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import QTRenderBaseView from '../QTRenderBaseView';
+import { TVView } from '../TVView';
 import { TabsDataSource } from './TabsDataSource';
 import { WaterfallListView } from './WaterfallListView';
 
@@ -206,7 +207,7 @@ export class QTTabsView extends QTRenderBaseView{
     // })
   }
 
-  addFocusables(views: QTView[], direction: number): boolean {
+  addFocusables(views: TVView[], direction: number): boolean {
     let pd = this.getTabData(this.currentIndex)
     // QTLog.d(TAG_FOCUS,`Tabs addFocusables currentContent:${ExtendUtil.debugView(pd!!.contentView)}`)
     return pd?.contentView?.addFocusables(views,direction) ? true : false;

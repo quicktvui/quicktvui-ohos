@@ -5,18 +5,20 @@ import {
   HippyCustomComponentView,
   HippyRenderCallback,
 } from 'hippy'
-import { TAG_FOCUS } from '../Constant';
+import { TAG_FASTLIST, TAG_FOCUS } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
 import { QTLog } from '../utils/QTLog';
+import { ViewUtils } from '../utils/ViewUtils';
 import { LayoutAttach } from './fastlist/LayoutAttach';
 import { QTActorHost } from './QTActorHost';
 import { QTViewActor } from './QTViewActor';
 import { QTVirtualView } from './QTVirtualView';
 import { QTViewState, StateView } from './StateView';
+import { TVView } from './TVView';
 
-export class QTBaseComponentView extends HippyCustomComponentView  implements  QTActorHost,QTVirtualView,StateView{
+export class QTBaseComponentView extends HippyCustomComponentView  implements  QTActorHost,QTVirtualView,StateView,TVView{
   childSlot: NodeContent | null = null
   public templateView : QTView | null = null;
   qtPadding: Padding = { top: 0, right: 0, bottom: 0, left: 0 }
@@ -24,7 +26,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   // TV扩展
   visibility: Visibility = Visibility.Visible
   sid: string = ''
-  uid:string = ''
+  // uid:string = ''
+  _uid:string = ''
   name: string = ''
   selected: boolean = false
   showonstate: string = 'normal' //
@@ -33,6 +36,29 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
   private currentStates: number[] = []
+
+  public get uid(): string {
+    if(this._uid){
+      return this._uid
+    }
+    if(LayoutAttach.obtainLayoutAttach(this).uid){
+      return LayoutAttach.obtainLayoutAttach(this)?.uid!!
+    }
+    if(this.tag > -1){
+      return `real_${this.tag}`
+    }else{
+      //return LayoutAttach.obtainLayoutAttach(view)?.uid
+      QTLog.e(TAG_FASTLIST,`getViewUid error invalid tag`)
+      return ''
+    }
+  }
+
+  // getter
+  // getter
+  // setter
+  public set uid(value: string) {
+    this._uid = value;
+  }
 
   duplicateParentState: boolean = false
 
@@ -64,12 +90,23 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
    * @param child
    * @param focusedView
    */
-  notifyChildRequestFocus(child:QTView,focusedView: QTView){
+  notifyChildRequestFocus(child:QTView,focusedView: TVView){
     if(this.parentView instanceof QTBaseComponentView){
       this.parentView.notifyChildRequestFocus(this,focusedView)
     }else{
       QTLog.w(TAG_FOCUS,`notifyChildRequestFocus fail parent:${ExtendUtil.debugView(this.parentView)},this:${ExtendUtil.debugView(this)}`)
     }
+  }
+
+  focusSearch(focused: TVView | null ,direction : number) : TVView | null{
+
+   // let  nextFocus = FocusFinder.findNextFocus(focused,this)
+
+    return null;
+  }
+
+  getDisplayChildren(){
+    return this.children
   }
 
 
@@ -155,7 +192,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventFocus
   }
 
-  addFocusables(views: QTView[],direction:number) : boolean{
+  addFocusables(views: TVView[],direction:number) : boolean{
     return this.viewActor.addFocusables(views,direction)
   }
 

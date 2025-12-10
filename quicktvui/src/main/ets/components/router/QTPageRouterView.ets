@@ -8,6 +8,7 @@ import {
   buildHippyRenderView
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { PageManager } from './PageManager';
 import { QTPageView } from './QTPageView';
 
 @Observed
@@ -41,6 +42,7 @@ export struct QTPageRouter {
 
   aboutToAppear(): void {
     this.renderView.event = this
+    PageManager.setUIContext(this.getUIContext())
   }
 
   aboutToDisappear() {

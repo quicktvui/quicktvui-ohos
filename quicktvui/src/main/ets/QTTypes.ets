@@ -12,3 +12,4 @@ export type QTPendingListView = QTFastListView | QTFastFlexView
 export type QTVirtualViewGroup = QTFastFlexView | QTFastListView | QTTabsView
 export type QTArray = HippyArray
 export type QTBaseView =  QTBaseComponentView | null
+export type QTTVView = QTBaseComponentView

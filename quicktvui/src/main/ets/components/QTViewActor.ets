@@ -5,7 +5,8 @@ import { TAG_FASTLIST, TAG_FOCUS, TAG_LAYOUT, TAG_QUICKTVUI } from "../Constant"
 import { QTAttach } from "./QTAttach"
 import { ExtendUtil } from "../utils/ExtendUtil"
 import { QTLog } from "../utils/QTLog"
-import { ViewUtils } from "../utils/ViewUtils"
+import { TVView } from "./TVView"
+import { QTBaseComponentView } from "./QTBaseComponentView"
 
 export class QTViewActor{
 
@@ -52,16 +53,24 @@ export class QTViewActor{
 
   }
 
-  addFocusables(views: QTView[],direction:number) : boolean{
+  addFocusables(views: TVView[],direction:number) : boolean{
     //FocusUtils.requestFocus(this.hostView)
     let view = this.hostView
     let canTakeFocus = view.cssFocusable
-    if(canTakeFocus){
-      views.push(this.hostView)
+    if(canTakeFocus ){
+      if(this.hostView instanceof QTBaseComponentView){
+        QTLog.i(TAG_FOCUS,`addFocusables by view Actor this : ${ExtendUtil.debugView(this.hostView)}`)
+        views.push(this.hostView)
+      }else{
+        QTLog.w(TAG_FOCUS,`addFocusables canTakeFocus reutrn  this : ${ExtendUtil.debugView(this.hostView)}`)
+      }
+
       return true;
     }
     return false;
   }
+
+
 
 
 
