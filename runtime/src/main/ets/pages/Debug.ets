@@ -32,6 +32,7 @@ import { BusinessError, commonEventManager, deviceInfo } from '@kit.BasicService
 import { QTNativeLayout } from 'libquicktvui.so';
 import { QTLog } from 'quicktvui/src/main/ets/utils/QTLog';
 import { TAG_FOCUS } from 'quicktvui/src/main/ets/Constant';
+import { KeyCode } from '@ohos.multimodalInput.keyCode';
 
 @Builder
 export function PageDebugBuilder(name: string, param: Object) {
@@ -503,13 +504,16 @@ struct Debug {
       }
     })
     //这里注释掉，自己实现的焦点系统就作废了
-    // .onKeyEventDispatch((event)=>{
-    //   QTLog.i (TAG_FOCUS, '========onKeyEventDispatch=========>>>' + event.type + " ====>>>> " + event.keyCode);
-    //   if(this.rootViewWrapper.getRootView()){
-    //     return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!,event)
-    //   }
-    //   return false;
-    // })
+    .onKeyPreIme((event)=>{
+      // QTLog.i (TAG_FOCUS, '========onKeyEventDispatch=========>>>' + event.type + " ====>>>> " + event.keyCode);
+      if(event.keyCode == KeyCode.KEYCODE_DPAD_LEFT
+        || event.keyCode == KeyCode.KEYCODE_DPAD_RIGHT
+        || event.keyCode == KeyCode.KEYCODE_DPAD_DOWN
+        || event.keyCode == KeyCode.KEYCODE_DPAD_UP){
+        return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!,event)
+      }
+      return false;
+    })
   }
 }
 
