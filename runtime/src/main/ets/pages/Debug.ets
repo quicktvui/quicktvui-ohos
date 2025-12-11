@@ -50,7 +50,7 @@ struct Debug {
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
   private debugMode: boolean = false
-  @State debugServerHost: string = '192.168.80.76' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.40.92' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
@@ -500,10 +500,13 @@ struct Debug {
         return false
       }
     })
-    .onKeyPreIme((event)=>{
+    .onKeyPreIme((event) => {
+      //------------------分发 key event 给 vue 端---------------------
+      this.hippyEngine?.onKeyEvent(event)
+      //------------------分发 key event 给 vue 端---------------------
       // QTLog.i (TAG_FOCUS, '========onKeyPreIme=========>>>' + event.type + " ====>>>> " + event.keyCode);
-      if(this.rootViewWrapper.getRootView()){
-        return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!,event)
+      if (this.rootViewWrapper.getRootView()) {
+        return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!, event)
       }
       //这里return false 则
       return false;
