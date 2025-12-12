@@ -116,7 +116,6 @@ export struct QTMediaSeries {
             .onBlur(() => {
               this.renderView.focusStr = undefined;
             })
-            .key(HIPPY_COMPONENT_KEY_PREFIX + this.renderView.tag + '_LIST_' + index)
           }, (item: string) => item)
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On

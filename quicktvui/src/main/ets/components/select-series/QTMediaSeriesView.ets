@@ -35,7 +35,9 @@ class QTMediaSeriesNode implements TVView {
   }
 }
 
-const PREFIX_KEY = "QTMediaSeriesView"
+const LIST_PREFIX_KEY = "MS_LIST"
+const GROUP_PREFIX_KEY = "MS_GROUP"
+
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView {
@@ -112,7 +114,8 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     pageSize: 10,
   };
   // private customTemplate: QTView | null = null;
-  __idx = 0;
+  __list_idx = 0;
+  __group_idx = 0;
   uidViewArr: QTMediaSeriesNode[] = [];
   private endBatchCallback: HippyEndBatchCallback | null = null
 
@@ -124,35 +127,35 @@ export class QTMediaSeriesView extends QTRenderBaseView {
    * let pageSize: number = 10;
    * let totalCount: number = 100;
    * */
-  getLRDataByPage(page: number, pageSize: number, totalSize: number) {
-    let result: Array<MyComponentParams> = [];
-    let isLast = Math.floor(totalSize / pageSize) <= page;
-    let size = isLast ? totalSize - page * pageSize : pageSize;
-    for (let i = 0; i < size; i++) {
-      let index = page * pageSize + i + 1;
-      let index2 = index > 9 ? '' + index : '0' + index;
-      result.push({
-        // 选集标题
-        title: i % 2 === 0 ? `第${page * pageSize + i + 1}集内容` :
-          `第${page * pageSize + i + 1}集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容`,
-        // 图文图片
-        // cover: 'https://i.328888.xyz/2023/01/04/W49yq.md.jpeg',
-        cover: 'https://www.huikez.com/uploads/allimg/2009/1-200921144Ub07.jpg',
-        // flagText: needFlag ? `flag${page * pageSize + i}` : '',
-        // flagText: (i !== 0 || page !== 0) ? i % 2 === 0 ? 'VIP' : '付费' : '',
-        showVip: (i !== 0 || page !== 0) ? i % 2 === 0 ? true : true : false,
-        // floatText: `float${page * pageSize + i}`,
-        floatText: i % 2 === 0 ? '05:30' : '10:06',
-        vip: {
-          enable: true,
-          text: 'VIP',
-        },
-        vipTitleStyle: { width: 150, height: 100 },
-        index2
-      })
-    }
-    return result;
-  }
+  // getLRDataByPage(page: number, pageSize: number, totalSize: number) {
+  //   let result: Array<MyComponentParams> = [];
+  //   let isLast = Math.floor(totalSize / pageSize) <= page;
+  //   let size = isLast ? totalSize - page * pageSize : pageSize;
+  //   for (let i = 0; i < size; i++) {
+  //     let index = page * pageSize + i + 1;
+  //     let index2 = index > 9 ? '' + index : '0' + index;
+  //     result.push({
+  //       // 选集标题
+  //       title: i % 2 === 0 ? `第${page * pageSize + i + 1}集内容` :
+  //         `第${page * pageSize + i + 1}集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容集内容`,
+  //       // 图文图片
+  //       // cover: 'https://i.328888.xyz/2023/01/04/W49yq.md.jpeg',
+  //       cover: 'https://www.huikez.com/uploads/allimg/2009/1-200921144Ub07.jpg',
+  //       // flagText: needFlag ? `flag${page * pageSize + i}` : '',
+  //       // flagText: (i !== 0 || page !== 0) ? i % 2 === 0 ? 'VIP' : '付费' : '',
+  //       showVip: (i !== 0 || page !== 0) ? i % 2 === 0 ? true : true : false,
+  //       // floatText: `float${page * pageSize + i}`,
+  //       floatText: i % 2 === 0 ? '05:30' : '10:06',
+  //       vip: {
+  //         enable: true,
+  //         text: 'VIP',
+  //       },
+  //       vipTitleStyle: { width: 150, height: 100 },
+  //       index2
+  //     })
+  //   }
+  //   return result;
+  // }
 
   /*
    * let groupSize: number = 20;
@@ -168,7 +171,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       const formatNumber = (num: number): string => {
         return num < 10 ? `0${num}` : `${num}`;
       };
-      let _key = this.getUid()
+      let _key = `${GROUP_PREFIX_KEY}_${this.__group_idx++}`
       result.push({
         key: _key,
         title: start !== end ? `${formatNumber(start)}-${formatNumber(end)}` : `${formatNumber(start)}`,
@@ -177,10 +180,6 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     }
     console.log(TAG_MediaSeries, `generatePageRanges is :${JSON.stringify(result)}`)
     return result;
-  }
-
-  getUid() {
-    return `MS_${this.__idx++}`;
   }
 
   exeScroll() {
@@ -297,12 +296,12 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         if (this.enableGroup) {
           this.generatePageData = this.generatePageRanges(this.initParam.totalCount, this.initParam.groupSize);
         }
-        console.log(TAG_MediaSeries, ` this.enableGroup :${this.enableGroup}`)
-        console.log(TAG_MediaSeries, ` template.type :${JSON.stringify(this.initParam)}`)
-        console.log(TAG_MediaSeries, ` initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)
-        console.log(TAG_MediaSeries, ` initParamGroup :${JSON.stringify(this.initParamGroup)}`)
-        console.log(TAG_MediaSeries, ` extra :${JSON.stringify(extra)}`)
-        console.log(TAG_MediaSeries, ` generatePageData :${JSON.stringify(this.generatePageData)}`)
+        // console.log(TAG_MediaSeries, ` this.enableGroup :${this.enableGroup}`)
+        // console.log(TAG_MediaSeries, ` template.type :${JSON.stringify(this.initParam)}`)
+        // console.log(TAG_MediaSeries, ` initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)
+        // console.log(TAG_MediaSeries, ` initParamGroup :${JSON.stringify(this.initParamGroup)}`)
+        // console.log(TAG_MediaSeries, ` extra :${JSON.stringify(extra)}`)
+        // console.log(TAG_MediaSeries, ` generatePageData :${JSON.stringify(this.generatePageData)}`)
         return true;
       }
       case "groupParam": {
@@ -370,7 +369,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             console.log(TAG_MediaSeries, `QTMediaSeriesView:page,key:${keyA}-${keyB}`, eachValue);
           })
 
-          let _key = this.getUid();
+          let _key = `${LIST_PREFIX_KEY}-${this.__list_idx++}`;
           this.listData.addData({
             key: _key,
             title: HRValueUtils.getStringValue('title', value as HippyMap, null)!,
@@ -406,6 +405,9 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       //设置选中的item
       case "setSelectChildPosition":
         let childPos = HRValueUtils.getNumber2(params[0], 0)
+        focusControl.requestFocus(`${LIST_PREFIX_KEY}_${childPos}`)
+        console.log(TAG_MediaSeries,
+          `requestChildFocus : focusPos is : ${LIST_PREFIX_KEY}_${childPos}`)
         console.log(TAG_MediaSeries, `setSelectChildPosition : childPos is : ${childPos} `)
         break;
 
@@ -430,14 +432,13 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       //设置选中的item
       case "requestChildFocus":
         let focusPos = HRValueUtils.getNumber2(params[0], 0)
-        focusControl.requestFocus(HIPPY_COMPONENT_KEY_PREFIX + this.tag + '_LIST_' + focusPos)
+        focusControl.requestFocus(`${LIST_PREFIX_KEY}_${focusPos}`)
         console.log(TAG_MediaSeries,
-          `requestChildFocus : focusPos is : ${HIPPY_COMPONENT_KEY_PREFIX + this.tag + '_LIST_' + focusPos}`)
+          `requestChildFocus : focusPos is : ${LIST_PREFIX_KEY}_${focusPos}`)
         break;
     }
 
   }
 }
-
 
 
