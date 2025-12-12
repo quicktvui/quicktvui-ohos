@@ -92,6 +92,12 @@ export class QTFastListView extends QTRenderBaseView{
     QTLog.w(TAG_FAST_EVENT,`------onScrollStart------`)
   }
 
+  /**
+   * 把当前组件下所有可获焦的view添加到views里,以辅助寻焦
+   * @param views
+   * @param direction
+   * @returns
+   */
   addFocusables(views: TVView[], direction: number): boolean {
     if (this.virtualChildren && this.virtualChildren.length > 0) {
       this.virtualChildren.forEach((child: QTView) => {
@@ -99,6 +105,7 @@ export class QTFastListView extends QTRenderBaseView{
         if(child instanceof QTBaseComponentView){
           child.addFocusables(views,direction)
         }else if (child.cssFocusable === true) {
+          //这里应该判断是否实现TVView接口，如果实现了，并且focusable为true，也应该添加进来
           //views.push(child);
           QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
         }
