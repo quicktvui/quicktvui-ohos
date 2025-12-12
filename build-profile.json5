@@ -1,19 +1,19 @@
 {
   "app": {
-//    "signingConfigs": [
-//      {
-//        "name": "default",
-//        "material": {
-//          "certpath": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B76CE6EA2CBD24DF324F94DF3BE01C9F5EA793ACDACCD6C093F1DEA0BB50EBA7D20A84F177143AA",
-//          "profile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p12",
-//          "storePassword": "0000001BBDC9D4A59B7CC330A6EC68AA23C77DA5475C81F048A8C383F89C00FAADF092209E1051FAA4D0BA"
-//        }
-//      }
-//    ],
+    //    "signingConfigs": [
+    //      {
+    //        "name": "default",
+    //        "material": {
+    //          "certpath": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.cer",
+    //          "keyAlias": "debugKey",
+    //          "keyPassword": "0000001B76CE6EA2CBD24DF324F94DF3BE01C9F5EA793ACDACCD6C093F1DEA0BB50EBA7D20A84F177143AA",
+    //          "profile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p7b",
+    //          "signAlg": "SHA256withECDSA",
+    //          "storeFile": "/Users/liulipeng/.ohos/config/openharmony/default_quicktvui_ohos_cfwTra-hExHfAnPgy20fiNakxovpLw9QXRVxmRzSTn8=.p12",
+    //          "storePassword": "0000001BBDC9D4A59B7CC330A6EC68AA23C77DA5475C81F048A8C383F89C00FAADF092209E1051FAA4D0BA"
+    //        }
+    //      }
+    //    ],
     "products": [
       {
         "name": "default",
@@ -43,6 +43,20 @@
       },
       {
         "name": "release"
+      }
+    ],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "material": {
+          "certpath": "C:/Users/axuan/.ohos/config/openharmony/default_quicktvui-ohos_p7qg89AwozEskecbmgVKiAAxisReIuevVlGWBZV2-xM=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001ADF313E88939380A27350507FCAEC3CE0ADBF44C8B35C5DB82CA0A20A5B227A6F932F2F287092",
+          "profile": "C:/Users/axuan/.ohos/config/openharmony/default_quicktvui-ohos_p7qg89AwozEskecbmgVKiAAxisReIuevVlGWBZV2-xM=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:/Users/axuan/.ohos/config/openharmony/default_quicktvui-ohos_p7qg89AwozEskecbmgVKiAAxisReIuevVlGWBZV2-xM=.p12",
+          "storePassword": "0000001A926661B498D2F390CCBE8B38B94FC3AA73B42BB4A82CF66CB957DC632E617BC8AFB0C9E897B2"
+        }
       }
     ]
   },

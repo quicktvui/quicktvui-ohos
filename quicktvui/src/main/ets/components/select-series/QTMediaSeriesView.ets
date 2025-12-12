@@ -20,6 +20,22 @@ import { HashMap } from '@kit.ArkTS';
 import { LengthMetrics } from "@kit.ArkUI";
 
 import { Group, InitParam, MyComponentParams, GeneratePageData, Template, MyDataSource } from './types/index';
+import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TVView } from '../TVView';
+import { QTLog } from '../../utils/QTLog';
+import { HippyRenderBaseView } from 'hippy'
+
+class QTMediaSeriesNode implements TVView {
+  uid: string = '';
+  children: HippyObservedArray<HippyRenderBaseView> = []
+  viewType: string = 'QTMediaSeries'
+
+  constructor(uid: string) {
+    this.uid = uid
+  }
+}
+
+const PREFIX_KEY = "QTMediaSeriesView"
 
 @Observed
 export class QTMediaSeriesView extends QTRenderBaseView {
@@ -96,7 +112,8 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     pageSize: 10,
   };
   // private customTemplate: QTView | null = null;
-
+  __idx = 0;
+  uidViewArr: QTMediaSeriesNode[] = [];
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   constructor(ctx: NativeRenderContext) {
@@ -151,19 +168,19 @@ export class QTMediaSeriesView extends QTRenderBaseView {
       const formatNumber = (num: number): string => {
         return num < 10 ? `0${num}` : `${num}`;
       };
+      let _key = this.getUid()
       result.push({
-        key: this.getRandomString(),
-        title: start!==end ?`${formatNumber(start)}-${formatNumber(end)}` : `${formatNumber(start)}`,
+        key: _key,
+        title: start !== end ? `${formatNumber(start)}-${formatNumber(end)}` : `${formatNumber(start)}`,
       });
+      this.uidViewArr.push(new QTMediaSeriesNode(_key));
     }
     console.log(TAG_MediaSeries, `generatePageRanges is :${JSON.stringify(result)}`)
     return result;
   }
 
-  getRandomString() {
-    let date = new Date().getTime().toString();
-    let data = Math.floor(Math.random() * 9000) + 1000;
-    return `${date}${data}`;
+  getUid() {
+    return `MS_${this.__idx++}`;
   }
 
   exeScroll() {
@@ -192,6 +209,14 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     // })
   }
 
+  addFocusables(views: TVView[], direction: number, ee?: HippyAny): boolean {
+    // console.log(TAG_MediaSeries, `~~~~addAllFocusable skip focusable view :`,
+    //   this.children.length + '' + this.viewType, direction, this.tag, ee, views.length, this.uidViewArr)
+    views.push(...this.uidViewArr)
+    // console.log(TAG_MediaSeries, `~~~~addAllFocusable skip focusable view :`,
+    //   this.children.length + '' + this.viewType, direction, this.tag, ee, views.length)
+    return true;
+  }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     console.log(TAG_MediaSeries, `setProp ============ QTMediaSeriesView :propKey:${propKey},value:${propValue}`)
@@ -345,8 +370,9 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             console.log(TAG_MediaSeries, `QTMediaSeriesView:page,key:${keyA}-${keyB}`, eachValue);
           })
 
+          let _key = this.getUid();
           this.listData.addData({
-            key: this.getRandomString(),
+            key: _key,
             title: HRValueUtils.getStringValue('title', value as HippyMap, null)!,
             cover: HRValueUtils.getStringValue('cover', value as HippyMap, null)!,
             floatText: HRValueUtils.getStringValue('floatText', value as HippyMap, null)!,
@@ -362,6 +388,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             index2: HRValueUtils.getStringValue('index2', value as HippyMap, null)!,
             id: HRValueUtils.getStringValue('id', value as HippyMap, null)!,
           });
+          this.uidViewArr.push(new QTMediaSeriesNode(_key));
         })
         console.log(TAG_MediaSeries, `QTMediaSeriesView listData :${JSON.stringify(this.listData)}`)
         break;

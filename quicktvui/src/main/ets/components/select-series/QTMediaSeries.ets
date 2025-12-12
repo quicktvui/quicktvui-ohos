@@ -90,6 +90,8 @@ export struct QTMediaSeries {
               //   y: this.renderView.focusStr == item.key ? 1.1 : 1,
               // })
             }
+            .width(px2vp(this.renderView.initParamTemplate.width))
+            .height(px2vp(this.renderView.initParamTemplate.height))
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
               let params = new Map<string, string | HippyAny>()
@@ -100,6 +102,7 @@ export struct QTMediaSeries {
               event.send(this.renderView.ctx, this.renderView.tag, params)
               this.renderView.focusStr = item.key;
             })
+            .id(item.key)
             .onFocus(() => {
               console.log(TAG_MediaSeries, 'onFocus ListItem', item.key, this.renderView.currentTitleId)
               let event = new HippyViewEvent("onItemFocused")
@@ -108,7 +111,7 @@ export struct QTMediaSeries {
               event.send(this.renderView.ctx, this.renderView.tag, params)
               this.renderView.focusStr = item.key;
               this.renderView.isSelectedButton = true;
-              this.renderView.scroller.scrollToIndex(index,true,ScrollAlign.CENTER)
+              this.renderView.scroller.scrollToIndex(index, true, ScrollAlign.CENTER)
             })
             .onBlur(() => {
               this.renderView.focusStr = undefined;
@@ -205,11 +208,12 @@ export struct QTMediaSeries {
                 params.set('position', index)
                 event.send(this.renderView.ctx, this.renderView.tag, params)
                 this.renderView.isSelectedButton = false;
-                this.renderView.scroller.scrollToIndex(index,true,ScrollAlign.CENTER)
+                this.renderView.scroller.scrollToIndex(index, true, ScrollAlign.CENTER)
               })
               .onBlur(() => {
                 this.renderView.focusStr = undefined;
               })
+              .id(item.key)
 
             }, (item: GeneratePageData) => JSON.stringify(item.title))
           }
