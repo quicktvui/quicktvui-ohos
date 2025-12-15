@@ -92,7 +92,7 @@
       },
       {
         "name": "g_2048",
-        "signingConfig": "default",
+        "signingConfig": "2048",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -107,7 +107,7 @@
       },
       {
         "name": "g_2048_cube",
-        "signingConfig": "default",
+        "signingConfig": "2048cube",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -122,7 +122,7 @@
       },
       {
         "name": "g_guess",
-        "signingConfig": "default",
+        "signingConfig": "guess",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -137,7 +137,7 @@
       },
       {
         "name": "g_huarong_road",
-        "signingConfig": "default",
+        "signingConfig": "huarongroad",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -152,7 +152,7 @@
       },
       {
         "name": "g_push_box",
-        "signingConfig": "default",
+        "signingConfig": "pushbox",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -167,7 +167,7 @@
       },
       {
         "name": "g_snake",
-        "signingConfig": "default",
+        "signingConfig": "snake",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -200,13 +200,85 @@
       {
         "name": "default",
         "material": {
-          "certpath": "sign/tudoudou.cer",
+          "certpath": "sign/tudoudou/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B7E310FD63717C4A8D792E83D92B4272799A61DCC22A6E10D4805180CA860C64BE28539A3338361",
-          "profile": "sign/tudoudou.p7b",
+          "keyPassword": "0000001B0CE0CA39A37D788CEE74E5EB8618210507AA4B84E1964D919F642CB9C1CD2D9016E522EE11F3CE",
+          "profile": "sign/tudoudou/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/tudoudou.p12",
-          "storePassword": "0000001B5FBAA935C66A7DADAF5BC09AE5B2F9F148F8AC360A416E4196DB23DBE4B7D9CC35EC3B34671BEB"
+          "storeFile": "sign/tudoudou/key.p12",
+          "storePassword": "0000001B27CC2D8E9CA900DFA294324A1B86A19F4A39467B4AF97482244BE5215E09D46C1D353F0F0978D2"
+        }
+      },
+      {
+        "name": "2048",
+        "material": {
+          "certpath": "sign/2048/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B951DBF5E1686753E31EFE4450AFFC460F31C4BA6909A1191977284E405809E98289287ECAD1663",
+          "profile": "sign/2048/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/2048/key.p12",
+          "storePassword": "0000001B6B6213720A8DEDE70ACD2F7D8B5E78C1560C4DF0C6F27585CF40FAED7EB4CD89A27D069091771E"
+        }
+      },
+      {
+        "name": "2048cube",
+        "material": {
+          "certpath": "sign/2048cube/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B8957CD4CB575847CC8DFD985D35C68F3AC46C6A3EF80F8D7E2FB72A37A37D9631CBCF7720966F6",
+          "profile": "sign/2048cube/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/2048cube/key.p12",
+          "storePassword": "0000001B719C3F874635247A0B664FBFFA54788E8B8856E2364B70DA8D08117E7764B413659565A1D53262"
+        }
+      },
+      {
+        "name": "guess",
+        "material": {
+          "certpath": "sign/guess/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B329A0C47DADD06470EC553A9D07C07AF68890C0EC38042A30E68331B02A0EEEADC389F5D26E82A",
+          "profile": "sign/guess/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/guess/key.p12",
+          "storePassword": "0000001BB8C6E427282E1D25182E98F47418B40A6D0F2B0E52795C1000E875C0B196054D0EA4C6A24EC8A1"
+        }
+      },
+      {
+        "name": "huarongroad",
+        "material": {
+          "certpath": "sign/huarongroad/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BA7E9F363E8D79206397FED5D0E6387187AF855A6E5C051EC1B1D5CF10E4B83F77436534493AEDD",
+          "profile": "sign/huarongroad/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/huarongroad/key.p12",
+          "storePassword": "0000001B60606FF464BEAE802C39ADA38CC31DEEEA839C0A2567EA71DF50D5CF2E42333AC00628419F8B1B"
+        }
+      },
+      {
+        "name": "pushbox",
+        "material": {
+          "certpath": "sign/pushbox/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B3AFA8AF1EE0F0BCF235AD073749FCCA398B921817DFCAFCAF296D670C44F792BD783ED6B0DCDE0",
+          "profile": "sign/pushbox/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/pushbox/key.p12",
+          "storePassword": "0000001B5E9B936B3CBE33655E875452DD77B8BBC4422508613552DD408190ADB4EC4FA5E1EA01D869C7A8"
+        }
+      },
+      {
+        "name": "snake",
+        "material": {
+          "certpath": "sign/snake/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B586368E7966BD4459D7E94BEDEDEFABBA063B4D577DE2EFC0F7CFD4585E669B5E16AA8CBC926AF",
+          "profile": "sign/snake/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/snake/key.p12",
+          "storePassword": "0000001B412611ABA0DA08583AF173E68C3613704A72ACACC924632FA64AF02C29691AFB78CA6E38D43876"
         }
       }
     ]
