@@ -84,6 +84,60 @@
           "./src/doudizhu/resources"
         ]
       }
+    },
+    {
+      "name": "g_2048",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_2048/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_2048_cube",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_2048_cube/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_guess",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_guess/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_huarong_road",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_huarong_road/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_push_box",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_push_box/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_snake",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_snake/resources"
+        ]
+      }
     }
   ]
 }
