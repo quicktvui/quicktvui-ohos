@@ -80,18 +80,13 @@ export struct QTMediaSeries {
               .backgroundColor('#80988787')
               .alignItems(VerticalAlign.Top)
               .focusable(true)
-              .margin({
-                left: index === 0 ? px2vp(60) : 0,
-                right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
-              })
-
-              // .scale({
-              //   x: this.renderView.focusStr == item.key ? 1.1 : 1,
-              //   y: this.renderView.focusStr == item.key ? 1.1 : 1,
-              // })
             }
             .width(px2vp(this.renderView.initParamTemplate.width))
             .height(px2vp(this.renderView.initParamTemplate.height))
+            .margin({
+              left: index === 0 ? px2vp(60) : 0,
+              right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
+            })
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
               let params = new Map<string, string | HippyAny>()
