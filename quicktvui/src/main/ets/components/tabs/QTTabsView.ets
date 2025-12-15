@@ -78,6 +78,8 @@ export class QTTabsView extends QTRenderBaseView{
   enableDrawerAnimation = false;
   autoChangePageByNative = true;
 
+  resumeTaskRunnable : number = -1;
+
   public tabsData: HippyObservedArray<TabPageData> = new HippyObservedArray()
 
   constructor(ctx: NativeRenderContext) {
@@ -261,7 +263,7 @@ export class QTTabsView extends QTRenderBaseView{
 
   updateTabsData(data : QTArray){
     //setupItemStores
-    QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)},pageUID:${LayoutAttach.obtainLayoutAttach(this).pageUid}`)
+    QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)},pageUID:${LayoutAttach.obtainLayoutAttach(this).pageUid},this defaultFocusPosition:${this.defaultFocusPosition}`)
     this.tabsData = []
     data.forEach((item: QTAny,index:number)=>{
       let p :TabPageData = new TabPageData()
@@ -316,6 +318,10 @@ export class QTTabsView extends QTRenderBaseView{
       if(this.tabList){
         this.tabList.visibility = Visibility.None
       }
+      let pd = this.getTabData(0)
+      if(pd){
+        pd.pendingFocusPosition = this.tabPendingFocus
+      }
     }else{
       if(this.tabList){
         this.tabList.visibility = Visibility.Visible
@@ -324,12 +330,58 @@ export class QTTabsView extends QTRenderBaseView{
         this.tabList.setListWithPrams(data,null)
       }
       // this.singleTabMode = true;
+      if(this.defaultFocusPosition > -1){
+        setTimeout(()=>{
+          this.requestTabListFocus(this.defaultFocusPosition)
+        },100)
+      }
     }
+
     // //测试用
     // setTimeout(()=>{
     //   this.singleTabMode = true;
     // },10)
 
+  }
+
+  requestTabListFocus(index: number){
+    QTLog.e(TAG_FOCUS,`requestTabListFocus index:${index}`)
+    this.tabList?.requestChildFocus(index)
+  }
+
+  requestFirstFocus(page : number){
+    let pd  = this.getTabData(page)
+    QTLog.e(TAG_TABS,`requestFirstFocus page:${page}`)
+    pd?.contentView?.requestChildFocus(0,100)
+  }
+
+  onCurrentPageToShow(page : number){
+    QTLog.d(TAG_TABS,`onCurrentPageToShow page:${page}`)
+    let pd = this.getTabData(page)
+    pd?.pendingFocusPosition
+    if(pd){
+      if(pd.isDataValid() && pd.pendingFocusPosition > -1){
+        this.requestFirstFocus(page)
+        pd.pendingFocusPosition = -1;
+      }
+    }
+  }
+
+  isHideTabState() : boolean{
+    return this.singleTabMode
+  }
+
+  requestResumePostTask(page : number ,delay : number){
+    let pd = this.getTabData(page)
+    clearTimeout(this.resumeTaskDelay)
+    let finalDelay = delay;
+    if(pd?.pendingFocusPosition){
+      finalDelay = this.firstResumeTaskDelay;
+    }
+    finalDelay = Math.max(150,finalDelay)
+    this.resumeTaskDelay = setTimeout(()=>{
+      this.onCurrentPageToShow(page)
+    },finalDelay)
   }
 
 
@@ -358,6 +410,26 @@ export class QTTabsView extends QTRenderBaseView{
           pd.updateDirty = true;
         }
       }
+    }
+  }
+
+  tryUpdatePageView(page: number){
+    let pd = this.getTabData(page)
+    if(pd){
+      clearTimeout(pd.postDataTask)
+      this.requestUIPageViewBindData(pd,page)
+    }
+  }
+
+  requestUIPageViewBindData(pd : TabPageData,page : number){
+      pd.postDataTask = setTimeout(()=>{
+        this.exeUIPageViewBindData(pd.contentView,pd,page)
+      },100)
+  }
+
+  exeUIPageViewBindData(wl : WaterfallListView | null,pd : TabPageData,page : number ){
+    if(page == this.currentIndex){
+      this.requestResumePostTask(page,this.resumeTaskDelay)
     }
   }
 
@@ -415,9 +487,12 @@ export class QTTabsView extends QTRenderBaseView{
     ExtendUtil.sendUIEvent(this.ctx,this.tag,'onLoadPageData',map)
   }
 
+  isSingleContent(){
+    return this.tabsData.length < 2
+  }
+
   setPageData(pageIndex: number,params:QTMap,dataArray : QTArray){
     QTLog.d(TAG_TABS,`setPageData :${pageIndex},dataArray:${dataArray?.length},params:${CommonUtils.hippyMap2String(params)}`)
-
       let pd = this.getTabData(pageIndex)
       if(pd?.dataState != 1){
         this.updateDataOnly(pageIndex,params,dataArray)
@@ -429,6 +504,10 @@ export class QTTabsView extends QTRenderBaseView{
           QTLog.d(TAG_TABS,`setPageData tag:${this.contentTemplate.tag} `)
           pd.contentView.nativeSetupIfNeed(this.contentTemplate.tag,this.contentTemplate)
           pd.contentView.updateSections(dataArray,pd.contentParams)
+          if(this.currentIndex == pageIndex){
+            this.tryUpdatePageView(pageIndex)
+            this.requestResumePostTask(pageIndex,this.resumeTaskDelay)
+          }
         }
       }
   }
@@ -681,10 +760,13 @@ export class TabPageData{
   pendingFocusPosition : number = -1;
   updateDirty = true;
   disableScrollOnFirstScreen = false;
+  postDataTask: number = -1;
   dataState = -1;
   loadTime = -1;
   contentView: WaterfallListView | null = null;
-
+  isDataValid(){
+    return this.dataState == 1
+  }
 
 
 }

@@ -172,7 +172,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   }
 
-  getPageUid(){
+  getPageUid() : string | null | undefined{
     return LayoutAttach.obtainLayoutAttach(this).pageUid
   }
 

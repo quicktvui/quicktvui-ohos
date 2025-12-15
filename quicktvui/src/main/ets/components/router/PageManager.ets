@@ -1,3 +1,6 @@
+import { QTView } from "../../QTTypes";
+import { ViewUtils } from "../../utils/ViewUtils";
+import { QTBaseComponentView } from "../QTBaseComponentView";
 import { IPage } from "./IPage";
 
 // PageManager.ets - 修复版
@@ -50,6 +53,22 @@ export class PageManager {
       return null;
     }
     return page as T;
+  }
+
+
+  static getPageHost<T extends IPage>(view : QTView): T | null {
+    let pageUid : string | null | undefined = ViewUtils.getViewPageUid(view)
+    if(pageUid){
+      const page = PageManager.pages.get(pageUid); // 使用类名
+      if (!page) {
+        console.warn(`[PageManager] getPageByView 页面不存在: ${pageUid}`);
+        return null;
+      }
+      return page as T;
+    }else{
+      console.warn(`[PageManager] getPageByView uid is null`);
+      return null;
+    }
   }
 
   // /**

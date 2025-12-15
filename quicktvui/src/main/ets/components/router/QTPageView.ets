@@ -68,7 +68,7 @@ export class QTPageView extends QTBaseComponentView implements IPage {
     }
   }
 
-  getPageUid(): String | null | undefined {
+  getPageUid(): string | null | undefined {
     return this.uid
   }
 

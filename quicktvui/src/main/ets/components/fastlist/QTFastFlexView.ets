@@ -68,7 +68,7 @@ export class QTFastFlexView extends QTRenderBaseView {
     }
   }
 
-  getPageUid(): String | null | undefined {
+  getPageUid(): string | null | undefined {
     if(this.templateView){
       let templateAttach = LayoutAttach.obtainLayoutAttach(this.templateView);
       if(templateAttach.pageUid){

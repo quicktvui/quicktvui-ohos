@@ -18,6 +18,7 @@ import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TVView } from '../TVView';
+import { FocusUtils } from '../../utils/FocusUtils';
 
 const PREFIX_KEY = "FASTLIST"
 
@@ -82,7 +83,7 @@ export class QTFastListView extends QTRenderBaseView{
     }
   }
 
-  getPageUid(): String | null | undefined {
+  getPageUid(): string | null | undefined {
     if(this.templateView){
       let templateAttach = LayoutAttach.obtainLayoutAttach(this.templateView);
       if(templateAttach.pageUid){
@@ -530,6 +531,17 @@ export class QTFastListView extends QTRenderBaseView{
     this.virtualChildren.splice(start, cout)
     this.notifyReload()
   }
+
+
+  requestChildFocus(position : number,delay : number = 0){
+    let child = this.virtualChildren[position]
+    if(child){
+      FocusUtils.requestViewGroupFocus(child,delay)
+    }else{
+      QTLog.e(TAG_FOCUS,`requestChildFocus return on child null position : ${position}`)
+    }
+  }
+
 
   updateItemRange(start : number,count:number,data:HippyArray){
     data?.forEach((item,index)=>{

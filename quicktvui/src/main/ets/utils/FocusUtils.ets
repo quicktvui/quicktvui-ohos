@@ -1,3 +1,4 @@
+import { PageManager } from "../components/router/PageManager";
 import { TAG_FASTLIST, TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
 import { ExtendUtil } from "./ExtendUtil";
@@ -24,4 +25,25 @@ export class FocusUtils{
       QTLog.e(TAG_FOCUS,`requestFocus fail uid is null view :${uid}`)
     }
   }
+
+  static requestViewGroupFocus(view : QTView | null | undefined,delay = 0){
+      if(!view){
+        return
+      }
+      QTLog.e(TAG_FOCUS,`requestViewGroupFocus focusable:${view.cssFocusable} ,this :`+ExtendUtil.debugView(view))
+      //focusControl.requestFocus(ViewUtils.getViewUid(this));
+      // this.getFocusManager()
+      setTimeout(()=>{
+        if(view.cssFocusable){
+          FocusUtils.requestFocus(view)
+        }else{
+          let focusManager = PageManager.getPageHost(view)?.focusManager
+          let nextFocus = focusManager?.findNextFocus(view)
+          if(nextFocus){
+            FocusUtils.requestFocusById(nextFocus.uid)
+          }
+        }
+      },delay)
+    }
+
 }
