@@ -14,6 +14,7 @@ export class QTItemFrameView extends QTDivView {
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+    this.cssFocusable = true;
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
@@ -45,18 +46,15 @@ export struct QTItemFrame {
 }
 
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: QTBaseComponentView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
-  .backgroundColor($$.cssBackgroundColor)
-  .position({ x: $$.cssPositionX, y: $$.cssPositionY })
-  .size({ width: $$.cssWidth, height: $$.cssHeight })
+function applyRenderViewBaseAttr($$: QTDivView) {
+  // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+  .backgroundColor($$.stateBackgroundColor)
+  .position({x: $$.cssPositionX, y: $$.cssPositionY})
+  .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
-  .visibility(($$ as HippyRenderBaseView).cssVisibility)
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  // .focusable($$.cssFocusable)
-  .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)
@@ -68,8 +66,30 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
+  //edit by tv
   //basic
   .key($$.name)
-  .id($$.sid)
+  .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
+  .clip($$.clipChildren)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
+  //div
+  .focusable($$.cssFocusable)
+  .tabStop($$.cssFocusable)
+  .border($$.focus ? $$.setBorder() : $$.border)
+  .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
+  .borderRadius({
+    topLeft: $$.borderTopLeftRadius,
+    topRight: $$.borderTopRightRadius,
+    bottomLeft: $$.borderBottomLeftRadius,
+    bottomRight: $$.borderBottomRightRadius,
+  })
+  // .onFocus(() => {
+  //   $$.focus = true
+  //   $$.handleFocus($$.focus)
+  // })
+  // .onBlur(() => {
+  //   $$.focus = false
+  //   $$.handleBlur($$.focus)
+  // })
 }

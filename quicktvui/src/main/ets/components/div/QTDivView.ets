@@ -21,29 +21,32 @@ import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderCallback,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { TAG_FOCUS, TAG_QUICKTVUI } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
-import { QTView } from '../../QTTypes';
+import { QTAny, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { ViewUtils } from '../../utils/ViewUtils';
+import { FastListUtils } from '../fastlist/FastListUtils';
+import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TVView } from '../TVView';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
 
 
 const HippyGestureTag = 'HippyGestureTag'
 
-@Observed
-class MyStackModifier implements AttributeModifier<StackAttribute> {
-  public color: string
-  constructor(color:string) {
-    this.color = color
-  }
-  applyNormalAttribute(instance: StackAttribute): void {
-    if(this.color){
-      instance.backgroundColor(`${this.color}`);
-    }
-  }
-}
-const modifier: MyStackModifier = new MyStackModifier("");
+// @Observed
+// class MyStackModifier implements AttributeModifier<StackAttribute> {
+//   public color: string
+//   constructor(color:string) {
+//     this.color = color
+//   }
+//   applyNormalAttribute(instance: StackAttribute): void {
+//     if(this.color){
+//       instance.backgroundColor(`${this.color}`);
+//     }
+//   }
+// }
+// const modifier: MyStackModifier = new MyStackModifier("");
 
 
 @Observed
@@ -71,9 +74,10 @@ const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invi
 @Observed
 export class QTDivView extends HRTvDivView {
 
-  mUserSetFocusBackgroundColor : number = Color.Transparent;
-  mUserSetSelectBackgroundColor : number = Color.Transparent;
-  mUserSetBackgroundColor : number = Color.Transparent;
+  mUserSetFocusBackgroundColor : ResourceColor = Color.White;
+  mUserSetSelectBackgroundColor : ResourceColor = Color.Transparent;
+  mUserSetBackgroundColor : ResourceColor = Color.Transparent;
+  stateBackgroundColor : ResourceColor  = Color.Transparent;
 
 
   constructor(ctx: NativeRenderContext) {
@@ -82,13 +86,54 @@ export class QTDivView extends HRTvDivView {
 
   drawableStateChanged(){
     super.drawableStateChanged()
-    // if(this.focus){
-    //   this.cssBackgroundColor = this.mUserSetFocusBackgroundColor;
-    // }else if(this.selected){
-    //   this.cssBackgroundColor = this.mUserSetSelectBackgroundColor;
-    // }else{
-    //   this.cssBackgroundColor = this.mUserSetBackgroundColor;
-    // }
+    let focused = this.isFocused()
+    if(!focused){
+      if(this.parentView instanceof QTBaseComponentView){
+        focused = this.duplicateParentState && this.parentView.isFocused();
+        // QTLog.d(TAG_FOCUS,`drawableStateChanged focused:${focused} duplicateParentState :${this.duplicateParentState},this;${ExtendUtil.debugView(this)}`)
+      }
+    }
+    let selected = this.isSelected()
+    if(!selected){
+      if(this.parentView instanceof QTBaseComponentView){
+        selected = this.duplicateParentState && this.parentView.isSelected();
+        // QTLog.d(TAG_FOCUS,`drawableStateChanged selected:${selected} duplicateParentState :${this.duplicateParentState} ,this;${ExtendUtil.debugView(this)}`)
+      }
+    }
+    if(focused){
+      this.stateBackgroundColor = this.mUserSetFocusBackgroundColor;
+      // QTLog.e(TAG_FOCUS,`drawableStateChanged -------> to focused state bg:${this.mUserSetFocusBackgroundColor} this:${ExtendUtil.debugView(this)}`)
+    }else if(selected){
+      // QTLog.w(TAG_FOCUS,`drawableStateChanged -------> to selected state bg:${this.mUserSetSelectBackgroundColor} this:${ExtendUtil.debugView(this)}`)
+      this.stateBackgroundColor = this.mUserSetSelectBackgroundColor;
+    }else{
+      // QTLog.i(TAG_FOCUS,`drawableStateChanged -------> to normal state bg:${this.mUserSetBackgroundColor} this:${ExtendUtil.debugView(this)}`)
+      this.stateBackgroundColor = this.mUserSetBackgroundColor;
+    }
+    this.children.map((child)=>{
+      if(child instanceof QTBaseComponentView){
+        child.drawableStateChanged()
+      }
+    })
+  }
+
+
+  addFocusables(views: TVView[], direction: number): boolean {
+    if(!super.addFocusables(views,direction)){
+      //证明自身是不可获焦的
+      if (this.children && this.children.length > 0) {
+        this.children.forEach((child: QTView) => {
+          if(child instanceof QTBaseComponentView){
+            child.addFocusables(views,direction)
+          }else if (child.cssFocusable === true) {
+            //views.push(child);
+            //不是
+            QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
+          }
+        });
+      }
+    }
+    return true;
   }
 
   requestFocus(){
@@ -121,8 +166,11 @@ export class QTDivView extends HRTvDivView {
             let count = colorStringArray.length
             for(let i = 0; i < colorStringArray.length; i ++){
               let colorStr = colorStringArray[i] as string
-              colorArray[i] = [ViewUtils.colorStringToNumber(colorStr),1/count * i]
-              //QTLog.i(TAG_QUICKTVUI,`gradientBackground color :`+colorArray[i])
+              let color = ViewUtils.colorStringToNumber(colorStr)
+              if(!color){
+                color = Color.Transparent;
+              }
+              colorArray[i] = [color,1/count * i]
             }
           }
           this.cssLinearGradient = {
@@ -135,17 +183,27 @@ export class QTDivView extends HRTvDivView {
 
         return true;
         case 'focusBackgroundColor':
+          // QTLog.w(TAG_FOCUS,`mUserSetFocusBackgroundColor :${this.mUserSetFocusBackgroundColor}`)
           this.mUserSetFocusBackgroundColor = HRValueUtils.getNumber(propValue)
-          QTLog.w(TAG_FOCUS,`mUserSetFocusBackgroundColor :${this.mUserSetFocusBackgroundColor}`)
+          if(!this.mUserSetFocusBackgroundColor){
+            this.mUserSetFocusBackgroundColor = Color.Transparent
+          }
           this.drawableStateChanged()
           return true;
         case 'selectBackgroundColor':
           this.mUserSetSelectBackgroundColor = HRValueUtils.getNumber(propValue)
-          QTLog.i(TAG_FOCUS,`mUserSetSelectBackgroundColor :${this.mUserSetSelectBackgroundColor}`)
+          if(!this.mUserSetSelectBackgroundColor){
+            this.mUserSetSelectBackgroundColor = Color.Transparent
+          }
+          // QTLog.i(TAG_FOCUS,`mUserSetSelectBackgroundColor :${this.mUserSetSelectBackgroundColor}`)
           this.drawableStateChanged()
           return true;
         case 'backgroundColor':
           this.mUserSetBackgroundColor = HRValueUtils.getNumber(propValue)
+          if(!this.mUserSetBackgroundColor){
+            this.mUserSetBackgroundColor = Color.Transparent
+          }
+          this.cssBackgroundColor = this.mUserSetBackgroundColor
           QTLog.i(TAG_FOCUS,`backgroundColor :${this.mUserSetBackgroundColor}`)
           this.drawableStateChanged()
         break;
@@ -177,17 +235,42 @@ export class QTDivView extends HRTvDivView {
   }
 
   handleFocus(isFocused: boolean): void {
-    QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
+    // QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
     if(this.parentView instanceof QTBaseComponentView){
       if(this.cssFocusable){
         this.parentView.notifyChildRequestFocus(this,this)
       }
     }
+    if(this.cssFocusable){
+      this.onFocusChanged(true)
+    }
     super.handleFocus(isFocused)
   }
 
+  /**
+   * 可获焦view，isFocused状态改变
+   * @param isFocused
+   */
+  onFocusChanged(isFocused:boolean){
+    if(!this.isVirtual){
+      let map = new Map<string,QTAny>()
+      map.set('isFocused',isFocused)
+      let sid = LayoutAttach.obtainLayoutAttach(this).sid
+      map.set('sid',sid)
+      ExtendUtil.sendViewEvent(this,'onFocus',map)
+    }
+    if(isFocused && this.isEventFocus()){
+      FastListUtils.handleItemFocus(this)
+    }
+  }
+
+
+
   handleBlur(isFocused: boolean): void {
-    QTLog.i(TAG_FOCUS,`---handle blur this:${ExtendUtil.debugView(this)}`)
+    // QTLog.i(TAG_FOCUS,`---handle blur this:${ExtendUtil.debugView(this)}`)
+    if(this.cssFocusable){
+      this.onFocusChanged(false)
+    }
     super.handleBlur(isFocused)
   }
 }
@@ -199,7 +282,7 @@ export struct QTDiv {
   @Consume('autoSize') @Watch('onAutoSizeChange') autoSize? : number[]
 
   private readonly TAG = "QTDiv"
-  @State colorModifier: MyStackModifier = modifier
+  // @State colorModifier: MyStackModifier = modifier
   @State visibilityModifier: MyStackModifierVisible = visibleModifier
 
   // 监听autoSize变化的回调函数
@@ -230,6 +313,9 @@ export struct QTDiv {
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
+    // setInterval(()=>{
+    //   QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this.renderView)} `)
+    // },5000)
   }
 
   aboutToDisappear() {
@@ -249,10 +335,18 @@ export struct QTDiv {
         .applyGestures(this.renderView)
         //注:当使用了自定义获焦requestFocus时候，不走系统默认焦点逻辑，不会触发focusBox焦点框，如需使用可以根据获焦状态来自定义border样式实现
         //custom
-        .attributeModifier(this.colorModifier)
+        // .attributeModifier(this.colorModifier)
         // .attributeModifier(this.visibilityModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
+        .onFocus(() => {
+          this.renderView.focus = true
+          this.renderView.handleFocus(this.renderView.focus)
+        })
+        .onBlur(() => {
+          this.renderView.focus = false
+          this.renderView.handleBlur(this.renderView.focus)
+        })
         .onClick((event=>{
           ViewUtils.handleClickEvent(event,this.renderView)
         }))
@@ -264,7 +358,7 @@ export struct QTDiv {
         }
         .applyRenderViewBaseAttr(this.renderView)
         // .attributeModifier(this.visibilityModifier)
-        .attributeModifier(this.colorModifier)
+        // .attributeModifier(this.colorModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
     }
@@ -275,7 +369,7 @@ export struct QTDiv {
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTDivView) {
   // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
-  .backgroundColor($$.cssBackgroundColor)
+  .backgroundColor($$.stateBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
@@ -302,7 +396,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .visibility($$.visibility)
   //div
   // .focusable($$.cssFocusable)
-  .tabStop($$.cssFocusable)
+  //.tabStop($$.cssFocusable)  设置了tabStop的容器节点获焦后 按OK键 不会触发OnClick，而是跳到容器内部寻找可获焦节点
   .border($$.focus ? $$.setBorder() : $$.border)
   .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
   .borderRadius({
@@ -311,14 +405,14 @@ function applyRenderViewBaseAttr($$: QTDivView) {
     bottomLeft: $$.borderBottomLeftRadius,
     bottomRight: $$.borderBottomRightRadius,
   })
-  .onFocus(() => {
-    $$.focus = true
-    $$.handleFocus($$.focus)
-  })
-  .onBlur(() => {
-    $$.focus = false
-    $$.handleBlur($$.focus)
-  })
+  // .onFocus(() => {
+  //   $$.focus = true
+  //   $$.handleFocus($$.focus)
+  // })
+  // .onBlur(() => {
+  //   $$.focus = false
+  //   $$.handleBlur($$.focus)
+  // })
 }
 
 @Extend(Stack)

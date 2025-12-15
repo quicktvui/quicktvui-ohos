@@ -12,19 +12,33 @@ import { QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { FocusUtils } from '../../utils/FocusUtils';
 import { QTLog } from '../../utils/QTLog';
+import { FocusManager } from '../FocusManager';
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TVView } from '../TVView';
+import { IPage } from './IPage';
+import { PageManager } from './PageManager';
 
 @Observed
-export class QTPageView extends QTBaseComponentView {
+export class QTPageView extends QTBaseComponentView implements IPage {
   public event: QTPage | null = null
-  focusedView : QTView | null = null;
-  savedFocus :QTView | null= null;
+  public savedFocus: TVView | null = null;
+  public focusManager: FocusManager = new FocusManager(this)
+  public isDialogMode: boolean = false
+
+  uiContext : UIContext | null = null;
+  isFront : boolean = false;
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
+    switch (propKey) {
+      case 'isDialogMode': {
+        this.isDialogMode = propValue as boolean;
+        return true;
+      }
+    }
     return super.setProp(propKey, propValue)
   }
 
@@ -35,28 +49,51 @@ export class QTPageView extends QTBaseComponentView {
     super.call(method, params, callback)
   }
 
-  notifyChildRequestFocus(child: QTView, focusedView: QTView): void {
-    this.focusedView = focusedView;
-    QTLog.e(TAG_FOCUS,`QTPageView requestChildFocus focusedView:${ExtendUtil.debugView(focusedView)}`)
+  notifyChildRequestFocus(child: QTView, focusedView: TVView): void {
+    this.focusManager.setFocusedView(focusedView)
+    QTLog.e(TAG_FOCUS, `QTPageView requestChildFocus focusedView:${focusedView?.uid}`)
   }
 
-  saveFocus(){
-    this.savedFocus = this.focusedView;
+  dispatchKeyEvent(event: KeyEvent): boolean {
+
+    if(this.isFront){
+      return this.focusManager.dispatchKeyEvent(event)
+    }else{
+      return false;
+    }
   }
 
-  restoreFocus(){
-    if(this.savedFocus != null){
-     FocusUtils.requestFocus(this.savedFocus)
+
+
+  saveFocus() {
+    this.savedFocus = this.focusManager.getFocusedView();
+  }
+
+  restoreFocus() {
+    if (this.savedFocus != null) {
+      FocusUtils.requestFocusById(this.savedFocus.uid)
       this.savedFocus = null;
     }
   }
 
   aboutToDisappear(){
+    this.isFront = false;
     this.saveFocus()
+    setTimeout(()=>{
+      PageManager.unregisterPage(this.uid)
+    },100)
   }
 
   aboutToAppear(){
+    this.isFront = true;
+    this.uid = `page-${this.tag}`
+    PageManager.registerPage(this.uid,this)
     this.restoreFocus()
+  }
+
+  setPageUIContext(uiContext : UIContext){
+    this.uiContext = uiContext;
+    this.focusManager.uiContext = uiContext;
   }
 
 }
@@ -75,6 +112,7 @@ export struct QTPage {
     // QTLog.e(TAG_FOCUS,`+++page aboutToAppear this:${ExtendUtil.debugView(this.renderView)}`)
     this.renderView.event = this
     this.renderView.aboutToAppear()
+    this.renderView.setPageUIContext(this.getUIContext())
   }
 
   aboutToDisappear() {
@@ -109,6 +147,7 @@ function applyRenderViewBaseAttr($$: QTPageView) {
   .accessibilityText($$.cssAccessibilityLabel)
   // .focusable($$.cssFocusable)
   .border($$.cssBorder)
+  .id(`page-${$$.tag}`)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)

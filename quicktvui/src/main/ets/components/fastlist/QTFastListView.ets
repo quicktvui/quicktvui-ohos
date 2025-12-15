@@ -16,6 +16,8 @@ import { QTItemRootView } from './QTItemRootView';
 import { QTFastList } from './QTFastList';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import System from '@ohos/zxing/src/main/ets/core/util/System';
+import { QTBaseComponentView } from '../QTBaseComponentView';
+import { TVView } from '../TVView';
 
 const PREFIX_KEY = "FASTLIST"
 
@@ -57,6 +59,7 @@ export class QTFastListView extends QTRenderBaseView{
     this.onScrolledOffset += scrollOffset;
     this.lastScrollState = scrollState
     this.lastCallTime = System.currentTimeMillis()
+    this.eventOnScroll?.(this.onScrolledOffset)
   }
 
   handleScrollValue(force:boolean ,sy : number){
@@ -89,6 +92,28 @@ export class QTFastListView extends QTRenderBaseView{
     QTLog.w(TAG_FAST_EVENT,`------onScrollStart------`)
   }
 
+  /**
+   * 把当前组件下所有可获焦的view添加到views里,以辅助寻焦
+   * @param views
+   * @param direction
+   * @returns
+   */
+  addFocusables(views: TVView[], direction: number): boolean {
+    if (this.virtualChildren && this.virtualChildren.length > 0) {
+      this.virtualChildren.forEach((child: QTView) => {
+        QTLog.d(TAG_FOCUS,`FastList addFocusables child:${ExtendUtil.debugView(child)}`)
+        if(child instanceof QTBaseComponentView){
+          child.addFocusables(views,direction)
+        }else if (child.cssFocusable === true) {
+          //这里应该判断是否实现TVView接口，如果实现了，并且focusable为true，也应该添加进来
+          //views.push(child);
+          QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
+        }
+      });
+    }
+    return true;
+  }
+
   getHandleEventNodeId() : number{
     return this.mHandleEventNodeId > -1  ? this.mHandleEventNodeId : this.tag;
   }
@@ -119,6 +144,8 @@ export class QTFastListView extends QTRenderBaseView{
   enablePlaceholder : boolean  = false;
 
   eventItemClick: ((index:number,clickedView:QTView) => void) | null = null
+  eventItemFocus: ((index:number,clickedView:QTView) => void) | null = null
+  eventOnScroll: ((onScrolledOffset:number) => void) | null = null
 
   mScrollEventEnable : boolean = false;
 
@@ -126,6 +153,8 @@ export class QTFastListView extends QTRenderBaseView{
   scrollYGreaterReferenceValue : number = -1;
 
   mHandleEventNodeId : number = -1;
+
+  scrollEnable:boolean = true;
 
   private endBatchCallback: HippyEndBatchCallback | null = null
 
@@ -258,8 +287,7 @@ export class QTFastListView extends QTRenderBaseView{
         }
         return true;
 
-      case "enableItemAnimator":
-        return true;
+
       case "disableScrollOnFirstScreen":
 
         return true;
@@ -271,7 +299,7 @@ export class QTFastListView extends QTRenderBaseView{
         return true;
 
       case "scrollEnabled":
-
+        this.scrollEnable = HRValueUtils.getBoolean(propValue,true)
         return true;
       case "firstFocusChild":
 
@@ -307,28 +335,28 @@ export class QTFastListView extends QTRenderBaseView{
         return true;
 
       case "makeChildVisibleClampBackward":
-
+        //暂不实现
         return true;
       case "makeChildVisibleClampForward":
-
+        //暂不实现
         return true;
       case "scrollThresholdHorizontal":
-
+        //暂不实现
         return true;
       case "scrollThresholdVertical":
-
+        //暂不实现
         return true;
       case "cachePool":
-
+        //暂不实现
         return true;
       case "cachePoolName":
-
+        //暂不实现
         return true;
       case "focusMemory":
 
         return true;
       case "pauseTaskOnHide":
-
+        //暂不实现
         return true;
       case "setSelectChildPosition":
 
@@ -337,28 +365,28 @@ export class QTFastListView extends QTRenderBaseView{
 
         return true;
       case "shakePreCheckNumber":
-
+        //暂不实现
         return true;
       case "placeholderFocusScale":
-
+        //暂不实现
         return true;
       case "placeholderColorString":
-
+        //暂不实现
         return true;
       case "placeholderColor":
-
+        //暂不实现
         return true;
       case "placeholderBorderRadius":
-
+        //暂不实现
         return true;
       case "preloadItemNumber":
-
+        //暂不实现
         return true;
       case "endHintEnabled":
-
+        //暂不实现
         return true;
       case "endShakeEnabled":
-
+        //暂不实现
         return true;
       case "forceBlockFocusOnFail":
 
@@ -429,7 +457,6 @@ export class QTFastListView extends QTRenderBaseView{
       case "display":
       case "setData":
       case "suspendUpdateTaskOnPause":
-
       case "verticalScrollBarEnabled":
       case "horizontalScrollBarEnabled":
       case "checkScrollOffsetOnStateChanged":
@@ -450,6 +477,7 @@ export class QTFastListView extends QTRenderBaseView{
       case "autoscrollInfiniteMode":
       case "autoSelectPosition":
       case "useLayoutAnimation":
+      case "enableItemAnimator":
         console.error(TAG_FASTLIST,`QTFastListView : 未实现propKey : ${propKey}`)
         return true;
       // default :
@@ -568,6 +596,10 @@ export class QTFastListView extends QTRenderBaseView{
 
   public notifyItemChanged(pos : number){
     this.dataSource?.notifyDataChange(pos)
+  }
+
+  public scrollToTop(){
+    this.scroller.scrollToIndex(0)
   }
 
   aboutToUpdate(): void {

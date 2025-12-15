@@ -94,7 +94,6 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("ESPlayMarkViewComponent", (ctx): HippyRenderBaseView => new QTPlayMarkView(ctx))
 
     //fallback
-    registerMap.set("ItemFrameComponent", (ctx): HippyRenderBaseView => new QTFallbackView(ctx))
     registerMap.set("RippleViewComponent", (ctx): HippyRenderBaseView => new QTFallbackView(ctx))
     // registerMap.set("ExampleViewB", (ctx): HippyRenderBaseView => new ExampleViewB(ctx))
     // registerMap.set("MyScrollView", (ctx): HippyRenderBaseView => new MyScrollView(ctx))

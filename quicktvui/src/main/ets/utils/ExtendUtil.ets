@@ -11,7 +11,6 @@ import { NodeUtils } from './NodeUtils';
 import { QTCompatUtil } from './QTCompatUtil';
 import { QTLog } from './QTLog';
 import { ViewUtils } from './ViewUtils';
-
 export class ExtendUtil{
 
   static debugView(view:QTView | null) : string{
@@ -49,7 +48,22 @@ export class ExtendUtil{
      return QTCompatUtil.getQTBaseView(view)?.viewActor
   }
 
+  static printTreeView(node: QTView, prefix: string = '', isLast: boolean = true): void {
+    // 打印当前节点
+    console.log(`${prefix}${isLast ? '└── ' : '├── '}${node.viewType} - ${node.tag}`);
 
+    // 如果有子节点，递归处理
+    if (node.children && node.children.length > 0) {
+      const childPrefix = prefix + (isLast ? '    ' : '│   ');
+      const childCount = node.children.length;
+
+      node.children.forEach((child, index) => {
+        // 判断当前子节点是否是最后一个
+        const isChildLast = index === childCount - 1;
+        ExtendUtil.printTreeView(child, childPrefix, isChildLast);
+      });
+    }
+  }
 
   // 状态常量定义 - 使用鸿蒙的状态枚举
   static STATE_SET_SELECTED_FOCUS: number[] = [

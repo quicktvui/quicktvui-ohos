@@ -9,7 +9,7 @@ import { LayoutAttach } from './LayoutAttach';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTFastFlexView } from './QTFastFlexView';
 import { QTLog } from '../../utils/QTLog';
-import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
 import { QTFastItemView } from './QTFastItemView';
 import { QTMap, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -59,9 +59,6 @@ export class TemplateViewManager{
     static applyPatchUpdate(updates:Array<PathUpdate> | null){
     updates?.map((p)=>{
       p.props.forEach((value,key)=>{
-        // if(key == 'text'){
-        //   console.log(TAG_FASTLIST,`updates p :${p.renderView.viewType},prop:${key},value:${value},position:${position}`)
-        // }
         //更新所有属性
         let handle = false
         switch (key){
@@ -127,7 +124,10 @@ export class TemplateViewManager{
     if(!rv){
       return null;
     }
-    VirtualViewRegistry.getInstance().registerView(rv)
+    let uid = VirtualViewRegistry.getInstance().registerView(rv)
+     if(rv instanceof QTBaseComponentView){
+       rv.uid = uid;
+     }
     this.applyInit(rv,template,templateProps,index)
     let style = new Map<String,HippyAny>()
     // toUpdate.forEach((value,key)=>{
@@ -255,7 +255,7 @@ export class TemplateViewManager{
                   rendView.sid = ''
                 }
               }
-              return;
+              break;
             case 'name':
               let name = HRValueUtils.getString(value);
               LayoutAttach.obtainLayoutAttach(rendView).name = name;
@@ -267,7 +267,7 @@ export class TemplateViewManager{
                   rendView.name = ''
                 }
               }
-              return ;
+              break;
           }
         }
       })

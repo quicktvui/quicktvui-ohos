@@ -1,7 +1,7 @@
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
 import { InnerViewPagerView, QTBaseComponentView, QTFastList,QTFastListView } from '../../../../../Index';
-import { TAG_FASTLIST, TAG_TABS } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
@@ -9,6 +9,7 @@ import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import QTRenderBaseView from '../QTRenderBaseView';
+import { TVView } from '../TVView';
 import { TabsDataSource } from './TabsDataSource';
 import { WaterfallListView } from './WaterfallListView';
 
@@ -206,6 +207,13 @@ export class QTTabsView extends QTRenderBaseView{
     // })
   }
 
+  addFocusables(views: TVView[], direction: number): boolean {
+    let pd = this.getTabData(this.currentIndex)
+    // QTLog.d(TAG_FOCUS,`Tabs addFocusables currentContent:${ExtendUtil.debugView(pd!!.contentView)}`)
+    return pd?.contentView?.addFocusables(views,direction) ? true : false;
+    return true;
+  }
+
   addSubRenderView(subView: HippyRenderBaseView, index: number): void {
     super.addSubRenderView(subView,index)
     if(subView instanceof QTFastListView){
@@ -213,6 +221,13 @@ export class QTTabsView extends QTRenderBaseView{
       this.tabList.eventItemClick = ((index,clickedView)=>{
         //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
         this.notifyPageChange(index)
+        this.controller.changeIndex(index)
+        this.notifyPageBringToFront(index,this.resumeTaskDelay)
+      })
+      this.tabList.eventItemFocus = ((index,focusView)=>{
+        //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
+        this.notifyPageChange(index)
+        this.scrollContentToTop(index)
         this.controller.changeIndex(index)
         this.notifyPageBringToFront(index,this.resumeTaskDelay)
       })
@@ -228,9 +243,20 @@ export class QTTabsView extends QTRenderBaseView{
     }
   }
 
+  scrollContentToTop(pageIndex: number){
+    let t = this.tabsData[pageIndex]
+    if(t){
+      t.contentView?.scrollToTop()
+    }
+  }
+
   // registerAllItemStore(){
   //
   // }
+
+  onContentScroll(pageIndex:number,scrolledValue:number){
+    QTLog.i(TAG_TABS,`onContentScroll pageIndex:${pageIndex},scrolledValue:${scrolledValue}`)
+  }
 
   updateTabsData(data : QTArray){
     //setupItemStores
@@ -252,9 +278,13 @@ export class QTTabsView extends QTRenderBaseView{
       let wl = new WaterfallListView(this.ctx,this)
       wl.pageIndex = index
       wl.isVirtual = true
+      wl.eventOnScroll = ((scrolled)=>{
+        this.onContentScroll(index,scrolled)
+      })
       if(this.viewpager?.templateListView){
         wl.setCustomTemplate(this.viewpager?.templateListView as QTView)
       }
+      wl.mHandleEventNodeId = this.tag
       p.contentView = wl
       // this.addSubRenderView(wl,2+index)
       QTPixelUtil.setRenderViewLayout(p.contentView,[0,0,this.cssWidth > 0 ? this.cssWidth : QTPixelUtil.getScreenDevWidth(),this.cssHeight > 0 ? this.cssHeight : QTPixelUtil.getScreenDevHeight() ])
@@ -310,6 +340,7 @@ export class QTTabsView extends QTRenderBaseView{
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
     QTLog.d(TAG_TABS,`onTabsContentWillChangeCallback currentIndex  :${currentIndex},comingIndex:${comingIndex}`)
+    this.scrollContentToTop(currentIndex)
     this.notifyPageChange(comingIndex)
     this.tryLoadPageData(comingIndex)
     return true;

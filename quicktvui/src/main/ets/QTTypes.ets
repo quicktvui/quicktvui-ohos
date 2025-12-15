@@ -1,4 +1,5 @@
 import {HippyRenderBaseView,HippyMap,HippyAny,HippyValue,HippyArray} from 'hippy'
+import { QTTabsView } from '../../../Index'
 import { QTFastFlexView } from './components/fastlist/QTFastFlexView'
 import { QTFastListView } from './components/fastlist/QTFastListView'
 import { QTBaseComponentView } from './components/QTBaseComponentView'
@@ -8,5 +9,7 @@ export type QTMap = HippyMap |  Map<string, HippyAny>
 export type QTAny = HippyAny
 export type QTValue = HippyValue
 export type QTPendingListView = QTFastListView | QTFastFlexView
+export type QTVirtualViewGroup = QTFastFlexView | QTFastListView | QTTabsView
 export type QTArray = HippyArray
 export type QTBaseView =  QTBaseComponentView | null
+export type QTTVView = QTBaseComponentView

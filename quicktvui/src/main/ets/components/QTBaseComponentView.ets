@@ -5,7 +5,7 @@ import {
   HippyCustomComponentView,
   HippyRenderCallback,
 } from 'hippy'
-import { TAG_FOCUS } from '../Constant';
+import { TAG_FASTLIST, TAG_FOCUS } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
@@ -16,8 +16,9 @@ import { QTActorHost } from './QTActorHost';
 import { QTViewActor } from './QTViewActor';
 import { QTVirtualView } from './QTVirtualView';
 import { QTViewState, StateView } from './StateView';
+import { TVView } from './TVView';
 
-export class QTBaseComponentView extends HippyCustomComponentView  implements  QTActorHost,QTVirtualView,StateView{
+export class QTBaseComponentView extends HippyCustomComponentView  implements  QTActorHost,QTVirtualView,StateView,TVView{
   childSlot: NodeContent | null = null
   public templateView : QTView | null = null;
   qtPadding: Padding = { top: 0, right: 0, bottom: 0, left: 0 }
@@ -25,7 +26,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   // TV扩展
   visibility: Visibility = Visibility.Visible
   sid: string = ''
-  uid:string = ''
+  // uid:string = ''
+  _uid:string = ''
   name: string = ''
   selected: boolean = false
   showonstate: string = 'normal' //
@@ -35,7 +37,30 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   border: BorderOptions = {}   //模拟selected选中效果
   private currentStates: number[] = []
 
-  duplicateParentState: boolean = true
+  public get uid(): string {
+    if(this._uid){
+      return this._uid
+    }
+    if(LayoutAttach.obtainLayoutAttach(this).uid){
+      return LayoutAttach.obtainLayoutAttach(this)?.uid!!
+    }
+    if(this.tag > -1){
+      return `real_${this.tag}`
+    }else{
+      //return LayoutAttach.obtainLayoutAttach(view)?.uid
+      QTLog.e(TAG_FASTLIST,`getViewUid error invalid tag`)
+      return ''
+    }
+  }
+
+  // getter
+  // getter
+  // setter
+  public set uid(value: string) {
+    this._uid = value;
+  }
+
+  duplicateParentState: boolean = false
 
   autofocus:boolean = false;
 
@@ -60,12 +85,28 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     this.viewActor.notifyChildSizeChanged(child,changedView, width, height)
   }
 
-  notifyChildRequestFocus(child:QTView,focusedView: QTView){
+  /**
+   * 通知parent，子view内部请求焦点
+   * @param child
+   * @param focusedView
+   */
+  notifyChildRequestFocus(child:QTView,focusedView: TVView){
     if(this.parentView instanceof QTBaseComponentView){
       this.parentView.notifyChildRequestFocus(this,focusedView)
     }else{
       QTLog.w(TAG_FOCUS,`notifyChildRequestFocus fail parent:${ExtendUtil.debugView(this.parentView)},this:${ExtendUtil.debugView(this)}`)
     }
+  }
+
+  focusSearch(focused: TVView | null ,direction : number) : TVView | null{
+
+   // let  nextFocus = FocusFinder.findNextFocus(focused,this)
+
+    return null;
+  }
+
+  getDisplayChildren(){
+    return this.children
   }
 
 
@@ -135,8 +176,29 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   }
 
+  isFocused(){
+    return this.focus && this.cssFocusable
+  }
+
+  isSelected(){
+    return this.selected;
+  }
+
   isEventClick() : boolean{
     return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventClick
+  }
+
+  isEventFocus() : boolean{
+    return this.isVirtual && LayoutAttach.obtainLayoutAttach(this).virtualExtra.eventFocus
+  }
+
+  addFocusables(views: TVView[],direction:number) : boolean{
+    return this.viewActor.addFocusables(views,direction)
+  }
+
+  dispatchKeyEvent(event: KeyEvent): boolean {
+   // QTLog.i(TAG_FOCUS,`dispatchKeyEvent :${event.keyText} code:${event.keyCode} this:${ExtendUtil.debugView(this)}`)
+    return false;
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
@@ -174,7 +236,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         //   return true;
       case 'duplicateParentState':
         {
-          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, false);
+          this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, true);
           // this.setDuplicate();
         }
         return true

@@ -18,7 +18,7 @@ import {
 } from 'hippy'
 
 import { RuntimeAPIProvider } from '../api/RuntimeAPIProvider'
-import { QTAPIProvider } from 'quicktvui';
+import { FocusManager, QTAPIProvider } from 'quicktvui';
 import {
   buildCustomRenderView,
 } from 'quicktvui';
@@ -51,8 +51,8 @@ export struct Debug {
   //----------------------------------------------------------------------------------
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
-  private debugMode: boolean = true
-  @State debugServerHost: string = '192.168.40.89' //TODO 调试服务地址
+  private debugMode: boolean = false
+  @State debugServerHost: string = '192.168.40.92' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
@@ -78,6 +78,7 @@ export struct Debug {
   private rootViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State isEngineInitialized: boolean = false
   @Provide('autoSize') autoSize?: number[] = []
+
 
   async aboutToAppear() {
     LogUtils.e(this.TAG, 'Lifecycle: aboutToAppear');
@@ -499,10 +500,22 @@ export struct Debug {
         return false
       }
     })
-    .onKeyEvent((event) => {
+    .onKeyPreIme((event) => {
+      //------------------分发 key event 给 vue 端---------------------
       this.hippyEngine?.onKeyEvent(event)
-      console.log('========onKeyEvent=========>>>' + event.type + " ====>>>> " + event.keyCode);
+      //------------------分发 key event 给 vue 端---------------------
+      // QTLog.i (TAG_FOCUS, '========onKeyPreIme=========>>>' + event.type + " ====>>>> " + event.keyCode);
+      if (this.rootViewWrapper.getRootView()) {
+        return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!, event)
+      }
+      //这里return false 则
+      return false;
     })
+    // 这里注释掉，自己实现的焦点系统就作废了
+    // .onKeyEventDispatch((event)=>{
+    //   // QTLog.i (TAG_FOCUS, '========onKeyEventDispatch=========>>>' + event.type + " ====>>>> " + event.keyCode);
+    //
+    // })
   }
 }
 

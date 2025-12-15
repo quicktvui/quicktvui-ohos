@@ -1,13 +1,15 @@
 import { QTAny, QTBaseView, QTView } from "../QTTypes"
-import { QTPixelUtil } from "../utils/QTPixelUtil"
 import { LayoutAttach } from "./fastlist/LayoutAttach"
 import {HippyRenderBaseView} from 'hippy'
-import { TAG_LAYOUT, TAG_QUICKTVUI } from "../Constant"
+import { TAG_FASTLIST, TAG_FOCUS, TAG_LAYOUT, TAG_QUICKTVUI } from "../Constant"
 import { QTAttach } from "./QTAttach"
 import { ExtendUtil } from "../utils/ExtendUtil"
 import { QTLog } from "../utils/QTLog"
+import { TVView } from "./TVView"
+import { QTBaseComponentView } from "./QTBaseComponentView"
 
 export class QTViewActor{
+
   constructor(hostView: HippyRenderBaseView) {
     this.hostView = hostView
   }
@@ -49,6 +51,23 @@ export class QTViewActor{
       // QTLog.w(TAG_LAYOUT,`notifyChildSizeChanged return on parent invalid:${ExtendUtil.debugView(this.hostView)},parent:${ExtendUtil.debugView(this.hostView?.parentView)}`)
     }
 
+  }
+
+  addFocusables(views: TVView[],direction:number) : boolean{
+    //FocusUtils.requestFocus(this.hostView)
+    let view = this.hostView
+    let canTakeFocus = view.cssFocusable
+    if(canTakeFocus ){
+      if(this.hostView instanceof QTBaseComponentView){
+        QTLog.i(TAG_FOCUS,`addFocusables by view Actor this : ${ExtendUtil.debugView(this.hostView)}`)
+        views.push(this.hostView)
+      }else{
+        QTLog.w(TAG_FOCUS,`addFocusables canTakeFocus reutrn  this : ${ExtendUtil.debugView(this.hostView)}`)
+      }
+
+      return true;
+    }
+    return false;
   }
 
 

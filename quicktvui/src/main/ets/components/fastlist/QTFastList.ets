@@ -130,7 +130,9 @@ export struct  QTFastList {
                 children: item.children,
               })
                 .reuseId(item.getReuseId())
-            }
+            }.onFocus(()=>{
+              this.renderView.scroller.scrollToIndex(index,false,ScrollAlign.CENTER)
+            })
             .margin(item.decoration)
           }, this.keyGenerate)
         }
