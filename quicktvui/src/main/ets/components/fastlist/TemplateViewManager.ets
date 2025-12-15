@@ -61,10 +61,14 @@ export class TemplateViewManager{
       p.props.forEach((value,key)=>{
         //更新所有属性
         let handle = false
+        let toValue = value;
         switch (key){
           case 'showIf':
             p.renderView.cssVisibility = value ? Visibility.Visible : Visibility.Hidden
             handle = true;
+            case 'fontSize':
+            toValue = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(value))
+            handle = false;
             break;
         }
         if(!handle){
@@ -73,7 +77,7 @@ export class TemplateViewManager{
           }else{
             QTLog.i(TAG_REUSE,`applyPendingProp on bindItem  key:${key},value:${value},view:${ExtendUtil.debugView(p.renderView)}`)
           }
-          p.renderView.setProp(key,value)
+          p.renderView.setProp(key,toValue)
         }
       })
     })
@@ -88,29 +92,6 @@ export class TemplateViewManager{
         QTLog.i(TAG_REUSE,`applyPendingProp key:${key},dataFromValue:${dataFromValue},view:${ExtendUtil.debugView(rendView)}`)
       }
       rendView.setProp(key,dataFromValue)
-    })
-  }
-
-
-
-  applyPendingPropsPatchUpdate(updates:Array<PathUpdate> | null){
-    updates?.map((p)=>{
-      p.props.forEach((value,key)=>{
-        // if(key == 'text'){
-        //   console.log(TAG_FASTLIST,`updates p :${p.renderView.viewType},prop:${key},value:${value},position:${position}`)
-        // }
-        //更新所有属性
-        let handle = false
-        switch (key){
-          case 'showIf':
-            p.renderView.cssVisibility = value ? Visibility.Visible : Visibility.Hidden
-            handle = true;
-            break;
-        }
-        if(!handle){
-          p.renderView.setProp(key,value)
-        }
-      })
     })
   }
 
