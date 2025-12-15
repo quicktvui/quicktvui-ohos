@@ -272,6 +272,10 @@ struct AppView {
     .onAttach(() => {
       this.postLifecycleEvent('onAttach')
     })
+    .onKeyPreIme((event) => {
+      this.appContext.engine?.onKeyEvent(event)
+      return false;
+    })
     .onDetach(() => {
       this.postLifecycleEvent('onDetach')
     })
