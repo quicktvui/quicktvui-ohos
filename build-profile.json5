@@ -89,6 +89,96 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "g_2048",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.elsb.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_2048_cube",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.elsbfk.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_guess",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.guesspos.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_huarong_road",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.szhrd.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_push_box",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.tuixiangzi.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_snake",
+        "signingConfig": "default",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.snake.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -160,6 +250,42 @@
           "name": "doudizhu",
           "applyToProducts": [
             "doudizhu"
+          ]
+        },
+        {
+          "name": "g_2048",
+          "applyToProducts": [
+            "g_2048"
+          ]
+        },
+        {
+          "name": "g_2048_cube",
+          "applyToProducts": [
+            "g_2048_cube"
+          ]
+        },
+        {
+          "name": "g_guess",
+          "applyToProducts": [
+            "g_guess"
+          ]
+        },
+        {
+          "name": "g_huarong_road",
+          "applyToProducts": [
+            "g_huarong_road"
+          ]
+        },
+        {
+          "name": "g_push_box",
+          "applyToProducts": [
+            "g_push_box"
+          ]
+        },
+        {
+          "name": "g_snake",
+          "applyToProducts": [
+            "g_snake"
           ]
         }
       ]
