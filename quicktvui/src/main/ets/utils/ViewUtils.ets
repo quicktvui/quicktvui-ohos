@@ -228,7 +228,7 @@ export class ViewUtils{
     return '#' + colorVal
   }
 
-  static getViewUid(view : QTView | null) : string | null{
+  static getViewUid(view : QTView | null | undefined) : string | null{
     //virtual_ or real_
     if(!view){
       return null;

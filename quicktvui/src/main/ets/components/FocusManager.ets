@@ -1,6 +1,5 @@
 import { TAG_CLICK, TAG_FASTLIST, TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
-import { ExtendUtil } from "../utils/ExtendUtil";
 import { FocusFinder } from "../utils/FocusFinder";
 import { QTLog } from "../utils/QTLog";
 import { QTBaseComponentView } from "./QTBaseComponentView";

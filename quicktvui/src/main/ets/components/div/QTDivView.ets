@@ -138,7 +138,8 @@ export class QTDivView extends HRTvDivView {
 
   requestFocus(){
     QTLog.e(TAG_FOCUS,`requestFocus focusable:${this.cssFocusable} ,this :`+ExtendUtil.debugView(this))
-    focusControl.requestFocus(ViewUtils.getViewUid(this));
+    //focusControl.requestFocus(ViewUtils.getViewUid(this));
+
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {

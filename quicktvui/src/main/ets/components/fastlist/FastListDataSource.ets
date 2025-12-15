@@ -407,13 +407,13 @@ export class FastListDataSource implements IDataSource {
               // this.templateViewManager.gatherToUpdateMapTraverse(rv,it.templateView,it.props,item.raw as HippyMap,null,updates,false)
             }else{
               fi.pendingUpdates = []
-              rv = this.templateViewManager.buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
+              rv = this.templateViewManager.buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,this.listView,0,updates)
               this.fillContent(type,rv!!,fi)
               // fi.updates = updates;
             }
           }else{
             fi.pendingUpdates = []
-            rv = this.templateViewManager.buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,null,0,updates)
+            rv = this.templateViewManager.buildRenderViewTraverse(this.rootListId,this.ctx,it.templateView,it.props,item.raw as HippyMap,this.listView,0,updates)
             this.fillContent(type,rv!!,fi)
             // fi.updates = updates;
           }

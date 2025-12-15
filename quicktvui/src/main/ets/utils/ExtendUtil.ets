@@ -13,7 +13,7 @@ import { QTLog } from './QTLog';
 import { ViewUtils } from './ViewUtils';
 export class ExtendUtil{
 
-  static debugView(view:QTView | null) : string{
+  static debugView(view:QTView | null | undefined) : string{
     if(view  == null ){
       return 'null'
     }

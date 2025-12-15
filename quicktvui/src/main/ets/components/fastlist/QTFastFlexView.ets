@@ -68,6 +68,16 @@ export class QTFastFlexView extends QTRenderBaseView {
     }
   }
 
+  getPageUid(): String | null | undefined {
+    if(this.templateView){
+      let templateAttach = LayoutAttach.obtainLayoutAttach(this.templateView);
+      if(templateAttach.pageUid){
+        return templateAttach.pageUid
+      }
+    }
+    return super.getPageUid();
+  }
+
   onDataChanged(data : HippyArray | null){
     QTLog.d(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
     this.virtualChildren = []
@@ -77,6 +87,7 @@ export class QTFastFlexView extends QTRenderBaseView {
         let item : ItemView = new ItemView(i,data[i] as HippyMap);
         // this.dataSource?.buildItem(item,i)
         let fi : QTItemRootView =  new QTItemRootView(this.ctx).init(this,item)
+        LayoutAttach.obtainLayoutAttach(fi).pageUid = this.getPageUid();
         this.dataSource.buildItem(fi,i)
         fi.enablePlaceholder = this.enablePlaceholder
         this.virtualChildren.push(fi)

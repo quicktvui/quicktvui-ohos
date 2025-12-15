@@ -82,6 +82,16 @@ export class QTFastListView extends QTRenderBaseView{
     }
   }
 
+  getPageUid(): String | null | undefined {
+    if(this.templateView){
+      let templateAttach = LayoutAttach.obtainLayoutAttach(this.templateView);
+      if(templateAttach.pageUid){
+        return templateAttach.pageUid
+      }
+    }
+    return super.getPageUid();
+  }
+
   onScrollIndex(start: number, end: number, center: number) {
     //QTLog.i(TAG_FAST_EVENT,`onScrollIndex start:${start},end:${end},center:${center}`)
   }
@@ -504,7 +514,9 @@ export class QTFastListView extends QTRenderBaseView{
           // QTLog.d(TAG_FASTLIST,`onDataChanged crate item :${CommonUtils.hippyAny2String(item)}`)
           //CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
           let it =  new ItemView(index,item as HippyMap)
-          return new QTItemRootView(this.ctx).init(this,it)
+          let fi = new QTItemRootView(this.ctx).init(this,it)
+          LayoutAttach.obtainLayoutAttach(fi).pageUid = this.getPageUid();
+          return fi;
         })
       )
       this.notifyReload()

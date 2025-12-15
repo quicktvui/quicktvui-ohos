@@ -6,7 +6,7 @@ import { ViewUtils } from "./ViewUtils";
 
 export class FocusUtils{
 
-    static requestFocus(view : QTView | null){
+    static requestFocus(view : QTView | null | undefined){
         let uid = ViewUtils.getViewUid(view)
         if(uid){
           QTLog.e(TAG_FOCUS,`exe requestFocus view :${ExtendUtil.debugView(view)}`)
@@ -16,7 +16,7 @@ export class FocusUtils{
         }
       }
 
-  static requestFocusById(uid : string | null){
+  static requestFocusById(uid : string | null | undefined){
     if(uid){
       QTLog.e(TAG_FOCUS,`exe requestFocus view :${uid}`)
       focusControl.requestFocus(uid)

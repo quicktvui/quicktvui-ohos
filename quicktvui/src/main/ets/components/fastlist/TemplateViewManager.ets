@@ -9,7 +9,7 @@ import { LayoutAttach } from './LayoutAttach';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTFastFlexView } from './QTFastFlexView';
 import { QTLog } from '../../utils/QTLog';
-import { TAG_FASTLIST, TAG_FOCUS, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_LAYOUT, TAG_QUICKTVUI, TAG_REUSE } from '../../Constant';
 import { QTFastItemView } from './QTFastItemView';
 import { QTMap, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -302,7 +302,13 @@ export class TemplateViewManager{
     }
     LayoutAttach.obtainLayoutAttach(patch.renderView).virtualExtra.rootListId = rootListId;
     updates.push(patch)
-    if(parent){
+    if(parent instanceof QTFastFlexView || parent instanceof QTFastListView){
+      let pageUid = LayoutAttach.obtainLayoutAttach(parent).pageUid;
+      LayoutAttach.obtainLayoutAttach(patch.renderView).pageUid = pageUid;
+      if(!pageUid){
+        QTLog.e(TAG_QUICKTVUI,`setPageUID error :${pageUid} this:${ExtendUtil.debugView(parent)}`)
+      }
+    }else if(parent){
       parent.addSubRenderView(patch.renderView,index)
       //添加layout node
       LayoutAttach.obtainLayoutAttach(parent).insertChild(LayoutAttach.obtainLayoutAttach(patch.renderView),index)

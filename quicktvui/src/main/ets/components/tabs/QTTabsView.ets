@@ -8,6 +8,7 @@ import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
+import { LayoutAttach } from '../fastlist/LayoutAttach';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { TVView } from '../TVView';
 import { TabsDataSource } from './TabsDataSource';
@@ -260,7 +261,7 @@ export class QTTabsView extends QTRenderBaseView{
 
   updateTabsData(data : QTArray){
     //setupItemStores
-    QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)}`)
+    QTLog.i(TAG_TABS,`updateTabsData tabListView:${ExtendUtil.debugView(this.tabList)},pageUID:${LayoutAttach.obtainLayoutAttach(this).pageUid}`)
     this.tabsData = []
     data.forEach((item: QTAny,index:number)=>{
       let p :TabPageData = new TabPageData()
@@ -276,6 +277,7 @@ export class QTTabsView extends QTRenderBaseView{
       }
       p.pageIndex = index
       let wl = new WaterfallListView(this.ctx,this)
+      LayoutAttach.obtainLayoutAttach(wl).pageUid = this.getPageUid()
       wl.pageIndex = index
       wl.isVirtual = true
       wl.eventOnScroll = ((scrolled)=>{
