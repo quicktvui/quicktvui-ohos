@@ -17,11 +17,11 @@
       },
       {
         "name": "tudoudou",
-        "signingConfig": "default",
+        "signingConfig": "tudoudou",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
-        "bundleName": "tv.huan.tudoudou",
+        "bundleName": "tv.huan.tudoudou.hmos",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
           "strictMode": {
@@ -202,11 +202,23 @@
         "material": {
           "certpath": "sign/tudoudou/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B0CE0CA39A37D788CEE74E5EB8618210507AA4B84E1964D919F642CB9C1CD2D9016E522EE11F3CE",
+          "keyPassword": "0000001BC8B66979784C6C7C33EE1D22881A7FCFEA41B85F5DE75898AA11D061300671DD00AD0DAD4BED01",
           "profile": "sign/tudoudou/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/tudoudou/key.p12",
-          "storePassword": "0000001B27CC2D8E9CA900DFA294324A1B86A19F4A39467B4AF97482244BE5215E09D46C1D353F0F0978D2"
+          "storePassword": "0000001BB689DA10D0A62FECE9D1FAC044D7E739C60623E2D80898712E833300E8E0A4F7EC22D468D500DF"
+        }
+      },
+      {
+        "name": "tudoudou",
+        "material": {
+          "storeFile": "sign_private/tudoudou/key.p12",
+          "storePassword": "0000001C54E774FF7C244D491F2569227818134F3117E94F9701E989B7906CBD405342F5DF98541586A783F2",
+          "keyAlias": "esapp",
+          "keyPassword": "0000001C7C201985169C5A190160745832FC25F913B10A76178042CCAD90DDEC8EC3521109DB60D22BFC7A32",
+          "signAlg": "SHA256withECDSA",
+          "profile": "sign_private/tudoudou/key.p7b",
+          "certpath": "sign_private/tudoudou/key.cer"
         }
       },
       {
@@ -214,11 +226,11 @@
         "material": {
           "certpath": "sign/2048/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B951DBF5E1686753E31EFE4450AFFC460F31C4BA6909A1191977284E405809E98289287ECAD1663",
+          "keyPassword": "0000001B9B5A8AE6B099D91884C13B962845EA6F0DB3BBDD910596B9807B6B62CD521F9C97913263363348",
           "profile": "sign/2048/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/2048/key.p12",
-          "storePassword": "0000001B6B6213720A8DEDE70ACD2F7D8B5E78C1560C4DF0C6F27585CF40FAED7EB4CD89A27D069091771E"
+          "storePassword": "0000001BE71CCAF4A6020E8D40C5D0CD1B20E0CEE707CD8143C9B0C8D19B99DB37C8B4A5AF82A3E2DC777E"
         }
       },
       {
@@ -226,11 +238,11 @@
         "material": {
           "certpath": "sign/2048cube/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B8957CD4CB575847CC8DFD985D35C68F3AC46C6A3EF80F8D7E2FB72A37A37D9631CBCF7720966F6",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
           "profile": "sign/2048cube/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/2048cube/key.p12",
-          "storePassword": "0000001B719C3F874635247A0B664FBFFA54788E8B8856E2364B70DA8D08117E7764B413659565A1D53262"
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
         }
       },
       {
@@ -238,11 +250,11 @@
         "material": {
           "certpath": "sign/guess/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B329A0C47DADD06470EC553A9D07C07AF68890C0EC38042A30E68331B02A0EEEADC389F5D26E82A",
+          "keyPassword": "0000001BC953024C14C1D5B30B242811AD77F61D033EA15DBA2B565EFE88F2F59F1B57071BDBDC1B914234",
           "profile": "sign/guess/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/guess/key.p12",
-          "storePassword": "0000001BB8C6E427282E1D25182E98F47418B40A6D0F2B0E52795C1000E875C0B196054D0EA4C6A24EC8A1"
+          "storePassword": "0000001BC695546712C43D10654457D674121A9E0E86205FAEA31D72842EBA9D6D608966914F9796267D3F"
         }
       },
       {
@@ -250,11 +262,11 @@
         "material": {
           "certpath": "sign/huarongroad/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BA7E9F363E8D79206397FED5D0E6387187AF855A6E5C051EC1B1D5CF10E4B83F77436534493AEDD",
+          "keyPassword": "0000001B82004AF08CB579E1FC86DEDB85C4A1609359C8BCF9F24AC9F47DB3084743CA1041258DD780A766",
           "profile": "sign/huarongroad/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/huarongroad/key.p12",
-          "storePassword": "0000001B60606FF464BEAE802C39ADA38CC31DEEEA839C0A2567EA71DF50D5CF2E42333AC00628419F8B1B"
+          "storePassword": "0000001B204F32293AE4802D6B2B8A4B4AC792CACE45CD1F34B911B60707E04B944A49CF2379A413741D39"
         }
       },
       {
@@ -262,11 +274,11 @@
         "material": {
           "certpath": "sign/pushbox/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B3AFA8AF1EE0F0BCF235AD073749FCCA398B921817DFCAFCAF296D670C44F792BD783ED6B0DCDE0",
+          "keyPassword": "0000001BF8E23196E2D8E546B8DC4BFD7CBAFBB43A447CBBA5C27917164310D34C9610C1F046440A1DA7E3",
           "profile": "sign/pushbox/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/pushbox/key.p12",
-          "storePassword": "0000001B5E9B936B3CBE33655E875452DD77B8BBC4422508613552DD408190ADB4EC4FA5E1EA01D869C7A8"
+          "storePassword": "0000001BAEF58214363C7674A0A6FFC7F9829B1A4166C52F9EF9EEABC0C77E601AF24A8F74511CBDF13652"
         }
       },
       {
@@ -274,11 +286,11 @@
         "material": {
           "certpath": "sign/snake/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B586368E7966BD4459D7E94BEDEDEFABBA063B4D577DE2EFC0F7CFD4585E669B5E16AA8CBC926AF",
+          "keyPassword": "0000001B8794CD8DC5664ECC3057CD97CD1496804AA5AF229CCD7F4BAF7FC0BB66F45BE55A2F07ED54C1DA",
           "profile": "sign/snake/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/snake/key.p12",
-          "storePassword": "0000001B412611ABA0DA08583AF173E68C3613704A72ACACC924632FA64AF02C29691AFB78CA6E38D43876"
+          "storePassword": "0000001B241CD651AF44801BA48CFE21B5A2D32F29232869E2BDCC8423171907AF689CA4D86DCC2060C21F"
         }
       }
     ]
