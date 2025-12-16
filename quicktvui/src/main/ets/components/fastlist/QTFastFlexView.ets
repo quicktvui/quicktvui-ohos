@@ -162,6 +162,7 @@ export class QTFastFlexView extends QTRenderBaseView {
             fi.enablePlaceholder = this.enablePlaceholder
           }
         })
+        return true;
       break;
 
     }
