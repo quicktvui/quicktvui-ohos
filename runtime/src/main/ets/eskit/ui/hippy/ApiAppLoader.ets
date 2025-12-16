@@ -216,37 +216,40 @@ interface DownloadResult {
 
 // --- 下载任务类 ---
 
-class DownloadTask {
+export class DownloadTask {
   private task: request.agent.Task | null = null;
 
+  /**
+   * 启动下载 -> 解密 -> 校验 MD5
+   */
   start(context: Context, download: Download): Promise<DownloadResult> {
     return new Promise<DownloadResult>(async (resolve, reject) => {
-      // 临时下载路径 (Cache 目录)
-      let tempPath = `${context.cacheDir}/${download.name}`;
+      // 1. 临时下载路径 (这是加密的原始文件)
+      // 注意：request.agent saveas 往往是相对于沙箱 cache 或 files 目录，这里我们假设最终能通过绝对路径访问
+      const tempFileName = `enc_${download.name}`; // 加个前缀区分
+      const tempPath = `${context.cacheDir}/${tempFileName}`;
 
-      // 如果之前有残留文件，先删除，防止断点续传导致MD5校验失败（除非逻辑支持断点续传）
-      try {
-        if (fs.accessSync(tempPath)) {
-          fs.unlinkSync(tempPath);
-        }
-      } catch (e) {
-      }
+      // 2. 解密后的最终路径 (用于 MD5 校验和后续解压)
+      const finalPath = `${context.cacheDir}/${download.name}`;
+
+      // 清理旧文件
+      this.cleanFile(tempPath);
+      this.cleanFile(finalPath);
 
       try {
         const config: request.agent.Config = {
           action: request.agent.Action.DOWNLOAD,
           url: download.url,
-          mode: request.agent.Mode.FOREGROUND, // 建议前台或根据需求改为 BACKGROUND
+          mode: request.agent.Mode.FOREGROUND,
           network: request.agent.Network.ANY,
           overwrite: true,
-          saveas: `./${download.name}` // request.agent saveas 往往是相对于 cache/files 的相对路径或特定沙箱路径
+          saveas: `./${tempFileName}` // 下载为加密文件名
         };
 
         this.task = await request.agent.create(context, config);
 
         this.task.on('failed', async (progress: request.agent.Progress) => {
           this._release();
-          // 获取失败原因
           let info = await request.agent.show(this.task!.tid);
           console.error('Download Failed:', JSON.stringify(info));
           reject({
@@ -258,33 +261,51 @@ class DownloadTask {
         this.task.on('completed', async (progress: request.agent.Progress) => {
           this._release();
 
-          // request.agent 下载完成后的实际物理路径通常需要通过 query 或约定获取
-          // 这里假设下载到了 cacheDir 下（如果是 background 模式需要特别注意路径）
-          // 由于上面 saveas 写法在不同 API 版本有差异，这里做个严谨处理：
-
-          // 假设文件确实落在了 tempPath (或者根据 agent 的 saveas 逻辑)
-          // 必须检查文件是否存在
+          // 检查下载的原始文件是否存在
           if (!fs.accessSync(tempPath)) {
-            reject({ code: -3004, data: 'Downloaded file not found' });
+            reject({ code: -3004, data: 'Downloaded raw file not found' });
             return;
           }
 
-          console.info('Download completed, checking MD5...');
-          const matched = await this.checkMd5(download.md5, tempPath);
+          try {
+            console.info('Download completed. Start Decrypting RPK...');
 
-          if (!matched) {
-            console.error('MD5 Mismatch!');
-            await fs.unlink(tempPath); // 删除损坏文件
+            // --- 核心修改：先解密 ---
+            // 将 tempPath (加密) 解密到 finalPath (明文)
+            await this.decryptRpk(tempPath, finalPath);
+            console.info('Decrypt success. Start checking MD5...');
+
+            // --- 核心修改：解密后删除原始加密文件 (可选，节省空间) ---
+            this.cleanFile(tempPath);
+
+            // --- 核心修改：校验解密后文件的 MD5 ---
+            // 注意：这里假设服务器给的 MD5 是针对【解密后】文件的
+            const matched = await this.checkMd5(download.md5, finalPath);
+
+            if (!matched) {
+              console.error('MD5 Mismatch after decrypt!');
+              this.cleanFile(finalPath); // 删除无效文件
+              reject({
+                code: -3003,
+                data: 'md5 mismatch'
+              } as BusinessError<string>);
+              return;
+            }
+
+            console.info('MD5 Check Passed.');
+            resolve({
+              path: finalPath // 返回解密后的路径供 ApiAppLoader 解压
+            });
+
+          } catch (e) {
+            console.error('Process error (Decrypt/MD5):', e);
+            this.cleanFile(tempPath);
+            this.cleanFile(finalPath);
             reject({
-              code: -3003,
-              data: 'md5 mismatch'
+              code: -3005,
+              data: `Process failed: ${e.message}`
             } as BusinessError<string>);
-            return;
           }
-
-          resolve({
-            path: tempPath // 返回已下载文件的路径，解压时直接用
-          });
         });
 
         await this.task.start();
@@ -300,15 +321,82 @@ class DownloadTask {
     });
   }
 
+  /**
+   * ArkTS 版的 decryptRpk 实现
+   * 读取 originFile，交换首尾 100 字节，写入 decryptFile
+   */
+  private async decryptRpk(originPath: string, decryptPath: string): Promise<void> {
+    try {
+      // 1. 读取源文件
+      let srcFile = await fs.open(originPath, fs.OpenMode.READ_ONLY);
+      let stat = await fs.stat(srcFile.fd);
+      // 注意：如果文件特别大，建议不要一次性 new ArrayBuffer，而是分块读写。
+      // 这里假设 RPK 文件大小适中（几十MB以内），保持原 Java 逻辑一次性读入。
+      let buffer = new ArrayBuffer(stat.size);
+
+      await fs.read(srcFile.fd, buffer);
+      await fs.close(srcFile);
+
+      // 2. 字节交换逻辑
+      let bytes = new Uint8Array(buffer);
+      const len = bytes.length;
+      const loopCount = 100;
+
+      for (let i = 0; i < loopCount; i++) {
+        // 防止文件极小越界
+        if (i >= len) {
+          break;
+        }
+
+        let tmp = bytes[i];
+        let targetIndex = len - i - 1;
+
+        if (targetIndex >= 0 && targetIndex < len) {
+          bytes[i] = bytes[targetIndex];
+          bytes[targetIndex] = tmp;
+        }
+      }
+      // 3. 写入目标文件
+      // CREATE: 不存在则创建, TRUNC: 存在则清空重写
+      let destFile = await fs.open(decryptPath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
+      await fs.write(destFile.fd, buffer);
+      await fs.close(destFile);
+
+    } catch (e) {
+      // 异常时尝试清理
+      this.cleanFile(decryptPath);
+      throw new Error(`Decrypt RPK failed: ${e.message}`);
+    }
+  }
+
   private async checkMd5(expectMd5: string, path: string): Promise<boolean> {
-    // 假设 FileUtil.calFileMd5 是可靠的
-    const fileMd5 = await FileUtil.calFileMd5(path);
-    console.info(`MD5 Check - Expect: ${expectMd5}, Actual: ${fileMd5}`);
-    return fileMd5.toLowerCase() === expectMd5.toLowerCase();
+    if (!expectMd5) {
+      return true;
+    } // 如果服务端没下发MD5，默认通过
+    try {
+      const fileMd5 = await FileUtil.calFileMd5(path);
+      console.info(`MD5 Check - Expect: ${expectMd5}, Actual: ${fileMd5}`);
+      return fileMd5.toLowerCase() === expectMd5.toLowerCase();
+    } catch (e) {
+      console.error('Calculate MD5 failed:', e);
+      return false;
+    }
+  }
+
+  // 辅助清理文件方法
+  private cleanFile(path: string) {
+    try {
+      if (fs.accessSync(path)) {
+        fs.unlinkSync(path);
+      }
+    } catch (ignore) {
+    }
   }
 
   private _release() {
     if (this.task) {
+      // request.agent 提供的 off 方法可能因 API 版本不同而有所差异
+      // 这里的逻辑主要是为了断开引用
       this.task.off('failed');
       this.task.off('completed');
       this.task = null;
