@@ -7,6 +7,8 @@ import { App } from '../../../App';
 import request from '@ohos.request';
 import { BusinessError } from '@ohos.base';
 import { FileUtil } from '../../utils/FileUtil';
+import { http } from '@kit.NetworkKit';
+import util from '@ohos.util';
 
 
 export class ApiAppLoader implements AppLoader {
@@ -23,20 +25,36 @@ export class ApiAppLoader implements AppLoader {
   }
 
   private fetchAppInfo(): Promise<AppInfo> {
+    const data = this.generateRequestParams()
     return new Promise<AppInfo>((resolve, reject) => {
-      //   const call = http.createHttp()
-      //   call.request(
-      //     // 'https://',
-      //     {
-      //       method: http.RequestMethod.POST,
-      //       extraData: this.generateRequestParams()
-      //     },
-      //     (error: BusinessError, response: http.HttpResponse) => {
-      //       console.log('')
-      //     })
+      const call = http.createHttp()
+      call.request(
+        'https://api.extscreen.com/extscreenapi/api/extend_screen/v2/hili/client/tvinfo',
+        {
+          method: http.RequestMethod.POST,
+          extraData: new Uint8Array(data).buffer,
+          header: {
+            'Content-Type': 'application/octet-stream', // 通用二进制类型
+          },
+          expectDataType: http.HttpDataType.ARRAY_BUFFER  // 如果期望二进制响应
+        },
+        (error: BusinessError, response: http.HttpResponse) => {
+          const result = response.result
+          if (typeof result === 'string') {
+            //TODO
+            return
+          }
+          if (result instanceof ArrayBuffer) {
+            console.log('===================结果======START========>>>>:', result.byteLength)
+            const ret = SignUtil.decodeWithPublicKey(result)
+            console.log('===================结果======END========>>>>:', ret)
+            return
+          }
+          console.log('object result:', JSON.stringify(result))
+        })
 
       resolve({
-        es_package: 'es.hello',
+        es_package: 'es.hello.world',
         tvpackagever: '1.0.0',
         tvpackage: 'http://192.168.7.7/pub/ohos/test.zip',
         tvpackagemd5: 'c84b9bc578478416b14d59d4dd316f30'
@@ -44,11 +62,18 @@ export class ApiAppLoader implements AppLoader {
     })
   }
 
+  private arrayBufferToString(buffer: ArrayBuffer): string {
+    return new util.TextDecoder('utf-8').decode(
+      new Uint8Array(buffer)
+    )
+  }
+
   private generateRequestParams(): ArrayBuffer {
     const params: Params = {
       // TODO device info
       // channel
       source: '',
+      sdk_ver: '2.61',
       // request app data
       client: {
         es_package: this.data.packageName!,
@@ -101,6 +126,7 @@ export class ApiAppLoader implements AppLoader {
 interface Params {
   source: string
   client: Client
+  sdk_ver: string
 }
 
 interface Client {

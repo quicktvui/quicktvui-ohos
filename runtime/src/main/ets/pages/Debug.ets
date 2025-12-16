@@ -32,6 +32,7 @@ import { BusinessError, commonEventManager, deviceInfo } from '@kit.BasicService
 import { QTNativeLayout } from 'libquicktvui.so';
 import libHippy from 'libhippy.so';
 import { App } from '../App';
+import { QTLog } from 'quicktvui/src/main/ets/utils/QTLog';
 
 @Builder
 export function PageDebugBuilder(name: string, param: Object) {
@@ -483,6 +484,7 @@ export struct Debug {
     })
     //返回键
     .onBackPressed(() => {
+      console.log('====TAGFOCUSS====onBackPressed=========>>>')
       if (this.isEngineInitialized) {
         this.hippyEngine?.onBackPressed(new RuntimeDefaultBackHandler())
         return true
@@ -504,7 +506,7 @@ export struct Debug {
       //------------------分发 key event 给 vue 端---------------------
       this.hippyEngine?.onKeyEvent(event)
       //------------------分发 key event 给 vue 端---------------------
-      // QTLog.i (TAG_FOCUS, '========onKeyPreIme=========>>>' + event.type + " ====>>>> " + event.keyCode);
+      console.log('==TAGFOCUSS======onKeyPreIme=========>>>' + event.type + " ====>>>> " + event.keyCode)
       if (this.rootViewWrapper.getRootView()) {
         return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!, event)
       }

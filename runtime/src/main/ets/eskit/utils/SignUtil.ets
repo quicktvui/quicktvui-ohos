@@ -1,6 +1,7 @@
 import cryptoFramework from '@ohos.security.cryptoFramework';
 import util from '@ohos.util';
 import cert from '@ohos.security.cert';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 export class SignUtil {
   static PUB_KEY_BUFFER =
@@ -64,8 +65,54 @@ export class SignUtil {
     return combined;
   }
 
-  // static decodeWithPublicKey(value: ArrayBuffer): string{
-  //
-  // }
+  static decodeWithPublicKey(buffer: ArrayBuffer): string {
+    try {
+      // 1️⃣ 还原公钥
+      const pubKey = cryptoFramework
+        .createAsyKeyGenerator('RSA1024')
+        .convertKeySync({ data: SignUtil.PUB_KEY_BUFFER }, null)
+        .pubKey
+
+      // 2️⃣ 创建 Cipher（⚠️ 和加密必须一模一样）
+      const cipher = cryptoFramework.createCipher('RSA|NoPadding|PKCS1')
+      cipher.initSync(cryptoFramework.CryptoMode.DECRYPT_MODE, pubKey, null)
+
+      // 3️⃣ 准备分块参数
+      const bytes = new Uint8Array(buffer)
+      const blockSize = Math.floor(1024 / 8) // 128
+      const len = bytes.length
+      const count = Math.floor(len / blockSize)
+
+      let result = new Uint8Array(0)
+      let index = 0
+
+      // 4️⃣ 分块解密
+      for (let i = 0; i < count; i++) {
+        const block = bytes.slice(index, index + blockSize)
+        const decrypted = cipher.doFinalSync({ data: block })
+        result = SignUtil.joinUint8Arrays(result, decrypted.data)
+        index += blockSize
+      }
+
+      // 5️⃣ ⚠️ RSA PKCS1Padding 会在尾部补 0，需要 trim
+      const trimmed = SignUtil.trimZeroPadding(result)
+
+      // 6️⃣ Uint8Array → string
+      return new util.TextDecoder('utf-8').decode(trimmed)
+    } catch (e) {
+      console.error('decode error:', e)
+      console.log('========结果==#####=====>>>>' + JSON.stringify(e))
+      return 'error!'
+    }
+  }
+
+  static trimZeroPadding(data: Uint8Array): Uint8Array {
+    let end = data.length
+    while (end > 0 && data[end - 1] === 0) {
+      end--
+    }
+    return data.slice(0, end)
+  }
+
 
 }
