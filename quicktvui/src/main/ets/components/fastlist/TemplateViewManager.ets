@@ -67,6 +67,7 @@ export class TemplateViewManager{
             p.renderView.cssVisibility = value ? Visibility.Visible : Visibility.Hidden
             handle = true;
             case 'fontSize':
+            case 'textSize':
             toValue = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(value))
             handle = false;
             break;
@@ -375,8 +376,8 @@ export class TemplateViewManager{
           }else{
             // console.log(QUICKTVUI_TAG,`--gatherToUpdateMap discard key:${key},data:${CommonUtils.hippyAny2String(value)}`)
             // toUpdate.set(key,value)
-            //原数据没有${xx}，直接按value处理
-            toUpdate.set(key,value)
+            //singleton里，属性会被自动执行，这里直接忽略
+            //toUpdate.set(key,value)
           }
         }
       }

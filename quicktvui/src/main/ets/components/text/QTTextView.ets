@@ -19,7 +19,7 @@ export class QTTextView extends QTRenderBaseView{
   lines: number = 1
   text: string = ""
   fontColor: ResourceColor | null = null
-  fontSize: Dimension = 20
+  fontSize: Dimension = 16
   lineHeight: number | null = null
   // fontStyle: FontStyle = FontStyle.Normal
   // fontWeight: number | FontWeight | string = FontWeight.Normal
@@ -68,6 +68,7 @@ export class QTTextView extends QTRenderBaseView{
         ViewUtils.configGravity(HRValueUtils.getString(propValue),this)
         return true;
       case "fontSize":
+      case "textSize":
         this.fontSize = HRValueUtils.getNumber(propValue);
         return true;
       case "paddingRect":
