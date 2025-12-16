@@ -17,13 +17,14 @@ export class FocusUtils{
         }
       }
 
-  static requestFocusById(uid : string | null | undefined){
+  static requestFocusById(uid : string | null | undefined) : boolean {
     if(uid){
       QTLog.e(TAG_FOCUS,`exe requestFocus view :${uid}`)
-      focusControl.requestFocus(uid)
+      return focusControl.requestFocus(uid)
     }else{
       QTLog.e(TAG_FOCUS,`requestFocus fail uid is null view :${uid}`)
     }
+    return false;
   }
 
   static requestViewGroupFocus(view : QTView | null | undefined,delay = 0){

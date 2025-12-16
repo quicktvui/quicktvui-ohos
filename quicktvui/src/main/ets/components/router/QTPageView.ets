@@ -85,7 +85,12 @@ export class QTPageView extends QTBaseComponentView implements IPage {
 
   restoreFocus() {
     if (this.savedFocusUid != null) {
-        FocusUtils.requestFocusById(this.savedFocusUid)
+        let b = FocusUtils.requestFocusById(this.savedFocusUid)
+
+        if(!b){
+          QTLog.e(TAG_FOCUS,`restoreFocus fail view may has destoryed uid:${this.savedFocusUid} request focus from page`)
+          FocusUtils.requestViewGroupFocus(this)
+        }
         this.savedFocusUid = undefined;
     }
   }
