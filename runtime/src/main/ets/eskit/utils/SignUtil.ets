@@ -1,6 +1,5 @@
 import cryptoFramework from '@ohos.security.cryptoFramework';
 import util from '@ohos.util';
-import cert from '@ohos.security.cert';
 import { BusinessError } from '@kit.BasicServicesKit';
 
 export class SignUtil {
@@ -49,13 +48,85 @@ export class SignUtil {
     return new Uint8Array().buffer
   }
 
+  static decodeWithPublicKey(buffer: ArrayBuffer): string {
+    try {
+      // 1. 生成 RSA1024 公钥
+      const asyKeyGenerator = cryptoFramework.createAsyKeyGenerator('RSA1024');
+      const pubKey = asyKeyGenerator.convertKeySync({ data: SignUtil.PUB_KEY_BUFFER }, null).pubKey;
+
+      // 2. 创建 Cipher
+      // 必须使用 NoPadding，因为我们要自己处理 Java 塞进去的 PKCS1 Padding
+      const cipher = cryptoFramework.createCipher('RSA|NoPadding');
+      // 3. 初始化
+      // ⚠️⚠️⚠️ 关键修改：使用 ENCRYPT_MODE ⚠️⚠️⚠️
+      // 原因：鸿蒙禁止用公钥初始化 DECRYPT_MODE。
+      // 但数学上，RSA公钥解密等同于用公钥做一次模幂运算，这在 API 中对应 ENCRYPT_MODE。
+      cipher.initSync(cryptoFramework.CryptoMode.ENCRYPT_MODE, pubKey, null);
+      // RSA1024 块大小固定为 128 字节
+      const keySizeBytes = 128;
+      const inputBytes = new Uint8Array(buffer);
+      const inputLen = inputBytes.length;
+      // 校验长度
+      if (inputLen % keySizeBytes !== 0) {
+        console.error(`数据长度错误: ${inputLen} 不是 ${keySizeBytes} 的倍数`);
+        return 'error: invalid length';
+      }
+
+      let result = new Uint8Array(0);
+      let offset = 0;
+
+      // 4. 分块处理
+      while (offset < inputLen) {
+        const block = inputBytes.slice(offset, offset + keySizeBytes);
+
+        // 执行运算 (虽然叫加密，但因为输入是密文，数学上是在解密)
+        const decryptedRaw = cipher.doFinalSync({ data: block });
+
+        if (decryptedRaw && decryptedRaw.data) {
+          // 手动移除 PKCS1 填充
+          const unpaddedBlock = SignUtil.removePkcs1Padding(decryptedRaw.data);
+          if (unpaddedBlock) {
+            result = SignUtil.joinUint8Arrays(result, unpaddedBlock);
+          }
+        }
+        offset += keySizeBytes;
+      }
+      return new util.TextDecoder('utf-8').decode(result);
+    } catch (e) {
+      const err = e as BusinessError;
+      console.error(`解密异常: code=${err.code}, message=${err.message}`);
+      return '';
+    }
+  }
+
   /**
-   * @throws
+   * 移除 PKCS#1 v1.5 填充
+   * 结构: 00 01 FF ... FF 00 [DATA]
    */
-  static encodeWithPublicKey2(value: string) {
-    const pubKey = cryptoFramework.createAsyKeyGenerator('RSA')
-      .convertKeySync({ data: SignUtil.PUB_KEY_BUFFER }, null).pubKey
-    const cipher = cryptoFramework.createCipher('RSA/None/PKCS1Padding');
+  static removePkcs1Padding(data: Uint8Array): Uint8Array | null {
+    // 兼容性处理：有些运算结果可能省略了最高位的 00，直接以 01 开头
+    let start = 0;
+    if (data[0] === 0x00 && data[1] === 0x01) {
+      start = 2;
+    } else if (data[0] === 0x01) {
+      start = 1;
+    } else {
+      console.error("Padding header invalid: " + data[0]);
+      return null;
+    }
+
+    // 寻找 00 分隔符
+    while (start < data.length) {
+      if (data[start] === 0x00) {
+        break; // 找到了
+      }
+      start++;
+    }
+
+    if (start >= data.length - 1) {
+      return null;
+    }
+    return data.slice(start + 1);
   }
 
   static joinUint8Arrays(a: Uint8Array, b: Uint8Array): Uint8Array {
@@ -64,55 +135,4 @@ export class SignUtil {
     combined.set(b, a.length);
     return combined;
   }
-
-  static decodeWithPublicKey(buffer: ArrayBuffer): string {
-    try {
-      // 1️⃣ 还原公钥
-      const pubKey = cryptoFramework
-        .createAsyKeyGenerator('RSA1024')
-        .convertKeySync({ data: SignUtil.PUB_KEY_BUFFER }, null)
-        .pubKey
-
-      // 2️⃣ 创建 Cipher（⚠️ 和加密必须一模一样）
-      const cipher = cryptoFramework.createCipher('RSA|NoPadding|PKCS1')
-      cipher.initSync(cryptoFramework.CryptoMode.DECRYPT_MODE, pubKey, null)
-
-      // 3️⃣ 准备分块参数
-      const bytes = new Uint8Array(buffer)
-      const blockSize = Math.floor(1024 / 8) // 128
-      const len = bytes.length
-      const count = Math.floor(len / blockSize)
-
-      let result = new Uint8Array(0)
-      let index = 0
-
-      // 4️⃣ 分块解密
-      for (let i = 0; i < count; i++) {
-        const block = bytes.slice(index, index + blockSize)
-        const decrypted = cipher.doFinalSync({ data: block })
-        result = SignUtil.joinUint8Arrays(result, decrypted.data)
-        index += blockSize
-      }
-
-      // 5️⃣ ⚠️ RSA PKCS1Padding 会在尾部补 0，需要 trim
-      const trimmed = SignUtil.trimZeroPadding(result)
-
-      // 6️⃣ Uint8Array → string
-      return new util.TextDecoder('utf-8').decode(trimmed)
-    } catch (e) {
-      console.error('decode error:', e)
-      console.log('========结果==#####=====>>>>' + JSON.stringify(e))
-      return 'error!'
-    }
-  }
-
-  static trimZeroPadding(data: Uint8Array): Uint8Array {
-    let end = data.length
-    while (end > 0 && data[end - 1] === 0) {
-      end--
-    }
-    return data.slice(0, end)
-  }
-
-
 }
