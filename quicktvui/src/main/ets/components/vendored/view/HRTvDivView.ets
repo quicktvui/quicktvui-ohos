@@ -211,6 +211,7 @@ export class HRTvDivView extends QTBaseComponentView {
         return true
       case 'clipChildren': {
         this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
+        this.cssOverflow = this.clipChildren
       }
         return true
       case 'duplicateParentState':

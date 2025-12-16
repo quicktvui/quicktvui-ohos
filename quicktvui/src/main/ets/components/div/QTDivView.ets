@@ -448,7 +448,6 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
-  .clip($$.cssOverflow)
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
   .shadow($$.cssShadow)

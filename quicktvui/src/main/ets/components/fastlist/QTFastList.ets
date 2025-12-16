@@ -88,6 +88,7 @@ export struct  QTFastList {
           //.direction(this.renderView.isHorizontal ? Axis.Horizontal : Axis.Vertical)
           .width('100%')
           .height('100%')
+          .clip(this.renderView.clipChildren)
           // ContentSlot(this.renderView.childSlot)
         }
         .applyRenderViewBaseAttr(this.renderView)
@@ -105,7 +106,7 @@ export struct  QTFastList {
               .margin(item.decoration)
             }, this.keyGenerate)
           }
-
+          .clip(this.renderView.clipChildren)
           .alignItems(GridItemAlignment.STRETCH)
           .columnsTemplate(this.renderView.spanCount)
           //.direction(this.renderView.isHorizontal ? Axis.Horizontal : Axis.Vertical)
@@ -139,6 +140,7 @@ export struct  QTFastList {
         .listDirection(this.renderView.isHorizontal ? Axis.Horizontal : Axis.Vertical)
         .width('100%')
         .height('100%')
+        .clip(this.renderView.clipChildren)
         .onAttach(()=>{
           console.error(TAG_FASTLIST,`List on Aattch!!`)
           // this.renderView.scroller.scrollToIndex(5)
@@ -198,7 +200,7 @@ function applyRenderViewBaseAttr($$: QTFastListView) {
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
-  .clip($$.cssOverflow)
+  .clip($$.clipChildren)
   .visibility(($$ as QTFastListView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)

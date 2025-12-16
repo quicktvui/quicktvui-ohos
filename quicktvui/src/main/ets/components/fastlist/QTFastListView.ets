@@ -171,6 +171,7 @@ export class QTFastListView extends QTRenderBaseView{
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+    this.clipChildren = false;
   }
 
 

@@ -33,6 +33,7 @@ export class QTFastFlexView extends QTRenderBaseView {
     this.dataSource = new FastListDataSource(ctx,this.virtualChildren)
     this.dataSource.listView = this;
     this.dataSource.setPlaceholderEnabled(false)
+    this.clipChildren = false;
   }
 
   setRootListID(rootListID:number){
@@ -293,7 +294,7 @@ function applyRenderViewBaseAttr($$: QTFastFlexView) {
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
-  .clip($$.cssOverflow)
+  .clip($$.clipChildren)
   .visibility(($$ as QTFastFlexView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)

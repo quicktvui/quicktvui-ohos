@@ -31,6 +31,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   selected: boolean = false
   showonstate: string = 'normal' //
   showOnStateArray : number[] = []
+  clipChildren: boolean = true
   focus: boolean = false
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
@@ -236,6 +237,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         return true;
       case "clipChildren":
         this.cssOverflow = HRValueUtils.getBoolean(propValue,true)
+        this.clipChildren = this.cssOverflow
         return true;
       case 'showOnState':
         //this.showonstate = HRValueUtils.getString(propValue as HippyAny);
