@@ -124,8 +124,8 @@ struct AppView {
 
     // TODO 打包动态生成
     let data = new EsData()
-    data.appName = '土豆逗科普'
-    data.packageName = 'es.hello.world'
+    data.appName = '鸿蒙测试'
+    data.packageName = 'es.harmony.os.tv'
     data.appIcon = 'https://extcdn.hsrc.tv/data_center/files/2024/05/29/3e07ff6b-cfc6-40d2-a885-843b1655348a.png'
     data.uri = `${AppLoaderFactory.FROM_ASSETS}/vue`
 
