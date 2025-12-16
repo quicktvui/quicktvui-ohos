@@ -19,7 +19,7 @@ import {
 import { LoadStatus } from '../LoadStatus'
 import { BusinessError } from '@ohos.base'
 import { RuntimeAPIProvider } from '../../api/RuntimeAPIProvider'
-import { buildCustomRenderView, QTAPIProvider } from 'quicktvui'
+import { buildCustomRenderView, FocusManager, QTAPIProvider } from 'quicktvui'
 import { AssetsAppLoader } from './hippy/AssetsAppLoader'
 import { IconSplashView } from './splash/SplashView'
 import common from '@ohos.app.ability.common'
@@ -36,7 +36,7 @@ struct AppView {
   @Provide('appContext')
   private appContext: AppContext = new AppContext(App.instance.context!)
   private appLoader?: AppLoader
-  private hippyViewWrapper = new HippyRootViewWrapper()
+  private hippyViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State splashOpacity: number = 1.0
   @Provide('autoSize') autoSize?: number[] = []
 
@@ -274,6 +274,9 @@ struct AppView {
     })
     .onKeyPreIme((event) => {
       this.appContext.engine?.onKeyEvent(event)
+      if (this.hippyViewWrapper.getRootView()) {
+        return FocusManager.dispatchKeyEvent(this.hippyViewWrapper.getRootView()!!.renderView!!, event)
+      }
       return false;
     })
     .onDetach(() => {
