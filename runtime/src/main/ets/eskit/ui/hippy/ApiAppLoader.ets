@@ -161,12 +161,52 @@ export class ApiAppLoader implements AppLoader {
     return ''; // 根据需求实现
   }
 
+  /**
+   * 获取 vendor.js 的绝对路径
+   * 路径规则: filesDir/app_rpk/apps/{包名}/{版本号}/dist/vendor.js
+   */
   getVendorJsFile(): string {
-    return '';
+    // 1. 安全检查：确保 Context 和必要的包信息存在
+    if (!App.instance.context || !this.data.packageName || !this.data.versionName) {
+      console.warn('ApiAppLoader: Context or Package info missing when getting vendor file');
+      return '';
+    }
+
+    // 2. 构建基础目录 (需与 getAppDir 逻辑保持一致)
+    // 路径: /data/storage/.../files/app_rpk/apps/com.example/1.0.0
+    const baseDir = `${App.instance.context.filesDir}/app_rpk/apps/${this.data.packageName}/${this.data.versionName}`;
+
+    // 3. 拼接 dist/vendor.js
+    const filePath = `${baseDir}/dist/vendor.js`;
+
+    // 4. (可选) 检查文件是否存在，如果业务需要严格验证可取消注释
+    /*
+    if (!fs.accessSync(filePath)) {
+      console.warn(`ApiAppLoader: Vendor file not found at ${filePath}`);
+      return '';
+    }
+    */
+    return filePath;
   }
 
+  /**
+   * 获取 index.js 的绝对路径
+   * 路径规则: filesDir/app_rpk/apps/{包名}/{版本号}/dist/index.js
+   */
   getIndexJsFile(): string {
-    return '';
+    // 1. 安全检查
+    if (!App.instance.context || !this.data.packageName || !this.data.versionName) {
+      console.warn('ApiAppLoader: Context or Package info missing when getting index file');
+      return '';
+    }
+
+    // 2. 构建基础目录
+    const baseDir = `${App.instance.context.filesDir}/app_rpk/apps/${this.data.packageName}/${this.data.versionName}`;
+
+    // 3. 拼接 dist/index.js
+    const filePath = `${baseDir}/dist/index.js`;
+
+    return filePath;
   }
 }
 
