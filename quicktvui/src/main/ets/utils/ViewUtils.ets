@@ -228,7 +228,7 @@ export class ViewUtils{
     return '#' + colorVal
   }
 
-  static getViewUid(view : QTView | null) : string | null{
+  static getViewUid(view : QTView | null | undefined) : string | null{
     //virtual_ or real_
     if(!view){
       return null;
@@ -236,6 +236,30 @@ export class ViewUtils{
     if(view instanceof QTBaseComponentView){
       if(view.uid){
         return view.uid;
+      }
+    }
+    if(LayoutAttach.obtainLayoutAttach(view).uid){
+      return LayoutAttach.obtainLayoutAttach(view)?.uid
+    }
+    if(view){
+      if(view.tag > -1){
+        return `real_${view.tag}`
+      }else{
+        //return LayoutAttach.obtainLayoutAttach(view)?.uid
+        QTLog.e(TAG_FASTLIST,`getViewUid error invalid tag`)
+      }
+    }
+    return null;
+  }
+
+  static getViewPageUid(view : QTView | null | undefined) : string | null | undefined{
+    //virtual_ or real_
+    if(!view){
+      return null;
+    }
+    if(view instanceof QTBaseComponentView){
+      if(view.getPageUid()){
+        return view.getPageUid();
       }
     }
     if(LayoutAttach.obtainLayoutAttach(view).uid){

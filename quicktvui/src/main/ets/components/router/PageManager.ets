@@ -1,10 +1,13 @@
+import { QTView } from "../../QTTypes";
+import { ViewUtils } from "../../utils/ViewUtils";
+import { QTBaseComponentView } from "../QTBaseComponentView";
 import { IPage } from "./IPage";
 
 // PageManager.ets - 修复版
 export class PageManager {
   // 静态变量
   private static pages: Map<string, IPage> = new Map();
-  private static currentPageId: string | null = null;
+  // private static currentPageId: string | null = null;
   private static uiContext : UIContext | null = null;
 
   static setUIContext(uiContext : UIContext){
@@ -23,7 +26,7 @@ export class PageManager {
       console.warn(`[PageManager] 页面ID "${pageId}" 已存在，将被覆盖`);
     }
     PageManager.pages.set(pageId, pageInstance); // 使用类名
-    PageManager.currentPageId = pageId; // 使用类名
+    // PageManager.currentPageId = pageId; // 使用类名
     console.log(`[PageManager] 页面注册成功: ${pageId}`);
   }
 
@@ -34,9 +37,9 @@ export class PageManager {
     if (PageManager.pages.delete(pageId)) { // 使用类名
       console.log(`[PageManager] 页面注销成功: ${pageId}`);
 
-      if (PageManager.currentPageId === pageId) { // 使用类名
-        PageManager.currentPageId = null; // 使用类名
-      }
+      // if (PageManager.currentPageId === pageId) { // 使用类名
+      //   PageManager.currentPageId = null; // 使用类名
+      // }
     }
   }
 
@@ -50,6 +53,22 @@ export class PageManager {
       return null;
     }
     return page as T;
+  }
+
+
+  static getPageHost<T extends IPage>(view : QTView): T | null {
+    let pageUid : string | null | undefined = ViewUtils.getViewPageUid(view)
+    if(pageUid){
+      const page = PageManager.pages.get(pageUid); // 使用类名
+      if (!page) {
+        console.warn(`[PageManager] getPageByView 页面不存在: ${pageUid}`);
+        return null;
+      }
+      return page as T;
+    }else{
+      console.warn(`[PageManager] getPageByView uid is null`);
+      return null;
+    }
   }
 
   // /**
@@ -100,7 +119,7 @@ export class PageManager {
   static clearAll(): void {
     const count = PageManager.pages.size; // 使用类名
     PageManager.pages.clear(); // 使用类名
-    PageManager.currentPageId = null; // 使用类名
+    // PageManager.currentPageId = null; // 使用类名
     console.log(`[PageManager] 已清空所有页面，共清理 ${count} 个页面`);
   }
 }

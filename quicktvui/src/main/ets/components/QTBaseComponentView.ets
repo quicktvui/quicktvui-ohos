@@ -5,12 +5,11 @@ import {
   HippyCustomComponentView,
   HippyRenderCallback,
 } from 'hippy'
-import { TAG_FASTLIST, TAG_FOCUS } from '../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_QUICKTVUI } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
 import { QTLog } from '../utils/QTLog';
-import { ViewUtils } from '../utils/ViewUtils';
 import { LayoutAttach } from './fastlist/LayoutAttach';
 import { QTActorHost } from './QTActorHost';
 import { QTViewActor } from './QTViewActor';
@@ -36,6 +35,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
   private currentStates: number[] = []
+
 
   public get uid(): string {
     if(this._uid){
@@ -170,6 +170,18 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   onCreateByTemplate(templateView : QTView){
 
+  }
+
+  getPageUid() : string | null | undefined{
+    return LayoutAttach.obtainLayoutAttach(this).pageUid
+  }
+
+  addSubRenderView(subView: QTView, index: number): void {
+    LayoutAttach.obtainLayoutAttach(subView).pageUid =  this.getPageUid()
+    if(!this.getPageUid()){
+      QTLog.e(TAG_QUICKTVUI,`addSubRenderView pageUid:${this.getPageUid()},uid:${this.uid} this:${ExtendUtil.debugView(this)}`)
+    }
+    super.addSubRenderView(subView,index)
   }
 
   aboutToUpdate(){

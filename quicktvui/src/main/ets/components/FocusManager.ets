@@ -1,6 +1,5 @@
 import { TAG_CLICK, TAG_FASTLIST, TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
-import { ExtendUtil } from "../utils/ExtendUtil";
 import { FocusFinder } from "../utils/FocusFinder";
 import { QTLog } from "../utils/QTLog";
 import { QTBaseComponentView } from "./QTBaseComponentView";
@@ -45,6 +44,13 @@ export class FocusManager{
     return null;
   }
 
+  findNextFocus(parent: QTView,direction = FocusFinder.DIRECTION_DOWN) : TVView | null{
+    let nextFocus = FocusFinder.findNextFocus(this.focusedView,parent,direction)
+    return nextFocus;
+  }
+
+  // public requestFocus(parent : QTView,direction)
+
   dispatchKeyEvent(event: KeyEvent) : boolean{
     if(!this.uiContext){
       QTLog.e(TAG_FOCUS,`dispatchKeyEvent error uiContext null`)
@@ -83,7 +89,6 @@ export class FocusManager{
         return true;
       }
     }
-
     if(view.children){
       for(let i = 0; i < view.children.length; i ++){
         if(FocusManager.dispatchKeyEvent(view.children[i],event)){

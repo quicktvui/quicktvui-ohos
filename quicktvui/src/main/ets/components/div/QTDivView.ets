@@ -23,11 +23,13 @@ import { TAG_FOCUS, TAG_QUICKTVUI } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
+import { FocusUtils } from '../../utils/FocusUtils';
 import { QTLog } from '../../utils/QTLog';
 import { ViewUtils } from '../../utils/ViewUtils';
 import { FastListUtils } from '../fastlist/FastListUtils';
 import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTBaseComponentView } from '../QTBaseComponentView';
+import { PageManager } from '../router/PageManager';
 import { TVView } from '../TVView';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
 
@@ -136,10 +138,25 @@ export class QTDivView extends HRTvDivView {
     return true;
   }
 
-  requestFocus(){
-    QTLog.e(TAG_FOCUS,`requestFocus focusable:${this.cssFocusable} ,this :`+ExtendUtil.debugView(this))
-    focusControl.requestFocus(ViewUtils.getViewUid(this));
+  requestFocus(delay : number = 0){
+    // QTLog.e(TAG_FOCUS,`requestFocus focusable:${this.cssFocusable} ,this :`+ExtendUtil.debugView(this))
+    // //focusControl.requestFocus(ViewUtils.getViewUid(this));
+    // // this.getFocusManager()
+    // setTimeout(()=>{
+    //   if(this.cssFocusable){
+    //     FocusUtils.requestFocus(this)
+    //   }else{
+    //     let focusManager = PageManager.getPageHost(this)?.focusManager
+    //     let nextFocus = focusManager?.findNextFocus(this)
+    //     if(nextFocus){
+    //       FocusUtils.requestFocusById(nextFocus.uid)
+    //     }
+    //   }
+    // },delay)
+    FocusUtils.requestViewGroupFocus(this,delay)
   }
+
+
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey){
@@ -223,7 +240,8 @@ export class QTDivView extends HRTvDivView {
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
     switch (method){
       case 'requestFocus':
-        this.requestFocus()
+      case 'requestFocusDirectly':
+        this.requestFocus(100)
         return;
     }
     super.call(method,params,callback)
