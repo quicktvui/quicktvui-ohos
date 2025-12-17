@@ -376,7 +376,6 @@ export struct QTDiv {
       .height(this.renderView.cssHeight + 4)
       .position({x:-2,y:-2})
     }else{
-
     }
   }
 

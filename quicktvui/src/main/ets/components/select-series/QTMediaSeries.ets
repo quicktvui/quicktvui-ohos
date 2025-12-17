@@ -34,52 +34,82 @@ export struct QTMediaSeries {
     console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
   }
 
+  @Builder
+  buildFocusBorder(){
+      Stack(){
+        Rect({
+          width:this.renderView.initParamTemplate.width + 4,
+          height: this.renderView.initParamTemplate.height + 4,
+          radius:8,
+        }) .fill(Color.Transparent) // 透明填充
+          .stroke(Color.White)
+          .strokeWidth(2)         // 边框宽度
+
+        Rect({
+          width:this.renderView.initParamTemplate.width,
+          height: this.renderView.initParamTemplate.height,
+          radius:4,
+        }) .fill(Color.Transparent) // 透明填充
+          .stroke(Color.Black)
+          .position({x:2,y:2})
+          .strokeWidth(1)         // 边框宽度
+      }
+      .width(this.renderView.initParamTemplate.width + 4)
+      .height(this.renderView.initParamTemplate.height + 4)
+      .position({x:-2,y:-2})
+  }
+
   build() {
     Stack() {
       Column() {
         List({ space: this.renderView.initParam.itemGap, initialIndex: 0, scroller: this.renderView.scroller }) {
           LazyForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
             ListItem() {
-              Row() {
-                Image(item.cover)
-                  .width(this.renderView.initParamTemplate.extra.imgWidth)
-                  .height(this.renderView.initParamTemplate.extra.imgHeight)
-                Column() {
-                  Text(item.title)
-                    .fontSize(this.renderView.initParamTemplate.titleSize)
-                    .textAlign(TextAlign.Start)
-                    .fontColor(item.showVip ? "#FFFFD97C" : "#FFFFFFFF")
-                    .maxLines(3)
-                    .textOverflow({ overflow: TextOverflow.Ellipsis })
-                    .fontFamily('HarmonyOS Sans')
+              Stack(){
+                if (this.renderView.focusStr == item.key){
+                  this.buildFocusBorder()
                 }
-                .width((this.renderView.initParamTemplate.width -
-                this.renderView.initParamTemplate.extra.imgWidth))
-                .height((this.renderView.initParamTemplate.height))
-                .alignItems(HorizontalAlign.Start)
-                .justifyContent(FlexAlign.Start)
-                .padding(10)
+                Row() {
+                  Image(item.cover)
+                    .width(this.renderView.initParamTemplate.extra.imgWidth)
+                    .height(this.renderView.initParamTemplate.extra.imgHeight)
+                  Column() {
+                    Text(item.title)
+                      .fontSize(this.renderView.initParamTemplate.titleSize)
+                      .textAlign(TextAlign.Start)
+                      .fontColor(item.showVip ? "#FFFFD97C" : "#FFFFFFFF")
+                      .maxLines(3)
+                      .textOverflow({ overflow: TextOverflow.Ellipsis })
+                      .fontFamily('HarmonyOS Sans')
+                  }
+                  .width((this.renderView.initParamTemplate.width -
+                  this.renderView.initParamTemplate.extra.imgWidth))
+                  .height((this.renderView.initParamTemplate.height))
+                  .alignItems(HorizontalAlign.Start)
+                  .justifyContent(FlexAlign.Start)
+                  .padding(10)
 
-                Text(item.floatText)
-                  .position({
-                    x: 10,
-                    y: 70
-                  })
-                  .backgroundColor('#803E3838')
-                  .fontColor(0xFFFFFF)
-                  .borderRadius(4)
-                  .padding({
-                    left: 4,
-                    right: 4
-                  })
-                  .fontFamily('HarmonyOS Sans')
-                  .fontSize(this.renderView.initParamTemplate.floatTitleSize)
+                  Text(item.floatText)
+                    .position({
+                      x: 10,
+                      y: 70
+                    })
+                    .backgroundColor('#803E3838')
+                    .fontColor(0xFFFFFF)
+                    .borderRadius(4)
+                    .padding({
+                      left: 4,
+                      right: 4
+                    })
+                    .fontFamily('HarmonyOS Sans')
+                    .fontSize(this.renderView.initParamTemplate.floatTitleSize)
+                }
+                .width(this.renderView.initParamTemplate.width)
+                .height(this.renderView.initParamTemplate.height)
+                .backgroundColor('#80988787')
+                .alignItems(VerticalAlign.Top)
+                .focusable(true)
               }
-              .width(this.renderView.initParamTemplate.width)
-              .height(this.renderView.initParamTemplate.height)
-              .backgroundColor('#80988787')
-              .alignItems(VerticalAlign.Top)
-              .focusable(true)
             }
             .width(this.renderView.initParamTemplate.width)
             .height(this.renderView.initParamTemplate.height)
