@@ -200,19 +200,16 @@ export struct  QTText {
           if(this.renderView.parentView instanceof QTBaseComponentView){
             let newWidth = 0
             let newHeight= 0;
-            if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight){
-              if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth){
-                newWidth = QTPixelUtil.vp2Vp(Number(newValue.width))
-                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedWidth(newWidth)
-                // this.renderView.cssWidth = Number(newValue.width)
-              }else{
-                newHeight = QTPixelUtil.vp2Vp(Number(newValue.height))
-                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
-                // this.renderView.cssHeight = Number(newValue.height)
-              }
+            if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight) {
+              newWidth = QTPixelUtil.vp2Vp(Number(newValue.width))
+              LayoutAttach.obtainLayoutAttach(this.renderView).setFixedWidth(newWidth)
+              // this.renderView.cssWidth = Number(newValue.width)
+              newHeight = QTPixelUtil.vp2Vp(Number(newValue.height))
+              LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
+              // this.renderView.cssHeight = Number(newValue.height)
               // QTPixelUtil.setRenderViewLayout(this.renderView,[0,])
               //QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
-              this.renderView.parentView.notifyChildSizeChanged(this.renderView,this.renderView,newWidth,newHeight)
+              this.renderView.parentView.notifyChildSizeChanged(this.renderView, this.renderView, newWidth, newHeight)
             }
           }else{
             QTLog.d(TAG_LAYOUT,`parent is not QTRenderBaseView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
