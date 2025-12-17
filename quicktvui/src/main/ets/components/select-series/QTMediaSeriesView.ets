@@ -380,7 +380,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         console.log(TAG_MediaSeries, `QTMediaSeriesView listData :${JSON.stringify(this.listData)}`)
         break;
 
-      // 自定义模式下的 数据总数
+    // 自定义模式下的 数据总数
       case "setInitData":
         let totalCount = HRValueUtils.getNumber2(params[0], 0)
         let pageSize = HRValueUtils.getNumber2(params[1], 0)
@@ -390,7 +390,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         this.generatePageData = this.generatePageRanges(totalCount, pageSize);
         break;
 
-      //设置选中的item
+    //设置选中的item
       case "setSelectChildPosition":
         let childPos = HRValueUtils.getNumber2(params[0], 0)
         focusControl.requestFocus(`${LIST_PREFIX_KEY}_${childPos}`)
@@ -398,14 +398,14 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         console.log(TAG_MediaSeries, `setSelectChildPosition : childPos is : ${childPos} `)
         break;
 
-      //滚动到指定位置
+    //滚动到指定位置
       case "scrollToPosition":
         let scrollPos = HRValueUtils.getNumber2(params[0], 0)
         this.scroller.scrollToIndex(scrollPos);
         console.log(TAG_MediaSeries, `scrollToPosition : scrollPos is : ${scrollPos}`)
         break;
 
-      //滚动到指定位置 可添加偏移量
+    //滚动到指定位置 可添加偏移量
       case "scrollToPositionWithOffset":
         let scrollPosIdx = HRValueUtils.getNumber2(params[0], 0)
         let scrollPosOffset = HRValueUtils.getNumber2(params[1], 0)
@@ -416,7 +416,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           `scrollToPositionWithOffset : scrollPosIdx is : ${scrollPosIdx}, scrollPosOffset is :${scrollPosOffset}`)
         break;
 
-      //设置选中的item
+    //设置选中的item
       case "requestChildFocus":
         let focusPos = HRValueUtils.getNumber2(params[0], 0)
         focusControl.requestFocus(`${LIST_PREFIX_KEY}_${focusPos}`)
