@@ -174,7 +174,7 @@ export class FocusFinder {
     const views: TVView[] = [];
     FocusFinder.addAllFocusable(views, root, direction);
 
-    QTLog.i(TAG_FOCUS, `findNextFocus search views length: ${views.length}`);
+    QTLog.i(TAG_FOCUS, `findNextFocus search views length: ${views.length} root : ${ExtendUtil.debugView(root)}`);
     // QTLog.i(TAG_FOCUS, `findNextFocus current focused: ${focusedView ? ExtendUtil.debugView(focusedView) : 'null'}`);
 
     if (views.length === 0) {

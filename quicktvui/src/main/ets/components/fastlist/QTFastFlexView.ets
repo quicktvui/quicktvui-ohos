@@ -33,6 +33,7 @@ export class QTFastFlexView extends QTRenderBaseView {
     this.dataSource = new FastListDataSource(ctx,this.virtualChildren)
     this.dataSource.listView = this;
     this.dataSource.setPlaceholderEnabled(false)
+    this.clipChildren = false;
   }
 
   setRootListID(rootListID:number){
@@ -68,6 +69,16 @@ export class QTFastFlexView extends QTRenderBaseView {
     }
   }
 
+  getPageUid(): string | null | undefined {
+    if(this.templateView){
+      let templateAttach = LayoutAttach.obtainLayoutAttach(this.templateView);
+      if(templateAttach.pageUid){
+        return templateAttach.pageUid
+      }
+    }
+    return super.getPageUid();
+  }
+
   onDataChanged(data : HippyArray | null){
     QTLog.d(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
     this.virtualChildren = []
@@ -77,6 +88,7 @@ export class QTFastFlexView extends QTRenderBaseView {
         let item : ItemView = new ItemView(i,data[i] as HippyMap);
         // this.dataSource?.buildItem(item,i)
         let fi : QTItemRootView =  new QTItemRootView(this.ctx).init(this,item)
+        LayoutAttach.obtainLayoutAttach(fi).pageUid = this.getPageUid();
         this.dataSource.buildItem(fi,i)
         fi.enablePlaceholder = this.enablePlaceholder
         this.virtualChildren.push(fi)
@@ -151,6 +163,7 @@ export class QTFastFlexView extends QTRenderBaseView {
             fi.enablePlaceholder = this.enablePlaceholder
           }
         })
+        return true;
       break;
 
     }
@@ -281,7 +294,7 @@ function applyRenderViewBaseAttr($$: QTFastFlexView) {
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
-  .clip($$.cssOverflow)
+  .clip($$.clipChildren)
   .visibility(($$ as QTFastFlexView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)

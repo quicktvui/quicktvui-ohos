@@ -7,11 +7,12 @@ import {
   HIPPY_COMPONENT_KEY_PREFIX,
   buildHippyRenderView
 } from 'hippy'
-import { TAG_FOCUS } from '../../Constant';
+import { TAG_FOCUS, TAG_QUICKTVUI } from '../../Constant';
 import { QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { FocusUtils } from '../../utils/FocusUtils';
 import { QTLog } from '../../utils/QTLog';
+import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { FocusManager } from '../FocusManager';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TVView } from '../TVView';
@@ -21,15 +22,19 @@ import { PageManager } from './PageManager';
 @Observed
 export class QTPageView extends QTBaseComponentView implements IPage {
   public event: QTPage | null = null
-  public savedFocus: TVView | null = null;
+  public savedFocusUid: string | undefined = undefined;
   public focusManager: FocusManager = new FocusManager(this)
   public isDialogMode: boolean = false
+  static pageNumber = 0;
 
   uiContext : UIContext | null = null;
   isFront : boolean = false;
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+    LayoutAttach.obtainLayoutAttach(this).uid = `page-${QTPageView.pageNumber}`
+    QTPageView.pageNumber ++
+    LayoutAttach.obtainLayoutAttach(this).pageUid = this.uid
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
@@ -63,16 +68,30 @@ export class QTPageView extends QTBaseComponentView implements IPage {
     }
   }
 
+  getPageUid(): string | null | undefined {
+    return this.uid
+  }
+
+  addSubRenderView(subView: QTView, index: number): void {
+    QTLog.d(TAG_QUICKTVUI,`--------QTPageView pageUid:${LayoutAttach.obtainLayoutAttach(this).pageUid},uid:${this.uid} this:${ExtendUtil.debugView(this)}`)
+
+    super.addSubRenderView(subView,index)
+  }
 
 
   saveFocus() {
-    this.savedFocus = this.focusManager.getFocusedView();
+    this.savedFocusUid = this.focusManager.getFocusedView()?.uid;
   }
 
   restoreFocus() {
-    if (this.savedFocus != null) {
-      FocusUtils.requestFocusById(this.savedFocus.uid)
-      this.savedFocus = null;
+    if (this.savedFocusUid != null) {
+        let b = FocusUtils.requestFocusById(this.savedFocusUid)
+
+        if(!b){
+          QTLog.e(TAG_FOCUS,`restoreFocus fail view may has destoryed uid:${this.savedFocusUid} request focus from page`)
+          FocusUtils.requestViewGroupFocus(this)
+        }
+        this.savedFocusUid = undefined;
     }
   }
 
@@ -86,9 +105,12 @@ export class QTPageView extends QTBaseComponentView implements IPage {
 
   aboutToAppear(){
     this.isFront = true;
-    this.uid = `page-${this.tag}`
+    // this.uid = `page-${this.tag}`
+
     PageManager.registerPage(this.uid,this)
-    this.restoreFocus()
+    setTimeout(()=>{
+      this.restoreFocus()
+    },100)
   }
 
   setPageUIContext(uiContext : UIContext){
@@ -147,7 +169,7 @@ function applyRenderViewBaseAttr($$: QTPageView) {
   .accessibilityText($$.cssAccessibilityLabel)
   // .focusable($$.cssFocusable)
   .border($$.cssBorder)
-  .id(`page-${$$.tag}`)
+  .id($$.uid)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)

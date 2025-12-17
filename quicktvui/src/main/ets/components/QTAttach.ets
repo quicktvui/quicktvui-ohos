@@ -9,7 +9,7 @@ export class QTAttach{
   private extra: Map<string,QTAny> | null = null;
   //全局唯一id
   uid:string | null = null;
-
+  pageUid:string | undefined | null = undefined;
   putExtra(key:string,value:QTAny){
     if(!this.extra){
       this.extra = new Map();

@@ -18,6 +18,7 @@ import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TVView } from '../TVView';
+import { FocusUtils } from '../../utils/FocusUtils';
 
 const PREFIX_KEY = "FASTLIST"
 
@@ -80,6 +81,16 @@ export class QTFastListView extends QTRenderBaseView{
         ExtendUtil.sendUIEvent(this.ctx,this.getHandleEventNodeId(),'onScrollYLesserReference',null)
       }
     }
+  }
+
+  getPageUid(): string | null | undefined {
+    if(this.templateView){
+      let templateAttach = LayoutAttach.obtainLayoutAttach(this.templateView);
+      if(templateAttach.pageUid){
+        return templateAttach.pageUid
+      }
+    }
+    return super.getPageUid();
   }
 
   onScrollIndex(start: number, end: number, center: number) {
@@ -160,6 +171,7 @@ export class QTFastListView extends QTRenderBaseView{
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+    this.clipChildren = false;
   }
 
 
@@ -504,7 +516,9 @@ export class QTFastListView extends QTRenderBaseView{
           // QTLog.d(TAG_FASTLIST,`onDataChanged crate item :${CommonUtils.hippyAny2String(item)}`)
           //CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
           let it =  new ItemView(index,item as HippyMap)
-          return new QTItemRootView(this.ctx).init(this,it)
+          let fi = new QTItemRootView(this.ctx).init(this,it)
+          LayoutAttach.obtainLayoutAttach(fi).pageUid = this.getPageUid();
+          return fi;
         })
       )
       this.notifyReload()
@@ -518,6 +532,17 @@ export class QTFastListView extends QTRenderBaseView{
     this.virtualChildren.splice(start, cout)
     this.notifyReload()
   }
+
+
+  requestChildFocus(position : number,delay : number = 0){
+    let child = this.virtualChildren[position]
+    if(child){
+      FocusUtils.requestViewGroupFocus(child,delay)
+    }else{
+      QTLog.e(TAG_FOCUS,`requestChildFocus return on child null position : ${position}`)
+    }
+  }
+
 
   updateItemRange(start : number,count:number,data:HippyArray){
     data?.forEach((item,index)=>{
