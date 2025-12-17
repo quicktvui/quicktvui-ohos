@@ -65,7 +65,7 @@ struct AppView {
       keyDownDuration: 0,
       isIntercepted: false
     };
-    setTimeout(()=>{
+    setTimeout(() => {
       try {
         // 触发tab点击，使默认焦点组件多态样式生效
         inputEventClient.injectEvent({ KeyEvent: keyDown });
@@ -74,7 +74,7 @@ struct AppView {
       } catch (e) {
         console.log("123456 tab key event click false")
       }
-    },5000)
+    }, 5000)
 
     // try {
     //   // 触发tab点击，使默认焦点组件多态样式生效
@@ -179,8 +179,9 @@ struct AppView {
       new RuntimeAPIProvider(),
       new QTAPIProvider()
     ]
-    if (this.appLoader instanceof AssetsAppLoader) {
-      params.coreJSAssetsPath = this.appLoader.getVendorJsFile()
+    if (this.appLoader) {
+      const coreJSAssetsPath = this.appLoader.getVendorJsFile()
+      params.coreJSAssetsPath = coreJSAssetsPath
     }
     return params
   }
@@ -223,8 +224,9 @@ struct AppView {
     // params.codeCacheTag = 'EsApp'
     params.jsParams = new Map<string, HippyValue>()
     params.wrappedCustomRenderViewBuilder = wrapBuilder(buildCustomRenderView)
-    if (this.appLoader instanceof AssetsAppLoader) {
-      params.jsAssetsPath = this.appLoader.getIndexJsFile()
+    if (this.appLoader) {
+      const jsAssetsPath = this.appLoader.getIndexJsFile()
+      params.jsAssetsPath = jsAssetsPath
     }
     return params
   }

@@ -24,6 +24,10 @@ export class ApiAppLoader implements AppLoader {
       console.info('ApiAppLoader: 开始请求应用信息...');
       const appInfo = await this.fetchAppInfo();
 
+      //
+      this.data.packageName = appInfo.es_package
+      this.data.versionName = appInfo.tvpackagever
+
       console.info(`ApiAppLoader: 获取信息成功，准备下载: ${appInfo.tvpackage}`);
       const download = await this.downloadPackage(appInfo);
 
@@ -232,6 +236,29 @@ interface Client {
   clientEsPackageVer: string;
 }
 
+
+// {
+//   "msg": "",
+//   "code": 200,
+//   "data": {
+//     "es_package_ver": "",
+//     "updatePopupTitle": "新版本",
+//     "appletsid": 657,
+//     "icon": "https://extcdn.hsrc.tv/exscreen/icon/3286b6e705e91a84c42a4211536fb1dd.jpeg",
+//     "refresh": false,
+//     "sdks": "",
+//     "minPluginVerCode": "",
+//     "updatePopupMessage": "",
+//     "tvpackagemd5": "7bc4554a824213f91bc4070fd0b0c63e",
+//     "tvpackage": "https://extcdn.hsrc.tv/exscreen/pkg/24ad3b6165134457b44ad0eacd567bc5.zip",
+//     "tvpackagever": "1.2.0",
+//     "name": "HarmonyOS",
+//     "es_package": "es.harmony.os.tv",
+//     "updatePopupSwitch": 0,
+//     "circle_logo": "https://extcdn.hsrc.tv/exscreen/icon/2cf288e8d9826545a4015e350b043616.jpeg",
+//     "sdke": ""
+//   }
+// }
 // 对应日志中的 data 部分
 interface AppInfo {
   es_package: string; // "es.hello.world"
