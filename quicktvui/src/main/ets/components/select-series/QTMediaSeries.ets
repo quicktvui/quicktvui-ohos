@@ -114,8 +114,8 @@ export struct QTMediaSeries {
             .width(this.renderView.initParamTemplate.width)
             .height(this.renderView.initParamTemplate.height)
             .margin({
-              left: index === 0 ? 60 : 0,
-              right: index === this.renderView.listData.totalCount() - 1 ? 60 : 0
+              left: index === 0 ? px2vp(120) : 0,
+              right: index === this.renderView.listData.totalCount() - 1 ? px2vp(120) : 0,
             })
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
@@ -164,6 +164,8 @@ export struct QTMediaSeries {
 
           this.renderView.currentTitleId = Math.floor(index / this.renderView.initParam.groupSize)
         })
+
+        //.backgroundColor(Color.Orange)
 
 
         if (this.renderView.enableGroup) {
@@ -271,6 +273,7 @@ export struct QTMediaSeries {
 function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
+  .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
   .clip(false)
   .visibility(($$ as QTMediaSeriesView).cssVisibility) // must add as, otherwise the compiler has error
