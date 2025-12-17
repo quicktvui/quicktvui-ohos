@@ -19,6 +19,7 @@ export class QTTextView extends QTRenderBaseView{
   lines: number = 1
   text: string = ""
   fontColor: ResourceColor | null = null
+  userFontColor: ResourceColor | null = null
   fontSize: Dimension = 16
   lineHeight: number | null = null
   // fontStyle: FontStyle = FontStyle.Normal
@@ -30,10 +31,22 @@ export class QTTextView extends QTRenderBaseView{
   verticalAlign :Alignment = Alignment.TopStart
   ellipsisMode: EllipsisMode = EllipsisMode.END
   textOverflow: TextOverflow = TextOverflow.Clip
-
+  focusColor: ResourceColor | null = null
+  selectColor: ResourceColor | null = null
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+  }
+
+  drawableStateChanged(): void {
+    super.handleShowOnState()
+    if(this.isFocusedOrDuplicateParentFocusState()){
+      this.fontColor = this.focusColor;
+    } else if(this.isSelectedOrDuplicateParentSelectState()){
+      this.fontColor == this.selectColor;
+    }else{
+      this.fontColor = this.userFontColor;
+    }
   }
 
 
@@ -96,6 +109,17 @@ export class QTTextView extends QTRenderBaseView{
       case "color":
         let colorVal = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
         this.fontColor = '#' + colorVal
+        this.userFontColor = this.fontColor
+        return true;
+      case "focusColor":
+        let focusColor = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+        this.focusColor = '#' + focusColor
+        this.drawableStateChanged()
+        return true;
+      case "selectColor":
+        let selectColor = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+        this.selectColor = '#' + selectColor
+        this.drawableStateChanged()
         return true;
       case "lineHeight":
         this.lineHeight = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))

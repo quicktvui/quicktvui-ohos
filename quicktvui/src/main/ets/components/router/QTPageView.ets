@@ -7,7 +7,7 @@ import {
   HIPPY_COMPONENT_KEY_PREFIX,
   buildHippyRenderView
 } from 'hippy'
-import { TAG_FOCUS, TAG_QUICKTVUI } from '../../Constant';
+import { TAG_FOCUS, TAG_PAGE, TAG_QUICKTVUI, TAG_TABS } from '../../Constant';
 import { QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { FocusUtils } from '../../utils/FocusUtils';
@@ -60,7 +60,7 @@ export class QTPageView extends QTBaseComponentView implements IPage {
   }
 
   dispatchKeyEvent(event: KeyEvent): boolean {
-
+    QTLog.d(TAG_PAGE,`dispatchKeyEvent this page is Front ${this.isFront} uid: ${this.uid}`)
     if(this.isFront){
       return this.focusManager.dispatchKeyEvent(event)
     }else{
@@ -96,6 +96,7 @@ export class QTPageView extends QTBaseComponentView implements IPage {
   }
 
   aboutToDisappear(){
+    QTLog.w(TAG_PAGE,`----aboutToDisappear page id :${this.uid}`)
     this.isFront = false;
     this.saveFocus()
     setTimeout(()=>{
@@ -103,10 +104,14 @@ export class QTPageView extends QTBaseComponentView implements IPage {
     },100)
   }
 
+  onDestroy(): void {
+    this.savedFocusUid = undefined;
+  }
+
   aboutToAppear(){
     this.isFront = true;
     // this.uid = `page-${this.tag}`
-
+    QTLog.i(TAG_PAGE,`+++++aboutToAppear page id :${this.uid}`)
     PageManager.registerPage(this.uid,this)
     setTimeout(()=>{
       this.restoreFocus()

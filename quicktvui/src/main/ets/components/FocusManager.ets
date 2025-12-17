@@ -1,4 +1,4 @@
-import { TAG_CLICK, TAG_FASTLIST, TAG_FOCUS } from "../Constant";
+import { TAG_CLICK, TAG_FASTLIST, TAG_FOCUS, TAG_PAGE } from "../Constant";
 import { QTView } from "../QTTypes";
 import { FocusFinder } from "../utils/FocusFinder";
 import { QTLog } from "../utils/QTLog";
@@ -6,6 +6,8 @@ import { QTBaseComponentView } from "./QTBaseComponentView";
 import { KeyCode } from "@kit.InputKit";
 import { FocusUtils } from "../utils/FocusUtils";
 import { TVView } from "./TVView";
+import { ExtendUtil } from "../utils/ExtendUtil";
+import { QTPageView } from "./router/QTPageView";
 
 export class FocusManager{
 
@@ -49,6 +51,11 @@ export class FocusManager{
     return nextFocus;
   }
 
+  findNextFocusWithFocused(parent: QTView,direction = FocusFinder.DIRECTION_DOWN,focused:TVView | null) : TVView | null{
+    let nextFocus = FocusFinder.findNextFocus(focused,parent,direction)
+    return nextFocus;
+  }
+
   // public requestFocus(parent : QTView,direction)
 
   dispatchKeyEvent(event: KeyEvent) : boolean{
@@ -85,17 +92,29 @@ export class FocusManager{
 
   static dispatchKeyEvent(view : QTView ,event : KeyEvent) : boolean {
     if(view instanceof  QTBaseComponentView){
+      QTLog.i(TAG_PAGE,`dispatchKeyEvent view: ${ExtendUtil.debugView(view)}`)
       if(view.dispatchKeyEvent(event)){
         return true;
       }
     }
-    if(view.children){
-      for(let i = 0; i < view.children.length; i ++){
-        if(FocusManager.dispatchKeyEvent(view.children[i],event)){
-          return true;
+    if(view instanceof QTPageView){
+      if(view.isFront){
+        if(view.children){
+          for(let i = 0; i < view.children.length; i ++){
+            if(FocusManager.dispatchKeyEvent(view.children[i],event)){
+              return true;
+            }
+          }
         }
       }
-
+    }else{
+      if(view.children){
+        for(let i = 0; i < view.children.length; i ++){
+          if(FocusManager.dispatchKeyEvent(view.children[i],event)){
+            return true;
+          }
+        }
+      }
     }
     return false;
   }

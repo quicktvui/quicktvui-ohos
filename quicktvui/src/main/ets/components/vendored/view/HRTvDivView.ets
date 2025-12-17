@@ -205,9 +205,9 @@ export class HRTvDivView extends QTBaseComponentView {
       //   this.showonstate = HRValueUtils.getString(propValue as HippyAny);
       //   this.showOnState();
       //   return true;
-      case 'sid': {
-        this.sid = propValue as string
-      }
+      // case 'sid': {
+      //   this.sid = propValue as string
+      // }
         return true
       case 'clipChildren': {
         this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
