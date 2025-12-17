@@ -28,14 +28,46 @@ export class ApiAppLoader implements AppLoader {
       this.data.packageName = appInfo.es_package
       this.data.versionName = appInfo.tvpackagever
 
+      // 获取解压目标文件夹路径 (注意：getAppDir 会自动创建该文件夹，所以下面需要判断是否需要清理)
+      const targetDir = this.getAppDir(appInfo);
+
+      // --- 新增逻辑 2：校验本地版本和MD5 ---
+      // 这里的 targetDir 包含了版本号，所以路径存在即代表“版本文件夹名字一致”
+      const md5MarkerFile = `${targetDir}/${appInfo.tvpackagemd5}`;
+
+      if (fs.accessSync(md5MarkerFile)) {
+        console.info(`ApiAppLoader: 本地已存在匹配版本且MD5校验一致，跳过下载: ${md5MarkerFile}`);
+        console.info('ApiAppLoader: 最终解压文件夹路径:', targetDir);
+        console.info('ApiAppLoader: 加载流程全部完成');
+        return; // 直接结束
+      } else {
+        console.info(`ApiAppLoader: 本地缓存不存在或MD5不一致，执行清理并重新下载`);
+        // 删除该版本目录，确保环境干净
+        FileUtil.deleteDir(targetDir);
+      }
+      // ------------------------------------
+
       console.info(`ApiAppLoader: 获取信息成功，准备下载: ${appInfo.tvpackage}`);
       const download = await this.downloadPackage(appInfo);
 
       console.info(`ApiAppLoader: 下载并校验MD5成功，路径: ${download.path}`);
-      const targetDir = this.getAppDir(appInfo);
 
+      // 注意：getAppDir 之前可能创建了文件夹被我们删除了，或者 unzip 内部会处理创建
       console.info(`ApiAppLoader: 开始解压到: ${targetDir}`);
       await this.unzip(download.path, targetDir);
+
+      // --- 新增逻辑 1：保存 MD5 值作为文件名 ---
+      try {
+        const markerPath = `${targetDir}/${appInfo.tvpackagemd5}`;
+        // 创建一个空文件，文件名即为 MD5
+        const file = fs.openSync(markerPath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+        fs.closeSync(file);
+        console.info(`ApiAppLoader: MD5标记文件已创建: ${markerPath}`);
+      } catch (e) {
+        console.error('ApiAppLoader: 创建MD5标记文件失败:', e);
+      }
+      // ---------------------------------------
+
       console.info('ApiAppLoader: 最终解压文件夹路径:', targetDir);
 
       console.info('ApiAppLoader: 加载流程全部完成');

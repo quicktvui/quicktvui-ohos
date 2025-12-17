@@ -81,5 +81,31 @@ export class FileUtil {
     } catch (ignore) {
     }
   }
+
+  /**
+   * 新增辅助方法：递归删除文件夹
+   */
+  static deleteDir(path: string) {
+    try {
+      if (fs.accessSync(path)) {
+        // 获取目录下所有文件/文件夹
+        const files = fs.listFileSync(path);
+        for (let i = 0; i < files.length; i++) {
+          const fileName = files[i];
+          const fullPath = `${path}/${fileName}`;
+          const stat = fs.statSync(fullPath);
+          if (stat.isDirectory()) {
+            FileUtil.deleteDir(fullPath); // 递归删除子文件夹
+          } else {
+            fs.unlinkSync(fullPath); // 删除文件
+          }
+        }
+        // 删除当前空文件夹
+        fs.rmdirSync(path);
+      }
+    } catch (e) {
+      console.error(`ApiAppLoader: 删除目录失败 ${path}:`, e);
+    }
+  }
 }
 
