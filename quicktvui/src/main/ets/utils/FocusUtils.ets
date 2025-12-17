@@ -2,6 +2,7 @@ import { PageManager } from "../components/router/PageManager";
 import { TAG_FASTLIST, TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
 import { ExtendUtil } from "./ExtendUtil";
+import { FocusFinder } from "./FocusFinder";
 import { QTLog } from "./QTLog";
 import { ViewUtils } from "./ViewUtils";
 
@@ -39,7 +40,7 @@ export class FocusUtils{
           FocusUtils.requestFocus(view)
         }else{
           let focusManager = PageManager.getPageHost(view)?.focusManager
-          let nextFocus = focusManager?.findNextFocus(view)
+          let nextFocus = focusManager?.findNextFocusWithFocused(view, FocusFinder.DIRECTION_DOWN,null)
           if(nextFocus){
             FocusUtils.requestFocusById(nextFocus.uid)
           }
