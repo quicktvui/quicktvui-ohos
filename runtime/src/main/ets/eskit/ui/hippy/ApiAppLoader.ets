@@ -296,8 +296,24 @@ export class DownloadTask {
       const tempFileName = `enc_${download.name}`; // 加个前缀区分
       const tempPath = `${context.cacheDir}/${tempFileName}`;
 
+      // ========================= 修改开始 =========================
+
+      // 2. 解密后的最终路径 -> 改为 filesDir 下的特定目录
+      // filesDir 在 "Device File Browser" 中位于 /data/app/el2/100/base/<包名>/haps/entry/files/
+      const exportDir = `${context.filesDir}/downloaded_pkg`;
+
+      // 确保目录存在
+      if (!fs.accessSync(exportDir)) {
+        fs.mkdirSync(exportDir, true);
+      }
+
+      const finalPath = `${exportDir}/${download.name}`;
+
+      // ========================= 修改结束 =========================
+
       // 2. 解密后的最终路径 (用于 MD5 校验和后续解压)
-      const finalPath = `${context.cacheDir}/${download.name}`;
+      //TODO
+      // const finalPath = `${context.cacheDir}/${download.name}`;
 
       // 清理旧文件
       this.cleanFile(tempPath);
