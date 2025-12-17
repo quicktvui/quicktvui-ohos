@@ -24,6 +24,7 @@ import { AssetsAppLoader } from './hippy/AssetsAppLoader'
 import { IconSplashView } from './splash/SplashView'
 import common from '@ohos.app.ability.common'
 import { inputEventClient, KeyCode } from '@kit.InputKit'
+import { ApiAppLoader } from './hippy/ApiAppLoader'
 
 @Builder
 export function PageDebugBuilder() {
@@ -127,7 +128,7 @@ struct AppView {
     data.appName = '鸿蒙测试'
     data.packageName = 'es.harmony.os.tv'
     data.appIcon = 'https://extcdn.hsrc.tv/data_center/files/2024/05/29/3e07ff6b-cfc6-40d2-a885-843b1655348a.png'
-    data.uri = `${AppLoaderFactory.FROM_ASSETS}/vue`
+    // data.uri = `${AppLoaderFactory.FROM_ASSETS}/vue`
 
     return data
   }
@@ -179,10 +180,17 @@ struct AppView {
       new RuntimeAPIProvider(),
       new QTAPIProvider()
     ]
-    if (this.appLoader) {
+
+    if (this.appLoader instanceof AssetsAppLoader) {
       const coreJSAssetsPath = this.appLoader.getVendorJsFile()
       params.coreJSAssetsPath = coreJSAssetsPath
     }
+    //
+    else if (this.appLoader instanceof ApiAppLoader) {
+      const coreJSFilePath = this.appLoader.getVendorJsFile()
+      params.coreJSFilePath = coreJSFilePath
+    }
+
     return params
   }
 
@@ -224,9 +232,15 @@ struct AppView {
     // params.codeCacheTag = 'EsApp'
     params.jsParams = new Map<string, HippyValue>()
     params.wrappedCustomRenderViewBuilder = wrapBuilder(buildCustomRenderView)
-    if (this.appLoader) {
+
+    if (this.appLoader instanceof AssetsAppLoader) {
       const jsAssetsPath = this.appLoader.getIndexJsFile()
       params.jsAssetsPath = jsAssetsPath
+    }
+    //
+    else if (this.appLoader instanceof ApiAppLoader) {
+      const jsFilePath = this.appLoader.getIndexJsFile()
+      params.jsFilePath = jsFilePath
     }
     return params
   }

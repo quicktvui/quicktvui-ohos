@@ -36,6 +36,7 @@ export class ApiAppLoader implements AppLoader {
 
       console.info(`ApiAppLoader: 开始解压到: ${targetDir}`);
       await this.unzip(download.path, targetDir);
+      console.info('ApiAppLoader: 最终解压文件夹路径:', targetDir);
 
       console.info('ApiAppLoader: 加载流程全部完成');
     } catch (e) {
@@ -291,30 +292,32 @@ export class DownloadTask {
    */
   start(context: Context, download: Download): Promise<DownloadResult> {
     return new Promise<DownloadResult>(async (resolve, reject) => {
+      console.info('Debug Path - filesDir:', context.filesDir);
+      console.info('Debug Path - cacheDir:', context.cacheDir);
+
       // 1. 临时下载路径 (这是加密的原始文件)
-      // 注意：request.agent saveas 往往是相对于沙箱 cache 或 files 目录，这里我们假设最终能通过绝对路径访问
+      // // 注意：request.agent saveas 往往是相对于沙箱 cache 或 files 目录，这里我们假设最终能通过绝对路径访问
       const tempFileName = `enc_${download.name}`; // 加个前缀区分
       const tempPath = `${context.cacheDir}/${tempFileName}`;
+      //
+      // // ========================= 修改开始 ======测试===================
+      //
+      // // 2. 解密后的最终路径 -> 改为 filesDir 下的特定目录
+      // // filesDir 在 "Device File Browser" 中位于 /data/app/el2/100/base/<包名>/haps/entry/files/
+      // const exportDir = `${context.filesDir}/downloaded_pkg`;
+      //
+      // // 确保目录存在
+      // if (!fs.accessSync(exportDir)) {
+      //   fs.mkdirSync(exportDir, true);
+      // }
 
-      // ========================= 修改开始 =========================
-
-      // 2. 解密后的最终路径 -> 改为 filesDir 下的特定目录
-      // filesDir 在 "Device File Browser" 中位于 /data/app/el2/100/base/<包名>/haps/entry/files/
-      const exportDir = `${context.filesDir}/downloaded_pkg`;
-
-      // 确保目录存在
-      if (!fs.accessSync(exportDir)) {
-        fs.mkdirSync(exportDir, true);
-      }
-
-      const finalPath = `${exportDir}/${download.name}`;
-
+      // const finalPath = `${exportDir}/${download.name}`;
       // ========================= 修改结束 =========================
 
       // 2. 解密后的最终路径 (用于 MD5 校验和后续解压)
-      //TODO
-      // const finalPath = `${context.cacheDir}/${download.name}`;
-
+      //
+      const finalPath = `${context.cacheDir}/${download.name}`;
+      console.info('Debug Path - Expecting decrypted file at:', finalPath);
       // 清理旧文件
       this.cleanFile(tempPath);
       this.cleanFile(finalPath);
@@ -342,6 +345,11 @@ export class DownloadTask {
         });
 
         this.task.on('completed', async (progress: request.agent.Progress) => {
+
+          console.log('Download check - Context CacheDir:', context.cacheDir);
+          console.log('Download check - Trying to access:', tempPath);
+          console.log('Download check - File exists?:', fs.accessSync(tempPath));
+
           this._release();
 
           // 检查下载的原始文件是否存在
@@ -355,7 +363,7 @@ export class DownloadTask {
 
             // --- 核心修改：先解密 ---
             // 将 tempPath (加密) 解密到 finalPath (明文)
-            await this.decryptRpk(tempPath, finalPath);
+            await FileUtil.decryptRpk(tempPath, finalPath);
             console.info('Decrypt success. Start checking MD5...');
 
             // --- 核心修改：解密后删除原始加密文件 (可选，节省空间) ---
@@ -402,54 +410,6 @@ export class DownloadTask {
         } as BusinessError<string>);
       }
     });
-  }
-
-  /**
-   * ArkTS 版的 decryptRpk 实现
-   * 读取 originFile，交换首尾 100 字节，写入 decryptFile
-   */
-  private async decryptRpk(originPath: string, decryptPath: string): Promise<void> {
-    try {
-      // 1. 读取源文件
-      let srcFile = await fs.open(originPath, fs.OpenMode.READ_ONLY);
-      let stat = await fs.stat(srcFile.fd);
-      // 注意：如果文件特别大，建议不要一次性 new ArrayBuffer，而是分块读写。
-      // 这里假设 RPK 文件大小适中（几十MB以内），保持原 Java 逻辑一次性读入。
-      let buffer = new ArrayBuffer(stat.size);
-
-      await fs.read(srcFile.fd, buffer);
-      await fs.close(srcFile);
-
-      // 2. 字节交换逻辑
-      let bytes = new Uint8Array(buffer);
-      const len = bytes.length;
-      const loopCount = 100;
-
-      for (let i = 0; i < loopCount; i++) {
-        // 防止文件极小越界
-        if (i >= len) {
-          break;
-        }
-
-        let tmp = bytes[i];
-        let targetIndex = len - i - 1;
-
-        if (targetIndex >= 0 && targetIndex < len) {
-          bytes[i] = bytes[targetIndex];
-          bytes[targetIndex] = tmp;
-        }
-      }
-      // 3. 写入目标文件
-      // CREATE: 不存在则创建, TRUNC: 存在则清空重写
-      let destFile = await fs.open(decryptPath, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
-      await fs.write(destFile.fd, buffer);
-      await fs.close(destFile);
-
-    } catch (e) {
-      // 异常时尝试清理
-      this.cleanFile(decryptPath);
-      throw new Error(`Decrypt RPK failed: ${e.message}`);
-    }
   }
 
   private async checkMd5(expectMd5: string, path: string): Promise<boolean> {
