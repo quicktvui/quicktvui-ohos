@@ -7,6 +7,8 @@ const TAG_REUSE = 'DebugReuse'
 const TAG_FAST_EVENT = 'DebugEvent'
 const TAG_TABS = 'DebugTabs'
 const TAG_FOCUS = 'DebugFocus'
+const TAG_STATE_DRAW = 'DebugStateDraw'
+const TAG_PAGE = 'DebugPage'
 
 export {
   QUICKTVUI_TAG as TAG_QUICKTVUI,
@@ -17,5 +19,7 @@ export {
   TAG_REUSE,
   TAG_FAST_EVENT,
   TAG_TABS,
-  TAG_FOCUS
+  TAG_FOCUS,
+  TAG_PAGE,
+  TAG_STATE_DRAW
 }

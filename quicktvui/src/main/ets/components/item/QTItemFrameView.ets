@@ -28,6 +28,10 @@ export struct QTItemFrame {
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
   aboutToAppear() {
+    if(this.children[0] instanceof QTBaseComponentView){
+      this.children[0].cssFocusable =  false;
+      this.children[0].duplicateParentState = true;
+    }
 
   }
 
@@ -74,8 +78,8 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
   //div
-  .focusable($$.cssFocusable)
-  .tabStop($$.cssFocusable)
+  .focusable($$.children[0].cssFocusable)
+  .tabStop($$.children[0].cssFocusable)
   .border($$.focus ? $$.setBorder() : $$.border)
   .focusScopeId($$.sid, $$.focusMemory) // TODO 目前web端未验证出实际效果
   .borderRadius({

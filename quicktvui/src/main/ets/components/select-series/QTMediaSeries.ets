@@ -84,8 +84,8 @@ export struct QTMediaSeries {
             .width(px2vp(this.renderView.initParamTemplate.width))
             .height(px2vp(this.renderView.initParamTemplate.height))
             .margin({
-              left: index === 0 ? px2vp(60) : 0,
-              right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
+              left: index === 0 ? px2vp(120) : 0,
+              right: index === this.renderView.listData.totalCount() - 1 ? px2vp(120) : 0,
             })
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")

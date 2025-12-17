@@ -1,7 +1,7 @@
 import System from '@ohos/zxing/src/main/ets/core/util/System';
 import {HippyRenderBaseView,HippyObservedArray,HRDiv,NativeRenderContext,HippyAny,HippyRenderCallback,HIPPY_COMPONENT_KEY_PREFIX,buildHippyRenderView} from 'hippy'
 import { InnerViewPagerView, QTBaseComponentView, QTFastList,QTFastListView } from '../../../../../Index';
-import { TAG_FASTLIST, TAG_FOCUS, TAG_TABS } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_PAGE, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
@@ -13,6 +13,7 @@ import QTRenderBaseView from '../QTRenderBaseView';
 import { TVView } from '../TVView';
 import { TabsDataSource } from './TabsDataSource';
 import { WaterfallListView } from './WaterfallListView';
+import { KeyCode } from '@kit.InputKit';
 
 
 @Observed
@@ -212,9 +213,54 @@ export class QTTabsView extends QTRenderBaseView{
 
   addFocusables(views: TVView[], direction: number): boolean {
     let pd = this.getTabData(this.currentIndex)
-    // QTLog.d(TAG_FOCUS,`Tabs addFocusables currentContent:${ExtendUtil.debugView(pd!!.contentView)}`)
+    QTLog.d(TAG_FOCUS,`Tabs addFocusables currentContent:${ExtendUtil.debugView(pd!!.contentView)} curentIdex:${this.currentIndex}`)
+    this.tabList?.addFocusables(views,direction)
     return pd?.contentView?.addFocusables(views,direction) ? true : false;
     return true;
+  }
+
+  onBackPressed() : boolean{
+    if(!this.autoHandleBackKey){
+      return false;
+    }
+    if(!this.autoScrollToTop){
+      return false;
+    }
+    let pd = this.getTabData(this.currentIndex)
+    if(pd?.contentView){
+      let needScrollToTop = pd.contentView.onScrolledOffset > 20 ? true:  false;
+      if(needScrollToTop){
+        this.scrollContentToTop(this.currentIndex)
+        if(this.isSingleContent()){
+          QTLog.d(TAG_TABS,`onBackPressed requestFocus at singleTab : ${this.currentIndex}`)
+          if(this.autoReFocusOnSingleTab){
+              setTimeout(()=>{
+               // FocusUtils.requestViewGroupFocus(pd?.contentView)
+                pd?.contentView?.requestChildFocus(0)
+              },500)
+          }
+        }else{
+          QTLog.d(TAG_TABS,`onBackPressed requestFocus at tab : ${this.currentIndex}`)
+          this.requestTabListFocus(this.currentIndex)
+        }
+
+        return true;
+      }
+    }else{
+      QTLog.d(TAG_TABS,`onBackPressed return false at pd.contentView null : ${this.currentIndex}`)
+    }
+    return false;
+  }
+
+  dispatchKeyEvent(event: KeyEvent): boolean {
+    if(event.keyCode == KeyCode.KEYCODE_BACK){
+      if(this.onBackPressed()){
+        QTLog.w(TAG_PAGE,`take over back pressed`)
+        return true;
+      }
+
+    }
+    return false;
   }
 
   addSubRenderView(subView: HippyRenderBaseView, index: number): void {
@@ -228,7 +274,7 @@ export class QTTabsView extends QTRenderBaseView{
         this.notifyPageBringToFront(index,this.resumeTaskDelay)
       })
       this.tabList.eventItemFocus = ((index,focusView)=>{
-        //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
+        QTLog.i(TAG_TABS,`TabsView eventItemFocus index:${index},focusView:${ExtendUtil.debugView(focusView)}`)
         this.notifyPageChange(index)
         this.scrollContentToTop(index)
         this.controller.changeIndex(index)
@@ -249,7 +295,7 @@ export class QTTabsView extends QTRenderBaseView{
   scrollContentToTop(pageIndex: number){
     let t = this.tabsData[pageIndex]
     if(t){
-      t.contentView?.scrollToTop()
+      t.contentView?.scrollToTop(false)
     }
   }
 
@@ -397,6 +443,7 @@ export class QTTabsView extends QTRenderBaseView{
     this.scrollContentToTop(currentIndex)
     this.notifyPageChange(comingIndex)
     this.tryLoadPageData(comingIndex)
+    this.currentIndex = comingIndex;
     return true;
   }
 
