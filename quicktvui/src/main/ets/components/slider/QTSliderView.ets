@@ -41,7 +41,7 @@ export class QTSliderView extends QTBaseComponentView {
   public thumbInactivatedBorderWidth: number = 0; // 滑块未激活描边粗细
   public blockBorderWidth: number = 0; // 滑块描边粗细值
   public enableFocusBorder: boolean = true; // 启用焦点边框
-  public focusable: boolean = true; // 是否获焦
+  // public focusable: boolean = true; // 是否获焦
   public showTips: boolean = false; // 气泡是否显示
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -66,7 +66,7 @@ export class QTSliderView extends QTBaseComponentView {
         return true;
       }
       case 'focusable': {
-        this.focusable = propValue as boolean;
+        this.cssFocusable = propValue as boolean;
         return true;
       }
     }
@@ -215,7 +215,7 @@ export struct QTSlider {
       .blockStyle({ type: this.renderView.thumbType, image: this.renderView.blockUrl, shape: new Ellipse(this.renderView.thumbDrawable) }) // 滑块的样式
       .blockBorderColor(this.renderView.blockBorderColor) // 滑块的边框颜色
       .blockBorderWidth(this.renderView.blockBorderWidth) // 滑块的边框宽度
-      // .focusable(this.renderView.focusable) // 是否获焦
+      .focusable(this.renderView.cssFocusable) // 是否获焦
       // .focusBox({ strokeColor: this.renderView.enableFocusBorder?ColorMetrics.rgba(0, 0, 255, 1):ColorMetrics.rgba(0, 0, 0, 0) }) // 获焦之后的样式
       .showTips(this.renderView.showTips) // 是否显示气泡
       .onFocus(() => {
@@ -266,7 +266,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  // .focusable($$.cssFocusable)
+  .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
