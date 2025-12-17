@@ -37,25 +37,25 @@ export struct QTMediaSeries {
   build() {
     Stack() {
       Column() {
-        List({ space: px2vp(this.renderView.initParam.itemGap), initialIndex: 0, scroller: this.renderView.scroller }) {
+        List({ space: this.renderView.initParam.itemGap, initialIndex: 0, scroller: this.renderView.scroller }) {
           LazyForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
             ListItem() {
               Row() {
                 Image(item.cover)
-                  .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
-                  .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
+                  .width(this.renderView.initParamTemplate.extra.imgWidth)
+                  .height(this.renderView.initParamTemplate.extra.imgHeight)
                 Column() {
                   Text(item.title)
-                    .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
+                    .fontSize(this.renderView.initParamTemplate.titleSize)
                     .textAlign(TextAlign.Start)
                     .fontColor(item.showVip ? "#FFFFD97C" : "#FFFFFFFF")
                     .maxLines(3)
                     .textOverflow({ overflow: TextOverflow.Ellipsis })
                     .fontFamily('HarmonyOS Sans')
                 }
-                .width(px2vp(this.renderView.initParamTemplate.width -
+                .width((this.renderView.initParamTemplate.width -
                 this.renderView.initParamTemplate.extra.imgWidth))
-                .height(px2vp(this.renderView.initParamTemplate.height))
+                .height((this.renderView.initParamTemplate.height))
                 .alignItems(HorizontalAlign.Start)
                 .justifyContent(FlexAlign.Start)
                 .padding(10)
@@ -73,19 +73,19 @@ export struct QTMediaSeries {
                     right: 4
                   })
                   .fontFamily('HarmonyOS Sans')
-                  .fontSize(px2vp(this.renderView.initParamTemplate.floatTitleSize))
+                  .fontSize(this.renderView.initParamTemplate.floatTitleSize)
               }
-              .width(px2vp(this.renderView.initParamTemplate.width))
-              .height(px2vp(this.renderView.initParamTemplate.height))
+              .width(this.renderView.initParamTemplate.width)
+              .height(this.renderView.initParamTemplate.height)
               .backgroundColor('#80988787')
               .alignItems(VerticalAlign.Top)
               .focusable(true)
             }
-            .width(px2vp(this.renderView.initParamTemplate.width))
-            .height(px2vp(this.renderView.initParamTemplate.height))
+            .width(this.renderView.initParamTemplate.width)
+            .height(this.renderView.initParamTemplate.height)
             .margin({
-              left: index === 0 ? px2vp(60) : 0,
-              right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
+              left: index === 0 ? 60 : 0,
+              right: index === this.renderView.listData.totalCount() - 1 ? 60 : 0
             })
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
@@ -115,7 +115,8 @@ export struct QTMediaSeries {
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
-        .height(px2vp(this.renderView.initParamTemplate.height))
+        .height(this.renderView.initParamTemplate.height + 40)
+        .alignListItem(ListItemAlign.Center)
         .onReachEnd(() => {
           if (this.renderView.initParam.totalCount <= this.renderView.pageNum * this.renderView.initParam.pageSize) {
             return
@@ -134,8 +135,6 @@ export struct QTMediaSeries {
           this.renderView.currentTitleId = Math.floor(index / this.renderView.initParam.groupSize)
         })
 
-        //.backgroundColor(Color.Orange)
-
 
         if (this.renderView.enableGroup) {
 
@@ -144,7 +143,7 @@ export struct QTMediaSeries {
               ListItem() {
                 Column() {
                   Text(item.title)
-                    .fontSize(px2vp(this.renderView.initParamGroup.textSize))
+                    .fontSize(this.renderView.initParamGroup.textSize)
                     .textAlign(TextAlign.Center)
                     .fontFamily('HarmonyOS Sans')
                     .focusable(true)
@@ -155,27 +154,27 @@ export struct QTMediaSeries {
                     .focusBox({ strokeColor: ColorMetrics.rgba(255, 255, 255, 0) })
                     .backgroundColor(this.renderView.focusStr == item.key ? Color.White : Color.Transparent)
                     .borderRadius({
-                      topLeft: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[0]),
-                      topRight: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[1]),
-                      bottomLeft: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[2]),
-                      bottomRight: px2vp(this.renderView.initParamGroup.focusBackground.cornerRadius?.[3]),
+                      topLeft: this.renderView.initParamGroup.focusBackground.cornerRadius?.[0],
+                      topRight: this.renderView.initParamGroup.focusBackground.cornerRadius?.[1],
+                      bottomLeft: this.renderView.initParamGroup.focusBackground.cornerRadius?.[2],
+                      bottomRight: this.renderView.initParamGroup.focusBackground.cornerRadius?.[3],
                     })
                     .padding({
-                      left: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[0]),
-                      right: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[0]),
-                      top: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
-                      bottom: px2vp(this.renderView.initParamGroup.focusBackground.padding?.[1]),
+                      left: this.renderView.initParamGroup.focusBackground.padding?.[0],
+                      right: this.renderView.initParamGroup.focusBackground.padding?.[0],
+                      top: this.renderView.initParamGroup.focusBackground.padding?.[1],
+                      bottom: this.renderView.initParamGroup.focusBackground.padding?.[1],
                     })
 
                   Text(' ')
-                    .width(px2vp(40))
-                    .height(px2vp(5))
+                    .width((40))
+                    .height((5))
                     .backgroundColor(Color.White)
                     .borderRadius(6)
                     .visibility((this.renderView.currentTitleId === index && this.renderView.isSelectedButton) ?
                     Visibility.Visible : Visibility.Hidden)
                 }
-                .height(px2vp(this.renderView.initParamGroup.itemHeight))
+                .height((this.renderView.initParamGroup.itemHeight))
               }
               .onClick(() => {
                 if (this.renderView.currentTitleId === index) {
@@ -211,18 +210,18 @@ export struct QTMediaSeries {
 
             }, (item: GeneratePageData) => JSON.stringify(item.title))
           }
-          .height(px2vp(this.renderView.initParamGroup.itemHeight + px2vp(this.renderView.initParamGroup.itemGap) / 2))
+          .height((this.renderView.initParamGroup.itemHeight + (this.renderView.initParamGroup.itemGap) / 2))
           .scrollBar(BarState.Off)
           .listDirection(Axis.Horizontal)
           .padding({
-            left: px2vp(this.renderView.initParamGroup.itemGap) / 2,
-            right: px2vp(this.renderView.initParamGroup.itemGap) / 2
+            left: this.renderView.initParamGroup.itemGap / 2,
+            right: this.renderView.initParamGroup.itemGap / 2
           })
           .margin({
-            left: px2vp(40),
-            right: px2vp(40),
-            top: px2vp(this.renderView.initParamGroup.itemGap),
-            bottom: px2vp(this.renderView.initParamGroup.itemGap),
+            left: 40,
+            right: 40,
+            top: this.renderView.initParamGroup.itemGap,
+            bottom: this.renderView.initParamGroup.itemGap,
           })
         }
       }.alignItems(HorizontalAlign.Start)
@@ -242,9 +241,8 @@ export struct QTMediaSeries {
 function applyRenderViewBaseAttr($$: QTMediaSeriesView) {
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
-  .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
-  .clip($$.cssOverflow)
+  .clip(false)
   .visibility(($$ as QTMediaSeriesView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
