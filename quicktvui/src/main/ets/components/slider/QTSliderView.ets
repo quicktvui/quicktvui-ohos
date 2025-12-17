@@ -218,6 +218,7 @@ export struct QTSlider {
       .focusable(this.renderView.cssFocusable) // 是否获焦
       // .focusBox({ strokeColor: this.renderView.enableFocusBorder?ColorMetrics.rgba(0, 0, 255, 1):ColorMetrics.rgba(0, 0, 0, 0) }) // 获焦之后的样式
       .showTips(this.renderView.showTips) // 是否显示气泡
+      .id(this.renderView.uid)
       .onFocus(() => {
         // 失去焦点是激活的初始值
         this.renderView.blockUrl = this.renderView.thumbUrl;
