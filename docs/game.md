@@ -4,6 +4,8 @@
 
 ### 1、ul/li没有焦点
 
+### 2、:clipChildren="false" 默认应该改成 true
+
 ## 有问题需要进一步解决
 
 ### 一、粉刷匠：https://gitee.com/chenddcoder/esapp-brush.git
