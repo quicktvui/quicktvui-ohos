@@ -21,7 +21,8 @@ import systemDateTime from '@ohos.systemDateTime';
 import { HippyMap } from 'hippy/src/main/ets/support/common/HippyTypes';
 import HippyRenderBaseView, {
   HippyObservedArray,
-  HIPPY_COMPONENT_KEY_PREFIX } from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView';
+  HIPPY_COMPONENT_KEY_PREFIX
+} from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView';
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
 import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils';
 import { HRPullHeaderView } from 'hippy/src/main/ets/renderer_native/components/pullheader/HRPullHeader';
@@ -58,23 +59,17 @@ export struct HRTvList {
   @State stickyIndex: number = INVALID_STICKY_INDEX
   private stickyArray: number[] = []
   private stickyStack: number[] = []
-
   private isDragging: boolean = false
-
   private lastMoveY: number = 0
-
   private initOffsetUsed: boolean = false
   private headerViewFullVisible: boolean = false
   private footerViewFullVisible: boolean = false
   private lastItemFullVisibleYOffset: number = 0
-
   private PAGE_SCROLL_STATE: string = "pageScrollState";
   private SCROLL_STATE_IDLE: string = "idle";
   private SCROLL_STATE_DRAGGING: string = "dragging";
   private SCROLL_STATE_SETTLING: string = "settling";
-
   private endBatchCallback: HippyEndBatchCallback | null = null
-
   dataSource: HRTvListDataSource | null = null
 
   private handleOnChildrenUpdated() {
@@ -135,7 +130,8 @@ export struct HRTvList {
 
   aboutToDisappear(): void {
     LogUtils.d(this.TAG, "aboutToDisappear: ")
-    this.renderView.ctx.getNativeRender().removeEndBatchCallback(this.renderView.ctx.getRootId(), this.endBatchCallback as HippyEndBatchCallback)
+    this.renderView.ctx.getNativeRender()
+      .removeEndBatchCallback(this.renderView.ctx.getRootId(), this.endBatchCallback as HippyEndBatchCallback)
   }
 
   emitScrollEvent(eventName: string) {
@@ -154,8 +150,10 @@ export struct HRTvList {
     contentOffset.set("y", this.renderView.scroller.currentOffset().yOffset);
 
     let contentSize = new Map<string, number>() as HippyMap;
-    contentSize.set("width", this.renderView.children.length > 0 ? this.renderView.children[0].cssWidth : this.renderView.cssWidth);
-    contentSize.set("height", this.renderView.children.length > 0 ? this.renderView.children[0].cssHeight : this.renderView.cssHeight);
+    contentSize.set("width",
+      this.renderView.children.length > 0 ? this.renderView.children[0].cssWidth : this.renderView.cssWidth);
+    contentSize.set("height",
+      this.renderView.children.length > 0 ? this.renderView.children[0].cssHeight : this.renderView.cssHeight);
 
     let layoutMeasurement = new Map<string, number>() as HippyMap;
     layoutMeasurement.set("width", this.renderView.cssWidth);
@@ -195,7 +193,8 @@ export struct HRTvList {
   }
 
   isReachEnd(lastIndex: number): boolean {
-    if (this.renderView.preloadItemNumber > 0 && lastIndex >= (this.children.length - this.renderView.preloadItemNumber)) {
+    if (this.renderView.preloadItemNumber > 0 &&
+      lastIndex >= (this.children.length - this.renderView.preloadItemNumber)) {
       return true;
     } else {
       return false;
@@ -203,8 +202,10 @@ export struct HRTvList {
   }
 
   sendOnReachedEvent() {
-    HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag, HREventUtils.EVENT_RECYCLER_END_REACHED, null);
-    HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag, HREventUtils.EVENT_RECYCLER_LOAD_MORE, null);
+    HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag, HREventUtils.EVENT_RECYCLER_END_REACHED,
+      null);
+    HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag, HREventUtils.EVENT_RECYCLER_LOAD_MORE,
+      null);
   }
 
   private checkBeginDrag() {
@@ -216,33 +217,33 @@ export struct HRTvList {
     }
   }
 
-  private handleTouchEvent(event:TouchEvent){
+  private handleTouchEvent(event: TouchEvent) {
     LogUtils.d(this.TAG, "handleTouchEvent: " + event.type)
-    switch (event.type){
+    switch (event.type) {
       case TouchType.Move:
         LogUtils.d(this.TAG, "handleTouchEvent: move ")
         break
-      case TouchType.Down:
-        {
-          LogUtils.d(this.TAG, "handleTouchEvent: Down ")
-          let params = new Map<string, number>() as HippyMap;
-          params.set(this.PAGE_SCROLL_STATE, 1);
-          params.set('offsetX', event.touches[0].x);
-          params.set('offsetY', event.touches[0].y);
-          HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag, HREventUtils.EVENT_PAGE_SCROLL_STATE_CHANGED, params);
-          LogUtils.d(this.TAG, "EVENT_PAGE_SCROLL_STATE_CHANGED  Down ")
-        }
+      case TouchType.Down: {
+        LogUtils.d(this.TAG, "handleTouchEvent: Down ")
+        let params = new Map<string, number>() as HippyMap;
+        params.set(this.PAGE_SCROLL_STATE, 1);
+        params.set('offsetX', event.touches[0].x);
+        params.set('offsetY', event.touches[0].y);
+        HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag,
+          HREventUtils.EVENT_PAGE_SCROLL_STATE_CHANGED, params);
+        LogUtils.d(this.TAG, "EVENT_PAGE_SCROLL_STATE_CHANGED  Down ")
+      }
         break
-      case TouchType.Up:
-        {
-          LogUtils.d(this.TAG, "handleTouchEvent: Up ")
-          let params = new Map<string, number>() as HippyMap;
-          params.set(this.PAGE_SCROLL_STATE, 0);
-          params.set('offsetX', event.touches[0].x);
-          params.set('offsetY', event.touches[0].y);
-          HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag, HREventUtils.EVENT_PAGE_SCROLL_STATE_CHANGED, params);
-          LogUtils.d(this.TAG, "EVENT_PAGE_SCROLL_STATE_CHANGED Up")
-        }
+      case TouchType.Up: {
+        LogUtils.d(this.TAG, "handleTouchEvent: Up ")
+        let params = new Map<string, number>() as HippyMap;
+        params.set(this.PAGE_SCROLL_STATE, 0);
+        params.set('offsetX', event.touches[0].x);
+        params.set('offsetY', event.touches[0].y);
+        HREventUtils.sendComponentEvent(this.renderView.ctx, this.renderView.tag,
+          HREventUtils.EVENT_PAGE_SCROLL_STATE_CHANGED, params);
+        LogUtils.d(this.TAG, "EVENT_PAGE_SCROLL_STATE_CHANGED Up")
+      }
         break
       case TouchType.Cancel:
         LogUtils.d(this.TAG, "handleTouchEvent: Cancel ")
@@ -375,14 +376,14 @@ export struct HRTvList {
     }
   }
 
-  setBorder(): BorderOptions{
+  setBorder(): BorderOptions {
     return {
       width: 2,
       color: Color.Blue
     }
   }
 
-  setBorderNone(): BorderOptions{
+  setBorderNone(): BorderOptions {
     return {
       width: 0,
     }
@@ -396,12 +397,12 @@ export struct HRTvList {
             buildHippyRenderView(item, null)
           }
           .focusable(true)
-          .defaultFocus(index==this.renderView.autofocusPosition)
-          .onFocus(()=>{
-            console.log('focus',this.renderView.autofocusPosition)
+          .defaultFocus(index == this.renderView.autofocusPosition)
+          .onFocus(() => {
+            console.log('focus', this.renderView.autofocusPosition)
           })
-          .onClick(()=>{
-            console.log('click',this.renderView.autofocusPosition)
+          .onClick(() => {
+            console.log('click', this.renderView.autofocusPosition)
 
           })
           .onVisibleAreaChange([0.0, 1.0], (isVisible: boolean, currentRatio: number) => {
@@ -421,7 +422,7 @@ export struct HRTvList {
       .opacity(this.renderView.opacity)
       .width('100%')
       .height('100%')
-      .margin({bottom:40})
+      .margin({ bottom: 40 })
       .id(this.renderView.sid)
       .alignListItem(ListItemAlign.Start)
       .borderRadius('20lpx')
@@ -429,14 +430,14 @@ export struct HRTvList {
       .key(this.renderView.name)
       .clip(this.renderView.clipChildren)
       .border(this.focus ? this.setBorder() : this.setBorderNone())
-      .onClick(()=>{
+      .onClick(() => {
         this.getUIContext().getFocusController().activate(true)
         focusControl.requestFocus(this.renderView.name);
       })
-      .onFocus(()=>{
+      .onFocus(() => {
         this.focus = true;
       })
-      .onBlur(()=>{
+      .onBlur(() => {
         this.focus = false;
       })
       .focusable(this.renderView.focusable)
@@ -465,7 +466,8 @@ export struct HRTvList {
       })
       .onScrollIndex((firstIndex: number, lastIndex: number, centerIndex: number) => {
         LogUtils.d(this.TAG, "onScrollIndex: firstIndex=" + firstIndex +
-          ", lastIndex=" + lastIndex + ", centerIndex=" + centerIndex + ",yOffset=" + this.renderView.scroller.currentOffset()
+          ", lastIndex=" + lastIndex + ", centerIndex=" + centerIndex + ",yOffset=" +
+        this.renderView.scroller.currentOffset()
           .yOffset);
         this.checkSendReachEndEvent(lastIndex);
       })
@@ -516,8 +518,8 @@ export struct HRTvList {
 function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
-  .position({x: $$.cssPositionX, y: $$.cssPositionY})
-  .size({width:$$.cssWidth, height: $$.cssHeight})
+  .position({ x: $$.cssPositionX, y: $$.cssPositionY })
+  .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error

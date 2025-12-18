@@ -20,24 +20,29 @@
 import { HippyAny, HippyRenderCallback } from 'hippy/src/main/ets/support/common/HippyTypes'
 import { NativeRenderContext } from 'hippy'
 import { HRPadding, HRRect } from 'hippy/src/main/ets/renderer_native/utils/HRTypes'
-import HippyRenderBaseView, { HippyObservedArray,
-  HIPPY_COMPONENT_KEY_PREFIX } from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView'
+import HippyRenderBaseView, {
+  HippyObservedArray,
+  HIPPY_COMPONENT_KEY_PREFIX
+} from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView'
 import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils';
 import { HRValueUtils } from 'hippy/src/main/ets/renderer_native/utils/HRValueUtils';
 import { HREventUtils } from 'hippy/src/main/ets/renderer_native/utils/HREventUtils'
 import { buildHippyRenderView } from 'hippy'
 import { QTBaseComponentView } from '../../QTBaseComponentView';
+import { TVView } from '../../TVView';
+import { QTView } from '../../../QTTypes';
+import { QTLog } from '../../../utils/QTLog';
+import { TAG_FOCUS } from '../../../Constant';
+import { ExtendUtil } from '../../../utils/ExtendUtil';
 
 @Observed
 export class HRTvListItemView extends QTBaseComponentView {
   private readonly TAG = "HRTvListItemView"
   public type: string = ""
   public sticky: boolean = false
-
   static readonly EXPOSURE_STATE_FULL_VISIBLE: number = 1;
   static readonly EXPOSURE_STATE_INVISIBLE: number = 2;
   static readonly EXPOSURE_STATE_PART_VISIBLE: number = 3;
-
   exposureState: number = HRTvListItemView.EXPOSURE_STATE_INVISIBLE;
 
   constructor(ctx: NativeRenderContext) {
@@ -60,6 +65,24 @@ export class HRTvListItemView extends QTBaseComponentView {
       return true
     }
     return super.setProp(propKey, propValue as HippyAny)
+  }
+
+  addFocusables(views: TVView[], direction: number): boolean {
+    if (!super.addFocusables(views, direction)) {
+      //证明自身是不可获焦的
+      if (this.children && this.children.length > 0) {
+        this.children.forEach((child: QTView) => {
+          if (child instanceof QTBaseComponentView) {
+            child.addFocusables(views, direction)
+          } else if (child.cssFocusable === true) {
+            //views.push(child);
+            //不是
+            QTLog.e(TAG_FOCUS, `addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
+          }
+        });
+      }
+    }
+    return true;
   }
 
   protected updateRenderViewFrame(frame: HRRect, padding: HRPadding | null): void {
@@ -114,7 +137,6 @@ export class HRTvListItemView extends QTBaseComponentView {
     }
     this.exposureState = state
   }
-
 }
 
 @Component
@@ -141,14 +163,14 @@ export struct HRTvListItem {
 function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
-  .position({x: $$.cssPositionX, y: $$.cssPositionY})
-  .size({width:$$.cssWidth, height: $$.cssHeight})
+  .position({ x: $$.cssPositionX, y: $$.cssPositionY })
+  .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
   .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  // .focusable($$.cssFocusable)
+  .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
@@ -166,3 +188,5 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .id($$.sid)
   .visibility($$.visibility)
 }
+
+
