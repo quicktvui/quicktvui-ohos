@@ -185,11 +185,7 @@ export class HRTvDivView extends QTBaseComponentView {
         this.focusScale = HRValueUtils.getNumber(propValue as HippyAny)
       }
         return true
-      case 'selected':
-        this.selected = HRValueUtils.getBoolean(propValue as HippyAny, false);
-        this.setSelectedBorder();
-        this.drawableStateChanged()
-        return true;
+
       //这里不需要了，直接在parent里处理
       // case 'showOnState':
       //   this.showonstate = HRValueUtils.getString(propValue as HippyAny);
@@ -366,12 +362,12 @@ export class HRTvDivView extends QTBaseComponentView {
 
   handleFocus(isFocused: boolean) {
     LogUtils.d(this.TAG, "Get Focus Method：" + isFocused);
-    this.drawableStateChanged()
+    // this.drawableStateChanged()
   }
 
   handleBlur(isFocused: boolean) {
     LogUtils.d(this.TAG, "Get Blur Method：" + isFocused);
-    this.drawableStateChanged()
+    // this.drawableStateChanged()
   }
 
   setBorder(): BorderOptions {

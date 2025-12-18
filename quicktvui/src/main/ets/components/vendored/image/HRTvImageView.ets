@@ -101,10 +101,11 @@ export class HRTvImageView extends QTBaseComponentView {
   sid: string = ''
   name: string = ''
   selected: boolean = false
-  showonstate: string = 'normal'
+  // showonstate: string
   focus: boolean = false
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
+  duplicateParentState: boolean = true
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -142,7 +143,7 @@ export class HRTvImageView extends QTBaseComponentView {
     //     this.visibility = Visibility.Hidden
     //   }
     // }
-    this.drawableStateChanged()
+    this.drawableStateChanged(this.currentStates)
   }
 
   private setResizeMode(pvalue: string) {

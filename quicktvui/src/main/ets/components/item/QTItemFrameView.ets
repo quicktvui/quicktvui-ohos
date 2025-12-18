@@ -12,6 +12,7 @@ import { QTBaseView } from '../../QTTypes';
 @Observed
 export class QTItemFrameView extends QTDivView {
   enableFocusBorder: boolean = true;
+  // duplicateParentState:boolean = true;
   constructor(ctx: NativeRenderContext) {
     super(ctx)
     this.cssFocusable = true;

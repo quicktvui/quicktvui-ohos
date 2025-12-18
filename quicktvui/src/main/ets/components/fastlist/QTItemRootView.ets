@@ -13,6 +13,7 @@ import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { QTPixelUtil } from '../../utils/QTPixelUtil';
+import { QTDivView } from '../div/QTDivView';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { TVView } from '../TVView';
@@ -87,6 +88,9 @@ export class QTItemRootView extends QTRenderBaseView{
     this.contentView = renderView;
     LayoutAttach.obtainLayoutAttach(this).insertChild(LayoutAttach.obtainLayoutAttach(renderView),0)
     this.addSubRenderView(renderView,0)
+    if(renderView instanceof QTBaseComponentView){
+      renderView.duplicateParentState = true;
+    }
     this.contentType = type;
     this.updateDirty = false;
   }

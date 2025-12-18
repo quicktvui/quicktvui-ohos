@@ -10,6 +10,8 @@ import { QTView } from '../../QTTypes';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
 import { QTLog } from '../../utils/QTLog';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTViewState } from '../StateView';
 
 
 @Observed
@@ -33,17 +35,18 @@ export class QTTextView extends QTRenderBaseView{
   textOverflow: TextOverflow = TextOverflow.Clip
   focusColor: ResourceColor | null = null
   selectColor: ResourceColor | null = null
+  duplicateParentState: boolean = true
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
 
-  drawableStateChanged(): void {
-    super.handleShowOnState()
-    if(this.isFocusedOrDuplicateParentFocusState()){
+  drawableStateChanged(currentState: number[]): void {
+    super.handleShowOnState(currentState)
+    if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_FOCUSED)){
       this.fontColor = this.focusColor;
-    } else if(this.isSelectedOrDuplicateParentSelectState()){
-      this.fontColor == this.selectColor;
+    } else if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_SELECTED)){
+      this.fontColor = this.selectColor;
     }else{
       this.fontColor = this.userFontColor;
     }
@@ -114,12 +117,12 @@ export class QTTextView extends QTRenderBaseView{
       case "focusColor":
         let focusColor = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
         this.focusColor = '#' + focusColor
-        this.drawableStateChanged()
+        this.drawableStateChanged(this.currentStates)
         return true;
       case "selectColor":
         let selectColor = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
         this.selectColor = '#' + selectColor
-        this.drawableStateChanged()
+        this.drawableStateChanged(this.currentStates)
         return true;
       case "lineHeight":
         this.lineHeight = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))
