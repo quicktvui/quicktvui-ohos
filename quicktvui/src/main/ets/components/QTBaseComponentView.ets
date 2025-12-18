@@ -35,6 +35,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   focus: boolean = false
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
+  enableFocusBorder: boolean = false //是否显示focusBox
+  focusable: boolean = false //是否可获焦
   private currentStates: number[] = []
 
 
@@ -273,6 +275,17 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
           this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, true);
           // this.setDuplicate();
         }
+        return true
+      case 'enableFocusBorder': {
+        this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, false)
+        // this.setFocusBoxStyle(); //预设focusBox样式
+      }
+        return true
+      case 'focusable': {
+        this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
+        this.cssFocusable = this.focusable
+        QTLog.i(TAG_FOCUS, `set focusable ${this.focusable} view:` + ExtendUtil.debugView(this))
+      }
         return true
     }
     return super.setProp(propKey, propValue)

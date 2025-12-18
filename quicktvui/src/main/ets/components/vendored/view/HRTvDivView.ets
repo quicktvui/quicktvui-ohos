@@ -90,7 +90,7 @@ export class HRTvDivView extends QTBaseComponentView {
   name: string = ''
   focusable: boolean = false //是否可获焦
   focus: boolean = false //当前是否处于聚焦状态
-  enableFocusBorder: boolean = true //是否显示focusBox
+  enableFocusBorder: boolean = false //是否显示focusBox
   focusBoxStyle: FocusBoxStyle = {} //focusBox样式
   focusScale: number = 1.05 //聚焦时候放大倍数
   sid: string = ''
@@ -180,17 +180,7 @@ export class HRTvDivView extends QTBaseComponentView {
       case 'name':
         this.name = HRValueUtils.getString(propValue as HippyAny);
         return true;
-      case 'focusable': {
-        this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
-        this.cssFocusable = this.focusable
-        QTLog.i(TAG_FOCUS, `set focusable ${this.focusable} view:` + ExtendUtil.debugView(this))
-      }
-        return true
-      case 'enableFocusBorder': {
-        this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, false)
-        this.setFocusBoxStyle(); //预设focusBox样式
-      }
-        return true
+
       case 'focusScale': {
         this.focusScale = HRValueUtils.getNumber(propValue as HippyAny)
       }

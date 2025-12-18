@@ -346,7 +346,7 @@ export struct QTDiv {
 
   @Builder
   buildFocusBorder(){
-    if(this.renderView.isFocused()){
+    if(this.renderView.isFocused() && this.renderView.enableFocusBorder){
       Stack(){
         Rect({
           width:this.renderView.cssWidth + 4,
