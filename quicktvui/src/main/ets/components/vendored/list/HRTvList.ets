@@ -423,7 +423,7 @@ export struct HRTvList {
       .height('100%')
       .margin({bottom:40})
       .id(this.renderView.sid)
-      .alignListItem(ListItemAlign.Center)
+      .alignListItem(ListItemAlign.Start)
       .borderRadius('20lpx')
       // .backgroundColor(Color.Orange)//验证clip属性用
       .key(this.renderView.name)
