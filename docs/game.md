@@ -1,11 +1,14 @@
 # Game
 
+## 统一问题：
+
+### 1、ul/li没有焦点
+
 ## 有问题需要进一步解决
 
 ### 一、粉刷匠：https://gitee.com/chenddcoder/esapp-brush.git
 
 1、背景图backgroundImage没有平铺
-2、排行榜列表ul没有显示
 
 ### 口算小天才：https://gitee.com/chenddcoder/mathgame.git
 
@@ -14,7 +17,6 @@
 ### 盖楼吧：https://gitee.com/chenddcoder/stacking-tower.git
 
 1、游戏主页错乱
-2、排行榜列表ul没有显示
 
 ### 整理水果：https://gitee.com/chenddcoder/fruit_sort.git
 
@@ -40,11 +42,6 @@
 ### 黑白棋：https://gitee.com/chenddcoder/blackwhite.git
 
 1、焦点问题
-2、排行榜列表ul没有显示
-
-### 欢乐方块：https://gitee.com/chenddcoder/esapp-ractangle.git
-
-1、方块边框没有
 
 ### 五子棋: https://gitee.com/chenddcoder/five.git
 
@@ -54,7 +51,6 @@
 ### 像素锦鲤：https://gitee.com/chenddcoder/esapp-flappy-es3.git
 
 1、游戏界面错乱
-2、排行榜列表没有显示
 3、按OK键无响应
 
 ### 中国象棋：https://gitee.com/chenddcoder/esapp-chess.git
@@ -71,4 +67,4 @@
 吃豆子：https://gitee.com/chenddcoder/esapp-pacman.git
 猜位置：https://gitee.com/chenddcoder/guess-location.git
 推箱子：https://gitee.com/chenddcoder/box.git
-
+欢乐方块：https://gitee.com/chenddcoder/esapp-ractangle.git
