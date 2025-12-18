@@ -443,6 +443,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .opacity($$.cssOpacity)
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
+  .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)
