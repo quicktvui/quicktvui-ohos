@@ -26,7 +26,7 @@ struct Main {
         //
         this.navPathStack?.pushPathByName('Debug', null, false);
       }
-    }, 500)
+    }, 5)
   }
 
   onPageHide(): void {

@@ -18,11 +18,16 @@
  * limitations under the License.
  */
 import { HippyMap, HippyValue, HippyAny, HippyRenderCallback } from 'hippy/src/main/ets/support/common/HippyTypes';
-import { NativeRenderContext ,HRNodeProps} from 'hippy';
+import { NativeRenderContext, HRNodeProps } from 'hippy';
 import HippyRenderBaseView from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView';
 import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils';
 import { HRValueUtils } from 'hippy/src/main/ets/renderer_native/utils/HRValueUtils';
 import { QTBaseComponentView } from '../../QTBaseComponentView';
+import { TVView } from '../../TVView';
+import { QTView } from '../../../QTTypes';
+import { QTLog } from '../../../utils/QTLog';
+import { TAG_FOCUS } from '../../../Constant';
+import { ExtendUtil } from '../../../utils/ExtendUtil';
 
 @Observed
 export class HRTvListView extends QTBaseComponentView {
@@ -40,44 +45,60 @@ export class HRTvListView extends QTBaseComponentView {
   preloadItemNumber: number = 0;
   exposureEventEnabled: Boolean = false;
   rowShouldSticky: boolean = false
-
   scrollBeginDragEventEnable: boolean = false
   scrollEndDragEventEnable: boolean = false
   momentumScrollBeginEventEnable: boolean = false
   momentumScrollEndEventEnable: boolean = false
   onScrollEventEnable: boolean = false
-
   hasPullHeader: boolean = false
   pullHeaderHeight: number = 0
   name: string = ''
   sid: string = ''
-  focusable:boolean = true
   nextFocus: Optional<FocusMovement> = {}
   clipChildren: boolean = false
   enableSelectOnFocus: boolean = false
   autofocusPosition: number = 1
-  opacity: number = -1
+  opacity: number = 1
   visibility: Visibility = Visibility.Visible
   backgroundColor: string = ""
   tabStop: boolean = false;
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+    this.cssFocusable = false
   }
 
-private findFocusable(children: Array<HippyRenderBaseView>):boolean {
+  private findFocusable(children: Array<HippyRenderBaseView>): boolean {
     const stack = [...children];
     while (stack.length > 0) {
-        const child = stack.pop();
-        if ((child as HRTvListView).focusable) {
-            return true;
-        }
-        if ((child as HRTvListView).children?.length > 0) {
-            stack.push(...(child as HRTvListView).children);
-        }
+      const child = stack.pop();
+      if ((child as HRTvListView).focusable) {
+        return true;
+      }
+      if ((child as HRTvListView).children?.length > 0) {
+        stack.push(...(child as HRTvListView).children);
+      }
     }
     return false;
-}
+  }
+
+  addFocusables(views: TVView[], direction: number): boolean {
+    if (!super.addFocusables(views, direction)) {
+      //证明自身是不可获焦的
+      if (this.children && this.children.length > 0) {
+        this.children.forEach((child: QTView) => {
+          if (child instanceof QTBaseComponentView) {
+            child.addFocusables(views, direction)
+          } else if (child.cssFocusable === true) {
+            //views.push(child);
+            //不是
+            QTLog.e(TAG_FOCUS, `addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
+          }
+        });
+      }
+    }
+    return true;
+  }
 
   setProp(propKey: string, propValue: HippyAny | HippyRenderCallback): boolean {
     LogUtils.d(this.TAG, "setProp: propKey " + propKey + ", value: " + propValue)
@@ -88,29 +109,26 @@ private findFocusable(children: Array<HippyRenderBaseView>):boolean {
       case 'sid':
         this.sid = HRValueUtils.getString(propValue as HippyAny);
         return true;
-      case 'focusable':
-        this.focusable =HRValueUtils.getBoolean(propValue as HippyAny, true);
-        return true;
       case 'clipChildren':
         this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
         return true
       case 'autofocusPosition':
         this.autofocusPosition = HRValueUtils.getNumber(propValue as HippyAny);
         return true
-      case 'nestedScrollTopPriority':
-        {
-          let value = HRValueUtils.getString(propValue as HippyAny)
-          if (value === 'parent') {
-            this.scrollForward = NestedScrollMode.PARENT_FIRST
-            //this.scrollBackward = NestedScrollMode.PARENT_FIRST
-          } else if (value === 'self') {
-            this.scrollForward = NestedScrollMode.SELF_FIRST
-            //this.scrollBackward = NestedScrollMode.SELF_FIRST
-          }
+      case 'nestedScrollTopPriority': {
+        let value = HRValueUtils.getString(propValue as HippyAny)
+        if (value === 'parent') {
+          this.scrollForward = NestedScrollMode.PARENT_FIRST
+          //this.scrollBackward = NestedScrollMode.PARENT_FIRST
+        } else if (value === 'self') {
+          this.scrollForward = NestedScrollMode.SELF_FIRST
+          //this.scrollBackward = NestedScrollMode.SELF_FIRST
         }
+      }
         return true
       case "horizontal":
-        this.listDirection = HRValueUtils.getBoolean(propValue as HippyAny, false) == true ? Axis.Horizontal : Axis.Vertical;
+        this.listDirection =
+          HRValueUtils.getBoolean(propValue as HippyAny, false) == true ? Axis.Horizontal : Axis.Vertical;
         return true
       case "scrollEnabled":
         this.scrollEnabled = HRValueUtils.getBoolean(propValue as HippyAny, true);
@@ -170,39 +188,33 @@ private findFocusable(children: Array<HippyRenderBaseView>):boolean {
       case 'enableSelectOnFocus':
         this.enableSelectOnFocus = HRValueUtils.getBoolean(propValue as HippyAny, false);
         return true;
-      case "opacity":
-        {
-          this.opacity = HRValueUtils.getNumber(propValue as HippyAny);
-          console.log(this.TAG,"设置透明度:"+this.opacity)
-        }
+      case "opacity": {
+        this.opacity = HRValueUtils.getNumber(propValue as HippyAny);
+        console.log(this.TAG, "设置透明度:" + this.opacity)
+      }
         return true;
-      case "Visibility":
-        {
-          let visibility = HRValueUtils.getString(propValue as HippyAny);
-          if(visibility == 'visible'){
-            this.visibility = Visibility.Visible
-          }
-          else if(visibility == 'invisible'){
-            this.visibility = Visibility.Hidden
-          }
-          else if(visibility == 'gone'){
-            this.visibility = Visibility.None
-          }
-          console.log(this.TAG,"设置可见:"+this.visibility)
+      case "Visibility": {
+        let visibility = HRValueUtils.getString(propValue as HippyAny);
+        if (visibility == 'visible') {
+          this.visibility = Visibility.Visible
+        } else if (visibility == 'invisible') {
+          this.visibility = Visibility.Hidden
+        } else if (visibility == 'gone') {
+          this.visibility = Visibility.None
         }
+        console.log(this.TAG, "设置可见:" + this.visibility)
+      }
         return true;
-      case "backGroundColor":
-        {
-          this.backgroundColor = HRValueUtils.getString(propValue as HippyAny);
-          console.log(this.TAG,"设置背景颜色:"+this.backgroundColor)
-        }
+      case "backGroundColor": {
+        this.backgroundColor = HRValueUtils.getString(propValue as HippyAny);
+        console.log(this.TAG, "设置背景颜色:" + this.backgroundColor)
+      }
         return true;
 
-      case "tabStop":
-        {
-          this.tabStop = HRValueUtils.getBoolean(propValue as HippyAny, false);
-          console.log(this.TAG,"设置焦点阻塞:"+this.tabStop)
-        }
+      case "tabStop": {
+        this.tabStop = HRValueUtils.getBoolean(propValue as HippyAny, false);
+        console.log(this.TAG, "设置焦点阻塞:" + this.tabStop)
+      }
         return true;
       default:
         break;
@@ -213,19 +225,17 @@ private findFocusable(children: Array<HippyRenderBaseView>):boolean {
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
     this.uiCtx?.runScopedTask(() => {
-    LogUtils.d(this.TAG, "call: method " + method + ", params: " + params)
-    switch (method) {
-      case "scrollToIndex":
-        {
+      LogUtils.d(this.TAG, "call: method " + method + ", params: " + params)
+      switch (method) {
+        case "scrollToIndex": {
           let xIndex = HRValueUtils.getNumber(params[0])
           let yIndex = HRValueUtils.getNumber(params[1])
           let animated = HRValueUtils.getBoolean(params[2], false)
           let index = this.listDirection == Axis.Vertical ? yIndex : xIndex
           this.scroller.scrollToIndex(this.hasPullHeader ? index + 1 : index, animated)
         }
-        break;
-      case "scrollToContentOffset":
-        {
+          break;
+        case "scrollToContentOffset": {
           let xOffset = HRValueUtils.getNumber(params[0])
           let yOffset = HRValueUtils.getNumber(params[1])
           let animated = HRValueUtils.getBoolean(params[2], false)
@@ -240,29 +250,29 @@ private findFocusable(children: Array<HippyRenderBaseView>):boolean {
             animation: animated
           })
         }
-        break;
-      case "scrollToTop":
-        {
+          break;
+        case "scrollToTop": {
           this.scroller.scrollToIndex(this.hasPullHeader ? 1 : 0)
         }
-        break
-      case "hasFocus":
+          break
+        case "hasFocus":
           let hasFocusRes = new Map<string, HippyValue>() as HippyMap;
-          hasFocusRes.set("value", (this.focusable || this.findFocusable(this.children) ));
+          hasFocusRes.set("value", (this.focusable || this.findFocusable(this.children)));
           callback && callback(hasFocusRes)
           break;
-      case "requestFocus":
+        case "requestFocus":
           focusControl.requestFocus(this.name);
           break;
-      case "clearFocus":
+        case "clearFocus":
           this.uiCtx?.getFocusController().clearFocus();
           break;
-      default:
-        break;
+        default:
+          break;
       }
     })
   }
-   setNextFocus(propValue: HippyAny) {
+
+  setNextFocus(propValue: HippyAny) {
     const m = HRValueUtils.getMap(propValue);
     if (m) {
       const left = HRValueUtils.getString((m as Map<string, HippyAny>).get('left') as string);
