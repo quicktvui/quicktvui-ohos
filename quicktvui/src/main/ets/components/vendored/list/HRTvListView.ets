@@ -56,7 +56,7 @@ export class HRTvListView extends QTBaseComponentView {
   clipChildren: boolean = false
   enableSelectOnFocus: boolean = false
   autofocusPosition: number = 1
-  opacity: number = -1
+  opacity: number = 1
   visibility: Visibility = Visibility.Visible
   backgroundColor: string = ""
   tabStop: boolean = false;
