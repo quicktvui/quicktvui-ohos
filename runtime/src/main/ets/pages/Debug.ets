@@ -50,7 +50,7 @@ struct Debug {
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
   private debugMode: boolean = false
-  @State debugServerHost: string = '192.168.40.92' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.40.81' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
@@ -101,6 +101,7 @@ struct Debug {
   }
 
   private initEngine() {
+    this.getUIContext().getFocusController().activate(true, false)
     //
     this.destroyEngine()
     //
