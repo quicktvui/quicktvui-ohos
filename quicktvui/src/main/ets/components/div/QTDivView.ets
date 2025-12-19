@@ -83,6 +83,7 @@ export class QTDivView extends HRTvDivView {
   stateBackgroundColor : ResourceColor  = Color.Transparent;
   focusBorderRadius : number = 8;
   originZIndex : number | null = 0;
+  focusBorderColor : ResourceColor  = Color.White;
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -254,6 +255,10 @@ export class QTDivView extends HRTvDivView {
        case 'focusBorderRadius':
         this.focusBorderRadius = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))
         return true
+        case 'focusBorderColor':
+          this.focusBorderColor = HRValueUtils.getNumber(propValue)
+          QTLog.w(TAG_STATE_DRAW,`set focusBorderColor:${propValue} number:${this.focusBorderColor} ,this:${ExtendUtil.debugView(this)}`)
+        return true;
       // case 'showOnState':
       //   super.setProp(propKey, propValue)
       //   QTLog.w(TAG_FOCUS,`div setShowOnState :${propValue},this:${ExtendUtil.debugView(this)}`)
@@ -359,7 +364,7 @@ export struct QTDiv {
           height: this.renderView.cssHeight + 4,
           radius:this.renderView.focusBorderRadius,
         }) .fill(Color.Transparent) // 透明填充
-          .stroke(Color.White)
+          .stroke(this.renderView.focusBorderColor)
           .strokeWidth(2)         // 边框宽度
 
         Rect({
