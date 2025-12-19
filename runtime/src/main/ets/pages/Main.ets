@@ -20,7 +20,7 @@ struct Main {
         clearInterval(this.intervalId)
         App.instance.nav?.pushPathByName('Debug', null, false);
       }
-    }, 500)
+    }, 5)
   }
 
   onPageHide(): void {

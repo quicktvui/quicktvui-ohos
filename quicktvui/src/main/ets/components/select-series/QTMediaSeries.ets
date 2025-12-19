@@ -57,58 +57,89 @@ export struct QTMediaSeries {
       }
   }
 
+  @Builder
+  buildFocusBorder(){
+    Stack() {
+      Rect({
+        width: px2vp(this.renderView.initParamTemplate.width + 4),
+        height: px2vp(this.renderView.initParamTemplate.height + 4),
+        radius: px2vp(8),
+      }).fill(Color.Transparent) // 透明填充
+        .stroke(Color.White)
+        .strokeWidth(px2vp(2)) // 边框宽度
+
+      Rect({
+        width: px2vp(this.renderView.initParamTemplate.width),
+        height: px2vp(this.renderView.initParamTemplate.height),
+        radius: px2vp(4),
+      }).fill(Color.Transparent) // 透明填充
+        .stroke(Color.Black)
+        .position({ x: px2vp(2), y: px2vp(2) })
+        .strokeWidth(px2vp(1)) // 边框宽度
+    }
+    .width(px2vp(this.renderView.initParamTemplate.width + 4))
+    .height(px2vp(this.renderView.initParamTemplate.height + 4))
+    .position({ x: -2, y: -2 })
+  }
+
   build() {
     Stack() {
       Column() {
         List({ space: px2vp(this.renderView.initParam.itemGap), initialIndex: 0, scroller: this.renderView.scroller }) {
           LazyForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
             ListItem() {
-              Row() {
-                Image(item.cover)
-                  .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
-                  .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
-                Column() {
-                  Text(item.title)
-                    .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
-                    .textAlign(TextAlign.Start)
-                    .fontColor(item.showVip ? "#FFFFD97C" : "#FFFFFFFF")
-                    .maxLines(3)
-                    .textOverflow({ overflow: TextOverflow.Ellipsis })
-                    .fontFamily('HarmonyOS Sans')
+              Stack(){
+                if (this.renderView.focusStr == item.key){
+                  this.buildFocusBorder()
                 }
-                .width(px2vp(this.renderView.initParamTemplate.width -
-                this.renderView.initParamTemplate.extra.imgWidth))
-                .height(px2vp(this.renderView.initParamTemplate.height))
-                .alignItems(HorizontalAlign.Start)
-                .justifyContent(FlexAlign.Start)
-                .padding(10)
+                Row() {
+                  Image(item.cover)
+                    .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
+                    .height(px2vp(this.renderView.initParamTemplate.extra.imgHeight))
+                  Column() {
+                    Text(item.title)
+                      .fontSize(px2vp(this.renderView.initParamTemplate.titleSize))
+                      .textAlign(TextAlign.Start)
+                      .fontColor(item.showVip ? "#FFFFD97C" : "#FFFFFFFF")
+                      .maxLines(3)
+                      .textOverflow({ overflow: TextOverflow.Ellipsis })
+                      .fontFamily('HarmonyOS Sans')
+                  }
+                  .width(px2vp(this.renderView.initParamTemplate.width -
+                  this.renderView.initParamTemplate.extra.imgWidth))
+                  .height(px2vp(this.renderView.initParamTemplate.height))
+                  .alignItems(HorizontalAlign.Start)
+                  .justifyContent(FlexAlign.Start)
+                  .padding(10)
 
-                Text(item.floatText)
-                  .position({
-                    x: 10,
-                    y: 70
-                  })
-                  .backgroundColor('#803E3838')
-                  .fontColor(0xFFFFFF)
-                  .borderRadius(4)
-                  .padding({
-                    left: 4,
-                    right: 4
-                  })
-                  .fontFamily('HarmonyOS Sans')
-                  .fontSize(px2vp(this.renderView.initParamTemplate.floatTitleSize))
+                  Text(item.floatText)
+                    .position({
+                      x: 10,
+                      y: 70
+                    })
+                    .backgroundColor('#803E3838')
+                    .fontColor(0xFFFFFF)
+                    .borderRadius(4)
+                    .padding({
+                      left: 4,
+                      right: 4
+                    })
+                    .fontFamily('HarmonyOS Sans')
+                    .fontSize(px2vp(this.renderView.initParamTemplate.floatTitleSize))
+                }
+                .width(px2vp(this.renderView.initParamTemplate.width))
+                .height(px2vp(this.renderView.initParamTemplate.height))
+                .backgroundColor('#80988787')
+                .alignItems(VerticalAlign.Top)
+                .focusable(true)
               }
-              .width(px2vp(this.renderView.initParamTemplate.width))
-              .height(px2vp(this.renderView.initParamTemplate.height))
-              .backgroundColor('#80988787')
-              .alignItems(VerticalAlign.Top)
-              .focusable(true)
+
             }
             .width(px2vp(this.renderView.initParamTemplate.width))
             .height(px2vp(this.renderView.initParamTemplate.height))
             .margin({
-              left: index === 0 ? px2vp(60) : 0,
-              right: index === this.renderView.listData.totalCount() - 1 ? px2vp(60) : 0,
+              left: index === 0 ? px2vp(120) : 0,
+              right: index === this.renderView.listData.totalCount() - 1 ? px2vp(120) : 0,
             })
             .onClick(() => {
               let event = new HippyViewEvent("onItemClick")
@@ -138,7 +169,8 @@ export struct QTMediaSeries {
         }
         .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
-        .height(px2vp(this.renderView.initParamTemplate.height))
+        .height(px2vp(this.renderView.initParamTemplate.height + 5))
+        .alignListItem(ListItemAlign.Center)
         .onReachEnd(() => {
           if (this.renderView.initParam.totalCount <= this.renderView.pageNum * this.renderView.initParam.pageSize) {
             return

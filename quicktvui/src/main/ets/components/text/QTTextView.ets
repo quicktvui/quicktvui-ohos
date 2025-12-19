@@ -10,6 +10,8 @@ import { QTView } from '../../QTTypes';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
 import { QTLog } from '../../utils/QTLog';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTViewState } from '../StateView';
 
 
 @Observed
@@ -19,7 +21,8 @@ export class QTTextView extends QTRenderBaseView{
   lines: number = 1
   text: string = ""
   fontColor: ResourceColor | null = null
-  fontSize: Dimension = 20
+  userFontColor: ResourceColor | null = null
+  fontSize: Dimension = 16
   lineHeight: number | null = null
   // fontStyle: FontStyle = FontStyle.Normal
   // fontWeight: number | FontWeight | string = FontWeight.Normal
@@ -30,10 +33,23 @@ export class QTTextView extends QTRenderBaseView{
   verticalAlign :Alignment = Alignment.TopStart
   ellipsisMode: EllipsisMode = EllipsisMode.END
   textOverflow: TextOverflow = TextOverflow.Clip
-
+  focusColor: ResourceColor | null = null
+  selectColor: ResourceColor | null = null
+  duplicateParentState: boolean = true
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+  }
+
+  drawableStateChanged(currentState: number[]): void {
+    super.handleShowOnState(currentState)
+    if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_FOCUSED)){
+      this.fontColor = this.focusColor;
+    } else if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_SELECTED)){
+      this.fontColor = this.selectColor;
+    }else{
+      this.fontColor = this.userFontColor;
+    }
   }
 
 
@@ -68,6 +84,7 @@ export class QTTextView extends QTRenderBaseView{
         ViewUtils.configGravity(HRValueUtils.getString(propValue),this)
         return true;
       case "fontSize":
+      case "textSize":
         this.fontSize = HRValueUtils.getNumber(propValue);
         return true;
       case "paddingRect":
@@ -95,6 +112,17 @@ export class QTTextView extends QTRenderBaseView{
       case "color":
         let colorVal = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
         this.fontColor = '#' + colorVal
+        this.userFontColor = this.fontColor
+        return true;
+      case "focusColor":
+        let focusColor = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+        this.focusColor = '#' + focusColor
+        this.drawableStateChanged(this.currentStates)
+        return true;
+      case "selectColor":
+        let selectColor = HRValueUtils.getNumber(propValue).toString(16).toLowerCase();
+        this.selectColor = '#' + selectColor
+        this.drawableStateChanged(this.currentStates)
         return true;
       case "lineHeight":
         this.lineHeight = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))
@@ -175,19 +203,16 @@ export struct  QTText {
           if(this.renderView.parentView instanceof QTBaseComponentView){
             let newWidth = 0
             let newHeight= 0;
-            if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight){
-              if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth){
-                newWidth = QTPixelUtil.vp2Vp(Number(newValue.width))
-                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedWidth(newWidth)
-                // this.renderView.cssWidth = Number(newValue.width)
-              }else{
-                newHeight = QTPixelUtil.vp2Vp(Number(newValue.height))
-                LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
-                // this.renderView.cssHeight = Number(newValue.height)
-              }
+            if(LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth || LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight) {
+              newWidth = QTPixelUtil.vp2Vp(Number(newValue.width))
+              LayoutAttach.obtainLayoutAttach(this.renderView).setFixedWidth(newWidth)
+              // this.renderView.cssWidth = Number(newValue.width)
+              newHeight = QTPixelUtil.vp2Vp(Number(newValue.height))
+              LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
+              // this.renderView.cssHeight = Number(newValue.height)
               // QTPixelUtil.setRenderViewLayout(this.renderView,[0,])
               //QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
-              this.renderView.parentView.notifyChildSizeChanged(this.renderView,this.renderView,newWidth,newHeight)
+              this.renderView.parentView.notifyChildSizeChanged(this.renderView, this.renderView, newWidth, newHeight)
             }
           }else{
             QTLog.d(TAG_LAYOUT,`parent is not QTRenderBaseView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)

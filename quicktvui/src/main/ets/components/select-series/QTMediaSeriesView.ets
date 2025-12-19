@@ -1,29 +1,29 @@
 import {
-  HippyObservedArray,
-  NativeRenderContext,
   HippyAny,
-  HippyRenderCallback,
-  HIPPY_COMPONENT_KEY_PREFIX,
   HippyArray,
+  HippyEndBatchCallback,
   HippyMap,
-  HippyEndBatchCallback
-} from 'hippy'
+  HippyObservedArray,
+  HippyRenderBaseView,
+  HippyRenderCallback,
+  NativeRenderContext
+} from 'hippy';
 import { TAG_MediaSeries } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 
 import { ExtendUtil } from '../../utils/ExtendUtil';
-import { QTView } from "../../QTTypes"
+import { CommonUtils } from '../../utils/CommonUtils';
+
+import { QTView } from '../../QTTypes';
 
 import QTRenderBaseView from '../QTRenderBaseView';
-import { HashMap } from '@kit.ArkTS';
 
-import { LengthMetrics } from "@kit.ArkUI";
-
-import { Group, InitParam, MyComponentParams, GeneratePageData, Template, MyDataSource } from './types/index';
-import { QTBaseComponentView } from '../QTBaseComponentView';
+import { LengthMetrics } from '@kit.ArkUI';
+import { QTPixelUtil } from '../../utils/QTPixelUtil';
+import {
+  GeneratePageData, Group, InitParam, MyDataSource, Template
+} from './types/index';
 import { TVView } from '../TVView';
-import { QTLog } from '../../utils/QTLog';
-import { HippyRenderBaseView } from 'hippy'
 
 class QTMediaSeriesNode implements TVView {
   uid: string = '';
@@ -59,37 +59,31 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   isSelectedButton: boolean = true;
   pageNum: number = 0;
   initParamTemplate: Template = {
-    titleSize: 28,
-    floatTitleSize: 20,
+    titleSize: 36,
+    floatTitleSize: 28,
     isFree: false,
     type: 'leftRight',
-    width: 560,
-    height: 160,
+    width: 747,
+    height: 198,
     focusScale: 1.1,
     extra: {
-      imgWidth: 268,
-      imgHeight: 160,
+      imgWidth: 336,
+      imgHeight: 198,
       textColor: {
-        normal: '#80FFFFFF',
-        focused: '#FFD97C',
-        selected: '#FFD97C',
+        normal: '#80FFFFFF', focused: '#FFD97C', selected: '#FFD97C',
       },
       cornerBgColor: {
-        orientation: 'LEFT_RIGHT',
-        cornerRadius: [4, 4, 4, 4],
-        color: ["#B67827", "#DBAF5C"],
+        orientation: 'LEFT_RIGHT', cornerRadius: [4, 4, 4, 4], color: ["#B67827", "#DBAF5C"],
       }
     }
   }
   initParamGroup: Group = {
-    itemWidth: 105,
-    itemHeight: 46,
+    itemWidth: 145,
+    itemHeight: 58,
     itemGap: 50,
-    textSize: 30,
+    textSize: 38,
     textColor: {
-      normal: '#80FFFFFF',
-      focused: '#603314',
-      selected: '#FFD97C',
+      normal: '#80FFFFFF', focused: '#603314', selected: '#FFD97C',
     },
     focusBackground: {
       orientation: 'LEFT_RIGHT',
@@ -208,20 +202,18 @@ export class QTMediaSeriesView extends QTRenderBaseView {
     // })
   }
 
-  addFocusables(views: TVView[], direction: number, ee?: HippyAny): boolean {
-    // console.log(TAG_MediaSeries, `~~~~addAllFocusable skip focusable view :`,
+  addFocusables(views: TVView[], direction: number,
+    ee?: HippyAny): boolean { // console.log(TAG_MediaSeries, `~~~~addAllFocusable skip focusable view :`,
     //   this.children.length + '' + this.viewType, direction, this.tag, ee, views.length, this.uidViewArr)
-    views.push(...this.uidViewArr)
-    // console.log(TAG_MediaSeries, `~~~~addAllFocusable skip focusable view :`,
+    views.push(...this.uidViewArr) // console.log(TAG_MediaSeries, `~~~~addAllFocusable skip focusable view :`,
     //   this.children.length + '' + this.viewType, direction, this.tag, ee, views.length)
     return true;
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
-    console.log(TAG_MediaSeries, `setProp ============ QTMediaSeriesView :propKey:${propKey},value:${propValue}`)
+    console.log(TAG_MediaSeries, `setProp ============:propKey:${propKey},value:${CommonUtils.hippyAny2String(propValue)}`)
     switch (propKey) {
-      case "initParam": {
-        // type == ’leftRight‘ : 图文模式
+      case "initParam": { // type == ’leftRight‘ : 图文模式
         let initParam = HRValueUtils.getMap(propValue);
         console.log(TAG_MediaSeries, `QTMediaSeriesView ${Array.from(initParam)}`)
         this.initParam = {
@@ -291,12 +283,10 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           mark: {
             color: (mark as HippyMap).get('color') as string | '#FFD97C',
           }
-        }
-        // 是否开启快速分组
+        } // 是否开启快速分组
         if (this.enableGroup) {
           this.generatePageData = this.generatePageRanges(this.initParam.totalCount, this.initParam.groupSize);
-        }
-        // console.log(TAG_MediaSeries, ` this.enableGroup :${this.enableGroup}`)
+        } // console.log(TAG_MediaSeries, ` this.enableGroup :${this.enableGroup}`)
         // console.log(TAG_MediaSeries, ` template.type :${JSON.stringify(this.initParam)}`)
         // console.log(TAG_MediaSeries, ` initParamTemplate :${JSON.stringify(this.initParamTemplate)}`)
         // console.log(TAG_MediaSeries, ` initParamGroup :${JSON.stringify(this.initParamGroup)}`)
@@ -304,8 +294,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         // console.log(TAG_MediaSeries, ` generatePageData :${JSON.stringify(this.generatePageData)}`)
         return true;
       }
-      case "groupParam": {
-        // 选集类型为非图文模式('leftrigth') 例如：'custom'
+      case "groupParam": { // 选集类型为非图文模式('leftrigth') 例如：'custom'
         let groupParam = HRValueUtils.getMap(propValue);
         let groupTextColor = (groupParam as HippyMap).get('textColor');
         let focusBackground = (groupParam as HippyMap).get('focusBackground');
@@ -314,9 +303,9 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         let focusBackgroundCornerRadius = (focusBackground as HippyMap).get('cornerRadius') as number[];
         this.initParamGroup = {
           itemWidth: (groupParam as HippyMap).get('itemWidth') as number || 105,
-          itemHeight: (groupParam as HippyMap).get('itemHeight') as number || 46,
+          itemHeight: (groupParam as HippyMap).get('itemHeight') as number || 60,
           itemGap: (groupParam as HippyMap).get('itemGap') as number || 50,
-          textSize: (groupParam as HippyMap).get('textSize') as number || 30,
+          textSize: (groupParam as HippyMap).get('textSize') as number || 45,
           textColor: {
             normal: (groupTextColor as HippyMap).get('normal') as string || '#80FFFFFF',
             focused: (groupTextColor as HippyMap).get('focused') as string || '#603314',
@@ -327,7 +316,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
             cornerRadius: [focusBackgroundCornerRadius[0] || 40, focusBackgroundCornerRadius[1] || 40,
               focusBackgroundCornerRadius[2] || 40, focusBackgroundCornerRadius[3] || 40],
             color: (focusBackground as HippyMap).get('color') as string[] || ['#FFE398', '#EEB364'],
-            padding: [focusBackgroundPadding[0] || 34, focusBackgroundPadding[1] || 6],
+            padding: [focusBackgroundPadding[0] || 68, focusBackgroundPadding[1] || 6],
           },
           mark: {
             color: (mark as HippyMap).get('color') as string || '#FFD97C',
@@ -336,8 +325,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         console.log(TAG_MediaSeries, ` groupParam :${JSON.stringify(this.initParamGroup)}`)
         return true;
       }
-      case "commonParam":
-      //
+      case "commonParam": //
       default:
         return true;
     }
@@ -351,14 +339,14 @@ export class QTMediaSeriesView extends QTRenderBaseView {
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
-    console.log(TAG_MediaSeries, `QTMediaSeriesView call function : ${method},params:${params}`)
+    console.log(TAG_MediaSeries, `QTMediaSeriesView call function : ${method},params:${params}`,QTPixelUtil.dev2Vp(100))
     switch (method) {
       //加载数据
       case "setPageData":
         let getArray = HRValueUtils.getArray(params as HippyArray)
         let page = getArray![0];
-        let data = getArray![1] as Map<string, HippyAny>; //数据格式参考 getLRDataByPage 函数返回值
-        //this.listData.removeAllData();
+        let data =
+          getArray![1] as Map<string, HippyAny>; //数据格式参考 getLRDataByPage 函数返回值 //this.listData.removeAllData();
 
         console.log(TAG_MediaSeries, `QTMediaSeriesView:page:${method},value:${page}`)
 
@@ -392,7 +380,7 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         console.log(TAG_MediaSeries, `QTMediaSeriesView listData :${JSON.stringify(this.listData)}`)
         break;
 
-      // 自定义模式下的 数据总数
+    // 自定义模式下的 数据总数
       case "setInitData":
         let totalCount = HRValueUtils.getNumber2(params[0], 0)
         let pageSize = HRValueUtils.getNumber2(params[1], 0)
@@ -402,23 +390,22 @@ export class QTMediaSeriesView extends QTRenderBaseView {
         this.generatePageData = this.generatePageRanges(totalCount, pageSize);
         break;
 
-      //设置选中的item
+    //设置选中的item
       case "setSelectChildPosition":
         let childPos = HRValueUtils.getNumber2(params[0], 0)
         focusControl.requestFocus(`${LIST_PREFIX_KEY}_${childPos}`)
-        console.log(TAG_MediaSeries,
-          `requestChildFocus : focusPos is : ${LIST_PREFIX_KEY}_${childPos}`)
+        console.log(TAG_MediaSeries, `requestChildFocus : focusPos is : ${LIST_PREFIX_KEY}_${childPos}`)
         console.log(TAG_MediaSeries, `setSelectChildPosition : childPos is : ${childPos} `)
         break;
 
-      //滚动到指定位置
+    //滚动到指定位置
       case "scrollToPosition":
         let scrollPos = HRValueUtils.getNumber2(params[0], 0)
         this.scroller.scrollToIndex(scrollPos);
         console.log(TAG_MediaSeries, `scrollToPosition : scrollPos is : ${scrollPos}`)
         break;
 
-      //滚动到指定位置 可添加偏移量
+    //滚动到指定位置 可添加偏移量
       case "scrollToPositionWithOffset":
         let scrollPosIdx = HRValueUtils.getNumber2(params[0], 0)
         let scrollPosOffset = HRValueUtils.getNumber2(params[1], 0)
@@ -429,12 +416,11 @@ export class QTMediaSeriesView extends QTRenderBaseView {
           `scrollToPositionWithOffset : scrollPosIdx is : ${scrollPosIdx}, scrollPosOffset is :${scrollPosOffset}`)
         break;
 
-      //设置选中的item
+    //设置选中的item
       case "requestChildFocus":
         let focusPos = HRValueUtils.getNumber2(params[0], 0)
         focusControl.requestFocus(`${LIST_PREFIX_KEY}_${focusPos}`)
-        console.log(TAG_MediaSeries,
-          `requestChildFocus : focusPos is : ${LIST_PREFIX_KEY}_${focusPos}`)
+        console.log(TAG_MediaSeries, `requestChildFocus : focusPos is : ${LIST_PREFIX_KEY}_${focusPos}`)
         break;
     }
 

@@ -5,7 +5,6 @@ import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
 import { ExtendUtil } from '../../utils/ExtendUtil';
-import { NodeUtils } from '../../utils/NodeUtils';
 import { QTLog } from '../../utils/QTLog';
 
 import QTRenderBaseView from '../QTRenderBaseView';
@@ -171,6 +170,7 @@ export class QTFastListView extends QTRenderBaseView{
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
+    this.clipChildren = false;
   }
 
 
@@ -189,6 +189,10 @@ export class QTFastListView extends QTRenderBaseView{
     if(customTemplate){
       this.mHandleEventNodeId = customTemplate.tag
     }
+  }
+
+  setSelectedChild(position : number){
+
   }
 
   public prepareTemplate() {
@@ -622,8 +626,8 @@ export class QTFastListView extends QTRenderBaseView{
     this.dataSource?.notifyDataChange(pos)
   }
 
-  public scrollToTop(){
-    this.scroller.scrollToIndex(0)
+  public scrollToTop(smooth : boolean  = true ){
+    this.scroller.scrollToIndex(0,smooth)
   }
 
   aboutToUpdate(): void {

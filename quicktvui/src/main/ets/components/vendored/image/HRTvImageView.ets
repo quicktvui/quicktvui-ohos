@@ -101,10 +101,11 @@ export class HRTvImageView extends QTBaseComponentView {
   sid: string = ''
   name: string = ''
   selected: boolean = false
-  showonstate: string = 'normal'
+  // showonstate: string
   focus: boolean = false
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
+  duplicateParentState: boolean = true
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
@@ -142,7 +143,7 @@ export class HRTvImageView extends QTBaseComponentView {
     //     this.visibility = Visibility.Hidden
     //   }
     // }
-    this.drawableStateChanged()
+    this.drawableStateChanged(this.currentStates)
   }
 
   private setResizeMode(pvalue: string) {
@@ -669,7 +670,7 @@ export struct HRTvImage {
         .onComplete(this.renderView.onCompleteCallback)
         .onError(this.renderView.onErrorCallback)
         .visibility(this.renderView.visibility)
-        .id(this.renderView.sid)
+        .id(this.renderView.uid)
         .key(this.renderView.name)
         // .border(this.renderView.border)
         .onFocus(() => {
@@ -688,20 +689,21 @@ export struct HRTvImage {
 
 // base props for all components
 @Extend(Column)
-function applyColumnRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyColumnRenderViewBaseAttr($$: HRTvImageView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
-  .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
+  .visibility(($$ as HRTvImageView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
   // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
+  .id($$.uid)
   .backgroundImage($$.cssBackgroundImage)
   .backgroundImageSize($$.cssBackgroundImageSize)
   .backgroundImagePosition($$.cssBackgroundImagePosition)
@@ -715,19 +717,20 @@ function applyColumnRenderViewBaseAttr($$: HippyRenderBaseView) {
 
 // base props for all components
 @Extend(Image)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
+function applyRenderViewBaseAttr($$: HRTvImageView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
-  .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
+  .visibility(($$ as HRTvImageView).cssVisibility) // must add as, otherwise the compiler has error
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
   // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
+  .id($$.uid)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)
   .backgroundImageSize($$.cssBackgroundImageSize)

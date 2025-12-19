@@ -4,7 +4,7 @@ import { QTAttach } from '../components/QTAttach';
 import { QTBaseComponentView } from '../components/QTBaseComponentView';
 import { QTViewActor } from '../components/QTViewActor';
 import { QTViewState, StateView, StateViewConstants } from '../components/StateView';
-import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_FOCUS } from '../Constant';
+import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_FOCUS, TAG_STATE_DRAW } from '../Constant';
 import { QTAny, QTView } from '../QTTypes';
 import { CommonUtils } from './CommonUtils';
 import { NodeUtils } from './NodeUtils';
@@ -128,13 +128,13 @@ export class ExtendUtil{
 
     if (showOnState && showOnState.length > 0) {
       const hasNormalState = ExtendUtil.stateContainsAttribute(showOnState, -1);
-      // QTLog.e(TAG_FOCUS, `hasNormalState: ${hasNormalState}`);
+      QTLog.e(TAG_STATE_DRAW, `hasNormalState: ${hasNormalState}`);
 
       if (hasNormalState) {
         // [normal] 相关逻辑
        const isNormalState = !ExtendUtil.stateContainsAttribute(states, ExtendUtil.findOppositeState(showOnState));
         view.visibility = isNormalState ? Visibility.Visible : Visibility.Hidden;
-        // QTLog.e(TAG_FOCUS, `1 handleShowOnState changeVisibility: ${view.visibility} view: ${ExtendUtil.debugView(view)}`);
+        QTLog.e(TAG_STATE_DRAW, `1 handleShowOnState changeVisibility: ${view.visibility} view: ${ExtendUtil.debugView(view)}`);
       } else {
         // [focused,selected] 相关逻辑
         let isShow = false;
@@ -144,13 +144,13 @@ export class ExtendUtil{
 
         if (showOnState.length === 1) {
           const containFocusAndSelect = ExtendUtil.stateContainsAttribute(showOnState, ExtendUtil.STATE_SET_SELECTED_FOCUS);
-          // QTLog.e(TAG_FOCUS, `containFocusAndSelect: ${containFocusAndSelect}, showOnState[0]: ${showOnState[0]}`);
+          QTLog.e(TAG_STATE_DRAW, `containFocusAndSelect: ${containFocusAndSelect}, showOnState[0]: ${showOnState[0]}`);
 
           if (containFocusAndSelect) {
             if (showOnState[0] === StateViewConstants.STATE_FOCUS_AND_SELECT) {
               isShow = true;
               takeOver = true;
-              QTLog.e(TAG_FOCUS, `STATE_FOCUS_AND_SELECT matched`);
+              QTLog.e(TAG_STATE_DRAW, `STATE_FOCUS_AND_SELECT matched`);
             }
           } else {
             // QTLog.e(TAG_FOCUS, `Checking STATE_SELECT_NO_FOCUS and STATE_FOCUS_NO_SELECT`);
@@ -159,7 +159,7 @@ export class ExtendUtil{
               takeOver = true;
               const hasSelected = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_SELECTED);
               const hasFocused = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_FOCUSED);
-              // QTLog.e(TAG_FOCUS, `STATE_SELECT_NO_FOCUS - hasSelected: ${hasSelected}, hasFocused: ${hasFocused}`);
+              QTLog.e(TAG_STATE_DRAW, `STATE_SELECT_NO_FOCUS - hasSelected: ${hasSelected}, hasFocused: ${hasFocused}`);
 
               if (hasSelected && !hasFocused) {
                 isShow = true;
@@ -170,7 +170,7 @@ export class ExtendUtil{
               takeOver = true;
               const hasFocused = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_FOCUSED);
               const hasSelected = ExtendUtil.stateContainsAttribute(states, ExtendUtil.STATE_SET_SELECTED);
-              // QTLog.e(TAG_FOCUS, `STATE_FOCUS_NO_SELECT - hasFocused: ${hasFocused}, hasSelected: ${hasSelected}`);
+              QTLog.e(TAG_STATE_DRAW, `STATE_FOCUS_NO_SELECT - hasFocused: ${hasFocused}, hasSelected: ${hasSelected}`);
 
               if (hasFocused && !hasSelected) {
                 isShow = true;
@@ -183,18 +183,18 @@ export class ExtendUtil{
 
         if (takeOver) {
           view.visibility = isShow ? Visibility.Visible : Visibility.Hidden;
-         // QTLog.e(TAG_FOCUS, `2 handleShowOnState changeVisibility: ${view.visibility} view: ${ExtendUtil.debugView(view)}`);
+         QTLog.e(TAG_STATE_DRAW, `2 handleShowOnState changeVisibility: ${view.visibility} view: ${ExtendUtil.debugView(view)}`);
         } else {
           const contain = ExtendUtil.stateContainsAttribute(states, showOnState);
         //  QTLog.e(TAG_FOCUS, `Final contain check: ${contain}`);
           view.visibility = contain ? Visibility.Visible : Visibility.Hidden;
-          //QTLog.e(TAG_FOCUS, `3 handleShowOnState changeVisibility: ${contain} view: ${ExtendUtil.debugView(view)}`);
+          QTLog.e(TAG_STATE_DRAW, `3 handleShowOnState changeVisibility: ${contain} view: ${ExtendUtil.debugView(view)}`);
         }
       }
       return true;
     }
 
-    QTLog.e(TAG_FOCUS, `handleShowOnState return false`);
+    QTLog.e(TAG_STATE_DRAW, `handleShowOnState return false`);
     return false;
   }
 

@@ -5,7 +5,7 @@ import {
   HippyCustomComponentView,
   HippyRenderCallback,
 } from 'hippy'
-import { TAG_FASTLIST, TAG_FOCUS, TAG_QUICKTVUI } from '../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
 import { QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
@@ -31,10 +31,13 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   selected: boolean = false
   showonstate: string = 'normal' //
   showOnStateArray : number[] = []
+  clipChildren: boolean = true
   focus: boolean = false
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
-  private currentStates: number[] = []
+  enableFocusBorder: boolean = false //是否显示focusBox
+  focusable: boolean = false //是否可获焦
+  currentStates: number[] = [QTViewState.STATE_NORMAL]
 
 
   public get uid(): string {
@@ -105,20 +108,25 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     return null;
   }
 
+  setSelected(selected : boolean){
+    this.selected = selected;
+    this.updateStateArray()
+    this.drawableStateChanged(this.currentStates)
+  }
+
   getDisplayChildren(){
     return this.children
   }
 
-
   // 更新状态数组的值
-  private updateStateArray(): void {
+  updateStateArray(): void {
     // 清空数组
     this.currentStates.length = 0
     // 根据selected和focus状态添加值
-    if (this.selected) {
+    if (this.isSelected()) {
       this.currentStates.push(QTViewState.STATE_SELECTED);
     }
-    if (this.focus) {
+    if (this.isFocused()) {
       this.currentStates.push(QTViewState.STATE_FOCUSED);
     }
     if(this.currentStates.length == 0 ){
@@ -126,8 +134,30 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     }
   }
 
+  isFocusedOrDuplicateParentFocusState() : boolean {
+    if(this.isFocused()){
+      return true;
+    }
+    if(this.parentView instanceof QTBaseComponentView){
+      let parentFocused = this.parentView.isFocusedOrDuplicateParentFocusState();
+      QTLog.d(TAG_STATE_DRAW,`parentFocused : ${parentFocused},this:${ExtendUtil.debugView(this)}`)
+      return this.duplicateParentState && parentFocused;
+    }
+    return false;
+  }
 
-  protected handleShowOnState() {
+  isSelectedOrDuplicateParentSelectState() : boolean {
+    if(this.isSelected()){
+      return true;
+    }
+    if(this.parentView instanceof QTBaseComponentView){
+      return this.duplicateParentState && this.parentView.isSelectedOrDuplicateParentSelectState();
+    }
+    return false;
+  }
+
+
+  protected handleShowOnState(currentState :number[]) {
     // if (this.showonstate.includes('normal')) {
     //   //不做处理
     // } else if (this.showonstate.includes('selected')) {
@@ -147,10 +177,9 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     // }
     // 先更新状态数组的值
     if(this.showOnStateArray.length > 0){
-      this.updateStateArray();
-      ///QTLog.w(TAG_FOCUS, `updateVisibility - currentStates: ${JSON.stringify(this.currentStates)}, showOnStateArray: ${JSON.stringify(this.showOnStateArray)}`);
+      QTLog.w(TAG_STATE_DRAW, `updateVisibility - currentStates: ${JSON.stringify(this.currentStates)}, showOnStateArray: ${JSON.stringify(this.showOnStateArray)} uid:${this.uid}`);
       // 使用固定的状态数组调用handleShowOnState
-      ExtendUtil.handleShowOnState(this, this.currentStates, this.showOnStateArray);
+      ExtendUtil.handleShowOnState(this, currentState, this.showOnStateArray);
     }
     // 如果没有处理系统状态，再处理自定义状态
     // if (!result && this.showonstate.length > 0) {
@@ -162,8 +191,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   /**
    * 通知焦点、背景图等状态改变
    */
-  drawableStateChanged(){
-    this.handleShowOnState()
+  drawableStateChanged(currentState: number[]){
+    this.handleShowOnState(currentState)
   }
 
   public viewActor: QTViewActor =  new QTViewActor(this);
@@ -236,12 +265,14 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         return true;
       case "clipChildren":
         this.cssOverflow = HRValueUtils.getBoolean(propValue,true)
+        this.clipChildren = this.cssOverflow
         return true;
       case 'showOnState':
         //this.showonstate = HRValueUtils.getString(propValue as HippyAny);
         ExtendUtil.configureShowOnState(this,propValue)
-        QTLog.w(TAG_FOCUS,`setShowOnState :${propValue},this:${ExtendUtil.debugView(this)}`)
-        this.handleShowOnState();
+        QTLog.w(TAG_STATE_DRAW,`setShowOnState :${propValue},this:${ExtendUtil.debugView(this)}`)
+        this.duplicateParentState = true;
+        this.handleShowOnState(this.currentStates);
         return true;
         // case 'showOnState':
         //
@@ -251,6 +282,21 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
           this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, true);
           // this.setDuplicate();
         }
+        return true
+      case 'selected':
+        this.setSelected(HRValueUtils.getBoolean(propValue as HippyAny, true))
+
+        return true;
+      case 'enableFocusBorder': {
+        this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, true)
+        // this.setFocusBoxStyle(); //预设focusBox样式
+      }
+        return true
+      case 'focusable': {
+        this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
+        this.cssFocusable = this.focusable
+        QTLog.i(TAG_FOCUS, `set focusable ${this.focusable} view:` + ExtendUtil.debugView(this))
+      }
         return true
     }
     return super.setProp(propKey, propValue)

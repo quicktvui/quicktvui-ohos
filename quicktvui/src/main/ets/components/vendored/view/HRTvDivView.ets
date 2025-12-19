@@ -92,7 +92,7 @@ export class HRTvDivView extends QTBaseComponentView {
   focus: boolean = false //当前是否处于聚焦状态
   enableFocusBorder: boolean = false //是否显示focusBox
   focusBoxStyle: FocusBoxStyle = {} //focusBox样式
-  focusScale: number = 1.1 //聚焦时候放大倍数
+  focusScale: number = 1.05 //聚焦时候放大倍数
   sid: string = ''
   clipChildren: boolean = false
   duplicateParentState: boolean = false
@@ -180,37 +180,24 @@ export class HRTvDivView extends QTBaseComponentView {
       case 'name':
         this.name = HRValueUtils.getString(propValue as HippyAny);
         return true;
-      case 'focusable': {
-        this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
-        this.cssFocusable = this.focusable
-        QTLog.i(TAG_FOCUS, `set focusable ${this.focusable} view:` + ExtendUtil.debugView(this))
-      }
-        return true
-      case 'enableFocusBorder': {
-        this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, false)
-        this.setFocusBoxStyle(); //预设focusBox样式
-      }
-        return true
+
       case 'focusScale': {
         this.focusScale = HRValueUtils.getNumber(propValue as HippyAny)
       }
         return true
-      case 'selected':
-        this.selected = HRValueUtils.getBoolean(propValue as HippyAny, false);
-        this.setSelectedBorder();
-        this.drawableStateChanged()
-        return true;
+
       //这里不需要了，直接在parent里处理
       // case 'showOnState':
       //   this.showonstate = HRValueUtils.getString(propValue as HippyAny);
       //   this.showOnState();
       //   return true;
-      case 'sid': {
-        this.sid = propValue as string
-      }
+      // case 'sid': {
+      //   this.sid = propValue as string
+      // }
         return true
       case 'clipChildren': {
         this.clipChildren = HRValueUtils.getBoolean(propValue as HippyAny, false);
+        this.cssOverflow = this.clipChildren
       }
         return true
       case 'duplicateParentState':
@@ -360,27 +347,27 @@ export class HRTvDivView extends QTBaseComponentView {
   setFocusBoxStyle() {
     //处理enableFocusBorder为true时候的默认样式，如果复杂则不能单纯使用focusBox来实现了，需要结合其他属性来混和实现
     // 注意：后续需处理与css样式的冲突以及优先级
-    if (this.enableFocusBorder) {
-      this.focusBoxStyle = {
-        margin: LengthMetrics.px(0),
-        strokeColor: ColorMetrics.rgba(255, 0, 0),
-        strokeWidth: LengthMetrics.px(3)
-      }
-    } else {
-      this.focusBoxStyle = {
-        strokeWidth: LengthMetrics.px(0)
-      }
-    }
+    // if (this.enableFocusBorder) {
+    //   this.focusBoxStyle = {
+    //     margin: LengthMetrics.px(0),
+    //     strokeColor: ColorMetrics.rgba(255, 0, 0),
+    //     strokeWidth: LengthMetrics.px(3)
+    //   }
+    // } else {
+    //   this.focusBoxStyle = {
+    //     strokeWidth: LengthMetrics.px(0)
+    //   }
+    // }
   }
 
   handleFocus(isFocused: boolean) {
     LogUtils.d(this.TAG, "Get Focus Method：" + isFocused);
-    this.drawableStateChanged()
+    // this.drawableStateChanged()
   }
 
   handleBlur(isFocused: boolean) {
     LogUtils.d(this.TAG, "Get Blur Method：" + isFocused);
-    this.drawableStateChanged()
+    // this.drawableStateChanged()
   }
 
   setBorder(): BorderOptions {

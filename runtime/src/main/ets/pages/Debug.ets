@@ -53,7 +53,7 @@ export struct Debug {
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
   private debugMode: boolean = false
-  @State debugServerHost: string = '192.168.40.92' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.40.81' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
@@ -102,6 +102,7 @@ export struct Debug {
   }
 
   private initEngine() {
+    this.getUIContext().getFocusController().activate(true, false)
     //
     this.destroyEngine()
     //
@@ -386,8 +387,8 @@ export struct Debug {
               .fontSize((this.debugServerAvailable || !this.debugMode) ? 40 : 150)
               .fontWeight(FontWeight.Bold)
               .backgroundColor($r('app.color.debug_font_color'))
-              .focusable(true)
-              .defaultFocus(true)
+              .focusable(false)
+              .defaultFocus(false)
               .type(ButtonType.Circle)
               .width(300)
               .height(300)
