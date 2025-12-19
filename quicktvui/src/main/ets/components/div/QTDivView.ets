@@ -115,7 +115,7 @@ export class QTDivView extends HRTvDivView {
       this.stateBackgroundColor = this.mUserSetBackgroundColor;
     }
     this.children.map((child)=>{
-      if(child instanceof QTBaseComponentView && child.duplicateParentState){
+      if(child instanceof QTBaseComponentView ){
         QTLog.d(TAG_STATE_DRAW,`drawableStateChanged child duplicateParentState :${child.duplicateParentState} child:${ExtendUtil.debugView(child)}`)
         child.drawableStateChanged(currentState)
       }

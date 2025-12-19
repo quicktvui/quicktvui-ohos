@@ -45,6 +45,7 @@ import { QTPlayMark, QTPlayMarkView } from './play-mark/QTPlayMarkView';
 import { ItemStore, ItemStoreView } from './fastlist/ItemStoreView';
 import { QTFastItem, QTFastItemView } from './fastlist/QTFastItemView';
 import { QTNodeOp, QTNodeOpView } from './node/QTNodeOpView';
+import { QTHRRichText, QTRichTextView } from './text/QTRichTextView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -115,6 +116,7 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("ListViewItem", (ctx): HippyRenderBaseView => new HRTvListItemView(ctx))
     registerMap.set("ViewPager", (ctx): HippyRenderBaseView => new HRTvViewPagerView(ctx))
     registerMap.set("ViewPagerItem", (ctx): HippyRenderBaseView => new HRTvViewPagerItemView(ctx))
+    registerMap.set("Text", (ctx): HippyRenderBaseView => new QTRichTextView(ctx))
     //
     return registerMap
   }
@@ -285,7 +287,12 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTFastItemView,
       children: $$.children,
     })
-  } else {
+  }else if ($$ instanceof QTRichTextView) {
+    QTHRRichText({
+      renderView: $$ as QTRichTextView,
+    })
+  }
+  else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,
