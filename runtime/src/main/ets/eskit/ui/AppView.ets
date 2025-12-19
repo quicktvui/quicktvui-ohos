@@ -179,6 +179,9 @@ struct AppView {
   }
 
   private generateEngineInitParams(): EngineInitParams {
+    //
+    this.getUIContext().getFocusController().activate(true, false)
+    //
     const params = new EngineInitParams(libHippy, App.instance.context!, this.getUIContext())
     params.debugMode = false
     params.enableLog = false
