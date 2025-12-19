@@ -453,7 +453,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)
-  .backgroundImageSize($$.cssBackgroundImageSize)
+  .backgroundImageSize($$.cssBackgroundImageSize ?? ImageSize.FILL)
   .backgroundImagePosition($$.cssBackgroundImagePosition)
   .transform($$.cssMatrix)
   .rotate($$.cssRotate)
