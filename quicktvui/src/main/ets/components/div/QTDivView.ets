@@ -388,6 +388,16 @@ export struct QTDiv {
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
+    if(this.renderView.cssWidth < 1 || this.renderView.cssHeight < 1){
+      setTimeout(()=>{
+        if(this.renderView.cssWidth < 1 && LayoutAttach.obtainLayoutAttach(this.renderView).isAutoWidth ){
+          this.renderView.cssWidth = this.renderView.parentView?.cssWidth ?? 0
+        }
+        if(this.renderView.cssHeight < 1 && LayoutAttach.obtainLayoutAttach(this.renderView).isAutoHeight){
+          this.renderView.cssHeight = this.renderView.parentView?.cssHeight ?? 0
+        }
+      },100)
+    }
     // setInterval(()=>{
     //   QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this.renderView)} `)
     // },5000)
