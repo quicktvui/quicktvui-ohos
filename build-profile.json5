@@ -121,12 +121,12 @@
         }
       },
       {
-        "name": "g_guess_location",
-        "signingConfig": "guess_location",
+        "name": "g_black_white",//黑白棋
+        "signingConfig": "black_white",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
-        "bundleName": "es.com.guesspos.tv",
+        "bundleName": "es.com.blackwhite.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
           "strictMode": {
@@ -136,22 +136,7 @@
         }
       },
       {
-        "name": "g_road",
-        "signingConfig": "road",
-        "compatibleSdkVersion": 15,
-        "compileSdkVersion": 18,
-        "targetSdkVersion": 18,
-        "bundleName": "es.com.szhrd.tv",
-        "runtimeOS": "OpenHarmony",
-        "buildOption": {
-          "strictMode": {
-            "caseSensitiveCheck": true,
-            "useNormalizedOHMUrl": true
-          }
-        }
-      },
-      {
-        "name": "g_box",
+        "name": "g_box",//推箱子
         "signingConfig": "box",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
@@ -166,7 +151,144 @@
         }
       },
       {
-        "name": "g_snake",
+        "name": "g_brush",//粉刷匠
+        "signingConfig": "brush",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.fenshuajiang.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_chess",//中国象棋
+        "signingConfig": "chess",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.chess.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_fog_lock",//雾锁迷城
+        "signingConfig": "fog_lock",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.wsmc.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_fruit_sort", //整理水果
+        "signingConfig": "fruit_sort",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.zlsg.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_guess_location",//猜位置
+        "signingConfig": "guess_location",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.guesspos.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_hannuota",//汉诺塔
+        "signingConfig": "hannuota",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.hnt.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_pacman",//吃豆人
+        "signingConfig": "pacman",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.pacman.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "g_rectangle",//欢乐方块
+        "signingConfig": "rectangle",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.hlfk.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+
+      {
+        "name": "g_road", //华容道
+        "signingConfig": "road",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.szhrd.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+
+      {
+        "name": "g_snake",//贪吃蛇
         "signingConfig": "snake",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
@@ -246,27 +368,15 @@
         }
       },
       {
-        "name": "guess_location",
+        "name": "black_white",//TODO
         "material": {
-          "certpath": "sign/guess_location/key.cer",
+          "certpath": "sign/black_white/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BC953024C14C1D5B30B242811AD77F61D033EA15DBA2B565EFE88F2F59F1B57071BDBDC1B914234",
-          "profile": "sign/guess_location/key.p7b",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/black_white/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/guess_location/key.p12",
-          "storePassword": "0000001BC695546712C43D10654457D674121A9E0E86205FAEA31D72842EBA9D6D608966914F9796267D3F"
-        }
-      },
-      {
-        "name": "road",
-        "material": {
-          "certpath": "sign/road/key.cer",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001B82004AF08CB579E1FC86DEDB85C4A1609359C8BCF9F24AC9F47DB3084743CA1041258DD780A766",
-          "profile": "sign/road/key.p7b",
-          "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/road/key.p12",
-          "storePassword": "0000001B204F32293AE4802D6B2B8A4B4AC792CACE45CD1F34B911B60707E04B944A49CF2379A413741D39"
+          "storeFile": "sign/black_white/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
         }
       },
       {
@@ -279,6 +389,114 @@
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/box/key.p12",
           "storePassword": "0000001BAEF58214363C7674A0A6FFC7F9829B1A4166C52F9EF9EEABC0C77E601AF24A8F74511CBDF13652"
+        }
+      },
+      {
+        "name": "brush",//TODO
+        "material": {
+          "certpath": "sign/brush/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/brush/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/brush/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
+        }
+      },
+      {
+        "name": "chess",//TODO
+        "material": {
+          "certpath": "sign/chess/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/chess/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/chess/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
+        }
+      },
+      {
+        "name": "fog_lock",//TODO
+        "material": {
+          "certpath": "sign/fog_lock/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/fog_lock/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/fog_lock/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
+        }
+      },
+      {
+        "name": "fruit_sort",//TODO
+        "material": {
+          "certpath": "sign/fruit_sort/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/fruit_sort/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/fruit_sort/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
+        }
+      },
+      {
+        "name": "guess_location",
+        "material": {
+          "certpath": "sign/guess_location/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BC953024C14C1D5B30B242811AD77F61D033EA15DBA2B565EFE88F2F59F1B57071BDBDC1B914234",
+          "profile": "sign/guess_location/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/guess_location/key.p12",
+          "storePassword": "0000001BC695546712C43D10654457D674121A9E0E86205FAEA31D72842EBA9D6D608966914F9796267D3F"
+        }
+      },
+      {
+        "name": "hannuota",//TODO
+        "material": {
+          "certpath": "sign/hannuota/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/hannuota/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/hannuota/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
+        }
+      },
+      {
+        "name": "pacman",//TODO
+        "material": {
+          "certpath": "sign/pacman/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/pacman/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/pacman/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
+        }
+      },
+      {
+        "name": "rectangle",//TODO
+        "material": {
+          "certpath": "sign/rectangle/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
+          "profile": "sign/rectangle/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/rectangle/key.p12",
+          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
+        }
+      },
+      {
+        "name": "road",
+        "material": {
+          "certpath": "sign/road/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B82004AF08CB579E1FC86DEDB85C4A1609359C8BCF9F24AC9F47DB3084743CA1041258DD780A766",
+          "profile": "sign/road/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/road/key.p12",
+          "storePassword": "0000001B204F32293AE4802D6B2B8A4B4AC792CACE45CD1F34B911B60707E04B944A49CF2379A413741D39"
         }
       },
       {
@@ -349,15 +567,9 @@
           ]
         },
         {
-          "name": "g_guess_location",
+          "name": "g_black_white",
           "applyToProducts": [
-            "g_guess_location"
-          ]
-        },
-        {
-          "name": "g_road",
-          "applyToProducts": [
-            "g_road"
+            "g_black_white"
           ]
         },
         {
@@ -366,6 +578,61 @@
             "g_box"
           ]
         },
+        {
+          "name": "g_brush",
+          "applyToProducts": [
+            "g_brush"
+          ]
+        },
+        {
+          "name": "g_chess",
+          "applyToProducts": [
+            "g_chess"
+          ]
+        },
+        {
+          "name": "g_fog_lock",
+          "applyToProducts": [
+            "g_fog_lock"
+          ]
+        },
+        {
+          "name": "g_fruit_sort",
+          "applyToProducts": [
+            "g_fruit_sort"
+          ]
+        },
+        {
+          "name": "g_guess_location",
+          "applyToProducts": [
+            "g_guess_location"
+          ]
+        },
+        {
+          "name": "g_hannuota",
+          "applyToProducts": [
+            "g_hannuota"
+          ]
+        },
+        {
+          "name": "g_pacman",
+          "applyToProducts": [
+            "g_pacman"
+          ]
+        },
+        {
+          "name": "g_rectangle",
+          "applyToProducts": [
+            "g_rectangle"
+          ]
+        },
+        {
+          "name": "g_road",
+          "applyToProducts": [
+            "g_road"
+          ]
+        },
+
         {
           "name": "g_snake",
           "applyToProducts": [

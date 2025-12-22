@@ -1,0 +1,34 @@
+[
+  {
+    "channel": "g_black_white",
+    "package": "es.com.blackwhite.tv"
+  },
+  {
+    "channel": "g_brush",
+    "package": "es.com.fenshuajiang.tv"
+  },
+  {
+    "channel": "g_chess",
+    "package": "es.com.chess.tv"
+  },
+  {
+    "channel": "g_fog_lock",
+    "package": "es.com.wsmc.tv"
+  },
+  {
+    "channel": "g_fruit_sort",
+    "package": "es.com.zlsg.tv"
+  },
+  {
+    "channel": "g_hannuota",
+    "package": "es.com.hnt.tv"
+  },
+  {
+    "channel": "g_pacman",
+    "package": "es.com.pacman.tv"
+  },
+  {
+    "channel": "g_rectangle",
+    "package": "es.com.hlfk.tv"
+  }
+]
