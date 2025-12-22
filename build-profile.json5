@@ -121,8 +121,9 @@
         }
       },
       {
-        "name": "g_black_white",//黑白棋
-//        "signingConfig": "black_white",
+        "name": "g_black_white",
+        //黑白棋
+        "signingConfig": "black_white",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -136,7 +137,8 @@
         }
       },
       {
-        "name": "g_box",//推箱子
+        "name": "g_box",
+        //推箱子
         "signingConfig": "box",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
@@ -151,8 +153,9 @@
         }
       },
       {
-        "name": "g_brush",//粉刷匠
-//        "signingConfig": "brush",
+        "name": "g_brush",
+        //粉刷匠
+        "signingConfig": "brush",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -166,8 +169,9 @@
         }
       },
       {
-        "name": "g_chess",//中国象棋
-//        "signingConfig": "chess",
+        "name": "g_chess",
+        //中国象棋
+        "signingConfig": "chess",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -181,8 +185,9 @@
         }
       },
       {
-        "name": "g_fog_lock",//雾锁迷城
-//        "signingConfig": "fog_lock",
+        "name": "g_fog_lock",
+        //雾锁迷城
+        "signingConfig": "fog_lock",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -196,8 +201,9 @@
         }
       },
       {
-        "name": "g_fruit_sort", //整理水果
-//        "signingConfig": "fruit_sort",
+        "name": "g_fruit_sort",
+        //整理水果
+        "signingConfig": "fruit_sort",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -211,7 +217,8 @@
         }
       },
       {
-        "name": "g_guess_location",//猜位置
+        "name": "g_guess_location",
+        //猜位置
         "signingConfig": "guess_location",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
@@ -226,8 +233,9 @@
         }
       },
       {
-        "name": "g_hannuota",//汉诺塔
-//        "signingConfig": "hannuota",
+        "name": "g_hannuota",
+        //汉诺塔
+        "signingConfig": "hannuota",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -241,8 +249,9 @@
         }
       },
       {
-        "name": "g_pacman",//吃豆人
-//        "signingConfig": "pacman",
+        "name": "g_pacman",
+        //吃豆人
+        "signingConfig": "pacman",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -256,8 +265,9 @@
         }
       },
       {
-        "name": "g_rectangle",//欢乐方块
-//        "signingConfig": "rectangle",
+        "name": "g_rectangle",
+        //欢乐方块
+        "signingConfig": "rectangle",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -270,9 +280,9 @@
           }
         }
       },
-
       {
-        "name": "g_road", //华容道
+        "name": "g_road",
+        //华容道
         "signingConfig": "road",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
@@ -286,9 +296,9 @@
           }
         }
       },
-
       {
-        "name": "g_snake",//贪吃蛇
+        "name": "g_snake",
+        //贪吃蛇
         "signingConfig": "snake",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
@@ -367,18 +377,18 @@
           "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
         }
       },
-//      {
-//        "name": "black_white",//TODO
-//        "material": {
-//          "certpath": "sign/black_white/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/black_white/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/black_white/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
+      {
+        "name": "black_white",
+        "material": {
+          "certpath": "sign/black_white/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BA8E629A98278EB5161744DBD1649209BEC27C39396CFCBFE08D5BA6CC2AE3FF820389CB7EC42FA",
+          "profile": "sign/black_white/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/black_white/key.p12",
+          "storePassword": "0000001BF733F8178645DE1715BCBA16E9246F5AC5EA494FA1610915D89393E716E492120314F746A776F8"
+        }
+      },
       {
         "name": "box",
         "material": {
@@ -391,54 +401,54 @@
           "storePassword": "0000001BAEF58214363C7674A0A6FFC7F9829B1A4166C52F9EF9EEABC0C77E601AF24A8F74511CBDF13652"
         }
       },
-//      {
-//        "name": "brush",//TODO
-//        "material": {
-//          "certpath": "sign/brush/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/brush/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/brush/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
-//      {
-//        "name": "chess",//TODO
-//        "material": {
-//          "certpath": "sign/chess/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/chess/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/chess/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
-//      {
-//        "name": "fog_lock",//TODO
-//        "material": {
-//          "certpath": "sign/fog_lock/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/fog_lock/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/fog_lock/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
-//      {
-//        "name": "fruit_sort",//TODO
-//        "material": {
-//          "certpath": "sign/fruit_sort/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/fruit_sort/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/fruit_sort/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
+      {
+        "name": "brush",
+        "material": {
+          "certpath": "sign/brush/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BA1A7F8F4B092A60CBE085EE38843142963BB89250AA0569BB8DDC8A000759BE454F7063817C9C7",
+          "profile": "sign/brush/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/brush/key.p12",
+          "storePassword": "0000001BDA14012336466F8085BDC631FB1AC4A017A52AE63CF6155ED10897F6B71DA0CA340386C5B7052A"
+        }
+      },
+      {
+        "name": "chess",
+        "material": {
+          "certpath": "sign/chess/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B10B500D85ECA6AAEA40AC1ECC78C5A530E8C8E2BA7AC9A1D027D1DCCC82E495CFB5EB1A7AE1796",
+          "profile": "sign/chess/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/chess/key.p12",
+          "storePassword": "0000001B7F38393FC5F075701B814377B2D77BBFAD182CDBE7CE8BA924F4C58D25E94716E72B9758F0062F"
+        }
+      },
+      {
+        "name": "fog_lock",
+        "material": {
+          "certpath": "sign/fog_lock/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B9B4C8544642F015045ABD0D628E1586F1A82325E570655D7AC13622F58D72792D7B5DCDA24BC74",
+          "profile": "sign/fog_lock/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/fog_lock/key.p12",
+          "storePassword": "0000001B21481C49982CE3E5BF0E6BC56FD8194DDE3D5C6EE3C54435547BC5684D51F9D07D6E409D158939"
+        }
+      },
+      {
+        "name": "fruit_sort",
+        "material": {
+          "certpath": "sign/fruit_sort/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BE0694F14D101173B1A8C9204AE47AB18743493A1AE1AED32CC90B8B33EF8956121041CC378AC93",
+          "profile": "sign/fruit_sort/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/fruit_sort/key.p12",
+          "storePassword": "0000001BC3A959ADCFE27A1E73FBE3238DD16A21EA5D043FE672AE0D26D44E6CC787D60BABCBBE0E729036"
+        }
+      },
       {
         "name": "guess_location",
         "material": {
@@ -451,42 +461,42 @@
           "storePassword": "0000001BC695546712C43D10654457D674121A9E0E86205FAEA31D72842EBA9D6D608966914F9796267D3F"
         }
       },
-//      {
-//        "name": "hannuota",//TODO
-//        "material": {
-//          "certpath": "sign/hannuota/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/hannuota/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/hannuota/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
-//      {
-//        "name": "pacman",//TODO
-//        "material": {
-//          "certpath": "sign/pacman/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/pacman/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/pacman/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
-//      {
-//        "name": "rectangle",//TODO
-//        "material": {
-//          "certpath": "sign/rectangle/key.cer",
-//          "keyAlias": "debugKey",
-//          "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-//          "profile": "sign/rectangle/key.p7b",
-//          "signAlg": "SHA256withECDSA",
-//          "storeFile": "sign/rectangle/key.p12",
-//          "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
-//        }
-//      },
+      {
+        "name": "hannuota",
+        "material": {
+          "certpath": "sign/hannuota/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BC64989865B12EC4AFE5BFDAA1D6966FF192669FA4C107BEBEE700A668A0735BECEFA1DBB34795D",
+          "profile": "sign/hannuota/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/hannuota/key.p12",
+          "storePassword": "0000001B71C7C8EA3B1DC3972744CC4B12C12CFC3AC996FADF4727CB9FECAF0C300C12F2556172538EC8B3"
+        }
+      },
+      {
+        "name": "pacman",
+        "material": {
+          "certpath": "sign/pacman/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BACE44A786ED33027A0DF63FF5E35B440775A05CBE61F8EE84304FA8DB9E3FD3A7DC35C1C3792CF",
+          "profile": "sign/pacman/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/pacman/key.p12",
+          "storePassword": "0000001BE6B96FFDE8FBC7B0DFC3BB99E7612763BA92C57D0335F54DC5D0B9D62B84258112356CF7EC371C"
+        }
+      },
+      {
+        "name": "rectangle",
+        "material": {
+          "certpath": "sign/rectangle/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B0B5C8CC6E0214187DE9D16ECE73A8D42F6E6DB6A8C80E31C38FB4EE7E31CFFE9A7EE317BD9D859",
+          "profile": "sign/rectangle/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/rectangle/key.p12",
+          "storePassword": "0000001B4505729E9350CF179C48C97D3BA2332E50A4AC817E64CEB0B05A93D082EEF3DBE20B3851B75AB6"
+        }
+      },
       {
         "name": "road",
         "material": {
@@ -632,7 +642,6 @@
             "g_road"
           ]
         },
-
         {
           "name": "g_snake",
           "applyToProducts": [
