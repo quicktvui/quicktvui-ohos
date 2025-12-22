@@ -147,6 +147,13 @@ export class QTItemRootView extends QTRenderBaseView{
     }
   }
 
+  clearFocusChild(){
+    this.focusChild = null;
+    if(this.parentList instanceof QTBaseComponentView){
+      this.parentList.clearFocusChild();
+    }
+  }
+
   getReuseId():string | null{
     if(this.itemView?.template?.templateView){
       return  `tp-${this.itemView?.template?.templateView.tag}-type-${LayoutAttach.obtainLayoutAttach(this).virtualExtra.itemType}`
@@ -154,6 +161,7 @@ export class QTItemRootView extends QTRenderBaseView{
       return `type${LayoutAttach.obtainLayoutAttach(this).virtualExtra.itemType}`
     }
   }
+
 
   letItemMatchChildPosition(childView : QTView){
     let childLa = LayoutAttach.obtainLayoutAttach(childView)

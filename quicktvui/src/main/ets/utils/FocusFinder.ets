@@ -197,6 +197,11 @@ export class FocusFinder {
         return FocusFinder.findFirstFocusableByDirection(views, root, direction);
       }
 
+      if(focusedRect.isEmpty()){
+        QTLog.e(TAG_FOCUS,`Current focused view rect is empty, focus search fail !`)
+        return null;
+      }
+
       QTLog.i(TAG_FOCUS, `findNextFocus current focused rect: ${focusedRect.toString()}`);
 
       // 找到最佳候选视图
@@ -363,10 +368,10 @@ export class FocusFinder {
       }
 
       // 检查视图的宽度和高度是否为0（或接近0）
-      if (!c.size || c.size.width <= 0.1 || c.size.height <= 0.1) {
-        QTLog.w(TAG_FOCUS, `getViewRectInRoot view has zero/small size, skip: ${view.uid} type:${view.viewType} size:${c.size?.width}x${c.size?.height}`);
-        return null;
-      }
+      // if (!c.size || c.size.width <= 0.1 || c.size.height <= 0.1) {
+      //   QTLog.w(TAG_FOCUS, `getViewRectInRoot view has zero/small size, skip: ${view.uid} type:${view.viewType} size:${c.size?.width}x${c.size?.height}`);
+      //   return null;
+      // }
 
       // 检查windowOffset是否有效
       if (!c.windowOffset) {

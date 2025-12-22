@@ -19,7 +19,7 @@
  */
 import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderCallback,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
-import { TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW } from '../../Constant';
+import { TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -243,11 +243,11 @@ export class QTDivView extends HRTvDivView {
           this.cssBackgroundColor = this.mUserSetBackgroundColor
           QTLog.i(TAG_STATE_DRAW,`backgroundColor :${this.mUserSetBackgroundColor} this:${ExtendUtil.debugView(this)}`)
           this.drawableStateChanged(this.currentStates)
-        break;
+          return true
         case 'autofocus':
           this.autofocus = HRValueUtils.getBoolean(propValue,true)
           QTLog.w(TAG_FOCUS,`set AutofocusPosition:${this.autofocus},this:${ExtendUtil.debugView(this)}`)
-          break;
+          return true
         case 'enableFocusBorder': {
           this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, false)
         }
@@ -284,17 +284,14 @@ export class QTDivView extends HRTvDivView {
   }
 
   handleFocus(isFocused: boolean): void {
-    // QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
-    if(this.parentView instanceof QTBaseComponentView){
-      if(this.cssFocusable){
-        this.parentView.notifyChildRequestFocus(this,this)
-      }
-    }
+    QTLog.w(TAG_TABS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
     if(this.cssFocusable){
       this.onFocusChanged(true)
     }
     super.handleFocus(isFocused)
   }
+
+
 
   /**
    * 可获焦view，isFocused状态改变
@@ -313,12 +310,13 @@ export class QTDivView extends HRTvDivView {
     }
     this.updateStateArray()
     this.drawableStateChanged(this.currentStates)
+    super.onFocusChanged(isFocused)
   }
 
 
 
   handleBlur(isFocused: boolean): void {
-    // QTLog.i(TAG_FOCUS,`---handle blur this:${ExtendUtil.debugView(this)}`)
+    QTLog.i(TAG_TABS,`---handle blur this:${ExtendUtil.debugView(this)}`)
     if(this.cssFocusable){
       this.onFocusChanged(false)
     }

@@ -9,6 +9,8 @@ import { QTItemRootView } from '../components/fastlist/QTItemRootView';
 import { QTTextView } from '../components/text/QTTextView';
 import { HRValueUtils } from '../HRValueUtils';
 import { LayoutAttach } from '../components/fastlist/LayoutAttach';
+import { QTDivView, QTFastFlexView, QTFastListView, QTTabsView } from '../../../../Index';
+import { QTFastItemView } from '../components/fastlist/QTFastItemView';
 
 export class ViewUtils{
   static getTextGravity(gs : string) : TextAlign{
@@ -272,6 +274,13 @@ export class ViewUtils{
         //return LayoutAttach.obtainLayoutAttach(view)?.uid
         QTLog.e(TAG_FASTLIST,`getViewUid error invalid tag`)
       }
+    }
+    return null;
+  }
+
+  static asViewGroup(view : QTView | null | undefined) : QTBaseComponentView | null{
+    if(view instanceof QTDivView || view instanceof QTFastListView || view instanceof QTFastFlexView || view instanceof QTTabsView || view instanceof QTItemRootView || view instanceof QTFastItemView){
+      return view;
     }
     return null;
   }

@@ -59,7 +59,7 @@ export class QTViewActor{
     let canTakeFocus = view.cssFocusable
     if(canTakeFocus ){
       if(this.hostView instanceof QTBaseComponentView){
-        QTLog.i(TAG_FOCUS,`addFocusables by view Actor this : ${ExtendUtil.debugView(this.hostView)}`)
+        QTLog.d(TAG_FOCUS,`addFocusables by view Actor this : ${ExtendUtil.debugView(this.hostView)}`)
         views.push(this.hostView)
       }else{
         QTLog.w(TAG_FOCUS,`addFocusables canTakeFocus reutrn  this : ${ExtendUtil.debugView(this.hostView)}`)

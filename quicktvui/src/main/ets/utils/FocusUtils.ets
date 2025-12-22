@@ -1,4 +1,5 @@
 import { PageManager } from "../components/router/PageManager";
+import { TVView } from "../components/TVView";
 import { TAG_FASTLIST, TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
 import { ExtendUtil } from "./ExtendUtil";
@@ -20,8 +21,9 @@ export class FocusUtils{
 
   static requestFocusById(uid : string | null | undefined) : boolean {
     if(uid){
-      QTLog.e(TAG_FOCUS,`exe requestFocus view :${uid}`)
-      return focusControl.requestFocus(uid)
+      let b =  focusControl.requestFocus(uid)
+      QTLog.e(TAG_FOCUS,`exe requestFocus view :${uid} success:${b}`)
+      return b;
     }else{
       QTLog.e(TAG_FOCUS,`requestFocus fail uid is null view :${uid}`)
     }
@@ -46,6 +48,15 @@ export class FocusUtils{
           }
         }
       },delay)
+    }
+
+    static focusSearchInViewGroup(root : QTView | null,focused :TVView | null,direction : number) : TVView | null | undefined{
+      if(!root){
+        return null;
+      }
+      let focusManager = PageManager.getPageHost(root)?.focusManager
+      let nextFocus = focusManager?.findNextFocusWithFocused(root, direction,focused)
+      return nextFocus;
     }
 
 }

@@ -104,6 +104,10 @@ export class QTFastFlexView extends QTRenderBaseView {
     }
   }
 
+  getDisplayChildren(): HippyObservedArray<QTView> {
+    return this.virtualChildren;
+  }
+
   keyGenerate(item : QTView,index : number) : string{
     if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid

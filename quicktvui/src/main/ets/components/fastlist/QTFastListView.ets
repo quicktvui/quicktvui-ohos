@@ -18,6 +18,7 @@ import System from '@ohos/zxing/src/main/ets/core/util/System';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TVView } from '../TVView';
 import { FocusUtils } from '../../utils/FocusUtils';
+import { QTViewActor } from '../QTViewActor';
 
 const PREFIX_KEY = "FASTLIST"
 
@@ -195,6 +196,17 @@ export class QTFastListView extends QTRenderBaseView{
 
   }
 
+  focusSearch(focused: TVView | null, direction: number): TVView | null {
+    if(this.hasFocus()){
+      let innerSeared = FocusUtils.focusSearchInViewGroup(this,focused,direction)
+      QTLog.e(TAG_FOCUS,`fastList focusSearch hasFocus:${this.hasFocus()},innerSeared:${innerSeared?.uid ?? 'null'} this:${ExtendUtil.debugView(this)}`)
+      if(innerSeared != null){
+        return innerSeared;
+      }
+    }
+    return super.focusSearch(focused,direction);
+  }
+
   public prepareTemplate() {
     // this.bgColor = Color.Pink
     QTLog.d(TAG_FASTLIST,`QTFastList: handleOnChildrenUpdated`)
@@ -265,6 +277,10 @@ export class QTFastListView extends QTRenderBaseView{
     if(this.endBatchCallback){
       this.ctx.getNativeRender().removeEndBatchCallback(this.ctx.getRootId(),this.endBatchCallback)
     }
+  }
+
+  getDisplayChildren(): HippyObservedArray<QTView> {
+    return this.virtualChildren
   }
 
 
