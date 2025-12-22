@@ -1,5 +1,13 @@
 [
   {
+    "channel": "g_2048",
+    "package": "es.com.elsb.tv"
+  },
+  {
+    "channel": "g_2048_rectangle",
+    "package": "es.com.elsbfk.tv"
+  },
+  {
     "channel": "g_black_white",
     "package": "es.com.blackwhite.tv"
   },
@@ -20,6 +28,10 @@
     "package": "es.com.zlsg.tv"
   },
   {
+    "channel": "g_guess_location",
+    "package": "es.com.guesspos.tv"
+  },
+  {
     "channel": "g_hannuota",
     "package": "es.com.hnt.tv"
   },
@@ -30,5 +42,13 @@
   {
     "channel": "g_rectangle",
     "package": "es.com.hlfk.tv"
+  },
+  {
+    "channel": "g_road",
+    "package": "es.com.szhrd.tv"
+  },
+  {
+    "channel": "g_snake",
+    "package": "es.com.snake.tv"
   }
 ]
