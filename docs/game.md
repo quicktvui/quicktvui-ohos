@@ -36,11 +36,11 @@
 
 2048: https://gitee.com/chenddcoder/2048.git
 2048方块：https://gitee.com/chenddcoder/2048rectangle.git
+推箱子：https://gitee.com/chenddcoder/box.git
+猜位置：https://gitee.com/chenddcoder/guess-location.git
+吃豆子：https://gitee.com/chenddcoder/esapp-pacman.git
 数字华容道：https://gitee.com/chenddcoder/road-vue3.git
 贪吃蛇: https://gitee.com/chenddcoder/snake.git
-吃豆子：https://gitee.com/chenddcoder/esapp-pacman.git
-猜位置：https://gitee.com/chenddcoder/guess-location.git
-推箱子：https://gitee.com/chenddcoder/box.git
 欢乐方块：https://gitee.com/chenddcoder/esapp-ractangle.git
 粉刷匠：https://gitee.com/chenddcoder/esapp-brush.git
 汉诺塔：https://gitee.com/chenddcoder/hannuota.git

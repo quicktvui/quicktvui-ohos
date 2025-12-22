@@ -106,8 +106,8 @@
         }
       },
       {
-        "name": "g_2048_cube",
-        "signingConfig": "2048cube",
+        "name": "g_2048_rectangle",
+        "signingConfig": "2048rectangle",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -121,8 +121,8 @@
         }
       },
       {
-        "name": "g_guess",
-        "signingConfig": "guess",
+        "name": "g_guess_location",
+        "signingConfig": "guesslocation",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -136,8 +136,8 @@
         }
       },
       {
-        "name": "g_huarong_road",
-        "signingConfig": "huarongroad",
+        "name": "g_road",
+        "signingConfig": "road",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -151,8 +151,8 @@
         }
       },
       {
-        "name": "g_push_box",
-        "signingConfig": "pushbox",
+        "name": "g_box",
+        "signingConfig": "box",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -234,50 +234,50 @@
         }
       },
       {
-        "name": "2048cube",
+        "name": "2048rectangle",
         "material": {
-          "certpath": "sign/2048cube/key.cer",
+          "certpath": "sign/2048rectangle/key.cer",
           "keyAlias": "debugKey",
           "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-          "profile": "sign/2048cube/key.p7b",
+          "profile": "sign/2048rectangle/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/2048cube/key.p12",
+          "storeFile": "sign/2048rectangle/key.p12",
           "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
         }
       },
       {
-        "name": "guess",
+        "name": "guesslocation",
         "material": {
-          "certpath": "sign/guess/key.cer",
+          "certpath": "sign/guesslocation/key.cer",
           "keyAlias": "debugKey",
           "keyPassword": "0000001BC953024C14C1D5B30B242811AD77F61D033EA15DBA2B565EFE88F2F59F1B57071BDBDC1B914234",
-          "profile": "sign/guess/key.p7b",
+          "profile": "sign/guesslocation/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/guess/key.p12",
+          "storeFile": "sign/guesslocation/key.p12",
           "storePassword": "0000001BC695546712C43D10654457D674121A9E0E86205FAEA31D72842EBA9D6D608966914F9796267D3F"
         }
       },
       {
-        "name": "huarongroad",
+        "name": "road",
         "material": {
-          "certpath": "sign/huarongroad/key.cer",
+          "certpath": "sign/road/key.cer",
           "keyAlias": "debugKey",
           "keyPassword": "0000001B82004AF08CB579E1FC86DEDB85C4A1609359C8BCF9F24AC9F47DB3084743CA1041258DD780A766",
-          "profile": "sign/huarongroad/key.p7b",
+          "profile": "sign/road/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/huarongroad/key.p12",
+          "storeFile": "sign/road/key.p12",
           "storePassword": "0000001B204F32293AE4802D6B2B8A4B4AC792CACE45CD1F34B911B60707E04B944A49CF2379A413741D39"
         }
       },
       {
-        "name": "pushbox",
+        "name": "box",
         "material": {
-          "certpath": "sign/pushbox/key.cer",
+          "certpath": "sign/box/key.cer",
           "keyAlias": "debugKey",
           "keyPassword": "0000001BF8E23196E2D8E546B8DC4BFD7CBAFBB43A447CBBA5C27917164310D34C9610C1F046440A1DA7E3",
-          "profile": "sign/pushbox/key.p7b",
+          "profile": "sign/box/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/pushbox/key.p12",
+          "storeFile": "sign/box/key.p12",
           "storePassword": "0000001BAEF58214363C7674A0A6FFC7F9829B1A4166C52F9EF9EEABC0C77E601AF24A8F74511CBDF13652"
         }
       },
@@ -343,27 +343,27 @@
           ]
         },
         {
-          "name": "g_2048_cube",
+          "name": "g_2048_rectangle",
           "applyToProducts": [
-            "g_2048_cube"
+            "g_2048_rectangle"
           ]
         },
         {
-          "name": "g_guess",
+          "name": "g_guess_location",
           "applyToProducts": [
-            "g_guess"
+            "g_guess_location"
           ]
         },
         {
-          "name": "g_huarong_road",
+          "name": "g_road",
           "applyToProducts": [
-            "g_huarong_road"
+            "g_road"
           ]
         },
         {
-          "name": "g_push_box",
+          "name": "g_box",
           "applyToProducts": [
-            "g_push_box"
+            "g_box"
           ]
         },
         {

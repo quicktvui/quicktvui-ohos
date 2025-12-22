@@ -12,3 +12,6 @@
 /.appanalyzer
 .DS_Store
 sign_private
+dist
+./dist
+./dist/*

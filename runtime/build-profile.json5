@@ -95,38 +95,110 @@
       }
     },
     {
-      "name": "g_2048_cube",
+      "name": "g_2048_rectangle",
       "resource": {
         "directories": [
           "./src/main/resources",
-          "./src/g_2048_cube/resources"
+          "./src/g_2048_rectangle/resources"
         ]
       }
     },
     {
-      "name": "g_guess",
+      "name": "g_black_white",
       "resource": {
         "directories": [
           "./src/main/resources",
-          "./src/g_guess/resources"
+          "./src/g_black_white/resources"
         ]
       }
     },
     {
-      "name": "g_huarong_road",
+      "name": "g_box",
       "resource": {
         "directories": [
           "./src/main/resources",
-          "./src/g_huarong_road/resources"
+          "./src/g_box/resources"
         ]
       }
     },
     {
-      "name": "g_push_box",
+      "name": "g_chess",
       "resource": {
         "directories": [
           "./src/main/resources",
-          "./src/g_push_box/resources"
+          "./src/g_chess/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_fog_lock",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_fog_lock/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_fruit_sort",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_fruit_sort/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_brush",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_brush/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_guess_location",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_guess_location/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_hannuota",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_hannuota/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_pacman",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_pacman/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_rectangle",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_rectangle/resources"
+        ]
+      }
+    },
+    {
+      "name": "g_road",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/g_road/resources"
         ]
       }
     },
