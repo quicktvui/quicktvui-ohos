@@ -107,7 +107,7 @@
       },
       {
         "name": "g_2048_rectangle",
-        "signingConfig": "2048rectangle",
+        "signingConfig": "2048_rectangle",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -122,7 +122,7 @@
       },
       {
         "name": "g_guess_location",
-        "signingConfig": "guesslocation",
+        "signingConfig": "guess_location",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -234,26 +234,26 @@
         }
       },
       {
-        "name": "2048rectangle",
+        "name": "2048_rectangle",
         "material": {
-          "certpath": "sign/2048rectangle/key.cer",
+          "certpath": "sign/2048_rectangle/key.cer",
           "keyAlias": "debugKey",
           "keyPassword": "0000001B578C0A71852E623153270DEC8EAF0E81A8A38B46CB05C3F3293F8B1F963405E3D538E4BCEBD84F",
-          "profile": "sign/2048rectangle/key.p7b",
+          "profile": "sign/2048_rectangle/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/2048rectangle/key.p12",
+          "storeFile": "sign/2048_rectangle/key.p12",
           "storePassword": "0000001B52BBD2A571011F6DBC21649B6A1A8879DE57DED75693EA04865AE63F04ED757211FE73099F7860"
         }
       },
       {
-        "name": "guesslocation",
+        "name": "guess_location",
         "material": {
-          "certpath": "sign/guesslocation/key.cer",
+          "certpath": "sign/guess_location/key.cer",
           "keyAlias": "debugKey",
           "keyPassword": "0000001BC953024C14C1D5B30B242811AD77F61D033EA15DBA2B565EFE88F2F59F1B57071BDBDC1B914234",
-          "profile": "sign/guesslocation/key.p7b",
+          "profile": "sign/guess_location/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/guesslocation/key.p12",
+          "storeFile": "sign/guess_location/key.p12",
           "storePassword": "0000001BC695546712C43D10654457D674121A9E0E86205FAEA31D72842EBA9D6D608966914F9796267D3F"
         }
       },
