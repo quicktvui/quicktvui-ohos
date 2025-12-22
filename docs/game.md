@@ -10,32 +10,16 @@
 
 ### 口算小天才：https://gitee.com/chenddcoder/mathgame.git
 
-1、所有按钮不能点击
+进度条有问题
 
 ### 盖楼吧：https://gitee.com/chenddcoder/stacking-tower.git
 
 1、游戏主页错乱
 
-### 整理水果：https://gitee.com/chenddcoder/fruit_sort.git
-
-2、焦点问题
-
-### 汉诺塔：https://gitee.com/chenddcoder/hannuota.git
-
-1、去掉焦点框
-
 ### 敲木鱼：https://gitee.com/chenddcoder/esapp-qiaomuyu.git
 
 2、敲木鱼动画问题
 3、列表焦点问题
-
-### 雾锁迷城：https://gitee.com/chenddcoder/foglock.git
-
-1、焦点问题 focus-border-color 没生效
-
-### 黑白棋：https://gitee.com/chenddcoder/blackwhite.git
-
-1、焦点问题
 
 ### 五子棋: https://gitee.com/chenddcoder/five.git
 
@@ -47,9 +31,6 @@
 1、游戏界面错乱
 3、按OK键无响应
 
-### 中国象棋：https://gitee.com/chenddcoder/esapp-chess.git
-
-1、没有焦点框
 
 ## ---------------------------- 已完成 ----------------------------
 
@@ -62,3 +43,8 @@
 推箱子：https://gitee.com/chenddcoder/box.git
 欢乐方块：https://gitee.com/chenddcoder/esapp-ractangle.git
 粉刷匠：https://gitee.com/chenddcoder/esapp-brush.git
+汉诺塔：https://gitee.com/chenddcoder/hannuota.git
+中国象棋：https://gitee.com/chenddcoder/esapp-chess.git
+整理水果：https://gitee.com/chenddcoder/fruit_sort.git
+黑白棋：https://gitee.com/chenddcoder/blackwhite.git
+雾锁迷城：https://gitee.com/chenddcoder/foglock.git
