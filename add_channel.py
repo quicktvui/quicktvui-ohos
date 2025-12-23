@@ -6,8 +6,6 @@ import subprocess
 
 # ================= 配置路径 =================
 PROJECT_ROOT = os.getcwd()
-# 根据您的实际情况，如果是直接在 quicktvui_ohos 目录下运行，则是 runtime
-# 如果是在项目根目录运行且有一层 quicktvui_ohos 文件夹，请修改为 os.path.join(PROJECT_ROOT, "quicktvui_ohos", "runtime")
 RUNTIME_MODULE_PATH = os.path.join(PROJECT_ROOT, "runtime")
 SIGN_PATH = os.path.join(PROJECT_ROOT, "sign")
 
