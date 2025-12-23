@@ -466,11 +466,11 @@
         "material": {
           "certpath": "sign/hannuota/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BC64989865B12EC4AFE5BFDAA1D6966FF192669FA4C107BEBEE700A668A0735BECEFA1DBB34795D",
+          "keyPassword": "0000001BB878B99D9F040BC28E3179F4025E83924ED0ECC7C9CCBE736CE03111C6882E59689C302651E073",
           "profile": "sign/hannuota/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/hannuota/key.p12",
-          "storePassword": "0000001B71C7C8EA3B1DC3972744CC4B12C12CFC3AC996FADF4727CB9FECAF0C300C12F2556172538EC8B3"
+          "storePassword": "0000001B9BD6866540D7B8526C8EDBB3AE42D6B06939FEB0F06DA1DE131F9F90DDB0B734D563FB15173716"
         }
       },
       {
@@ -478,11 +478,11 @@
         "material": {
           "certpath": "sign/pacman/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BACE44A786ED33027A0DF63FF5E35B440775A05CBE61F8EE84304FA8DB9E3FD3A7DC35C1C3792CF",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
           "profile": "sign/pacman/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/pacman/key.p12",
-          "storePassword": "0000001BE6B96FFDE8FBC7B0DFC3BB99E7612763BA92C57D0335F54DC5D0B9D62B84258112356CF7EC371C"
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
         }
       },
       {
@@ -490,13 +490,14 @@
         "material": {
           "certpath": "sign/rectangle/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001B0B5C8CC6E0214187DE9D16ECE73A8D42F6E6DB6A8C80E31C38FB4EE7E31CFFE9A7EE317BD9D859",
+          "keyPassword": "0000001B91848E28A095B4BA057887B5889DAA2E350212E93B3D83119E65F44FAFCAD8A9A1131EEB24D127",
           "profile": "sign/rectangle/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/rectangle/key.p12",
-          "storePassword": "0000001B4505729E9350CF179C48C97D3BA2332E50A4AC817E64CEB0B05A93D082EEF3DBE20B3851B75AB6"
+          "storePassword": "0000001B9D6A1C91FE70E58655B43C4A337501201C1CFCC2859247DD935ED290EFB3A60AC250BD52D1F181"
         }
       },
+
       {
         "name": "road",
         "material": {
