@@ -2,17 +2,12 @@ import os
 import shutil
 import json
 import re
+import subprocess
 
 # ================= 配置路径 =================
 PROJECT_ROOT = os.getcwd()
-RUNTIME_MODULE_PATH = os.path.join(PROJECT_ROOT, "runtime") # 请确认这个路径是否需要改回 "runtime"
-# 如果脚本在项目根目录运行，通常是:
-# RUNTIME_MODULE_PATH = os.path.join(PROJECT_ROOT, "quicktvui_ohos", "runtime")
-# 但根据您之前贴的代码，似乎是:
-# RUNTIME_MODULE_PATH = os.path.join(PROJECT_ROOT, "runtime")
-# 请根据实际文件夹结构确认。下面默认使用 quicktvui_ohos/runtime
-
-# 假设结构是 project/quicktvui_ohos/runtime
+# 根据您的实际情况，如果是直接在 quicktvui_ohos 目录下运行，则是 runtime
+# 如果是在项目根目录运行且有一层 quicktvui_ohos 文件夹，请修改为 os.path.join(PROJECT_ROOT, "quicktvui_ohos", "runtime")
 RUNTIME_MODULE_PATH = os.path.join(PROJECT_ROOT, "runtime")
 SIGN_PATH = os.path.join(PROJECT_ROOT, "sign")
 
@@ -139,8 +134,35 @@ def smart_append_node(file_path, identifier_pattern, replacements, scope_pattern
     except Exception as e:
         print_color(f"处理文件 {file_path} 失败: {e}", "red")
 
+def run_git_add(paths):
+    """ 执行 git add 命令 """
+    print_color("\n=== 执行 Git Add ===", "yellow")
+
+    # 过滤掉不存在的路径
+    valid_paths = [p for p in paths if os.path.exists(p)]
+
+    if not valid_paths:
+        print_color("没有文件需要添加到 Git", "yellow")
+        return
+
+    try:
+        # 打印即将添加的文件
+        print("正在添加以下文件/目录:")
+        for p in valid_paths:
+            print(f" - {os.path.relpath(p, PROJECT_ROOT)}") # 显示相对路径
+
+        # 执行命令
+        subprocess.run(["git", "add"] + valid_paths, check=True)
+        print_color("Git Add 执行成功!", "green")
+    except subprocess.CalledProcessError as e:
+        print_color(f"Git Add 执行失败: {e}", "red")
+    except FileNotFoundError:
+        print_color("错误: 未找到 git 命令，请确认已安装 git。", "red")
+    except Exception as e:
+        print_color(f"发生错误: {e}", "red")
+
 def main():
-    print_color("=== HarmonyOS 渠道添加脚本 (Fix2) ===", "green")
+    print_color("=== HarmonyOS 渠道添加脚本 (Git版) ===", "green")
 
     channel_name = input("请输入渠道名称 (例如 book): ").strip()
     if not channel_name: return
@@ -153,7 +175,7 @@ def main():
     print_color(f"\n配置: {channel_name} | {sign_config_name}", "yellow")
     if input("确认继续? (y/n): ").lower() != 'y': return
 
-    # 1. 拷贝资源 (简单检查)
+    # 1. 拷贝资源
     target_runtime_src = os.path.join(RUNTIME_MODULE_PATH, "src", channel_name)
     if not os.path.exists(target_runtime_src):
         try:
@@ -198,7 +220,6 @@ def main():
     )
 
     # Root SigningConfigs
-    # 修复：同时替换 sign/template 和 sign_private/template 以防万一
     smart_append_node(
         ROOT_PROFILE,
         identifier_pattern=r'"name"\s*:\s*"template"',
@@ -221,7 +242,27 @@ def main():
         scope_pattern=r'"modules"[\s\S]*?"targets"\s*:\s*\['
     )
 
-    print_color("完成", "green")
+    print_color("文件操作完成", "green")
+
+    # ================= 3. 执行 Git Add =================
+    # 收集需要添加的路径
+    git_paths = [
+        RUNTIME_PROFILE,        # 修改的 runtime/build-profile.json5
+        ROOT_PROFILE,           # 修改的 build-profile.json5
+        target_runtime_src,     # 新增的 src/xxx 文件夹
+        target_sign_path        # 新增的 sign/xxx 文件夹
+    ]
+
+    run_git_add(git_paths)
+
+    # ================= 4. 重要提醒 =================
+    print_color("\n" + "="*20 + " 重 要 提 醒 " + "="*20, "red")
+    print(f"1. [图标] 请替换: runtime/src/{channel_name}/resources/base/media/app_icon.png")
+    print(f"2. [代码] 请添加快应用代码到: runtime/src/{channel_name}/rawfile/vue")
+    print(f"3. [签名] 脚本已拷贝了测试签名到: sign/{channel_name}")
+    print(f"   注意：请务必将该文件夹下的文件替换为【正式签名文件】。")
+    print(f"4. [路径] 请确认 build-profile 中 'signingConfigs' 与实际目录 'sign' 的映射关系。")
+    print_color("="*50, "red")
 
 if __name__ == "__main__":
     main()
