@@ -607,11 +607,11 @@
         "material": {
           "certpath": "sign/baduanjin/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001B21F76C7D1C63CBCEE7FEB4C0EB4BEB5143CECFD3EDC0E76C0C5CE0D698738F23821D6E6C91D2CE",
           "profile": "sign/baduanjin/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/baduanjin/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001BF529C47BCF1CCB4985DD4B83243892F7C7FE76C6F922F2552774C05D1A2444D695780FD9277C9D"
         }
       }
     ]
