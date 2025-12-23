@@ -185,7 +185,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .onClick($$.eventClick)
   //quicktvui tv basic
   .key($$.name)
-  .id($$.sid)
+  .id($$.uid)
   .visibility($$.visibility)
 }
 

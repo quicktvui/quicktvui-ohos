@@ -211,12 +211,20 @@ export class QTTabsView extends QTRenderBaseView{
     // })
   }
 
+  // getDisplayChildren(): HippyObservedArray<HippyRenderBaseView> {
+  //   return this.getTabData(this.currentIndex)?.contentView?.virtualChildren
+  // }
+
   addFocusables(views: TVView[], direction: number): boolean {
     let pd = this.getTabData(this.currentIndex)
     QTLog.d(TAG_FOCUS,`Tabs addFocusables currentContent:${ExtendUtil.debugView(pd!!.contentView)} curentIdex:${this.currentIndex}`)
     this.tabList?.addFocusables(views,direction)
     return pd?.contentView?.addFocusables(views,direction) ? true : false;
     return true;
+  }
+
+  focusSearch(focused: TVView | null, direction: number): TVView | null {
+    return this.getTabData(this.currentIndex)?.contentView?.focusSearch(focused,direction) ?? null;
   }
 
   onBackPressed() : boolean{

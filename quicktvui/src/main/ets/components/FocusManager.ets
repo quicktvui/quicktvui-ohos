@@ -8,6 +8,10 @@ import { FocusUtils } from "../utils/FocusUtils";
 import { TVView } from "./TVView";
 import { ExtendUtil } from "../utils/ExtendUtil";
 import { QTPageView } from "./router/QTPageView";
+import { inspector } from "@kit.ArkUI";
+import { QTFastList } from "./fastlist/QTFastList";
+import { QTDivView, QTFastListView, QTTabsView } from "../../../../Index";
+import { ViewUtils } from "../utils/ViewUtils";
 
 export class FocusManager{
 
@@ -33,15 +37,24 @@ export class FocusManager{
       return -1;
   }
 
-  focusSearchInDescendants(focused: TVView | null , direction : number) : TVView | null{
-    for (let i = 0; i < this.rootView.children.length; i++) {
-      let child = this.rootView.children[i]
-      if(child  instanceof  QTBaseComponentView){
-        let nextFocus = child.focusSearch(focused,direction)
-        if(nextFocus != null){
-          return nextFocus;
-        }
+  focusSearchInDescendants(focused: TVView | null , direction : number,rootView:QTView | null) : TVView | null{
+    if(!rootView){
+      return null;
+    }
+    let result : TVView | null | undefined = null;
+    if(ViewUtils.asViewGroup(rootView)){
+      result = ViewUtils.asViewGroup(rootView)?.focusSearch(focused,direction);
+      if(result){
+        return result;
       }
+    }
+    let children = rootView instanceof QTBaseComponentView ?  rootView.getDisplayChildren() : rootView.children;
+    for (let i = 0; i < children.length; i++) {
+      let child = children[i]
+        result = this.focusSearchInDescendants(focused,direction,child)
+        if(result != null){
+          return result;
+        }
     }
     return null;
   }
@@ -67,7 +80,7 @@ export class FocusManager{
       let direction = FocusManager.getDirectionByKeyCode(event.keyCode)
       if(direction > 0){
         let nextFocus : TVView | null = null;
-        nextFocus = this.focusSearchInDescendants(this.focusedView,direction);
+        nextFocus = this.focusSearchInDescendants(this.focusedView,direction,this.rootView);
         if(!nextFocus){
           nextFocus = FocusFinder.findNextFocus(this.focusedView,this.rootView,direction)
         }

@@ -289,16 +289,6 @@ export class HRTvDivView extends QTBaseComponentView {
         this.showOnState();
       }
         break;
-      case "hasFocus":
-        let hasFocusRes = new Map<string, HippyValue>() as HippyMap;
-        hasFocusRes.set("value", (this.focusable || this.findFocusable(this.children)));
-        callback && callback(hasFocusRes)
-        break;
-      case "isFocused":
-        let isFocusedRes = new Map<string, HippyValue>() as HippyMap;
-        isFocusedRes.set("value", this.focus);
-        callback && callback(isFocusedRes)
-        break;
       case "requestFocus": {
         const id = params[0] as string;
         focusControl.requestFocus(id);
@@ -342,6 +332,7 @@ export class HRTvDivView extends QTBaseComponentView {
       }
       default:
     }
+    super.call(method,params,callback)
   }
 
   setFocusBoxStyle() {
