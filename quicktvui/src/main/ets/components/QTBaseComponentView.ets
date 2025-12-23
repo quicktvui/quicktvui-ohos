@@ -7,7 +7,7 @@ import {
 } from 'hippy'
 import { TAG_FASTLIST, TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
-import { QTView } from '../QTTypes';
+import { QTAny, QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
 import { QTLog } from '../utils/QTLog';
 import { LayoutAttach } from './fastlist/LayoutAttach';
@@ -38,7 +38,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   enableFocusBorder: boolean = false //是否显示focusBox
   focusable: boolean = false //是否可获焦
   currentStates: number[] = [QTViewState.STATE_NORMAL]
-
+  focusChild : QTView | null = null;
+  descendantFocusability : number = 1;
 
   public get uid(): string {
     if(this._uid){
@@ -94,6 +95,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
    * @param focusedView
    */
   notifyChildRequestFocus(child:QTView,focusedView: TVView){
+    this.focusChild = child;
+    QTLog.i(TAG_FOCUS,`++++notifyChildRequestFocus focusChild : ${ExtendUtil.debugView(this.focusChild)}`)
     if(this.parentView instanceof QTBaseComponentView){
       this.parentView.notifyChildRequestFocus(this,focusedView)
     }else{
@@ -102,9 +105,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   }
 
   focusSearch(focused: TVView | null ,direction : number) : TVView | null{
-
    // let  nextFocus = FocusFinder.findNextFocus(focused,this)
-
+    QTLog.e(TAG_FOCUS,`focusSearch hasFocus:${this.hasFocus()},focused:${focused?.uid ?? 'null'} this:${ExtendUtil.debugView(this)}`)
     return null;
   }
 
@@ -201,6 +203,30 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
 
   }
 
+  hasFocus(){
+    return this.focusChild != null;
+  }
+
+  clearFocusChild(){
+    QTLog.w(TAG_FOCUS,`-----clearFocusChild focusChild : ${ExtendUtil.debugView(this.focusChild)}`)
+    this.focusChild = null;
+    if(this.parentView instanceof QTBaseComponentView){
+      this.parentView.clearFocusChild();
+    }
+  }
+
+  onFocusChanged(isFocused:boolean){
+    if(this.parentView instanceof QTBaseComponentView){
+      if(this.cssFocusable){
+        if(isFocused){
+          this.parentView.notifyChildRequestFocus(this,this)
+        }else{
+          this.parentView.clearFocusChild();
+        }
+      }
+    }
+  }
+
   getPageUid() : string | null | undefined{
     return LayoutAttach.obtainLayoutAttach(this).pageUid
   }
@@ -218,7 +244,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   }
 
   isFocused(){
-    return this.focus && this.cssFocusable
+    return this.focus && (this.cssFocusable ?? false)
   }
 
   isSelected(){
@@ -285,7 +311,6 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         return true
       case 'selected':
         this.setSelected(HRValueUtils.getBoolean(propValue as HippyAny, true))
-
         return true;
       case 'enableFocusBorder': {
         this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, true)
@@ -298,6 +323,14 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         QTLog.i(TAG_FOCUS, `set focusable ${this.focusable} view:` + ExtendUtil.debugView(this))
       }
         return true
+      case 'descendantFocusability':
+        this.descendantFocusability = HRValueUtils.getNumber(propValue);
+        QTLog.i(TAG_FOCUS, `set descendantFocusability ${this.descendantFocusability} view:` + ExtendUtil.debugView(this))
+        return true;
+      // case 'blockRootFocus':
+      //   let enableBlock = HRValueUtils.getBoolean(propValue,false)
+      //   this.viewActor.blockRootFocus(enableBlock,this)
+      //   return true;
     }
     return super.setProp(propKey, propValue)
   }
@@ -309,6 +342,19 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
       if (callback) {
         const info = new Map<string, HippyAny>()
         callback(info)
+      }
+    }else{
+      switch (method){
+        case "hasFocus":
+          let hasFocusRes = new Map<string, boolean>();
+          hasFocusRes.set("value", (this.hasFocus()));
+          callback && callback(hasFocusRes)
+          break;
+        case "isFocused":
+          let isFocusedRes = new Map<string, boolean>();
+          isFocusedRes.set("value", this.isFocused());
+          callback && callback(isFocusedRes)
+          break;
       }
     }
   }

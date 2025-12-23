@@ -143,7 +143,7 @@ export class QTTextView extends QTRenderBaseView{
       //
       //   return true;
       case "text":
-        QTLog.d(TAG_REUSE,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
+        QTLog.d(TAG_LAYOUT,`setText old:${this.text},new :${HRValueUtils.getString(propValue)}`)
         this.text = HRValueUtils.getString(propValue)
         return true;
     }
@@ -184,7 +184,7 @@ export class QTTextView extends QTRenderBaseView{
 export struct  QTText {
   @ObjectLink renderView: QTTextView
   @ObjectLink children: HippyObservedArray<QTView>
-  @Consume('autoSize') autoSize?: number[]
+  // @Consume('autoSize') autoSize?: number[]
 
   @State textSize: SizeOptions = MeasureText.measureTextSize({
     textContent: this.renderView.text,
@@ -199,6 +199,7 @@ export struct  QTText {
       .height(this.renderView.cssHeight > 0 ? this.renderView.cssHeight :  this.textSize.height)
       .padding(this.renderView.qtPadding)
       .onAreaChange((oldValue: Area, newValue: Area) => {
+        QTLog.d(TAG_LAYOUT,`0 textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
         if(newValue.width != oldValue.width || newValue.height != oldValue.height){
           if(this.renderView.parentView instanceof QTBaseComponentView){
             let newWidth = 0
@@ -211,7 +212,7 @@ export struct  QTText {
               LayoutAttach.obtainLayoutAttach(this.renderView).setFixedHeight(newHeight)
               // this.renderView.cssHeight = Number(newValue.height)
               // QTPixelUtil.setRenderViewLayout(this.renderView,[0,])
-              //QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
+              QTLog.d(TAG_LAYOUT,`textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
               this.renderView.parentView.notifyChildSizeChanged(this.renderView, this.renderView, newWidth, newHeight)
             }
           }else{
