@@ -76,8 +76,8 @@
         }
       },
       {
-        "name": "baduanjin",
-        "signingConfig": "baduanjin",
+        "name": "wm_baduanjin",
+        "signingConfig": "wm_baduanjin",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -576,14 +576,14 @@
         }
       },
       {
-        "name": "baduanjin",
+        "name": "wm_baduanjin",
         "material": {
-          "certpath": "sign/baduanjin/key.cer",
+          "certpath": "sign/wm_baduanjin/key.cer",
           "keyAlias": "debugKey",
           "keyPassword": "0000001BD82D152EFE6F5406A856E5333790EE111D94CB26636031128191DB2BAE4D4BDB47BDCFDA5B1500",
-          "profile": "sign/baduanjin/key.p7b",
+          "profile": "sign/wm_baduanjin/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/baduanjin/key.p12",
+          "storeFile": "sign/wm_baduanjin/key.p12",
           "storePassword": "0000001B5CCED4947304AB1B0102EA4998B5544654D6EBF1B7FE76FA9A2F9A5069F3DE2414681E5A4B3CB2"
         }
       },
@@ -625,9 +625,9 @@
           ]
         },
         {
-          "name": "baduanjin",
+          "name": "wm_baduanjin",
           "applyToProducts": [
-            "baduanjin"
+            "wm_baduanjin"
           ]
         },
         {

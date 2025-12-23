@@ -77,11 +77,11 @@
       }
     },
     {
-      "name": "baduanjin",
+      "name": "wm_baduanjin",
       "resource": {
         "directories": [
           "./src/main/resources",
-          "./src/baduanjin/resources"
+          "./src/wm_baduanjin/resources"
         ]
       }
     },
