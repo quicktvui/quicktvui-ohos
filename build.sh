@@ -72,7 +72,8 @@ build_channel() {
 # ========================================================
 CHANNELS=(
 ke_ting_jian_shen
-#tudoudou
+tudoudou
+baduanjin
 #  g_2048
 #  g_2048_rectangle
 #  g_black_white

@@ -77,7 +77,7 @@
       },
       {
         "name": "baduanjin",
-        "signingConfig": "default",
+        "signingConfig": "baduanjin",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -574,7 +574,19 @@
           "storeFile": "sign/ke_ting_jian_shen/key.p12",
           "storePassword": "0000001BE6CBD60B8A5E958D822F406B4490B7F5A3D4F7AF4E622A81CB30C743E495D3CE23857B98B5591C"
         }
-      }
+      },
+      {
+        "name": "baduanjin",
+        "material": {
+          "certpath": "sign/baduanjin/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B97F8E20F8A0C964C64CAD63D1DD9A394373C0806B5555B863DE084B374FC890C5AFC5CC709CC8D",
+          "profile": "sign/baduanjin/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/baduanjin/key.p12",
+          "storePassword": "0000001BE6CBD60B8A5E958D822F406B4490B7F5A3D4F7AF4E622A81CB30C743E495D3CE23857B98B5591C"
+        }
+      },
     ]
   },
   "modules": [
