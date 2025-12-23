@@ -41,6 +41,15 @@
       "name": "default",
     },
     {
+      "name": "template",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/template/resources"
+        ]
+      }
+    },
+    {
       "name": "tudoudou",
       "resource": {
         "directories": [
