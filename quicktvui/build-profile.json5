@@ -3,6 +3,16 @@
   "buildOptionSet": [
     {
       "name": "release",
+      "externalNativeOptions": {
+        "abiFilters": [
+          "arm64-v8a",
+        ],
+      },
+      "nativeLib": {
+        "debugSymbol": {
+          "strip": false
+        }
+      },
       "arkOptions": {
         "obfuscation": {
           "ruleOptions": {
