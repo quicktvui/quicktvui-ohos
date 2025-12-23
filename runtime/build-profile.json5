@@ -220,5 +220,15 @@
         ]
       }
     }
-  ]
+  ,
+{
+      "name": "ke_ting_jian_shen",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/ke_ting_jian_shen/resources"
+        ]
+      }
+    }
+]
 }

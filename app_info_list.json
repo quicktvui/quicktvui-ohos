@@ -50,5 +50,9 @@
   {
     "channel": "g_snake",
     "package": "es.com.snake.tv"
+  },
+  {
+    "channel": "ke_ting_jian_shen",
+    "package": "es.com.ktjs.tv"
   }
 ]

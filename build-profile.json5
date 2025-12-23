@@ -326,6 +326,21 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "ke_ting_jian_shen",
+        "signingConfig": "ke_ting_jian_shen",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.ktjs.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -524,7 +539,6 @@
           "storePassword": "0000001B9D6A1C91FE70E58655B43C4A337501201C1CFCC2859247DD935ED290EFB3A60AC250BD52D1F181"
         }
       },
-
       {
         "name": "road",
         "material": {
@@ -547,6 +561,18 @@
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/snake/key.p12",
           "storePassword": "0000001B241CD651AF44801BA48CFE21B5A2D32F29232869E2BDCC8423171907AF689CA4D86DCC2060C21F"
+        }
+      },
+      {
+        "name": "ke_ting_jian_shen",
+        "material": {
+          "certpath": "sign/ke_ting_jian_shen/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/ke_ting_jian_shen/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/ke_ting_jian_shen/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
         }
       }
     ]
@@ -680,6 +706,12 @@
           "name": "g_snake",
           "applyToProducts": [
             "g_snake"
+          ]
+        },
+        {
+          "name": "ke_ting_jian_shen",
+          "applyToProducts": [
+            "ke_ting_jian_shen"
           ]
         }
       ]
