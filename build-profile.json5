@@ -401,13 +401,13 @@
       {
         "name": "tudoudou",
         "material": {
-          "storeFile": "sign_private/tudoudou/key.p12",
-          "storePassword": "0000001C54E774FF7C244D491F2569227818134F3117E94F9701E989B7906CBD405342F5DF98541586A783F2",
-          "keyAlias": "esapp",
-          "keyPassword": "0000001C7C201985169C5A190160745832FC25F913B10A76178042CCAD90DDEC8EC3521109DB60D22BFC7A32",
+          "certpath": "sign/tudoudou/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B6B2360BA9B61B88A934C4F991DED38E351A281AE85BE1D239AE23F26D3F2D048E5579E23C8BF0A",
+          "profile": "sign/tudoudou/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "profile": "sign_private/tudoudou/key.p7b",
-          "certpath": "sign_private/tudoudou/key.cer"
+          "storeFile": "sign/tudoudou/key.p12",
+          "storePassword": "0000001BCA3EDCDD67428C50BFE37E0D20CD567C29A78799BD61483AD7FF9B31412FD7D44CEB112AEA8AA5"
         }
       },
       {
