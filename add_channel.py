@@ -4,6 +4,9 @@ import json
 import re
 import subprocess
 
+
+# eg: python3 add_channel.py
+
 # ================= 配置路径 =================
 PROJECT_ROOT = os.getcwd()
 RUNTIME_MODULE_PATH = os.path.join(PROJECT_ROOT, "runtime")

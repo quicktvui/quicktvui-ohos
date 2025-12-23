@@ -54,5 +54,13 @@
   {
     "channel": "ke_ting_jian_shen",
     "package": "es.com.ktjs.tv"
+  },
+  {
+    "channel": "baduanjin",
+    "package": "es.com.baduanjin.tv"
+  },
+  {
+    "channel": "wm_baduanjin",
+    "package": "tv.huan.wmbdj"
   }
 ]

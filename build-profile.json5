@@ -341,6 +341,21 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "baduanjin",
+        "signingConfig": "baduanjin",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.baduanjin.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -587,6 +602,18 @@
           "storePassword": "0000001B5CCED4947304AB1B0102EA4998B5544654D6EBF1B7FE76FA9A2F9A5069F3DE2414681E5A4B3CB2"
         }
       },
+      {
+        "name": "baduanjin",
+        "material": {
+          "certpath": "sign/baduanjin/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/baduanjin/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/baduanjin/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      }
     ]
   },
   "modules": [
@@ -724,6 +751,12 @@
           "name": "ke_ting_jian_shen",
           "applyToProducts": [
             "ke_ting_jian_shen"
+          ]
+        },
+        {
+          "name": "baduanjin",
+          "applyToProducts": [
+            "baduanjin"
           ]
         }
       ]

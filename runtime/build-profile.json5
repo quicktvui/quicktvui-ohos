@@ -219,9 +219,8 @@
           "./src/g_snake/resources"
         ]
       }
-    }
-  ,
-{
+    },
+    {
       "name": "ke_ting_jian_shen",
       "resource": {
         "directories": [
@@ -229,6 +228,15 @@
           "./src/ke_ting_jian_shen/resources"
         ]
       }
+    },
+    {
+      "name": "baduanjin",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/baduanjin/resources"
+        ]
+      }
     }
-]
+  ]
 }
