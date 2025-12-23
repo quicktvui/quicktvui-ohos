@@ -72,19 +72,19 @@ build_channel() {
 # ========================================================
 CHANNELS=(
   g_2048
-#   g_2048_rectangle
-#   g_black_white
-#   g_box
-#   g_brush
-#   g_chess
-#   g_fog_lock
-#   g_fruit_sort
-#   g_guess_location
-#   g_hannuota
-#   g_pacman
-#   g_rectangle
-#   g_road
-#   g_snake
+  g_2048_rectangle
+  g_black_white
+  g_box
+  g_brush
+  g_chess
+  g_fog_lock
+  g_fruit_sort
+  g_guess_location
+  g_hannuota
+  g_pacman
+  g_rectangle
+  g_road
+  g_snake
 )
 
 # ========================================================
