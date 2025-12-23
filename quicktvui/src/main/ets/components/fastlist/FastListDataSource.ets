@@ -41,6 +41,7 @@ import { QTLog } from '../../utils/QTLog';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { globalQTViewMap, ItemStoreView } from './ItemStoreView';
 import { CommonUtils } from '../../utils/CommonUtils';
+import { JSON } from '@kit.ArkTS';
 
 
 // class ItemEntry{
@@ -301,6 +302,14 @@ export class FastListDataSource implements IDataSource {
         }
         return;
       }
+    if(data.has('contentLayout')){
+      QTLog.d(TAG_FASTLIST,`findItemViewSize has Layout :${data.get('layout')}`)
+      let array = data.get('contentLayout') as QTArray
+      for(let i = 0; i < 4; i ++){
+        layout[i] = QTPixelUtil.getDimensionValue(array[i])
+      }
+      return;
+    }
       if(data.has('size')){
         let array = data.get('size') as QTArray
         QTLog.d(TAG_FASTLIST,`findItemViewSize has size :${data.get('size')}`)
@@ -316,6 +325,15 @@ export class FastListDataSource implements IDataSource {
         layout[2] =  QTPixelUtil.getDimensionValue(map.get('width'))
         layout[3] =  QTPixelUtil.getDimensionValue(map.get('height'))
       }
+    if(data.has('contentStyle')){
+      QTLog.d(TAG_FASTLIST,`findItemViewSize has flexStyle :${data.get('flexStyle')}`)
+      let map = data.get('contentStyle') as QTMap
+      layout[0] =  QTPixelUtil.getDimensionValue(map.get('left'))
+      layout[1] =  QTPixelUtil.getDimensionValue(map.get('top'))
+      layout[2] =  QTPixelUtil.getDimensionValue(map.get('width'))
+      layout[3] =  QTPixelUtil.getDimensionValue(map.get('height'))
+    }
+
       if(layout[2] < 1 && data.has('width')){
         QTLog.d(TAG_FASTLIST,`findItemViewSize has width :${data.get('width')}`)
         layout[2] =  QTPixelUtil.getDimensionValue(data.get('width'))
@@ -527,6 +545,10 @@ export class FastListDataSource implements IDataSource {
     let fi = this.dataList[index] as QTItemRootView
     let item: ItemView = fi.itemView!!
     let type = getItemType(item.raw)
+    if(!type){
+      type = FastListDataSource.DEFAULT_TYPE
+    }
+    let it = this.getTemplateByType(type!!)
     // if(!fi.contentType || fi.contentType != type || fi.updateDirty){
     if(true){
       try{
@@ -541,6 +563,15 @@ export class FastListDataSource implements IDataSource {
     QTLog.d(TAG_REUSE,`getData index:${index}`)
     if(fi.cssWidth < 1 || fi.cssHeight < 1){
       console.error(TAG_LAYOUT,`getData layout Error index:${index},item:${CommonUtils.hippyAny2String(item.raw)}`)
+      let layout : number[] = [0,0,0,0]
+      FastListDataSource.findItemViewSize(it!!.props,index,item.raw as QTMap,layout)
+      console.error(TAG_LAYOUT,`getData fallback layout : ${JSON.stringify(layout)} `)
+      if(fi.cssWidth < 1){
+        fi.cssWidth = QTPixelUtil.dev2Vp(layout[2])
+      }
+      if(fi.cssHeight < 1){
+        fi.cssHeight = QTPixelUtil.dev2Vp(layout[3])
+      }
     }
     // if(item.renderView){
     //   NodeUtils.printViewTreePretty(item.renderView,'',false)
