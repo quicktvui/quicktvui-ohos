@@ -568,11 +568,11 @@
         "material": {
           "certpath": "sign/ke_ting_jian_shen/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001B97F8E20F8A0C964C64CAD63D1DD9A394373C0806B5555B863DE084B374FC890C5AFC5CC709CC8D",
           "profile": "sign/ke_ting_jian_shen/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/ke_ting_jian_shen/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001BE6CBD60B8A5E958D822F406B4490B7F5A3D4F7AF4E622A81CB30C743E495D3CE23857B98B5591C"
         }
       }
     ]

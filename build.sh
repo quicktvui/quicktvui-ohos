@@ -71,7 +71,8 @@ build_channel() {
 # 4. 渠道列表
 # ========================================================
 CHANNELS=(
-tudoudou
+ke_ting_jian_shen
+#tudoudou
 #  g_2048
 #  g_2048_rectangle
 #  g_black_white
