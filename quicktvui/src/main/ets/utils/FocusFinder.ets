@@ -4,6 +4,7 @@ import { TVView } from "../components/TVView";
 import { TAG_FOCUS } from "../Constant";
 import { QTView } from "../QTTypes";
 import { ExtendUtil } from "./ExtendUtil";
+import { FocusUtils } from "./FocusUtils";
 import { QTLog } from "./QTLog";
 
 // Rect类实现
@@ -198,8 +199,9 @@ export class FocusFinder {
       }
 
       if(focusedRect.isEmpty()){
-        QTLog.e(TAG_FOCUS,`Current focused view rect is empty, focus search fail !`)
-        return null;
+        QTLog.e(TAG_FOCUS,`Current focused view rect is empty, focus search may fail !`)
+        // return null;
+        // return FocusFinder.findFirstFocusableByDirection(views, root, direction);
       }
 
       QTLog.i(TAG_FOCUS, `findNextFocus current focused rect: ${focusedRect.toString()}`);
@@ -331,7 +333,7 @@ export class FocusFinder {
 
   static addAllFocusable(views: TVView[], target: QTView, direction: number) {
     // 检查当前视图是否可获取焦点
-    if(target instanceof QTBaseComponentView){
+    if(target instanceof QTBaseComponentView && target.descendantFocusability != FocusUtils.FOCUS_BLOCK_DESCENDANTS){
       target.addFocusables(views,direction)
     }
     else if (target.cssFocusable === true) {

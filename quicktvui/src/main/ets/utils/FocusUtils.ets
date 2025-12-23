@@ -9,6 +9,10 @@ import { ViewUtils } from "./ViewUtils";
 
 export class FocusUtils{
 
+    static FOCUS_BEFORE_DESCENDANTS : number = 0
+    static FOCUS_AFTER_DESCENDANTS : number = 1
+    static FOCUS_BLOCK_DESCENDANTS : number = 2
+
     static requestFocus(view : QTView | null | undefined){
         let uid = ViewUtils.getViewUid(view)
         if(uid){
@@ -57,6 +61,14 @@ export class FocusUtils{
       let focusManager = PageManager.getPageHost(root)?.focusManager
       let nextFocus = focusManager?.findNextFocusWithFocused(root, direction,focused)
       return nextFocus;
+    }
+
+    static blockRootFocus(requestView : QTView){
+      QTLog.w(TAG_FOCUS,`+++blockRootFocus called requestView:${ExtendUtil.debugView(requestView)}`)
+    }
+
+    static unBlockRootFocus(requestView: QTView){
+      QTLog.e(TAG_FOCUS,`+++unBlockRootFocus called requestView:${ExtendUtil.debugView(requestView)}`)
     }
 
 }

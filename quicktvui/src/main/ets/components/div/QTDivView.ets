@@ -253,17 +253,20 @@ export class QTDivView extends HRTvDivView {
         }
         return true
        case 'focusBorderRadius':
-        this.focusBorderRadius = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))
+          this.focusBorderRadius = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue))
         return true
         case 'focusBorderColor':
           this.focusBorderColor = HRValueUtils.getNumber(propValue)
           QTLog.w(TAG_STATE_DRAW,`set focusBorderColor:${propValue} number:${this.focusBorderColor} ,this:${ExtendUtil.debugView(this)}`)
         return true;
-      // case 'showOnState':
-      //   super.setProp(propKey, propValue)
-      //   QTLog.w(TAG_FOCUS,`div setShowOnState :${propValue},this:${ExtendUtil.debugView(this)}`)
-      //   this.handleShowOnState();
-      //   return true;
+      case 'blockRootFocus':
+          let enableBlock = HRValueUtils.getBoolean(propValue,false)
+          if(enableBlock){
+            FocusUtils.blockRootFocus(this)
+          }else{
+            FocusUtils.unBlockRootFocus(this)
+          }
+        return true;
     }
     return super.setProp(propKey, propValue)
   }
@@ -404,6 +407,9 @@ export struct QTDiv {
     // setInterval(()=>{
     //   QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this.renderView)} `)
     // },5000)
+    if(this.renderView.autofocus && this.renderView.cssFocusable){
+      FocusUtils.requestFocus(this.renderView)
+    }
   }
 
   aboutToDisappear() {

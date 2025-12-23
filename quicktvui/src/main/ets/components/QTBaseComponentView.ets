@@ -39,6 +39,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   focusable: boolean = false //是否可获焦
   currentStates: number[] = [QTViewState.STATE_NORMAL]
   focusChild : QTView | null = null;
+  descendantFocusability : number = 1;
 
   public get uid(): string {
     if(this._uid){
@@ -243,7 +244,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   }
 
   isFocused(){
-    return this.focus && this.cssFocusable
+    return this.focus && (this.cssFocusable ?? false)
   }
 
   isSelected(){
@@ -322,6 +323,14 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         QTLog.i(TAG_FOCUS, `set focusable ${this.focusable} view:` + ExtendUtil.debugView(this))
       }
         return true
+      case 'descendantFocusability':
+        this.descendantFocusability = HRValueUtils.getNumber(propValue);
+        QTLog.i(TAG_FOCUS, `set descendantFocusability ${this.descendantFocusability} view:` + ExtendUtil.debugView(this))
+        return true;
+      // case 'blockRootFocus':
+      //   let enableBlock = HRValueUtils.getBoolean(propValue,false)
+      //   this.viewActor.blockRootFocus(enableBlock,this)
+      //   return true;
     }
     return super.setProp(propKey, propValue)
   }
@@ -333,6 +342,19 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
       if (callback) {
         const info = new Map<string, HippyAny>()
         callback(info)
+      }
+    }else{
+      switch (method){
+        case "hasFocus":
+          let hasFocusRes = new Map<string, boolean>();
+          hasFocusRes.set("value", (this.hasFocus()));
+          callback && callback(hasFocusRes)
+          break;
+        case "isFocused":
+          let isFocusedRes = new Map<string, boolean>();
+          isFocusedRes.set("value", this.isFocused());
+          callback && callback(isFocusedRes)
+          break;
       }
     }
   }
