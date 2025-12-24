@@ -1,15 +1,15 @@
 import { Config } from "./Config";
 
 export const DefaultConfig: Config = {
-  appId: '',
+  appId: 'debug',
   appEntry: 'Application',
   appDebug: false,
   // api
-  apiHost: '', //TODO
+  apiHost: '',
   apiVersion: '',
   //
-  bundleSource: 'REMOTE', //枚举：LOCAL | REMOTE
-  bundleUri: '',
+  bundleSource: 'LOCAL', //枚举：LOCAL | REMOTE
+  bundleUri: 'assets:///vue',
   //
   params: undefined
 }

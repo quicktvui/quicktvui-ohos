@@ -6,6 +6,7 @@ export const BuildConfig: Config = {
   appId: BuildProfile.APP_ID,
   appEntry: BuildProfile.APP_ENTRY,
   appDebug: BuildProfile.APP_DEBUG,
+
   //
   apiHost: BuildProfile.API_HOST,
   apiVersion: BuildProfile.API_VERSION,
