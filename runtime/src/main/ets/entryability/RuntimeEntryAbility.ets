@@ -52,7 +52,7 @@ export default class RuntimeEntryAbility extends UIAbility {
       if (esData) {
         //
         App.instance.nav?.pushDestination(
-          { name: runtimeConfig.entryPage, param: runtimeConfig.parameters },
+          { name: runtimeConfig.appEntry, param: runtimeConfig.params },
           { launchMode: LaunchMode.STANDARD })
       }
     }

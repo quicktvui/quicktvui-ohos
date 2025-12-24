@@ -6,10 +6,17 @@ import type { RuntimeConfig } from './RuntimeConfig'
 export class ConfigResolver {
   static resolve(launch?: LaunchConfig): RuntimeConfig {
     return {
-      entryPage: launch?.entryPage ?? BuildConfig.entryPage ?? DefaultConfig.entryPage,
-      enableLog: launch?.enableLog ?? BuildConfig.enableLog ?? DefaultConfig.enableLog,
-      packageName: launch?.packageName ?? BuildConfig.packageName ?? DefaultConfig.packageName,
-      parameters: launch?.parameters ?? BuildConfig.parameters ?? DefaultConfig.parameters,
+      //
+      appId: launch?.appId ?? BuildConfig.appId ?? DefaultConfig.appId,
+      appEntry: launch?.appEntry ?? BuildConfig.appEntry ?? DefaultConfig.appEntry,
+      appDebug: launch?.appDebug ?? BuildConfig.appDebug ?? DefaultConfig.appDebug,
+      //
+      apiHost: launch?.apiHost ?? BuildConfig.apiHost ?? DefaultConfig.apiHost,
+      apiVersion: launch?.apiVersion ?? BuildConfig.apiVersion ?? DefaultConfig.apiVersion,
+      //
+      bundleSource: launch?.bundleSource ?? BuildConfig.bundleSource ?? DefaultConfig.bundleSource,
+      bundleUri: launch?.bundleUri ?? BuildConfig.bundleUri ?? DefaultConfig.bundleUri,
+      params: launch?.params ?? BuildConfig.params ?? DefaultConfig.params,
     }
   }
 }

@@ -1,16 +1,17 @@
-// config/BuildConfig.ts
 import BuildProfile from 'BuildProfile'
+import { BundleSourceType, Config } from './Config'
 
-export interface IBuildConfig {
-  entryPage: string
-  enableLog: boolean
-  packageName: string
-  parameters: string
-}
-
-export const BuildConfig: IBuildConfig = {
-  entryPage: BuildProfile.ENTRY_PAGE ?? 'Application',
-  enableLog: BuildProfile.ENABLE_LOG ?? false,
-  packageName: BuildProfile.PRODUCT_NAME,
-  parameters: BuildProfile.PARAMETERS
+export const BuildConfig: Config = {
+  //
+  appId: BuildProfile.APP_ID,
+  appEntry: BuildProfile.APP_ENTRY,
+  appDebug: BuildProfile.APP_DEBUG,
+  //
+  apiHost: BuildProfile.API_HOST,
+  apiVersion: BuildProfile.API_VERSION,
+  //
+  bundleSource: BuildProfile.BUNDLE_SOURCE as BundleSourceType,
+  bundleUri: BuildProfile.BUNDLE_URI,
+  //
+  params: BuildProfile.PARAMS ? JSON.parse(BuildProfile.PARAMS) : undefined,
 }

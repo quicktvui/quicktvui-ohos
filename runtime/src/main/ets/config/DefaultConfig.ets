@@ -1,13 +1,15 @@
-export interface IDefaultConfig {
-  entryPage: string
-  enableLog: boolean
-  packageName: string
-  parameters: string
-}
+import { Config } from "./Config";
 
-export const DefaultConfig: IDefaultConfig = {
-  entryPage: 'Application',
-  enableLog: false,
-  packageName: '',
-  parameters: ''
+export const DefaultConfig: Config = {
+  appId: '',
+  appEntry: 'Application',
+  appDebug: false,
+  // api
+  apiHost: '', //TODO
+  apiVersion: '',
+  //
+  bundleSource: 'REMOTE', //枚举：LOCAL | REMOTE
+  bundleUri: '',
+  //
+  params: undefined
 }

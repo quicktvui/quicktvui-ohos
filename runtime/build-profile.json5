@@ -10,8 +10,8 @@
 //
 //// --- 3. JS包/动态化配置 (BUNDLE_ 前缀) ---
 //"BUNDLE_SOURCE": "LOCAL",                // 取值: 'LOCAL' | 'REMOTE' (比 LOAD_TYPE 更简洁)
-//"BUNDLE_URL": "http://192.168.1.100:8080/bundles/game.js", // 远程全路径
-//"BUNDLE_PATH": "dist/game_bundle.js",    // 本地相对路径
+//"BUNDLE_URI": "http://192.168.1.100:8080/bundles/game.js", // 远程全路径
+//"PARAMS": "{key: value}",
 //--------------------------------------------------------------------------------------------
 
 {
@@ -30,7 +30,14 @@
       "arkOptions": {
         //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
-          "APP_DEBUG": true
+          "APP_ID": '',
+          "APP_ENTRY": '',
+          "APP_DEBUG": true,
+          "API_HOST": '',
+          "API_VERSION": '',
+          "BUNDLE_SOURCE": '',
+          "BUNDLE_URI": '',
+          "PARAMS": '',
         },
         "obfuscation": {
           "ruleOptions": {
@@ -47,7 +54,14 @@
       "arkOptions": {
         //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
-          "APP_DEBUG": false
+          "APP_ID": '',
+          "APP_ENTRY": '',
+          "APP_DEBUG": false,
+          "API_HOST": '',
+          "API_VERSION": '',
+          "BUNDLE_SOURCE": '',
+          "BUNDLE_URI": '',
+          "PARAMS": ''
         },
         "obfuscation": {
           "ruleOptions": {

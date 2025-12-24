@@ -1,6 +1,3 @@
-export interface RuntimeConfig {
-  entryPage?: string
-  enableLog?: boolean
-  packageName: string
-  parameters: string
-}
+import { Config } from "./Config";
+
+export interface RuntimeConfig extends Config {}
