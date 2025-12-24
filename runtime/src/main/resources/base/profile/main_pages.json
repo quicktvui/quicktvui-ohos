@@ -1,5 +1,5 @@
 {
   "src": [
-    "eskit/ui/AppView"
+    "pages/Main"
   ]
 }

@@ -14,7 +14,8 @@ import {
   HippyRootViewWrapper,
   HippyValue,
   ModuleLoadParams,
-  ModuleLoadStatus
+  ModuleLoadStatus,
+  LogUtils,
 } from 'hippy'
 import { LoadStatus } from '../LoadStatus'
 import { BusinessError } from '@ohos.base'
@@ -31,93 +32,15 @@ export function PageDebugBuilder() {
   AppView()
 }
 
-@Entry
 @Component
 struct AppView {
+  private TAG: string = 'AppPage'
   @Provide('appContext')
   private appContext: AppContext = new AppContext(App.instance.context!)
   private appLoader?: AppLoader
   private hippyViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State splashOpacity: number = 1.0
   @Provide('autoSize') autoSize?: number[] = []
-
-  //region 生命周期
-
-  aboutToAppear(): void {
-    this.appContext.data = this.parseEsData()
-    AppManager.instance.addAppContext(this.appContext)
-
-    this.startLoadApp()
-    this.postLifecycleEvent('onAppear')
-  }
-
-  onPageShow(): void {
-    this.postLifecycleEvent('onShown')
-    console.log('123456');
-    let keyDown: inputEventClient.KeyEvent = {
-      isPressed: true,
-      keyCode: KeyCode.KEYCODE_TAB,
-      keyDownDuration: 0,
-      isIntercepted: false
-    };
-    let keyUp: inputEventClient.KeyEvent = {
-      isPressed: false,
-      keyCode: KeyCode.KEYCODE_TAB,
-      keyDownDuration: 0,
-      isIntercepted: false
-    };
-    setTimeout(() => {
-      try {
-        // 触发tab点击，使默认焦点组件多态样式生效
-        inputEventClient.injectEvent({ KeyEvent: keyDown });
-        inputEventClient.injectEvent({ KeyEvent: keyUp });
-        console.log('123456  123');
-      } catch (e) {
-        console.log("123456 tab key event click false")
-      }
-    }, 5000)
-
-    // try {
-    //   // 触发tab点击，使默认焦点组件多态样式生效
-    //   inputEventClient.injectEvent({ KeyEvent: keyDown });
-    //   inputEventClient.injectEvent({ KeyEvent: keyUp });
-    //   console.log('123456  123');
-    // } catch (e) {
-    //   console.log("123456 tab key event click false")
-    // }
-  }
-
-  onPageHide(): void {
-    this.postLifecycleEvent('onHidden')
-  }
-
-  aboutToDisappear(): void {
-    this.postLifecycleEvent('onDisAppear')
-    AppManager.instance.removeAppContext(this.appContext)
-  }
-
-  onBackPress(): boolean | void {
-    let engine = this.appContext.engine
-    if (engine) {
-      engine?.onBackPressed({
-        handleBackPress() {
-          console.log('Back button pressed');
-          (App.instance.context as common.UIAbilityContext).terminateSelf().then(() => {
-          }).catch(() => {
-          })
-        }
-      })
-      return true
-    }
-  }
-
-  private postLifecycleEvent(eventName: string) {
-    this.appContext.engine?.onLifecycleEvent(eventName)
-  }
-
-  //endregion
-
-  //region 参数解析
 
   private parseEsData(): EsData {
     // 从启动参数里解析EsData
@@ -136,13 +59,8 @@ struct AppView {
     // data.appName = '2048'
     // data.packageName = 'es.com.elsbharmony.tv'
     // data.appIcon = 'https://extcdn.hsrc.tv/data_center/files/2024/05/29/3e07ff6b-cfc6-40d2-a885-843b1655348a.png'
-
     return data
   }
-
-  //endregion
-
-  //region 应用加载
 
   private async startLoadApp() {
     try {
@@ -200,13 +118,11 @@ struct AppView {
       const coreJSFilePath = this.appLoader.getVendorJsFile()
       params.coreJSFilePath = coreJSFilePath
     }
-
     return params
   }
 
   private loadModule() {
     const params = this.generateLoadModuleParams()
-    // this.hippyEngine?.loadModule(params)
     const viewThis = this
     const view = this.appContext.engine?.loadModuleWithListener(params, {
       onLoadCompleted(statusCode: ModuleLoadStatus, msg: string) {
@@ -239,7 +155,6 @@ struct AppView {
   private generateLoadModuleParams(): ModuleLoadParams {
     const params = new ModuleLoadParams('', '', '', '', null, null, null)
     params.componentName = 'EsApp'
-    // params.codeCacheTag = 'EsApp'
     params.jsParams = new Map<string, HippyValue>()
     params.wrappedCustomRenderViewBuilder = wrapBuilder(buildCustomRenderView)
 
@@ -262,12 +177,12 @@ struct AppView {
     } as BusinessError<string>
   }
 
-  //endregion
-
-  //region 界面绘制
+  private postLifecycleEvent(eventName: string) {
+    this.appContext.engine?.onLifecycleEvent(eventName)
+  }
 
   build() {
-    Navigation(App.instance.nav) {
+    NavDestination() {
       Stack() {
         if (this.splashOpacity > 0) {
           IconSplashView().opacity(this.splashOpacity)
@@ -292,11 +207,81 @@ struct AppView {
         this.appContext.engine?.onKeyEvent(event)
       })
     }
-    .hideToolBar(true)
+    .hideTitleBar(true)
     .hideBackButton(true)
-    .mode(NavigationMode.Stack)
+    .hideToolBar(true)
+    .onReady((context: NavDestinationContext) => {
+      LogUtils.e(this.TAG, 'Lifecycle: onReady');
+    })
+    .onWillAppear(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onWillAppear');
+      this.postLifecycleEvent('onWillAppear')
+
+    })
     .onAttach(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onAttach');
       this.postLifecycleEvent('onAttach')
+    })
+    .onAppear(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onAppear');
+      this.appContext.data = this.parseEsData()
+      AppManager.instance.addAppContext(this.appContext)
+
+      this.startLoadApp()
+      this.postLifecycleEvent('onAppear')
+    })
+    .onWillShow(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onWillShow');
+      this.postLifecycleEvent('onWillShow')
+    })
+    .onShown(() => {
+      this.appContext.engine?.onEngineResume()
+      LogUtils.e(this.TAG, 'Lifecycle: onShown');
+      this.postLifecycleEvent('onShown')
+      let keyDown: inputEventClient.KeyEvent = {
+        isPressed: true,
+        keyCode: KeyCode.KEYCODE_TAB,
+        keyDownDuration: 0,
+        isIntercepted: false
+      };
+      let keyUp: inputEventClient.KeyEvent = {
+        isPressed: false,
+        keyCode: KeyCode.KEYCODE_TAB,
+        keyDownDuration: 0,
+        isIntercepted: false
+      };
+      setTimeout(() => {
+        try {
+          // 触发tab点击，使默认焦点组件多态样式生效
+          inputEventClient.injectEvent({ KeyEvent: keyDown });
+          inputEventClient.injectEvent({ KeyEvent: keyUp });
+          console.log('123456  123');
+        } catch (e) {
+          console.log("123456 tab key event click false")
+        }
+      }, 5000)
+    })
+    .onWillHide(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onWillHide');
+      this.postLifecycleEvent('onWillHide')
+    })
+    .onHidden(() => {
+      this.appContext.engine?.onEnginePause()
+      LogUtils.e(this.TAG, 'Lifecycle: onHidden');
+      this.postLifecycleEvent('onHidden')
+    })
+    .onWillDisappear(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onWillDisappear');
+      this.postLifecycleEvent('onWillDisappear')
+    })
+    .onDetach(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onDetach');
+      this.postLifecycleEvent('onDetach')
+    })
+    .onDisAppear(() => {
+      LogUtils.e(this.TAG, 'Lifecycle: onDisAppear');
+      this.postLifecycleEvent('onDisAppear')
+      AppManager.instance.removeAppContext(this.appContext)
     })
     .onKeyPreIme((event) => {
       this.appContext.engine?.onKeyEvent(event)
@@ -305,10 +290,28 @@ struct AppView {
       }
       return false;
     })
-    .onDetach(() => {
-      this.postLifecycleEvent('onDetach')
+    .onBackPressed(() => {
+      let engine = this.appContext.engine
+      if (engine) {
+        engine?.onBackPressed({
+          handleBackPress() {
+            if (App.instance.nav && App.instance.nav.size() <= 1) {
+              (App.instance.context as common.UIAbilityContext).terminateSelf()
+                .then(() => {
+                  LogUtils.d(this.TAG, 'terminateSelf success.');
+                })
+                .catch((err: BusinessError) => {
+                  LogUtils.d(this.TAG, 'terminateSelf error.' + JSON.stringify(err));
+                });
+            }
+          }
+        })
+        return true
+      }
+      return false
     })
   }
-
-  //endregion
 }
+
+
+

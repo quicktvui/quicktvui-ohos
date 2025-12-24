@@ -56,7 +56,7 @@ export default class RuntimeEntryAbility extends UIAbility {
     LogUtils.i(this.TAG, `Ability onWindowStageCreate`)
 
     // windowStage.loadContent('pages/Main', (err) => {
-    windowStage.loadContent('eskit/ui/AppView', (err) => {
+    windowStage.loadContent('pages/Main', (err) => {
       if (err.code) {
         LogUtils.i(this.TAG, `Failed to load the content. Cause: ${JSON.stringify(err) ?? ''}`)
         return;
