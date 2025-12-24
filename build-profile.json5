@@ -24,6 +24,11 @@
         "bundleName": "tv.huan.template.hmos",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "tv.huan.template.hmos",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -39,6 +44,11 @@
         "bundleName": "tv.huan.tudoudou.hmos",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "tv.huan.tudoudou.hmos",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -54,6 +64,11 @@
         "bundleName": "tv.huan.xiangsheng",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "tv.huan.xiangsheng",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -69,6 +84,11 @@
         "bundleName": "tv.huan.guoxuegushi",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "tv.huan.guoxuegushi",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -84,6 +104,11 @@
         "bundleName": "tv.huan.wmbdj",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "tv.huan.wmbdj",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -99,6 +124,11 @@
         "bundleName": "tv.huan.jjddzss",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "tv.huan.jjddzss",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -114,6 +144,11 @@
         "bundleName": "es.com.elsb.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.elsb.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -129,6 +164,11 @@
         "bundleName": "es.com.elsbfk.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.elsbfk.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -145,6 +185,11 @@
         "bundleName": "es.com.blackwhite.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.blackwhite.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -161,6 +206,11 @@
         "bundleName": "es.com.tuixiangzi.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.tuixiangzi.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -177,6 +227,11 @@
         "bundleName": "es.com.fenshuajiang.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.fenshuajiang.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -193,6 +248,11 @@
         "bundleName": "es.com.chess.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.chess.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -209,6 +269,11 @@
         "bundleName": "es.com.wsmc.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.wsmc.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -225,6 +290,11 @@
         "bundleName": "es.com.zlsg.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.zlsg.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -241,6 +311,11 @@
         "bundleName": "es.com.guesspos.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.guesspos.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -257,6 +332,11 @@
         "bundleName": "es.com.hnt.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.hnt.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -273,6 +353,11 @@
         "bundleName": "es.com.pacman.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.pacman.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -289,6 +374,11 @@
         "bundleName": "es.com.hlfk.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.hlfk.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -305,6 +395,11 @@
         "bundleName": "es.com.szhrd.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.szhrd.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -321,6 +416,11 @@
         "bundleName": "es.com.snake.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.snake.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -336,6 +436,11 @@
         "bundleName": "es.com.ktjs.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.ktjs.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true
@@ -351,6 +456,11 @@
         "bundleName": "es.com.baduanjin.tv",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.baduanjin.tv",
+            }
+          },
           "strictMode": {
             "caseSensitiveCheck": true,
             "useNormalizedOHMUrl": true

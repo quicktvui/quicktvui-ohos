@@ -1,3 +1,19 @@
+//--------------------------------------------------------------------------------------------
+//// --- 1. App 基础信息 (APP_ 前缀) ---
+//"APP_ID": "com.test.package",
+//"APP_ENTRY": "App",
+//"APP_DEBUG": true,          // 比 ENABLE_LOG 更通用
+//
+//// --- 2. 服务端接口 (API_ 前缀) ---
+//"API_HOST": "http://192.168.1.100:8080", // HOST 通常指域名/IP+端口
+//"API_VERSION": "/api/v1",                // 版本号分离，拼接更灵活
+//
+//// --- 3. JS包/动态化配置 (BUNDLE_ 前缀) ---
+//"BUNDLE_SOURCE": "LOCAL",                // 取值: 'LOCAL' | 'REMOTE' (比 LOAD_TYPE 更简洁)
+//"BUNDLE_URL": "http://192.168.1.100:8080/bundles/game.js", // 远程全路径
+//"BUNDLE_PATH": "dist/game_bundle.js",    // 本地相对路径
+//--------------------------------------------------------------------------------------------
+
 {
   "apiType": "stageMode",
   "buildOption": {
@@ -12,11 +28,9 @@
       "name": "debug",
       "debuggable": true,
       "arkOptions": {
+        //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
-          "PACKAGE_NAME": "com.test.package",
-          "PARAMETERS": "XXXXXXX",
-          "ENTRY_PAGE": "App",
-          "ENABLE_LOG": false
+          "APP_DEBUG": true
         },
         "obfuscation": {
           "ruleOptions": {
@@ -31,11 +45,9 @@
     {
       "name": "release",
       "arkOptions": {
+        //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
-          "PACKAGE_NAME": "com.test.package",
-          "PARAMETERS": "XXXXXXX",
-          "ENTRY_PAGE": "App",
-          "ENABLE_LOG": false
+          "APP_DEBUG": false
         },
         "obfuscation": {
           "ruleOptions": {
