@@ -1,7 +1,7 @@
 import common from '@ohos.app.ability.common';
+import { RuntimeConfig } from './config/RuntimeConfig';
 
 export class App {
-  // region 单例
 
   private static _instance: App
 
@@ -15,9 +15,7 @@ export class App {
   private constructor() {
   }
 
-  // endregion
-
   context?: common.UIAbilityContext
-  launchParams?: Record<string, Object>
   nav?: NavPathStack
+  runtimeConfig?: RuntimeConfig
 }

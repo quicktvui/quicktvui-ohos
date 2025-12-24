@@ -10,7 +10,7 @@
     },
     {
       "name": "AppView",
-      "pageSourceFile": "src/main/ets/eskit/ui/AppView.ets",
+      "pageSourceFile": "src/main/ets/pages/Application.ets",
       "buildFunction": "PageDebugBuilder",
       "data": {
         "description": "eskit app view"

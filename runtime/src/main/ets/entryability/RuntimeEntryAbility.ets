@@ -6,6 +6,8 @@ import {
 } from 'hippy';
 import { EsData } from '../eskit/EsData';
 import { App } from '../App';
+import { LaunchConfigParser } from '../config/LaunchConfigParser';
+import { ConfigResolver } from '../config/ConfigResolver';
 
 export default class RuntimeEntryAbility extends UIAbility {
   public readonly TAG: string = 'RuntimeEntryAbility'
@@ -13,7 +15,6 @@ export default class RuntimeEntryAbility extends UIAbility {
   //
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     LogUtils.i(this.TAG, `Ability onCreate`)
-
     LogUtils.i(this.TAG, `onCreate: want: uri: ${want?.uri}  launchParam: ${launchParam}`)
 
     App.instance.context = this.context
@@ -35,17 +36,26 @@ export default class RuntimeEntryAbility extends UIAbility {
    * @param onNewWant
    */
   private launch(want: Want, launchParam: AbilityConstant.LaunchParam, onNewWant: boolean) {
-    console.log('++++++++++++++ launch', JSON.stringify(want), JSON.stringify(launchParam), onNewWant)
-
-    App.instance.launchParams = want.parameters
-
+    LogUtils.d(this.TAG, `launch want: ` + JSON.stringify(want)
+      + ' launchParam: ' + JSON.stringify(launchParam)
+      + ' onNewWant: ' + JSON.stringify(onNewWant)
+    )
+    //--------------------------------------------------------------------
+    const launchConfig = LaunchConfigParser.parse(
+      want.parameters as Record<string, Object>
+    )
+    const runtimeConfig = ConfigResolver.resolve(launchConfig)
+    App.instance.runtimeConfig = runtimeConfig
+    //--------------------------------------------------------------------
     if (onNewWant) {
       let esData = EsData.tryParse(want.parameters)
       if (esData) {
-        App.instance.nav?.pushDestination({name: 'AppView', param: esData }, {launchMode:LaunchMode.STANDARD})
+        //
+        App.instance.nav?.pushDestination(
+          { name: runtimeConfig.entryPage, param: runtimeConfig.parameters },
+          { launchMode: LaunchMode.STANDARD })
       }
     }
-
   }
 
   onDestroy(): void {

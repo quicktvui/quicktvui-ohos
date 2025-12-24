@@ -1,8 +1,3 @@
-import { App } from '../../App'
-import { AppContext } from '../AppContext'
-import { AppManager } from '../AppManager'
-import { EsData } from '../EsData'
-import { AppLoader, AppLoaderFactory } from './hippy/AppLoader'
 import libHippy from 'libhippy.so'
 import {
   createHippyEngine,
@@ -17,23 +12,28 @@ import {
   ModuleLoadStatus,
   LogUtils,
 } from 'hippy'
-import { LoadStatus } from '../LoadStatus'
 import { BusinessError } from '@ohos.base'
-import { RuntimeAPIProvider } from '../../api/RuntimeAPIProvider'
 import { buildCustomRenderView, FocusManager, QTAPIProvider } from 'quicktvui'
-import { AssetsAppLoader } from './hippy/AssetsAppLoader'
-import { IconSplashView } from './splash/SplashView'
 import common from '@ohos.app.ability.common'
 import { inputEventClient, KeyCode } from '@kit.InputKit'
-import { ApiAppLoader } from './hippy/ApiAppLoader'
+import { EsData } from '../eskit/EsData'
+import { ApiAppLoader } from '../eskit/ui/hippy/ApiAppLoader'
+import { LoadStatus } from '../eskit/LoadStatus'
+import { RuntimeAPIProvider } from '../api/RuntimeAPIProvider'
+import { IconSplashView } from '../eskit/ui/splash/SplashView'
+import { AssetsAppLoader } from '../eskit/ui/hippy/AssetsAppLoader'
+import { AppContext } from '../eskit/AppContext'
+import { AppManager } from '../eskit/AppManager'
+import { App } from '../App'
+import { AppLoader, AppLoaderFactory } from '../eskit/ui/hippy/AppLoader'
 
 @Builder
 export function PageDebugBuilder() {
-  AppView()
+  Application()
 }
 
 @Component
-struct AppView {
+struct Application {
   private TAG: string = 'AppPage'
   @Provide('appContext')
   private appContext: AppContext = new AppContext(App.instance.context!)

@@ -12,6 +12,12 @@
       "name": "debug",
       "debuggable": true,
       "arkOptions": {
+        "buildProfileFields": {
+          "PACKAGE_NAME": "com.test.package",
+          "PARAMETERS": "XXXXXXX",
+          "ENTRY_PAGE": "App",
+          "ENABLE_LOG": false
+        },
         "obfuscation": {
           "ruleOptions": {
             "enable": false,
@@ -25,6 +31,12 @@
     {
       "name": "release",
       "arkOptions": {
+        "buildProfileFields": {
+          "PACKAGE_NAME": "com.test.package",
+          "PARAMETERS": "XXXXXXX",
+          "ENTRY_PAGE": "App",
+          "ENABLE_LOG": false
+        },
         "obfuscation": {
           "ruleOptions": {
             "enable": false,
