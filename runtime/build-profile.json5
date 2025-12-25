@@ -55,6 +55,8 @@
           "APP_DEBUG": false,
           "BUNDLE_SOURCE": 'LOCAL',
           "BUNDLE_URI": 'assets:///vue',
+//          "BUNDLE_SOURCE": 'REMOTE',
+//          "BUNDLE_URI": '',
           "PARAMS": ''
         },
         "obfuscation": {
