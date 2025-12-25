@@ -599,7 +599,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": 'Debug',
               "APP_ID": "com.extscreen.runtime",
               "BUNDLE_SOURCE": 'Local',
               "BUNDLE_URI": '',
