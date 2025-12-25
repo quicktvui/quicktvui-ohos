@@ -466,6 +466,26 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "test_source_server",
+        "signingConfig": "test_source_server",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.elsbharmony.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ID": "es.com.elsbharmony.tv",
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -723,6 +743,18 @@
           "storeFile": "sign/baduanjin/key.p12",
           "storePassword": "0000001BF529C47BCF1CCB4985DD4B83243892F7C7FE76C6F922F2552774C05D1A2444D695780FD9277C9D"
         }
+      },
+      {
+        "name": "test_source_server",
+        "material": {
+          "certpath": "sign/test_source_server/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/test_source_server/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/test_source_server/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
       }
     ]
   },
@@ -867,6 +899,12 @@
           "name": "baduanjin",
           "applyToProducts": [
             "baduanjin"
+          ]
+        },
+        {
+          "name": "test_source_server",
+          "applyToProducts": [
+            "test_source_server"
           ]
         }
       ]

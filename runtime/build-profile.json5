@@ -55,8 +55,8 @@
           "APP_DEBUG": false,
           "BUNDLE_SOURCE": 'LOCAL',
           "BUNDLE_URI": 'assets:///vue',
-//          "BUNDLE_SOURCE": 'REMOTE',
-//          "BUNDLE_URI": '',
+          //          "BUNDLE_SOURCE": 'REMOTE',
+          //          "BUNDLE_URI": '',
           "PARAMS": ''
         },
         "obfuscation": {
@@ -269,6 +269,15 @@
         "directories": [
           "./src/main/resources",
           "./src/baduanjin/resources"
+        ]
+      }
+    },
+    {
+      "name": "test_source_server",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/test_source_server/resources"
         ]
       }
     }
