@@ -6,8 +6,8 @@ export const BUILD_MODE_NAME = 'debug';
 export const DEBUG = true;
 export const TARGET_NAME = 'default';
 export const APP_ENTRY = 'Application';
-export const APP_ID = 'tv.huan.xiangsheng';
-export const BUNDLE_SOURCE = 'REMOTE';
+export const APP_ID = 'com.extscreen.runtime';
+export const BUNDLE_SOURCE = 'Local';
 export const BUNDLE_URI = '';
 export const PARAMS = '';
 

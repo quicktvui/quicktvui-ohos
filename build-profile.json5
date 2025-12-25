@@ -898,11 +898,11 @@
         "material": {
           "certpath": "sign/runtime/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001AEFD0A4D3044B2E168CC29216E0BF53E16889988729D94639430BBBEEDF1371AD4303FB0A03F6",
           "profile": "sign/runtime/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/runtime/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001AA57761406B460B2E54FF03A7018F8C0412567F85F1BAC26383FD0E3D439078C7A930B072291B"
         }
       },
       {
