@@ -611,6 +611,30 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "app_center",
+        "signingConfig": "app_center",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "cn.openharmony.app.center",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": 'Application',
+              "APP_ID": "cn.openharmony.app.center",
+              "BUNDLE_SOURCE": 'REMOTE',
+              "BUNDLE_URI": '',
+              "PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -928,6 +952,18 @@
           "storeFile": "sign/doudizhu/key.p12",
           "storePassword": "0000001A8E2972411615B93EEF3F70B43DE7AE83C7E66781F9B7A326E72C190600980867F04E5CE5D385"
         }
+      },
+      {
+        "name": "app_center",
+        "material": {
+          "certpath": "sign/app_center/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001AD14B0F44AB223AA24875CEFBA55175D48B20670EA468FD21278D440CB0902B543D619191A8C7",
+          "profile": "sign/app_center/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/app_center/key.p12",
+          "storePassword": "0000001A1FCC0952A723E4E23F4B01AB034559E02E636E919639041BA569F3D2C9A1758B697F8E4203F6"
+        }
       }
     ]
   },
@@ -1084,6 +1120,12 @@
           "name": "runtime",
           "applyToProducts": [
             "runtime"
+          ]
+        },
+        {
+          "name": "app_center",
+          "applyToProducts": [
+            "app_center"
           ]
         }
       ]

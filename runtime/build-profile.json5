@@ -280,5 +280,15 @@
         ]
       }
     }
-  ]
+  ,
+{
+      "name": "app_center",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/app_center/resources"
+        ]
+      }
+    }
+]
 }
