@@ -30,13 +30,10 @@
       "arkOptions": {
         //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
-          "APP_ID": '',
-          "APP_ENTRY": '',
+          "APP_ENTRY": 'Application',
           "APP_DEBUG": true,
-          "API_HOST": '',
-          "API_VERSION": '',
-          "BUNDLE_SOURCE": '',
-          "BUNDLE_URI": '',
+          "BUNDLE_SOURCE": 'LOCAL',
+          "BUNDLE_URI": 'assets:///vue',
           "PARAMS": '',
         },
         "obfuscation": {
@@ -54,13 +51,10 @@
       "arkOptions": {
         //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
-          "APP_ID": '',
-          "APP_ENTRY": '',
+          "APP_ENTRY": 'Application',
           "APP_DEBUG": false,
-          "API_HOST": '',
-          "API_VERSION": '',
-          "BUNDLE_SOURCE": '',
-          "BUNDLE_URI": '',
+          "BUNDLE_SOURCE": 'LOCAL',
+          "BUNDLE_URI": 'assets:///vue',
           "PARAMS": ''
         },
         "obfuscation": {

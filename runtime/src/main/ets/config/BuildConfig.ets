@@ -8,9 +8,6 @@ export const BuildConfig: Config = {
   appDebug: BuildProfile.APP_DEBUG,
 
   //
-  apiHost: BuildProfile.API_HOST,
-  apiVersion: BuildProfile.API_VERSION,
-  //
   bundleSource: BuildProfile.BUNDLE_SOURCE as BundleSourceType,
   bundleUri: BuildProfile.BUNDLE_URI,
   //

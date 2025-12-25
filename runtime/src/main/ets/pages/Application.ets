@@ -44,11 +44,11 @@ struct Application {
 
   private parseEsData(): EsData {
     let data = new EsData()
-    //TODO
     // data.appName = App.instance.runtimeConfig?.appName
     data.packageName = App.instance.runtimeConfig?.appId
     // data.appIcon = App.instance.runtimeConfig?.appIcon
     data.uri = App.instance.runtimeConfig?.bundleUri
+    data.bundleSource = App.instance.runtimeConfig?.bundleSource ?? 'REMOTE'
     //-----------------------2048-------------------------------
     // let data = new EsData()
     // data.appName = '2048'

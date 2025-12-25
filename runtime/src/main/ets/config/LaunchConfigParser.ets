@@ -22,15 +22,6 @@ export class LaunchConfigParser {
       cfg.appDebug = params.appDebug
     }
     //---------------------------------------------------
-
-    if (typeof params.apiHost === 'string') {
-      cfg.apiHost = params.apiHost
-    }
-
-    if (typeof params.apiVersion === 'string') {
-      cfg.apiVersion = params.apiVersion
-    }
-    //---------------------------------------------------
     if (params.bundleSource && (params.bundleSource === 'LOCAL' || params.bundleSource === 'REMOTE')) {
       cfg.bundleSource = params.bundleSource as BundleSourceType;
     }

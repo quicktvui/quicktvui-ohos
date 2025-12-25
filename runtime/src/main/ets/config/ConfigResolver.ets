@@ -11,9 +11,6 @@ export class ConfigResolver {
       appEntry: launch?.appEntry ?? BuildConfig.appEntry ?? DefaultConfig.appEntry,
       appDebug: launch?.appDebug ?? BuildConfig.appDebug ?? DefaultConfig.appDebug,
       //
-      apiHost: launch?.apiHost ?? BuildConfig.apiHost ?? DefaultConfig.apiHost,
-      apiVersion: launch?.apiVersion ?? BuildConfig.apiVersion ?? DefaultConfig.apiVersion,
-      //
       bundleSource: launch?.bundleSource ?? BuildConfig.bundleSource ?? DefaultConfig.bundleSource,
       bundleUri: launch?.bundleUri ?? BuildConfig.bundleUri ?? DefaultConfig.bundleUri,
       params: launch?.params ?? BuildConfig.params ?? DefaultConfig.params,

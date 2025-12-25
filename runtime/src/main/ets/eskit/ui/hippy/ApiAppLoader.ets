@@ -115,7 +115,7 @@ export class ApiAppLoader implements AppLoader {
     return new Promise<AppInfo>((resolve, reject) => {
       const call = http.createHttp();
       call.request(
-        'https://api.extscreen.com/extscreenapi/api/extend_screen/v2/hili/client/tvinfo',
+        this.data.uri,
         {
           method: http.RequestMethod.POST,
           extraData: new Uint8Array(requestData).buffer,
