@@ -1,5 +1,6 @@
 import { LogUtils, } from 'hippy'
 import { App } from '../App';
+import { EsData } from '../eskit/EsData';
 
 /**
  * 入口
@@ -13,7 +14,12 @@ struct Main {
     LogUtils.d(this.TAG, 'Lifecycle: onPageShow');
 
     const runtimeConfig = App.instance.runtimeConfig
-    App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, null, false);
+    const params: EsData = {
+      packageName: runtimeConfig?.appId,
+      uri: runtimeConfig?.bundleUri,
+      bundleSource: runtimeConfig?.bundleSource ?? 'REMOTE'
+    }
+    App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, params, false);
   }
 
   onPageHide(): void {

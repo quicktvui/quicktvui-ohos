@@ -80,7 +80,6 @@ export struct Debug {
   @State isEngineInitialized: boolean = false
   @Provide('autoSize') autoSize?: number[] = []
 
-
   async aboutToAppear() {
     LogUtils.e(this.TAG, 'Lifecycle: aboutToAppear');
     this.initDebugServer()
@@ -485,7 +484,6 @@ export struct Debug {
     })
     //返回键
     .onBackPressed(() => {
-      console.log('====TAGFOCUSS====onBackPressed=========>>>')
       if (this.isEngineInitialized) {
         this.hippyEngine?.onBackPressed(new RuntimeDefaultBackHandler())
         return true
@@ -507,24 +505,31 @@ export struct Debug {
       //------------------分发 key event 给 vue 端---------------------
       this.hippyEngine?.onKeyEvent(event)
       //------------------分发 key event 给 vue 端---------------------
-      console.log('==TAGFOCUSS======onKeyPreIme=========>>>' + event.type + " ====>>>> " + event.keyCode)
       if (this.rootViewWrapper.getRootView()) {
         return FocusManager.dispatchKeyEvent(this.rootViewWrapper.getRootView()!!.renderView!!, event)
       }
       //这里return false 则
       return false;
     })
-    // 这里注释掉，自己实现的焦点系统就作废了
-    // .onKeyEventDispatch((event)=>{
-    //   // QTLog.i (TAG_FOCUS, '========onKeyEventDispatch=========>>>' + event.type + " ====>>>> " + event.keyCode);
-    //
-    // })
   }
 }
 
 class RuntimeDefaultBackHandler implements BackPressHandler {
+  private TAG: string = 'RuntimeDebugPage'
+
   handleBackPress(): void {
-    console.log('Back button pressed');
+    if (App.instance.nav && App.instance.nav.size() <= 1) {
+      (App.instance.context as common.UIAbilityContext).terminateSelf()
+        .then(() => {
+          LogUtils.d(this.TAG, 'terminateSelf success.');
+        })
+        .catch((err: BusinessError) => {
+          LogUtils.d(this.TAG, 'terminateSelf error.' + JSON.stringify(err));
+        });
+    } else {
+      App.instance.nav?.pop(false)
+      LogUtils.e(this.TAG, 'Lifecycle: onBackPressed 4444');
+    }
   }
 }
 

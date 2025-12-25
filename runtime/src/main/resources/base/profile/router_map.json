@@ -9,7 +9,7 @@
       }
     },
     {
-      "name": "AppView",
+      "name": "Application",
       "pageSourceFile": "src/main/ets/pages/Application.ets",
       "buildFunction": "PageDebugBuilder",
       "data": {

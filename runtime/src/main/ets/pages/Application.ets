@@ -34,21 +34,22 @@ export function PageDebugBuilder() {
 
 @Component
 struct Application {
-  private TAG: string = 'AppPage'
+  private TAG: string = 'ApplicationPage'
   @Provide('appContext')
   private appContext: AppContext = new AppContext(App.instance.context!)
   private appLoader?: AppLoader
   private hippyViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State splashOpacity: number = 1.0
   @Provide('autoSize') autoSize?: number[] = []
+  private appInfo: EsData | null = null
 
-  private parseEsData(): EsData {
-    let data = new EsData()
+  private parseEsData(data: EsData): EsData {
+    // data.packageName = App.instance.runtimeConfig?.appId
+    // data.uri = App.instance.runtimeConfig?.bundleUri
+    // data.bundleSource = App.instance.runtimeConfig?.bundleSource ?? 'REMOTE'
+
     // data.appName = App.instance.runtimeConfig?.appName
-    data.packageName = App.instance.runtimeConfig?.appId
     // data.appIcon = App.instance.runtimeConfig?.appIcon
-    data.uri = App.instance.runtimeConfig?.bundleUri
-    data.bundleSource = App.instance.runtimeConfig?.bundleSource ?? 'REMOTE'
     //-----------------------2048-------------------------------
     // let data = new EsData()
     // data.appName = '2048'
@@ -59,11 +60,12 @@ struct Application {
 
   private async startLoadApp() {
     try {
-      const data = this.appContext.data
-      this.appLoader = AppLoaderFactory.create(data)
-      await this.appLoader.startLoad()
-      this.appContext.engine = await this.createEngine()
-      this.loadModule()
+      if (this.appInfo) {
+        this.appLoader = AppLoaderFactory.create(this.appInfo)
+        await this.appLoader.startLoad()
+        this.appContext.engine = await this.createEngine()
+        this.loadModule()
+      }
     } catch (error) {
       console.log('发生异常', error)
       this.appContext.loadResult = {
@@ -206,7 +208,8 @@ struct Application {
     .hideBackButton(true)
     .hideToolBar(true)
     .onReady((context: NavDestinationContext) => {
-      LogUtils.e(this.TAG, 'Lifecycle: onReady');
+      this.appInfo = context.pathInfo.param as EsData
+      LogUtils.e(this.TAG, 'Lifecycle: onReady param: ' + JSON.stringify(this.appInfo));
     })
     .onWillAppear(() => {
       LogUtils.e(this.TAG, 'Lifecycle: onWillAppear');
@@ -219,10 +222,13 @@ struct Application {
     })
     .onAppear(() => {
       LogUtils.e(this.TAG, 'Lifecycle: onAppear');
-      this.appContext.data = this.parseEsData()
+      if (this.appInfo) {
+        this.parseEsData(this.appInfo)
+      }
       AppManager.instance.addAppContext(this.appContext)
-
+      //
       this.startLoadApp()
+      //
       this.postLifecycleEvent('onAppear')
     })
     .onWillShow(() => {
@@ -288,8 +294,10 @@ struct Application {
     .onBackPressed(() => {
       let engine = this.appContext.engine
       if (engine) {
+        LogUtils.e(this.TAG, 'Lifecycle: onBackPressed start');
         engine?.onBackPressed({
           handleBackPress() {
+            LogUtils.e(this.TAG, 'Lifecycle: onBackPressed');
             if (App.instance.nav && App.instance.nav.size() <= 1) {
               (App.instance.context as common.UIAbilityContext).terminateSelf()
                 .then(() => {
@@ -298,6 +306,9 @@ struct Application {
                 .catch((err: BusinessError) => {
                   LogUtils.d(this.TAG, 'terminateSelf error.' + JSON.stringify(err));
                 });
+            } else {
+              App.instance.nav?.pop(false)
+              LogUtils.e(this.TAG, 'Lifecycle: onBackPressed 4444');
             }
           }
         })

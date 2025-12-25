@@ -1,14 +1,14 @@
 import {
-  HippyEngineContext,
-  HippyAny,
-  HippyModulePromise,
-  HippyNativeModule,
-  LogUtils
+  HippyEngineContext, HippyAny, HippyModulePromise, HippyNativeModule, LogUtils, HippyMap
 } from 'hippy';
 
 import { BaseModule } from './BaseModule';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { bundleManager, common, OpenLinkOptions } from '@kit.AbilityKit';
+import { parseEsAppUri } from '../eskit/scheme/EsAppUri';
+import { App } from '../App';
+import { EsData } from '../eskit/EsData';
+import { DefaultConfig } from '../config/DefaultConfig';
 
 /**
  *
@@ -57,6 +57,39 @@ export class ESNativeRouterModule extends BaseModule {
           const canOpen = bundleManager.canOpenLink(link);
           LogUtils.i(this.TAG, `CanOpenLink: link: ${link} canOpen: ${canOpen}`)
           promise?.resolve(canOpen)
+        } catch (error) {
+          LogUtils.e(this.TAG,
+            `Failed to canOpenLink. code=${error.code}, message=${error.message}`)
+          promise?.reject(error)
+        }
+        break;
+      }
+      case 'openESApp': {
+        try {
+          // esapp://action/start?pkg=com.quicktvui.app.api
+          const payload = params[0] as string;
+          const result = parseEsAppUri(payload)
+          LogUtils.i(this.TAG,
+            `scheme=${result.scheme} host=${result.host} path=${result.path} params=${JSON.stringify(result.params)}`)
+          if (result.scheme === 'esapp' &&
+            result.host === 'action' &&
+            result.path === '/start') {
+            const pkgName = result.params['pkg']
+            LogUtils.i(this.TAG, `=============openESApp=================>>>>` + JSON.stringify(pkgName))
+            // TODO：启动对应应用 / 页面
+            // App.instance.nav?.pushDestination(
+            //   { name: 'Application' },
+            //   { launchMode: LaunchMode.STANDARD })
+
+            const appInfo: EsData = {
+              bundleSource: 'REMOTE',
+              packageName: pkgName,
+              uri: DefaultConfig.bundleUri
+            }
+
+            App.instance.nav?.pushPathByName('Application', appInfo, false);
+          }
+          promise?.resolve(true)
         } catch (error) {
           LogUtils.e(this.TAG,
             `Failed to canOpenLink. code=${error.code}, message=${error.message}`)
