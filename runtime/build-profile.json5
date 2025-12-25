@@ -270,9 +270,8 @@
           "./src/test_source_server/resources"
         ]
       }
-    }
-  ,
-{
+    },
+    {
       "name": "debug",
       "resource": {
         "directories": [
@@ -280,6 +279,15 @@
           "./src/debug/resources"
         ]
       }
+    },
+    {
+      "name": "runtime",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/runtime/resources"
+        ]
+      }
     }
-]
+  ]
 }

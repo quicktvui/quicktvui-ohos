@@ -587,6 +587,30 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "runtime",
+        "signingConfig": "runtime",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "com.extscreen.runtime",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": 'Application',
+              "APP_ID": "com.extscreen.runtime",
+              "BUNDLE_SOURCE": 'Local',
+              "BUNDLE_URI": '',
+              "PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -856,6 +880,18 @@
           "storeFile": "sign/test_source_server/key.p12",
           "storePassword": "0000001AFD8598B69926A82FB072EC5076FB97EE3E48D37BCF937BFC07D47C3D5DCB7BC84BA2F70EF085"
         }
+      },
+      {
+        "name": "runtime",
+        "material": {
+          "certpath": "sign/runtime/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/runtime/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/runtime/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
       }
     ]
   },
@@ -1006,6 +1042,12 @@
           "name": "test_source_server",
           "applyToProducts": [
             "test_source_server"
+          ]
+        },
+        {
+          "name": "runtime",
+          "applyToProducts": [
+            "runtime"
           ]
         }
       ]
