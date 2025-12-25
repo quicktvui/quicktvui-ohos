@@ -632,13 +632,13 @@
       {
         "name": "default",
         "material": {
-          "certpath": "sign/tudoudou/key.cer",
+          "certpath": "sign/default/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BC8B66979784C6C7C33EE1D22881A7FCFEA41B85F5DE75898AA11D061300671DD00AD0DAD4BED01",
-          "profile": "sign/tudoudou/key.p7b",
+          "keyPassword": "0000001A21487599C38EDCF5AB831898AC1C54471CDEE5B81F5E2D33BEEFABD122519565B94F3FBD2482",
+          "profile": "sign/default/key.p7b",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "sign/tudoudou/key.p12",
-          "storePassword": "0000001BB689DA10D0A62FECE9D1FAC044D7E739C60623E2D80898712E833300E8E0A4F7EC22D468D500DF"
+          "storeFile": "sign/default/key.p12",
+          "storePassword": "0000001A9D8A07DA6149B04B9DEA10CEF409A5C65958300158C038136971D9EAC0C1F90B45933733B112"
         }
       },
       {
