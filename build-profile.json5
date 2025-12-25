@@ -658,11 +658,11 @@
         "material": {
           "certpath": "sign/xiangsheng/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001A812CB0352AEDBC9AB592A8E202263B9D806801117177FDE62945A0E72310C760C7396F217629",
+          "keyPassword": "0000001AADB82222D8178C70DBB650BE8DAF371756775E498384B5DF640F134D5EE576DF231DF5BBAD80",
           "profile": "sign/xiangsheng/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/xiangsheng/key.p12",
-          "storePassword": "0000001A927080C739A7ED8DEFEED2F5A9829F5C68DFA2C1E6A1C41D7CF06F1859E2AA2D556AF2DB2CDB"
+          "storePassword": "0000001AF2B8BD9287FB5A3335EFDF4559B6E48DAB6CDF261DAC6F18C98BE9A870EEF0BA3A2542FAB022"
         }
       },
       {
