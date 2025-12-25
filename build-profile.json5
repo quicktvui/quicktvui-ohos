@@ -74,7 +74,7 @@
       },
       {
         "name": "xiangsheng",
-        "signingConfig": "default",
+        "signingConfig": "xiangsheng",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -651,6 +651,18 @@
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/template/key.p12",
           "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "xiangsheng",
+        "material": {
+          "certpath": "sign/xiangsheng/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A812CB0352AEDBC9AB592A8E202263B9D806801117177FDE62945A0E72310C760C7396F217629",
+          "profile": "sign/xiangsheng/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/xiangsheng/key.p12",
+          "storePassword": "0000001A927080C739A7ED8DEFEED2F5A9829F5C68DFA2C1E6A1C41D7CF06F1859E2AA2D556AF2DB2CDB"
         }
       },
       {
