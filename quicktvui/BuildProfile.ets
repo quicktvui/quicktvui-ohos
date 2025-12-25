@@ -2,10 +2,10 @@
  * Use these variables when you tailor your ArkTS code. They must be of the const type.
  */
 export const HAR_VERSION = '1.0.0';
-export const BUILD_MODE_NAME = 'release';
-export const DEBUG = false;
+export const BUILD_MODE_NAME = 'debug';
+export const DEBUG = true;
 export const TARGET_NAME = 'default';
-export const APP_ENTRY = 'Application';
+export const APP_ENTRY = 'Debug';
 export const APP_ID = 'es.com.elsbharmony.tv';
 export const BUNDLE_SOURCE = 'REMOTE';
 export const BUNDLE_URI = '';
