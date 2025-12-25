@@ -11,7 +11,9 @@ struct Main {
 
   onPageShow(): void {
     LogUtils.d(this.TAG, 'Lifecycle: onPageShow');
-    App.instance.nav?.pushPathByName('AppView', null, false);
+
+    const runtimeConfig = App.instance.runtimeConfig
+    App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, null, false);
   }
 
   onPageHide(): void {

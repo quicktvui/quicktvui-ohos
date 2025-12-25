@@ -575,7 +575,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": 'Debug',
               "APP_ID": "es.com.elsbharmony.tv",
               "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
