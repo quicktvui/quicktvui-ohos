@@ -98,7 +98,7 @@
       },
       {
         "name": "gushi",
-        "signingConfig": "default",
+        "signingConfig": "gushi",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -903,6 +903,18 @@
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/runtime/key.p12",
           "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "gushi",
+        "material": {
+          "certpath": "sign/gushi/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A7D42EDB8123F1D7B3858AEB73936D53CA4E8DE8F59FBC7160A27EBB5548A98A55369B00272AF",
+          "profile": "sign/gushi/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/gushi/key.p12",
+          "storePassword": "0000001AC62CAB365DDD2133CADA86B37F606072128F4880073344E1B261D6D52875D633CDAE62F31950"
         }
       }
     ]
