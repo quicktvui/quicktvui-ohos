@@ -146,7 +146,7 @@
       },
       {
         "name": "doudizhu",
-        "signingConfig": "default",
+        "signingConfig": "doudizhu",
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
@@ -915,6 +915,18 @@
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/gushi/key.p12",
           "storePassword": "0000001AC62CAB365DDD2133CADA86B37F606072128F4880073344E1B261D6D52875D633CDAE62F31950"
+        }
+      },
+      {
+        "name": "doudizhu",
+        "material": {
+          "certpath": "sign/doudizhu/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001A555C7A153BCAF0BD535B0F8D6FAB9F5115F91D726358791E8817C4568EC30DF72C129F6E87D8",
+          "profile": "sign/doudizhu/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/doudizhu/key.p12",
+          "storePassword": "0000001A8E2972411615B93EEF3F70B43DE7AE83C7E66781F9B7A326E72C190600980867F04E5CE5D385"
         }
       }
     ]
