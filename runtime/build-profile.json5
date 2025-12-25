@@ -272,15 +272,6 @@
       }
     },
     {
-      "name": "debug",
-      "resource": {
-        "directories": [
-          "./src/main/resources",
-          "./src/debug/resources"
-        ]
-      }
-    },
-    {
       "name": "runtime",
       "resource": {
         "directories": [
