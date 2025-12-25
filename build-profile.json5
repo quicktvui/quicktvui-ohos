@@ -749,11 +749,11 @@
         "material": {
           "certpath": "sign/test_source_server/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001A250D1269F4B271ED10989CEF74304F8D6888AAB1B9D371F16B08DEFDA6C464990696932B21DD",
           "profile": "sign/test_source_server/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/test_source_server/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001AFD8598B69926A82FB072EC5076FB97EE3E48D37BCF937BFC07D47C3D5DCB7BC84BA2F70EF085"
         }
       }
     ]
