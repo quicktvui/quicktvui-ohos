@@ -6,7 +6,7 @@ export interface Config {
   appEntry?: string
   appDebug?: boolean
   //
-  bundleSource: BundleSourceType //枚举：LOCAL | REMOTE
+  bundleSource: BundleSourceType  | undefined//枚举：LOCAL | REMOTE
   bundleUri?: string
   //
   params?: object

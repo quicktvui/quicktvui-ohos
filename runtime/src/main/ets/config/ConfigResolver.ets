@@ -5,6 +5,11 @@ import type { RuntimeConfig } from './RuntimeConfig'
 
 export class ConfigResolver {
   static resolve(launch?: LaunchConfig): RuntimeConfig {
+
+    console.log("========ConfigResolver=======bundleSource===>>>>" + launch?.bundleSource)
+    console.log("========ConfigResolver=======BuildConfig===>>>>" + JSON.stringify(BuildConfig))
+    console.log("========ConfigResolver=======DefaultConfig===>>>>" + JSON.stringify(DefaultConfig))
+
     return {
       //
       appId: launch?.appId ?? BuildConfig.appId ?? DefaultConfig.appId,

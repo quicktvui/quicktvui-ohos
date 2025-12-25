@@ -45,6 +45,8 @@ export default class RuntimeEntryAbility extends UIAbility {
       want.parameters as Record<string, Object>
     )
     const runtimeConfig = ConfigResolver.resolve(launchConfig)
+    LogUtils.e(this.TAG, `Ability runtimeConfig :` + JSON.stringify(runtimeConfig))
+
     App.instance.runtimeConfig = runtimeConfig
     //--------------------------------------------------------------------
     if (onNewWant) {

@@ -8,7 +8,7 @@ export class LaunchConfigParser {
     }
 
     const cfg: LaunchConfig = {
-      bundleSource: 'REMOTE'
+      bundleSource: undefined
     }
 
     //---------------------------------------------------
