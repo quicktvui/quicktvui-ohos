@@ -13,7 +13,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Debug',
               "APP_ID": "com.extscreen.runtime",
-              "BUNDLE_SOURCE": 'Local',
               "BUNDLE_URI": 'assets:///vue',
               "PARAMS": ''
             }
@@ -37,7 +36,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "tv.huan.template.hmos",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -61,7 +59,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "tv.huan.tudoudou.hmos",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -85,7 +82,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "tv.huan.xiangsheng",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -109,7 +105,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "tv.huan.guoxuegushi",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -133,7 +128,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "tv.huan.wmbdj",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -157,7 +151,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "tv.huan.jjddzss",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -181,7 +174,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.elsb.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -205,7 +197,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.elsbfk.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -230,7 +221,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.blackwhite.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -255,7 +245,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.tuixiangzi.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -280,7 +269,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.fenshuajiang.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -305,7 +293,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.chess.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -330,7 +317,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.wsmc.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -355,7 +341,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.zlsg.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -380,7 +365,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.guesspos.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -405,7 +389,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.hnt.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -430,7 +413,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.pacman.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -455,7 +437,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.hlfk.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -480,7 +461,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.szhrd.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -505,7 +485,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.snake.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -529,7 +508,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.ktjs.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -553,7 +531,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "es.com.baduanjin.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -575,9 +552,8 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Debug',
+              "APP_ENTRY": 'Application',
               "APP_ID": "es.com.elsbharmony.tv",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }
@@ -601,8 +577,7 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Debug',
               "APP_ID": "com.extscreen.runtime",
-              "BUNDLE_SOURCE": 'Local',
-              "BUNDLE_URI": '',
+              "BUNDLE_URI": 'assets:///vue',
               "PARAMS": ''
             }
           },
@@ -625,7 +600,6 @@
             "buildProfileFields": {
               "APP_ENTRY": 'Application',
               "APP_ID": "cn.openharmony.app.center",
-              "BUNDLE_SOURCE": 'REMOTE',
               "BUNDLE_URI": '',
               "PARAMS": ''
             }

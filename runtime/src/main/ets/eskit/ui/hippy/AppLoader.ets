@@ -20,8 +20,10 @@ export class AppLoaderFactory {
   public static FROM_ASSETS = "assets://"
 
   public static create(data: EsData): AppLoader {
-    if (data.bundleSource == 'LOCAL') {
-      return new AssetsAppLoader(data)
+    if (data.uri?.length !== undefined) {
+      if (data.uri.startsWith(AppLoaderFactory.FROM_ASSETS)) {
+        return new AssetsAppLoader(data)
+      }
     }
     return new ApiAppLoader(data)
   }

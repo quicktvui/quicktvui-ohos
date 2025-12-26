@@ -16,8 +16,10 @@ struct Main {
     const runtimeConfig = App.instance.runtimeConfig
     const params: EsData = {
       packageName: runtimeConfig?.appId,
+      appName: runtimeConfig?.appName,
+      appIcon: runtimeConfig?.appIcon,
       uri: runtimeConfig?.bundleUri,
-      bundleSource: runtimeConfig?.bundleSource ?? 'REMOTE'
+      args: runtimeConfig?.params,
     }
     App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, params, false);
   }

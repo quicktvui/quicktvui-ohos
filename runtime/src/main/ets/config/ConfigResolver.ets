@@ -1,5 +1,4 @@
 import { BuildConfig } from './BuildConfig'
-import { BundleSourceType } from './Config'
 import { DefaultConfig } from './DefaultConfig'
 import type { LaunchConfig } from './LaunchConfig'
 import type { RuntimeConfig } from './RuntimeConfig'
@@ -18,11 +17,6 @@ export class ConfigResolver {
         BuildConfig.appEntry,
         DefaultConfig.appEntry
       ),
-      bundleSource: pickString(
-        launch?.bundleSource,
-        BuildConfig.bundleSource,
-        DefaultConfig.bundleSource
-      ) as BundleSourceType,
 
       bundleUri: pickString(
         launch?.bundleUri,

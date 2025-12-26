@@ -75,16 +75,17 @@ export class ESNativeRouterModule extends BaseModule {
             result.host === 'action' &&
             result.path === '/start') {
             const pkgName = result.params['pkg']
-            LogUtils.i(this.TAG, `=============openESApp=================>>>>` + JSON.stringify(pkgName))
-            // TODO：启动对应应用 / 页面
-            // App.instance.nav?.pushDestination(
-            //   { name: 'Application' },
-            //   { launchMode: LaunchMode.STANDARD })
+            const appName = result.params['name']
+            const appIcon = result.params['icon']
+            const uri = result.params['uri']
+            const args = result.params['args']
 
             const appInfo: EsData = {
-              bundleSource: 'REMOTE',
               packageName: pkgName,
-              uri: DefaultConfig.bundleUri
+              appName: appName,
+              appIcon: appIcon,
+              uri: uri,
+              args: JSON.parse(args),
             }
 
             App.instance.nav?.pushPathByName('Application', appInfo, false);

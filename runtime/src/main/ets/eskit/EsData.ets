@@ -1,5 +1,3 @@
-import { BundleSourceType } from "../config/Config"
-
 export class EsData {
   /* 应用名称 */
   appName?: string
@@ -10,11 +8,9 @@ export class EsData {
   /* 版本 */
   versionName?: string
   /* 启动参数 */
-  args?: Map<string, object>
+  args?: object
   /* 自定义加载地址 */
   uri?: string
-  /* 来源 */
-  bundleSource: BundleSourceType = 'REMOTE'
 
   static tryParse(parameters?: Record<string, Object>): EsData | null {
     if (parameters?.uri) {

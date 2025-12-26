@@ -5,9 +5,8 @@ export const HAR_VERSION = '1.0.0';
 export const BUILD_MODE_NAME = 'debug';
 export const DEBUG = true;
 export const TARGET_NAME = 'default';
-export const APP_ENTRY = 'Debug';
-export const APP_ID = 'com.extscreen.runtime';
-export const BUNDLE_SOURCE = 'Local';
+export const APP_ENTRY = 'Application';
+export const APP_ID = 'es.com.elsbharmony.tv';
 export const BUNDLE_URI = '';
 export const PARAMS = '';
 
@@ -21,7 +20,6 @@ export default class BuildProfile {
 	static readonly TARGET_NAME = TARGET_NAME;
 	static readonly APP_ENTRY = APP_ENTRY;
 	static readonly APP_ID = APP_ID;
-	static readonly BUNDLE_SOURCE = BUNDLE_SOURCE;
 	static readonly BUNDLE_URI = BUNDLE_URI;
 	static readonly PARAMS = PARAMS;
 }

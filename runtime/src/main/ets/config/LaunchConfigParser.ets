@@ -1,4 +1,3 @@
-import { BundleSourceType } from './Config'
 import type { LaunchConfig } from './LaunchConfig'
 
 export class LaunchConfigParser {
@@ -7,9 +6,7 @@ export class LaunchConfigParser {
       return undefined
     }
 
-    const cfg: LaunchConfig = {
-      bundleSource: undefined
-    }
+    const cfg: LaunchConfig = {}
 
     //---------------------------------------------------
     if (typeof params.appId === 'string') {
@@ -22,14 +19,10 @@ export class LaunchConfigParser {
       cfg.appDebug = params.appDebug
     }
     //---------------------------------------------------
-    if (params.bundleSource && (params.bundleSource === 'LOCAL' || params.bundleSource === 'REMOTE')) {
-      cfg.bundleSource = params.bundleSource as BundleSourceType;
-    }
     if (typeof params.bundleUri === 'string') {
       cfg.bundleUri = params.bundleUri
     }
     //---------------------------------------------------
-
     if (typeof params.params === 'string') {
       try {
         cfg.params = JSON.parse(params.params)
