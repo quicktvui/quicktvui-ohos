@@ -1,8 +1,8 @@
 import common from '@ohos.app.ability.common';
 import { RuntimeConfig } from './config/RuntimeConfig';
+import { window } from '@kit.ArkUI';
 
 export class App {
-
   private static _instance: App
 
   static get instance(): App {
@@ -15,6 +15,7 @@ export class App {
   private constructor() {
   }
 
+  windowStage?: window.WindowStage
   context?: common.UIAbilityContext
   nav?: NavPathStack
   runtimeConfig?: RuntimeConfig

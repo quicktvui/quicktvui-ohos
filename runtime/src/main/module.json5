@@ -17,7 +17,7 @@
     "routerMap": "$profile:router_map",
     "abilities": [
       {
-        "name": "default",
+        "name": "EntryAbility",
         "srcEntry": "./ets/entryability/RuntimeEntryAbility.ets",
         "description": "demo",
         "icon": "$media:layered_image",
@@ -46,8 +46,6 @@
             "uris": [
               {
                 "scheme": "esapp",
-                "host": "action",
-                "path": "start"
               }
             ]
           },

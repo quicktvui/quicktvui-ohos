@@ -5,24 +5,36 @@ export class LaunchConfigParser {
     if (!params) {
       return undefined
     }
-
     const cfg: LaunchConfig = {}
-
-    //---------------------------------------------------
-    if (typeof params.appId === 'string') {
-      cfg.appId = params.appId
+    //pkg
+    if (typeof params.pkg === 'string') {
+      cfg.appId = params.pkg
     }
-    if (typeof params.appEntry === 'string') {
-      cfg.appEntry = params.appEntry
+    //entry
+    if (typeof params.entry === 'string') {
+      cfg.appEntry = params.entry
     }
-    if (typeof params.appDebug === 'boolean') {
-      cfg.appDebug = params.appDebug
+    //name
+    if (typeof params.name === 'string') {
+      cfg.appName = params.name
     }
-    //---------------------------------------------------
-    if (typeof params.bundleUri === 'string') {
-      cfg.bundleUri = params.bundleUri
+    //icon
+    if (typeof params.icon === 'string') {
+      cfg.appIcon = params.icon
     }
-    //---------------------------------------------------
+    //verion
+    if (typeof params.verion === 'string') {
+      cfg.appVersion = params.verion
+    }
+    //debug
+    if (typeof params.debug === 'boolean') {
+      cfg.appDebug = params.debug
+    }
+    //uri
+    if (typeof params.uri === 'string') {
+      cfg.bundleUri = params.uri
+    }
+    //params
     if (typeof params.params === 'string') {
       try {
         cfg.params = JSON.parse(params.params)

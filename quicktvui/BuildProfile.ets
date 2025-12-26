@@ -6,8 +6,8 @@ export const BUILD_MODE_NAME = 'debug';
 export const DEBUG = true;
 export const TARGET_NAME = 'default';
 export const APP_ENTRY = '';
-export const APP_ID = 'es.com.elsbharmony.tv';
-export const BUNDLE_URI = '';
+export const APP_ID = 'cn.openharmony.app.center';
+export const BUNDLE_URI = 'assets:///vue/app_center';
 export const PARAMS = '';
 
 /**

@@ -182,7 +182,8 @@ struct Application {
     NavDestination() {
       Stack() {
         if (this.splashOpacity > 0) {
-          IconSplashView().opacity(this.splashOpacity)
+          IconSplashView()
+            .opacity(this.splashOpacity)
         } else {
           HippyRoot({
             hippyEngine: this.appContext.engine,
