@@ -79,21 +79,24 @@ export class ESNativeRouterModule extends BaseModule {
             const appIcon = result.params['icon']
             const uri = result.params['uri']
             const args = result.params['args']
-
+            let argJson = undefined
+            try {
+              argJson = JSON.parse(args)
+            } catch (e) {
+            }
             const appInfo: EsData = {
               packageName: pkgName,
               appName: appName,
               appIcon: appIcon,
               uri: uri,
-              args: JSON.parse(args),
+              args: argJson,
             }
-
             App.instance.nav?.pushPathByName('Application', appInfo, false);
           }
           promise?.resolve(true)
         } catch (error) {
           LogUtils.e(this.TAG,
-            `Failed to canOpenLink. code=${error.code}, message=${error.message}`)
+            `Failed to open app. error:${JSON.stringify(error)}`)
           promise?.reject(error)
         }
         break;
