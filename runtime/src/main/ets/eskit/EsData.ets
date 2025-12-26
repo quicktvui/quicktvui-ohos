@@ -4,34 +4,13 @@ export class EsData {
   /* icon */
   appIcon?: string
   /* 包名 */
-  packageName?: string
+  appId?: string
   /* 版本 */
-  versionName?: string
+  appVersion?: string
   /* 启动参数 */
-  args?: object
+  params?: object
+  /* 否开启调试 */
+  appDebug?: boolean
   /* 自定义加载地址 */
-  uri?: string
-
-  static tryParse(parameters?: Record<string, Object>): EsData | null {
-    if (parameters?.uri) {
-      return EsData.parseWithUri(parameters.uri as string)
-    }
-
-    if (parameters?.pkg) {
-      return EsData.parseWithParams(parameters);
-    }
-
-    return null
-  }
-
-  private static parseWithUri(uri: string): EsData | null {
-    return null
-  }
-
-  private static parseWithParams(params: Record<string, Object>): EsData {
-    let data = new EsData()
-    data.packageName = params.pkg as string
-    data.uri = params.uri as string
-    return data;
-  }
+  bundleUri?: string
 }

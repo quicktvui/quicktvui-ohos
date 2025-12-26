@@ -56,13 +56,18 @@ export default class RuntimeEntryAbility extends UIAbility {
     //--------------------------------------------------------------------
 
     if (onNewWant) {
-      // 这里的 EsData.tryParse 也会基于合并后的 parameters 进行解析
-      let esData = EsData.tryParse(want.parameters)
-      if (esData) {
-        App.instance.nav?.pushDestination(
-          { name: runtimeConfig.appEntry, param: runtimeConfig.params },
-          { launchMode: LaunchMode.STANDARD })
+      const runtimeConfig = App.instance.runtimeConfig
+      const params: EsData = {
+        appId: runtimeConfig?.appId,
+        appName: runtimeConfig?.appName,
+        appIcon: runtimeConfig?.appIcon,
+        bundleUri: runtimeConfig?.bundleUri,
+        params: runtimeConfig?.params,
       }
+
+      App.instance.nav?.pushDestination(
+        { name: runtimeConfig.appEntry, param: params },
+        { launchMode: LaunchMode.STANDARD })
     }
   }
 

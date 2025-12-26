@@ -24,8 +24,8 @@ export class ApiAppLoader implements AppLoader {
       console.info('ApiAppLoader: 开始请求应用信息...');
       const appInfo = await this.fetchAppInfo();
 
-      this.data.packageName = appInfo.es_package
-      this.data.versionName = appInfo.tvpackagever
+      this.data.appId = appInfo.es_package
+      this.data.appVersion = appInfo.tvpackagever
 
       // 1. 获取该包名的根目录 (例如: .../files/app_rpk/apps/com.example.pkg)
       //    注意：这里不包含具体的版本号
@@ -115,7 +115,7 @@ export class ApiAppLoader implements AppLoader {
     return new Promise<AppInfo>((resolve, reject) => {
       const call = http.createHttp();
       call.request(
-        this.data.uri,
+        this.data.bundleUri,
         {
           method: http.RequestMethod.POST,
           extraData: new Uint8Array(requestData).buffer,
@@ -171,8 +171,8 @@ export class ApiAppLoader implements AppLoader {
       source: '', // 根据实际情况填写
       sdk_ver: '3.0',
       client: {
-        es_package: this.data.packageName!,
-        es_package_ver: this.data.versionName || '',
+        es_package: this.data.appId!,
+        es_package_ver: this.data.appVersion || '',
         clientEsPackageVer: ''
       }
     };
@@ -235,14 +235,14 @@ export class ApiAppLoader implements AppLoader {
    */
   getVendorJsFile(): string {
     // 1. 安全检查：确保 Context 和必要的包信息存在
-    if (!App.instance.context || !this.data.packageName || !this.data.versionName) {
+    if (!App.instance.context || !this.data.appId || !this.data.appVersion) {
       console.warn('ApiAppLoader: Context or Package info missing when getting vendor file');
       return '';
     }
 
     // 2. 构建基础目录 (需与 getAppDir 逻辑保持一致)
     // 路径: /data/storage/.../files/app_rpk/apps/com.example/1.0.0
-    const baseDir = `${App.instance.context.filesDir}/app_rpk/apps/${this.data.packageName}/${this.data.versionName}`;
+    const baseDir = `${App.instance.context.filesDir}/app_rpk/apps/${this.data.appId}/${this.data.appVersion}`;
 
     // 3. 拼接 dist/vendor.js
     const filePath = `${baseDir}/dist/vendor.js`;
@@ -255,13 +255,13 @@ export class ApiAppLoader implements AppLoader {
    */
   getIndexJsFile(): string {
     // 1. 安全检查
-    if (!App.instance.context || !this.data.packageName || !this.data.versionName) {
+    if (!App.instance.context || !this.data.appId || !this.data.appVersion) {
       console.warn('ApiAppLoader: Context or Package info missing when getting index file');
       return '';
     }
 
     // 2. 构建基础目录
-    const baseDir = `${App.instance.context.filesDir}/app_rpk/apps/${this.data.packageName}/${this.data.versionName}`;
+    const baseDir = `${App.instance.context.filesDir}/app_rpk/apps/${this.data.appId}/${this.data.appVersion}`;
 
     // 3. 拼接 dist/index.js
     const filePath = `${baseDir}/dist/index.js`;

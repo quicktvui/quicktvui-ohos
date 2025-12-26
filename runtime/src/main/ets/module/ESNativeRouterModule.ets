@@ -5,10 +5,9 @@ import {
 import { BaseModule } from './BaseModule';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { bundleManager, common, OpenLinkOptions } from '@kit.AbilityKit';
-import { parseEsAppUri } from '../eskit/scheme/EsAppUri';
 import { App } from '../App';
 import { EsData } from '../eskit/EsData';
-import { DefaultConfig } from '../config/DefaultConfig';
+import Url from '@ohos.url'
 
 /**
  *
@@ -66,38 +65,71 @@ export class ESNativeRouterModule extends BaseModule {
       }
       case 'openESApp': {
         try {
-          // esapp://action/start?pkg=com.quicktvui.app.api
+          // 传入的 payload 格式：
+          // esapp://es.hello.world/2.0?entry=Debug&uri=assets%3A%2F%2F%2Fvue%2F&params=%7B%22key%22%3A%22value%22%7D&debug=true&from=cmd
           const payload = params[0] as string;
-          const result = parseEsAppUri(payload)
+          // 1. 使用标准库解析
+          const urlObj = Url.URL.parseURL(payload);
+
           LogUtils.i(this.TAG,
-            `scheme=${result.scheme} host=${result.host} path=${result.path} params=${JSON.stringify(result.params)}`)
-          if (result.scheme === 'esapp' &&
-            result.host === 'action' &&
-            result.path === '/start') {
-            const pkgName = result.params['pkg']
-            const appName = result.params['name']
-            const appIcon = result.params['icon']
-            const uri = result.params['uri']
-            const args = result.params['args']
-            let argJson = undefined
+            `openESApp parsing: scheme=${urlObj.protocol} host=${urlObj.hostname} path=${urlObj.pathname}`);
+
+          // 2. 校验协议
+          if (urlObj.protocol === 'esapp:') {
+            // --- A. 提取基础信息 ---
+            // Host 即为包名
+            const pkgName = urlObj.hostname;
+            // Path 即为版本 (去掉开头的 /)
+            const version = urlObj.pathname.startsWith('/') ? urlObj.pathname.substring(1) : urlObj.pathname;
+
+            // --- B. 提取 Query 参数 ---
+            const queryParams = urlObj.params;
+
+            const appName = queryParams.get('name');
+            const appIcon = queryParams.get('icon');
+
+            // 入口页面 (默认为 Application)
+            const entryPage = queryParams.get('entry') || 'Application';
+
+            // 调试标记
+            const isDebug = queryParams.get('debug') === 'true';
+
+            // URI (需要解码)
+            const encodedUri = queryParams.get('uri');
+            const realUri = encodedUri ? decodeURIComponent(encodedUri) : '';
+
+            // JSON Params (需要解码 + 反序列化)
+            const encodedArgs = queryParams.get('params');
+            let argJson: Record<string, Object> = {};
             try {
-              argJson = JSON.parse(args)
+              if (encodedArgs) {
+                argJson = JSON.parse(decodeURIComponent(encodedArgs)) as Record<string, Object>;
+              }
             } catch (e) {
+              LogUtils.w(this.TAG, `JSON parse failed: ${e}`);
             }
+
+            // --- C. 构造 EsData ---
             const appInfo: EsData = {
-              packageName: pkgName,
-              appName: appName,
-              appIcon: appIcon,
-              uri: uri,
-              args: argJson,
-            }
-            App.instance.nav?.pushPathByName('Application', appInfo, false);
+              appId: pkgName,
+              appName: appName || '',
+              appIcon: appIcon || '',
+              appVersion: version,
+              bundleUri: realUri,
+              params: argJson,
+              appDebug: isDebug
+            };
+            // --- D. 路由跳转 ---
+            LogUtils.i(this.TAG, `Navigating to ${entryPage} with info: ${JSON.stringify(appInfo)}`);
+
+            App.instance.nav?.pushPathByName(entryPage, appInfo, false);
+          } else {
+            LogUtils.w(this.TAG, `Unknown scheme: ${urlObj.protocol}`);
           }
-          promise?.resolve(true)
+          promise?.resolve(true);
         } catch (error) {
-          LogUtils.e(this.TAG,
-            `Failed to open app. error:${JSON.stringify(error)}`)
-          promise?.reject(error)
+          LogUtils.e(this.TAG, `Failed to open app. error:${JSON.stringify(error)}`);
+          promise?.reject(error);
         }
         break;
       }

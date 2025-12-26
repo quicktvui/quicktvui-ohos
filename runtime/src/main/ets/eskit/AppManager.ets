@@ -29,7 +29,7 @@ export class AppManager {
 
   findAppContextWithPackageName(value: string): AppContext | null {
     for (let ctx of this.apps) {
-      if (ctx.data.packageName == value) {
+      if (ctx.data.appId == value) {
         return ctx
       }
     }
