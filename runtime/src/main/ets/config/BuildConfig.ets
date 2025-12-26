@@ -4,10 +4,11 @@ import { Config } from './Config'
 export const BuildConfig: Config = {
   //
   appId: BuildProfile.APP_ID,
+  appName: BuildProfile.APP_NAME,
+  appIcon: BuildProfile.APP_ICON,
+  appVersion: BuildProfile.APP_VERSION,
   appEntry: BuildProfile.APP_ENTRY,
   appDebug: BuildProfile.APP_DEBUG,
-  //
-  bundleUri: BuildProfile.BUNDLE_URI,
-  //
-  params: BuildProfile.PARAMS ? JSON.parse(BuildProfile.PARAMS) : undefined,
+  appBundleUri: BuildProfile.APP_BUNDLE_URI,
+  appParams: BuildProfile.APP_PARAMS ? JSON.parse(BuildProfile.APP_PARAMS) : undefined,
 }

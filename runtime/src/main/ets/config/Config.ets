@@ -7,7 +7,7 @@ export interface Config {
   appEntry?: string
   appDebug?: boolean
   //
-  bundleUri?: string
+  appBundleUri?: string
   //
-  params?: object
+  appParams?: object
 }

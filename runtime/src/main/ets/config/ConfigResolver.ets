@@ -37,13 +37,13 @@ export class ConfigResolver {
         DefaultConfig.appVersion
       ),
 
-      bundleUri: pickString(
-        launch?.bundleUri,
-        BuildConfig.bundleUri,
-        DefaultConfig.bundleUri
+      appBundleUri: pickString(
+        launch?.appBundleUri,
+        BuildConfig.appBundleUri,
+        DefaultConfig.appBundleUri
       ),
 
-      params: launch?.params ?? BuildConfig.params ?? DefaultConfig.params,
+      appParams: launch?.appParams ?? BuildConfig.appParams ?? DefaultConfig.appParams,
       appDebug: launch?.appDebug ?? BuildConfig.appDebug ?? DefaultConfig.appDebug,
     }
   }

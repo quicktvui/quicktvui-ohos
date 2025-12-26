@@ -18,8 +18,8 @@ struct Main {
       appId: runtimeConfig?.appId,
       appName: runtimeConfig?.appName,
       appIcon: runtimeConfig?.appIcon,
-      bundleUri: runtimeConfig?.bundleUri,
-      params: runtimeConfig?.params,
+      bundleUri: runtimeConfig?.appBundleUri,
+      params: runtimeConfig?.appParams,
     }
     App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, params, false);
   }

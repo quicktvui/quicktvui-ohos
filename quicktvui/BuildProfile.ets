@@ -7,8 +7,11 @@ export const DEBUG = true;
 export const TARGET_NAME = 'default';
 export const APP_ENTRY = '';
 export const APP_ID = 'cn.openharmony.app.center';
-export const BUNDLE_URI = 'assets:///vue/app_center';
-export const PARAMS = '';
+export const APP_NAME = '';
+export const APP_ICON = '';
+export const APP_VERSION = '';
+export const APP_BUNDLE_URI = 'assets:///vue/app_center';
+export const APP_PARAMS = '';
 
 /**
  * BuildProfile Class is used only for compatibility purposes.
@@ -20,6 +23,9 @@ export default class BuildProfile {
 	static readonly TARGET_NAME = TARGET_NAME;
 	static readonly APP_ENTRY = APP_ENTRY;
 	static readonly APP_ID = APP_ID;
-	static readonly BUNDLE_URI = BUNDLE_URI;
-	static readonly PARAMS = PARAMS;
+	static readonly APP_NAME = APP_NAME;
+	static readonly APP_ICON = APP_ICON;
+	static readonly APP_VERSION = APP_VERSION;
+	static readonly APP_BUNDLE_URI = APP_BUNDLE_URI;
+	static readonly APP_PARAMS = APP_PARAMS;
 }

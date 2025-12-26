@@ -32,14 +32,14 @@ export class LaunchConfigParser {
     }
     //uri
     if (typeof params.uri === 'string') {
-      cfg.bundleUri = params.uri
+      cfg.appBundleUri = params.uri
     }
     //params
     if (typeof params.params === 'string') {
       try {
-        cfg.params = JSON.parse(params.params)
+        cfg.appParams = JSON.parse(params.params)
       } catch {
-        cfg.params = params.parameters
+        cfg.appParams = params.parameters
       }
     }
     return cfg
