@@ -34,7 +34,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "tv.huan.template.hmos",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -57,7 +57,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "tv.huan.tudoudou.hmos",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -80,7 +80,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "tv.huan.xiangsheng",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -103,7 +103,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "tv.huan.guoxuegushi",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -126,7 +126,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "tv.huan.wmbdj",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -149,7 +149,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "tv.huan.jjddzss",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -172,7 +172,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.elsb.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -195,7 +195,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.elsbfk.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -219,7 +219,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.blackwhite.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -243,7 +243,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.tuixiangzi.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -267,7 +267,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.fenshuajiang.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -291,7 +291,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.chess.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -315,7 +315,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.wsmc.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -339,7 +339,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.zlsg.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -363,7 +363,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.guesspos.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -387,7 +387,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.hnt.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -411,7 +411,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.pacman.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -435,7 +435,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.hlfk.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -459,7 +459,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.szhrd.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -483,7 +483,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.snake.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -506,7 +506,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.ktjs.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -529,7 +529,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.baduanjin.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -552,7 +552,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.elsbharmony.tv",
               "BUNDLE_URI": '',
               "PARAMS": ''
@@ -598,7 +598,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Application',
+              "APP_ENTRY": '',
               "APP_ID": "cn.openharmony.app.center",
               "BUNDLE_URI": '',
               "PARAMS": ''
