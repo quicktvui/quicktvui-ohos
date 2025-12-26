@@ -32,7 +32,7 @@ import { BusinessError, commonEventManager, deviceInfo } from '@kit.BasicService
 import { QTNativeLayout } from 'libquicktvui.so';
 import libHippy from 'libhippy.so';
 import { App } from '../App';
-import { QTLog } from 'quicktvui/src/main/ets/utils/QTLog';
+import { EsData } from '../eskit/EsData';
 
 @Builder
 export function PageDebugBuilder(name: string, param: Object) {
@@ -41,7 +41,7 @@ export function PageDebugBuilder(name: string, param: Object) {
 
 @Component
 export struct Debug {
-  private TAG: string = 'RuntimeDebugPage'
+  private TAG: string = 'DebugPage'
   private navPathStack: NavPathStack = new NavPathStack();
   @State name: string = ''
   @State currentEnv: string = 'dev'
@@ -79,6 +79,7 @@ export struct Debug {
   private rootViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State isEngineInitialized: boolean = false
   @Provide('autoSize') autoSize?: number[] = []
+  @State appInfo: EsData | null = null
 
   async aboutToAppear() {
     LogUtils.e(this.TAG, 'Lifecycle: aboutToAppear');
@@ -143,6 +144,12 @@ export struct Debug {
   }
 
   //--------------------------------DEBUG SERVER------------------------------------------
+  private initAppInfo() {
+    if (this.appInfo && this.appInfo.appBundleUri) {
+      this.debugServerHost = this.appInfo.appBundleUri
+    }
+  }
+
   private initDebugServer() {
     if (!this.debugMode) {
       return
@@ -437,6 +444,9 @@ export struct Debug {
     .hideToolBar(true)
     .onReady((context: NavDestinationContext) => {
       this.navPathStack = context.pathStack;
+      this.appInfo = context.pathInfo.param as EsData
+      console.log(this.TAG + ' appInfo: ' + JSON.stringify(this.appInfo))
+      this.initAppInfo()
     })
     .onWillAppear(() => {
       LogUtils.e(this.TAG, 'Lifecycle: onWillAppear');

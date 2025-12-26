@@ -652,7 +652,7 @@
               "APP_NAME": "",
               "APP_ICON": "",
               "APP_VERSION": "",
-              "APP_BUNDLE_URI": 'assets:///vue',
+              "APP_BUNDLE_URI": '',
               "APP_PARAMS": ''
             }
           },
