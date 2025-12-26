@@ -145,9 +145,19 @@ export struct Debug {
 
   //--------------------------------DEBUG SERVER------------------------------------------
   private initAppInfo() {
-    if (this.appInfo && this.appInfo.appBundleUri) {
-      this.debugServerHost = this.appInfo.appBundleUri
+    const uri = this.appInfo?.appBundleUri
+    if (!uri) {
+      return
     }
+    if (this.isIPv4(uri)) {
+      this.debugServerHost = uri
+    }
+  }
+
+  private isIPv4(host: string): boolean {
+    const ipv4Reg =
+      /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}$/
+    return ipv4Reg.test(host)
   }
 
   private initDebugServer() {

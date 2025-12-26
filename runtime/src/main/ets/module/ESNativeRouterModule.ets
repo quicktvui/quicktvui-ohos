@@ -68,6 +68,7 @@ export class ESNativeRouterModule extends BaseModule {
           // 传入的 payload 格式：
           // esapp://es.hello.world/2.0?entry=Debug&uri=assets%3A%2F%2F%2Fvue%2F&params=%7B%22key%22%3A%22value%22%7D&debug=true&from=cmd
           const payload = params[0] as string;
+          console.log(this.TAG + " openESApp params: " + payload)
           // 1. 使用标准库解析
           const urlObj = Url.URL.parseURL(payload);
 
@@ -99,7 +100,7 @@ export class ESNativeRouterModule extends BaseModule {
             const realUri = encodedUri ? decodeURIComponent(encodedUri) : '';
 
             // JSON Params (需要解码 + 反序列化)
-            const encodedArgs = queryParams.get('params');
+            const encodedArgs = queryParams.get('args');
             let argJson: Record<string, Object> = {};
             try {
               if (encodedArgs) {
