@@ -71,7 +71,7 @@ build_channel() {
 # 4. 渠道列表
 # ========================================================
 CHANNELS=(
-#app_center
+app_center
 #ke_ting_jian_shen
 #tudoudou
 #baduanjin
