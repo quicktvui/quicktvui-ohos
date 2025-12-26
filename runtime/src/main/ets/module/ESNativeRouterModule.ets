@@ -71,7 +71,7 @@ export class ESNativeRouterModule extends BaseModule {
           // 1. 使用标准库解析
           const urlObj = Url.URL.parseURL(payload);
 
-          LogUtils.i(this.TAG,
+          LogUtils.e(this.TAG,
             `openESApp parsing: scheme=${urlObj.protocol} host=${urlObj.hostname} path=${urlObj.pathname}`);
 
           // 2. 校验协议
@@ -120,7 +120,7 @@ export class ESNativeRouterModule extends BaseModule {
               appDebug: isDebug
             };
             // --- D. 路由跳转 ---
-            LogUtils.i(this.TAG, `Navigating to ${entryPage} with info: ${JSON.stringify(appInfo)}`);
+            LogUtils.e(this.TAG, `Navigating to ${entryPage} with info: ${JSON.stringify(appInfo)}`);
 
             App.instance.nav?.pushPathByName(entryPage, appInfo, false);
           } else {
