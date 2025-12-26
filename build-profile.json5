@@ -600,7 +600,7 @@
             "buildProfileFields": {
               "APP_ENTRY": '',
               "APP_ID": "cn.openharmony.app.center",
-              "BUNDLE_URI": '',
+              "BUNDLE_URI": 'assets:///vue/app_center',
               "PARAMS": ''
             }
           },
