@@ -7,7 +7,7 @@ export class AssetsAppLoader implements AppLoader {
 
   constructor(data: EsData) {
     this.data = data
-    let dir = data.bundleUri!.replace(AppLoaderFactory.FROM_ASSETS, '')
+    let dir = data.appBundleUri!.replace(AppLoaderFactory.FROM_ASSETS, '')
     this.baseDir = dir.startsWith('/') ? dir.slice(1) : dir;
   }
 

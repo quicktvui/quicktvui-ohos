@@ -115,8 +115,8 @@ export class ESNativeRouterModule extends BaseModule {
               appName: appName || '',
               appIcon: appIcon || '',
               appVersion: version,
-              bundleUri: realUri,
-              params: argJson,
+              appBundleUri: realUri,
+              appParams: argJson,
               appDebug: isDebug
             };
             // --- D. 路由跳转 ---

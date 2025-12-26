@@ -14,13 +14,15 @@ struct Main {
     LogUtils.d(this.TAG, 'Lifecycle: onPageShow');
 
     const runtimeConfig = App.instance.runtimeConfig
-    const params: EsData = {
-      appId: runtimeConfig?.appId,
-      appName: runtimeConfig?.appName,
-      appIcon: runtimeConfig?.appIcon,
-      bundleUri: runtimeConfig?.appBundleUri,
-      params: runtimeConfig?.appParams,
-    }
+    const params = EsData.buildESData(
+      runtimeConfig?.appId,
+      runtimeConfig?.appVersion,
+      runtimeConfig?.appName,
+      runtimeConfig?.appIcon,
+      runtimeConfig?.appDebug,
+      runtimeConfig?.appBundleUri,
+      runtimeConfig?.appParams,
+    )
     App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, params, false);
   }
 

@@ -20,8 +20,8 @@ export class AppLoaderFactory {
   public static FROM_ASSETS = "assets://"
 
   public static create(data: EsData): AppLoader {
-    if (data.bundleUri?.length !== undefined) {
-      if (data.bundleUri.startsWith(AppLoaderFactory.FROM_ASSETS)) {
+    if (data.appBundleUri?.length !== undefined) {
+      if (data.appBundleUri.startsWith(AppLoaderFactory.FROM_ASSETS)) {
         return new AssetsAppLoader(data)
       }
     }

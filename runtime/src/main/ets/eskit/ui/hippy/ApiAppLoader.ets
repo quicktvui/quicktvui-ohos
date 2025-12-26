@@ -14,6 +14,7 @@ export class ApiAppLoader implements AppLoader {
 
   constructor(data: EsData) {
     this.data = data
+    console.info(`ApiAppLoader: data: ${JSON.stringify(data)}`);
   }
 
   /**
@@ -115,7 +116,7 @@ export class ApiAppLoader implements AppLoader {
     return new Promise<AppInfo>((resolve, reject) => {
       const call = http.createHttp();
       call.request(
-        this.data.bundleUri,
+        this.data.appBundleUri,
         {
           method: http.RequestMethod.POST,
           extraData: new Uint8Array(requestData).buffer,
@@ -176,6 +177,7 @@ export class ApiAppLoader implements AppLoader {
         clientEsPackageVer: ''
       }
     };
+    console.log('ApiAppLoader fetchAppInfo params: ' + JSON.stringify(params))
     return SignUtil.encodeWithPublicKey(JSON.stringify(params));
   }
 
