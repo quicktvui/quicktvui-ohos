@@ -20,7 +20,7 @@ import { EsData } from '../eskit/EsData'
 import { ApiAppLoader } from '../eskit/ui/hippy/ApiAppLoader'
 import { LoadStatus } from '../eskit/LoadStatus'
 import { RuntimeAPIProvider } from '../api/RuntimeAPIProvider'
-import { IconSplashView } from '../eskit/ui/splash/SplashView'
+import { LoadingSplashView } from '../eskit/ui/splash/SplashView'
 import { AssetsAppLoader } from '../eskit/ui/hippy/AssetsAppLoader'
 import { AppContext } from '../eskit/AppContext'
 import { AppManager } from '../eskit/AppManager'
@@ -41,7 +41,7 @@ struct Application {
   private hippyViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
   @State splashOpacity: number = 1.0
   @Provide('autoSize') autoSize?: number[] = []
-  private appInfo: EsData | null = null
+  @State appInfo: EsData | null = null
 
   private parseEsData(data: EsData): EsData {
     // data.packageName = App.instance.runtimeConfig?.appId
@@ -182,7 +182,7 @@ struct Application {
     NavDestination() {
       Stack() {
         if (this.splashOpacity > 0) {
-          IconSplashView()
+          LoadingSplashView({ appInfo: this.appInfo })
             .opacity(this.splashOpacity)
         } else {
           HippyRoot({
