@@ -94,7 +94,7 @@
               "APP_NAME": "",
               "APP_ICON": "",
               "APP_VERSION": "",
-              "APP_BUNDLE_URI": '',
+              "APP_BUNDLE_URI": 'assets:///vue',
               "APP_PARAMS": ''
             }
           },
@@ -172,7 +172,7 @@
               "APP_NAME": "",
               "APP_ICON": "",
               "APP_VERSION": "",
-              "APP_BUNDLE_URI": '',
+              "APP_BUNDLE_URI": 'assets:///vue',
               "APP_PARAMS": ''
             }
           },

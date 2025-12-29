@@ -71,7 +71,8 @@ build_channel() {
 # 4. 渠道列表
 # ========================================================
 CHANNELS=(
-doudizhu
+xiangsheng
+#doudizhu
 #ctyangshenggong
 #haoqidongwu
 #huohuotu
