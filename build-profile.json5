@@ -1230,11 +1230,11 @@
         "material": {
           "certpath": "sign/ctyangshenggong/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001B3F597FD61C2F4F7A3DFCD30F4A6FFDC0097A519F502DF2F2F227AA8B784DF22F731008085F6BCF",
           "profile": "sign/ctyangshenggong/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/ctyangshenggong/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001B7B3C9EEDBF39FBAD2A2365B257B869C54A65E38DB6F13AA9916BDE232BE871CB517AC32E51D6D3"
         }
       },
       {
@@ -1242,11 +1242,11 @@
         "material": {
           "certpath": "sign/haoqidongwu/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001B0FC454F249518CDAECC764C0CE6FE33B50EC003C1A7103107F43C37BFA86282F8D29A3348A4AB2",
           "profile": "sign/haoqidongwu/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/haoqidongwu/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001B09211ED12E7F9B51746A922514BA012AF3EAC68C91F032DB86CDF1F91F6DEAC7BEA2760CAD2EF4"
         }
       },
       {
@@ -1254,11 +1254,11 @@
         "material": {
           "certpath": "sign/huohuotu/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001BAFCD477FC66E75B7527D1BE38E80A552A968BA18DFF903F44D679A891801F20F529D48A01268E0",
           "profile": "sign/huohuotu/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/huohuotu/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001BACC07362D1012600973C64AD90FDCAA2CBDAD3FB2D180526681F506EF729305A072431C2BEF569"
         }
       },
       {
@@ -1266,11 +1266,11 @@
         "material": {
           "certpath": "sign/konglongxingqiu/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001B371CC33AAB72ACB8C416505B9FE067FBF7790F91223D04C47F42F53C20AEF838DD75DE19E70B5A",
           "profile": "sign/konglongxingqiu/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/konglongxingqiu/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001B57970DB701FADC97C5C626C565AB4CEFE9DD8D640C04B4C7C1D59488390DA074F556205CB88494"
         }
       },
       {
@@ -1278,11 +1278,11 @@
         "material": {
           "certpath": "sign/guangchangwu/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001BE6AE95993E2F5DD8C2800902453AC2F2830777527A5A4AD04FFD526449CE9C6FC6644BC0A7B65F",
           "profile": "sign/guangchangwu/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/guangchangwu/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001B2F37E42C3BD0D4E0B6A9EE6A8A247F090348ACE19B5C657DB38E957117540F8F5E8EF93C479CBA"
         }
       },
       {
@@ -1290,11 +1290,11 @@
         "material": {
           "certpath": "sign/shoushijin/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001B403D902AEA66A44029D5396C5E0F5106755769A1561C8A57538B7F42FDB307F41AD4B38CA27F6A",
           "profile": "sign/shoushijin/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/shoushijin/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001BDFE22867056D4D8BB1ED271B483F2965A47D1CF03C4170933CF66473D358E9FC520596359A823D"
         }
       },
       {
@@ -1302,11 +1302,11 @@
         "material": {
           "certpath": "sign/xingainian/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001BB211D4E58A9985E26ABE14AAA397BF73B813C16C7E0CCE24E3F6627EBD65090E09149AD270AD3B",
           "profile": "sign/xingainian/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/xingainian/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001BF46DC190F18E72AD82A3A01C10DFE59092334CDD46E7A76EE346441E5FA82BB53527C0588DE429"
         }
       },
       {
@@ -1314,11 +1314,11 @@
         "material": {
           "certpath": "sign/hsport/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "keyPassword": "0000001B40B6CDCEA72BE5E6EEB6EAA83BF8F6A2F35EBC2912A4F80E47911EB1AC7649E6EC372A49E1BB3E",
           "profile": "sign/hsport/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/hsport/key.p12",
-          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+          "storePassword": "0000001BF17AFB9C2BB2754B939A15F9C13294446C707D3ECC6C5BBA8DE0C9944531F693479DA8F3FAC7C1"
         }
       }
     ]
