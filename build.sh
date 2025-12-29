@@ -71,14 +71,15 @@ build_channel() {
 # 4. 渠道列表
 # ========================================================
 CHANNELS=(
-ctyangshenggong
-haoqidongwu
-huohuotu
-konglongxingqiu
-guangchangwu
-shoushijin
-xingainian
-hsport
+doudizhu
+#ctyangshenggong
+#haoqidongwu
+#huohuotu
+#konglongxingqiu
+#guangchangwu
+#shoushijin
+#xingainian
+#hsport
 
 #app_center
 #ke_ting_jian_shen
