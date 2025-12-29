@@ -7,6 +7,7 @@ import { QTView } from "../../QTTypes";
 import { QTItemRoot, QTItemRootView } from "./QTItemRootView";
 import { LayoutAttach } from "./LayoutAttach";
 import { QTLog } from "../../utils/QTLog";
+import { ExtendUtil } from "../../utils/ExtendUtil";
 
 @Component
 export struct  QTFastList {
@@ -39,11 +40,25 @@ export struct  QTFastList {
 
 
   keyGenerate(item : QTView,index : number) : string{
+    let key : string | null = ''
+
     if (item instanceof QTItemRootView && item.itemView){
-      return item.itemView.getItemForEachKey();
+      key =  item.itemView.getItemForEachKey();
+      if(!key){
+        key = item.itemView.getItemId();
+      }
+      if(!key){
+        key = item.uid;
+      }
     } else{
-      return 'view-' + index
+      key =  'view-' + index
     }
+    if(!key){
+      QTLog.e(TAG_FASTLIST,`keyGenerate fail item:${ExtendUtil.debugView(this.renderView)},index:${index}`)
+    }else{
+      QTLog.d(TAG_FASTLIST,`keyGenerate key:${key} item ${ExtendUtil.debugView(item)},index:${index}`)
+    }
+    return key ?? '';
     /*if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid
       if(id){
