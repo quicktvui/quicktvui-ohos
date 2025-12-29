@@ -687,6 +687,214 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "ctyangshenggong",
+        "signingConfig": "ctyangshenggong",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.ctyangshenggong.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.ctyangshenggong.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "haoqidongwu",
+        "signingConfig": "haoqidongwu",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.haoqidongwu.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.haoqidongwu.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "huohuotu",
+        "signingConfig": "huohuotu",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.huohuotu.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.huohuotu.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "konglongxingqiu",
+        "signingConfig": "konglongxingqiu",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.konglongxingqiu.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.konglongxingqiu.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "guangchangwu",
+        "signingConfig": "guangchangwu",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.guangchangwu.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.guangchangwu.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "shoushijin",
+        "signingConfig": "shoushijin",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.shoushijin.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.shoushijin.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "xingainian",
+        "signingConfig": "xingainian",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.xingainian.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.xingainian.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      },
+      {
+        "name": "hsport",
+        "signingConfig": "hsport",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.hsport.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.hsport.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -1016,6 +1224,102 @@
           "storeFile": "sign/app_center/key.p12",
           "storePassword": "0000001A1FCC0952A723E4E23F4B01AB034559E02E636E919639041BA569F3D2C9A1758B697F8E4203F6"
         }
+      },
+      {
+        "name": "ctyangshenggong",
+        "material": {
+          "certpath": "sign/ctyangshenggong/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/ctyangshenggong/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/ctyangshenggong/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "haoqidongwu",
+        "material": {
+          "certpath": "sign/haoqidongwu/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/haoqidongwu/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/haoqidongwu/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "huohuotu",
+        "material": {
+          "certpath": "sign/huohuotu/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/huohuotu/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/huohuotu/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "konglongxingqiu",
+        "material": {
+          "certpath": "sign/konglongxingqiu/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/konglongxingqiu/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/konglongxingqiu/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "guangchangwu",
+        "material": {
+          "certpath": "sign/guangchangwu/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/guangchangwu/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/guangchangwu/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "shoushijin",
+        "material": {
+          "certpath": "sign/shoushijin/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/shoushijin/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/shoushijin/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "xingainian",
+        "material": {
+          "certpath": "sign/xingainian/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/xingainian/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/xingainian/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
+      },
+      {
+        "name": "hsport",
+        "material": {
+          "certpath": "sign/hsport/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/hsport/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/hsport/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
       }
     ]
   },
@@ -1178,6 +1482,54 @@
           "name": "app_center",
           "applyToProducts": [
             "app_center"
+          ]
+        },
+        {
+          "name": "ctyangshenggong",
+          "applyToProducts": [
+            "ctyangshenggong"
+          ]
+        },
+        {
+          "name": "haoqidongwu",
+          "applyToProducts": [
+            "haoqidongwu"
+          ]
+        },
+        {
+          "name": "huohuotu",
+          "applyToProducts": [
+            "huohuotu"
+          ]
+        },
+        {
+          "name": "konglongxingqiu",
+          "applyToProducts": [
+            "konglongxingqiu"
+          ]
+        },
+        {
+          "name": "guangchangwu",
+          "applyToProducts": [
+            "guangchangwu"
+          ]
+        },
+        {
+          "name": "shoushijin",
+          "applyToProducts": [
+            "shoushijin"
+          ]
+        },
+        {
+          "name": "xingainian",
+          "applyToProducts": [
+            "xingainian"
+          ]
+        },
+        {
+          "name": "hsport",
+          "applyToProducts": [
+            "hsport"
           ]
         }
       ]

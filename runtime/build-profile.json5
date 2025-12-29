@@ -288,6 +288,78 @@
           "./src/app_center/resources"
         ]
       }
+    },
+    {
+      "name": "ctyangshenggong",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/ctyangshenggong/resources"
+        ]
+      }
+    },
+    {
+      "name": "haoqidongwu",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/haoqidongwu/resources"
+        ]
+      }
+    },
+    {
+      "name": "huohuotu",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/huohuotu/resources"
+        ]
+      }
+    },
+    {
+      "name": "konglongxingqiu",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/konglongxingqiu/resources"
+        ]
+      }
+    },
+    {
+      "name": "guangchangwu",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/guangchangwu/resources"
+        ]
+      }
+    },
+    {
+      "name": "shoushijin",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/shoushijin/resources"
+        ]
+      }
+    },
+    {
+      "name": "xingainian",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/xingainian/resources"
+        ]
+      }
+    },
+    {
+      "name": "hsport",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/hsport/resources"
+        ]
+      }
     }
   ]
 }
