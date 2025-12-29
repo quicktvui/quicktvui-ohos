@@ -33,6 +33,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 import { QTViewState } from '../StateView';
 import { TVView } from '../TVView';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
+import { ColorMetrics } from '@kit.ArkUI';
 
 
 const HippyGestureTag = 'HippyGestureTag'
@@ -76,6 +77,16 @@ const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invi
 
 @Observed
 export class QTDivView extends HRTvDivView {
+  handleOnHover(isHover: boolean, event: HoverEvent) {
+    QTLog.d(TAG_FOCUS,`handleOnHover :${isHover} this:${ExtendUtil.debugView(this)} `)
+    // if(isHover && this.cssFocusable){
+    //   this.requestFocus(100)
+    // }
+  }
+
+ handleOnHoverMove(data : HoverEvent){
+   QTLog.d(TAG_FOCUS,`handleOnHoverMove this:${ExtendUtil.debugView(this)}`)
+}
 
   mUserSetFocusBackgroundColor : ResourceColor = Color.Transparent;
   mUserSetSelectBackgroundColor : ResourceColor = Color.Transparent;
@@ -440,6 +451,12 @@ export struct QTDiv {
         .onClick((event=>{
           ViewUtils.handleClickEvent(event,this.renderView)
         }))
+        // .hoverEffect(HoverEffect.Scale)
+        // .onHover(this.renderView.handleOnHover)
+        .focusBox({
+          strokeColor:ColorMetrics.rgba(0, 0, 0,0),
+        })
+        // .onHoverMove(this.renderView.handleOnHoverMove)
     }else {
         Stack() {
           this.buildFocusBorder()
@@ -452,8 +469,14 @@ export struct QTDiv {
         // .attributeModifier(this.colorModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
+        // .hoverEffect(HoverEffect.Scale)
         .onFocus(() => this.renderView.onFocus())
         .onBlur(() => this.renderView.onBlur())
+        // .onHover(this.renderView.handleOnHover)
+        // .onHoverMove(this.renderView.handleOnHoverMove)
+        .focusBox({
+          strokeColor:ColorMetrics.rgba(0, 0, 0,0),
+        })
     }
   }
 }

@@ -24,6 +24,8 @@ import { QTFastFlexView } from './QTFastFlexView';
 import { QTFastItemView } from './QTFastItemView';
 import { QTFastListView } from './QTFastListView';
 import { PathUpdate, PendingPathUpdate, TemplateViewManager } from './TemplateViewManager';
+import { VirtualViewRegistry } from './VirtualViewRegistry';
+
 const PREFIX_KEY = "ITEMROOT"
 
 export class ElementNode{
@@ -72,6 +74,7 @@ export class QTItemRootView extends QTRenderBaseView{
   constructor(ctx: NativeRenderContext) {
     super(ctx)
     this.__serialNumber = PREFIX_KEY + QTItemRootView.__idx++;
+    VirtualViewRegistry.getInstance().registerView(this)
   }
 
   init(parent : QTPendingListView,item:ItemView): QTItemRootView{

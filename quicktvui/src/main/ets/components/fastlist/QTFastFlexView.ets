@@ -109,21 +109,45 @@ export class QTFastFlexView extends QTRenderBaseView {
   }
 
   keyGenerate(item : QTView,index : number) : string{
-    if(item instanceof QTItemRootView){
+    let key : string | null = ''
+
+    if (item instanceof QTItemRootView && item.itemView){
+      key =  item.itemView.getItemForEachKey();
+      if(!key){
+        key = item.itemView.getItemId();
+      }
+      if(!key){
+        key = item.uid;
+      }
+    } else{
+      key =  'view-' + index
+    }
+    if(!key){
+      QTLog.e(TAG_FASTLIST,`keyGenerate fail item:${ExtendUtil.debugView(this)},index:${index}`)
+    }else{
+      QTLog.d(TAG_FASTLIST,`keyGenerate key:${key} item ${ExtendUtil.debugView(item)},index:${index}`)
+    }
+    return key ?? '';
+    /*if(item instanceof QTItemRootView){
       let id = LayoutAttach.obtainLayoutAttach(item).sid
       if(id){
-        console.debug(TAG_FASTLIST,`FastFlex:keyGenerate id from sid:${id}`)
-        return id
+        QTLog.d(TAG_REUSE,`keyGenerate id from sid:${id}`)
+        return id +'-'+ item.updateTimes
       }
       if(item.itemView){
         id =  item.itemView.getItemId()
         if(id){
-          console.debug(TAG_FASTLIST,`FastFlex:keyGenerate id by item:${id}`)
-          return LayoutAttach.obtainLayoutAttach(item).virtualExtra.itemType + ''+ id;
+          QTLog.d(TAG_REUSE,`keyGenerate id by item:${id}`)
+          return LayoutAttach.obtainLayoutAttach(item).virtualExtra.itemType + ''+ id + '-'+item.updateTimes;
+        }else{
+          // QTLog.d(TAG_REUSE,`keyGenerate id with fi-:${index}-${item.updateTimes}`)
         }
+        return `fi-:${index}-${item.updateTimes}`
       }
+    }else{
+      // QTLog.d(TAG_REUSE,`keyGenerate use fallback -:${index}`)
     }
-    return 'view-'+index
+    return 'view-'+index*/
   }
 
   addFocusables(views: TVView[], direction: number): boolean {
