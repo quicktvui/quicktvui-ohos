@@ -62,5 +62,37 @@
   {
     "channel": "wm_baduanjin",
     "package": "tv.huan.wmbdj"
+  },
+  {
+    "channel": "ctyangshenggong",
+    "package": "es.com.ctyangshenggong.tv"
+  },
+  {
+    "channel": "haoqidongwu",
+    "package": "es.com.haoqidongwu.tv"
+  },
+  {
+    "channel": "huohuotu",
+    "package": "es.com.huohuotu.tv"
+  },
+  {
+    "channel": "konglongxingqiu",
+    "package": "es.com.konglongxingqiu.tv"
+  },
+  {
+    "channel": "guangchangwu",
+    "package": "es.com.guangchangwu.tv"
+  },
+  {
+    "channel": "shoushijin",
+    "package": "es.com.shoushijin.tv"
+  },
+  {
+    "channel": "xingainian",
+    "package": "es.com.xingainian.tv"
+  },
+  {
+    "channel": "hsport",
+    "package": "es.com.hsport.tv"
   }
 ]
