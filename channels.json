@@ -1,7 +1,6 @@
 [
   {
     "channel": "test_channel",
-    "package": "com.test.app.hmos",
-    "name": "测试频道"
+    "package": "com.test.app.hmos"
   }
 ]
