@@ -4,13 +4,11 @@ import json
 import re
 import subprocess
 
-
-# eg: python3 add_channel.py
-
 # ================= 配置路径 =================
 PROJECT_ROOT = os.getcwd()
 RUNTIME_MODULE_PATH = os.path.join(PROJECT_ROOT, "runtime")
 SIGN_PATH = os.path.join(PROJECT_ROOT, "sign")
+CHANNEL_CONFIG_FILE = os.path.join(PROJECT_ROOT, "channels.json")
 
 # build-profile.json5 文件路径
 RUNTIME_PROFILE = os.path.join(RUNTIME_MODULE_PATH, "build-profile.json5")
@@ -19,6 +17,9 @@ ROOT_PROFILE = os.path.join(PROJECT_ROOT, "build-profile.json5")
 # 模版路径
 RUNTIME_TEMPLATE_SRC = os.path.join(RUNTIME_MODULE_PATH, "src", "template")
 SIGN_TEMPLATE_SRC = os.path.join(SIGN_PATH, "template")
+
+# 模版中的默认包名（用于查找并替换为新包名）
+TEMPLATE_BUNDLE_NAME = "tv.huan.template.hmos"
 
 def print_color(text, color="green"):
     colors = {"green": "\033[92m", "red": "\033[91m", "yellow": "\033[93m", "reset": "\033[0m"}
@@ -97,7 +98,7 @@ def smart_append_node(file_path, identifier_pattern, replacements, scope_pattern
         if scope_pattern:
             scope_match = re.search(scope_pattern, content)
             if not scope_match:
-                print_color(f"错误: 未找到作用域 {scope_pattern}", "red"); return
+                print_color(f"错误: 未找到作用域 {scope_pattern} in {os.path.basename(file_path)}", "red"); return
             search_start_idx = scope_match.end()
 
         # 2. 提取模版
@@ -115,14 +116,14 @@ def smart_append_node(file_path, identifier_pattern, replacements, scope_pattern
         for old_str, new_str in replacements.items():
             new_block = new_block.replace(old_str, new_str)
 
-        # 5. 【修复核心】查重 - 只在当前数组范围内查重！
+        # 5. 查重 - 只在当前数组范围内查重
         name_match = re.search(r'"name"\s*:\s*"(.*?)"', new_block)
         if name_match:
             new_name = name_match.group(1)
             # 截取从 scope 开始到 数组结束 的内容进行检查
             scope_content = content[search_start_idx : insert_idx]
             if f'"name": "{new_name}"' in scope_content:
-                print_color(f"跳过: 当前数组中已存在 name: {new_name}", "yellow")
+                print_color(f"跳过: {os.path.basename(file_path)} 中已存在 name: {new_name}", "yellow")
                 return
 
         # 6. 插入
@@ -138,66 +139,66 @@ def smart_append_node(file_path, identifier_pattern, replacements, scope_pattern
 def run_git_add(paths):
     """ 执行 git add 命令 """
     print_color("\n=== 执行 Git Add ===", "yellow")
-
-    # 过滤掉不存在的路径
     valid_paths = [p for p in paths if os.path.exists(p)]
-
-    if not valid_paths:
-        print_color("没有文件需要添加到 Git", "yellow")
-        return
+    if not valid_paths: return
 
     try:
-        # 打印即将添加的文件
-        print("正在添加以下文件/目录:")
-        for p in valid_paths:
-            print(f" - {os.path.relpath(p, PROJECT_ROOT)}") # 显示相对路径
-
+        # 去重
+        valid_paths = list(set(valid_paths))
         # 执行命令
         subprocess.run(["git", "add"] + valid_paths, check=True)
-        print_color("Git Add 执行成功!", "green")
-    except subprocess.CalledProcessError as e:
-        print_color(f"Git Add 执行失败: {e}", "red")
-    except FileNotFoundError:
-        print_color("错误: 未找到 git 命令，请确认已安装 git。", "red")
+        print_color(f"Git Add 成功添加了 {len(valid_paths)} 个文件/目录", "green")
     except Exception as e:
-        print_color(f"发生错误: {e}", "red")
+        print_color(f"Git Add 执行失败: {e}", "red")
 
-def main():
-    print_color("=== HarmonyOS 渠道添加脚本 (Git版) ===", "green")
+def process_channel(item):
+    channel_name = item.get("channel")
+    package_name = item.get("package")
+    # 如果json里有name字段则使用，否则使用channel名作为应用名
+    app_label = item.get("name", channel_name)
 
-    channel_name = input("请输入渠道名称 (例如 book): ").strip()
-    if not channel_name: return
+    if not channel_name or not package_name:
+        print_color(f"跳过无效数据: {item}", "red")
+        return []
 
-    app_label = input(f"请输入应用名称: ").strip()
+    print_color(f"\n正在处理渠道: {channel_name} | 包名: {package_name}", "green")
 
     sign_config_name = get_signing_config_name(channel_name)
-    target_bundle_name = f"tv.huan.{channel_name}.hmos"
+    created_paths = []
 
-    print_color(f"\n配置: {channel_name} | {sign_config_name}", "yellow")
-    if input("确认继续? (y/n): ").lower() != 'y': return
-
-    # 1. 拷贝资源
+    # 1. 拷贝资源 (Runtime SRC)
     target_runtime_src = os.path.join(RUNTIME_MODULE_PATH, "src", channel_name)
     if not os.path.exists(target_runtime_src):
         try:
             shutil.copytree(RUNTIME_TEMPLATE_SRC, target_runtime_src)
+            # 修改 string.json 中的 app_name
             s_path = os.path.join(target_runtime_src, "resources", "base", "element", "string.json")
             if os.path.exists(s_path):
                 with open(s_path, 'r', encoding='utf-8') as f: data = json.load(f)
-                for item in data.get("string", []):
-                    if item.get("name") == "app_name": item["value"] = app_label
+                for str_item in data.get("string", []):
+                    if str_item.get("name") == "app_name":
+                        str_item["value"] = app_label
                 with open(s_path, 'w', encoding='utf-8') as f: json.dump(data, f, ensure_ascii=False, indent=2)
-            print("资源已拷贝")
-        except: pass
+            created_paths.append(target_runtime_src)
+            print(f"资源已拷贝: src/{channel_name}")
+        except Exception as e:
+            print_color(f"拷贝资源失败: {e}", "red")
+    else:
+        created_paths.append(target_runtime_src) # 即使存在也加入git add列表
 
+    # 2. 拷贝签名 (Sign)
     target_sign_path = os.path.join(SIGN_PATH, channel_name)
     if not os.path.exists(target_sign_path):
-        try: shutil.copytree(SIGN_TEMPLATE_SRC, target_sign_path); print("签名已拷贝")
-        except: pass
+        try:
+            shutil.copytree(SIGN_TEMPLATE_SRC, target_sign_path)
+            created_paths.append(target_sign_path)
+            print(f"签名已拷贝: sign/{channel_name}")
+        except Exception as e:
+            print_color(f"拷贝签名失败: {e}", "red")
+    else:
+        created_paths.append(target_sign_path)
 
-    # 2. 修改 JSON
-
-    # Runtime Targets
+    # 3. 修改 JSON - Runtime Targets
     smart_append_node(
         RUNTIME_PROFILE,
         identifier_pattern=r'"name"\s*:\s*"template"',
@@ -208,31 +209,33 @@ def main():
         scope_pattern=r'"targets"\s*:\s*\['
     )
 
-    # Root Products
+    # 4. 修改 JSON - Root Products
+    # 注意：这里将 TEMPLATE_BUNDLE_NAME 替换为 package_name
+    # 这样 buildProfileFields 中的 APP_ID 和 bundleName 都会被同时修改
     smart_append_node(
         ROOT_PROFILE,
         identifier_pattern=r'"name"\s*:\s*"template"',
         replacements={
             '"name": "template"': f'"name": "{channel_name}"',
             '"signingConfig": "template"': f'"signingConfig": "{sign_config_name}"',
-            'tv.huan.template.hmos': target_bundle_name
+            TEMPLATE_BUNDLE_NAME: package_name
         },
         scope_pattern=r'"products"\s*:\s*\['
     )
 
-    # Root SigningConfigs
+    # 5. 修改 JSON - Root SigningConfigs
     smart_append_node(
         ROOT_PROFILE,
         identifier_pattern=r'"name"\s*:\s*"template"',
         replacements={
             '"name": "template"': f'"name": "{sign_config_name}"',
-            'sign/template/': f'sign/{channel_name}/',         # 匹配您提供的JSON格式
-            'sign_private/template/': f'sign_private/{channel_name}/' # 兼容另一种格式
+            'sign/template/': f'sign/{channel_name}/',
+            'sign_private/template/': f'sign_private/{channel_name}/'
         },
         scope_pattern=r'"signingConfigs"\s*:\s*\['
     )
 
-    # Root Runtime Module Targets
+    # 6. 修改 JSON - Root Modules -> targets
     smart_append_node(
         ROOT_PROFILE,
         identifier_pattern=r'"name"\s*:\s*"template"',
@@ -243,27 +246,38 @@ def main():
         scope_pattern=r'"modules"[\s\S]*?"targets"\s*:\s*\['
     )
 
-    print_color("文件操作完成", "green")
+    return created_paths
 
-    # ================= 3. 执行 Git Add =================
-    # 收集需要添加的路径
-    git_paths = [
-        RUNTIME_PROFILE,        # 修改的 runtime/build-profile.json5
-        ROOT_PROFILE,           # 修改的 build-profile.json5
-        target_runtime_src,     # 新增的 src/xxx 文件夹
-        target_sign_path        # 新增的 sign/xxx 文件夹
-    ]
+def main():
+    print_color("=== HarmonyOS 批量渠道添加脚本 (JSON版) ===", "green")
 
-    run_git_add(git_paths)
+    if not os.path.exists(CHANNEL_CONFIG_FILE):
+        print_color(f"错误: 未找到配置文件 {CHANNEL_CONFIG_FILE}", "red")
+        print("请创建一个 channels.json 文件，格式为: [{'channel': 'xxx', 'package': 'xxx'}]")
+        return
 
-    # ================= 4. 重要提醒 =================
-    print_color("\n" + "="*20 + " 重 要 提 醒 " + "="*20, "red")
-    print(f"1. [图标] 请替换: runtime/src/{channel_name}/resources/base/media/app_icon.png")
-    print(f"2. [代码] 请添加快应用代码到: runtime/src/{channel_name}/rawfile/vue")
-    print(f"3. [签名] 脚本已拷贝了测试签名到: sign/{channel_name}")
-    print(f"   注意：请务必将该文件夹下的文件替换为【正式签名文件】。")
-    print(f"4. [路径] 请确认 build-profile 中 'signingConfigs' 与实际目录 'sign' 的映射关系。")
-    print_color("="*50, "red")
+    try:
+        with open(CHANNEL_CONFIG_FILE, 'r', encoding='utf-8') as f:
+            channels_list = json.load(f)
+    except Exception as e:
+        print_color(f"读取配置文件失败: {e}", "red")
+        return
+
+    print(f"读取到 {len(channels_list)} 个渠道配置，准备处理...")
+
+    all_git_paths = [RUNTIME_PROFILE, ROOT_PROFILE]
+
+    for item in channels_list:
+        new_paths = process_channel(item)
+        all_git_paths.extend(new_paths)
+
+    # 执行 Git Add
+    if input("\n是否执行 git add? (y/n): ").lower() == 'y':
+        run_git_add(all_git_paths)
+
+    print_color("\n" + "="*50, "green")
+    print_color("批量处理完成！请检查生成的文件。", "green")
+    print_color("="*50, "green")
 
 if __name__ == "__main__":
     main()
