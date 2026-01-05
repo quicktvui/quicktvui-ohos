@@ -1352,11 +1352,11 @@
         "material": {
           "certpath": "sign/appstore/key.cer",
           "keyAlias": "debugKey",
-          "keyPassword": "00000018875989B474FDD29C1F8F54346D0BEA9C70A45030DBA2253664FE6F4F15666CB5B183AC2D",
+          "keyPassword": "0000001866F6209AE8B566E23C230BE9C3054E4300484B64CB89C519D442E59BF0722C3F798A1AB5",
           "profile": "sign/appstore/key.p7b",
           "signAlg": "SHA256withECDSA",
           "storeFile": "sign/appstore/key.p12",
-          "storePassword": "0000001886961B5A3925E40452C4DDF3F3585ACA762BECF890639C77072D69601BF158A7262C8E3A"
+          "storePassword": "00000018896EF8E9F114EF768AF1DFFFA63085E3B17EA99F7BC484992C4113DAB31007E2DDCACA6D"
         }
       }
     ]
