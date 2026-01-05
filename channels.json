@@ -1,6 +1,6 @@
 [
   {
-    "channel": "test_channel",
-    "package": "com.test.app.hmos"
+    "channel": "appstore",
+    "package": "es.com.appstore.tv"
   }
 ]

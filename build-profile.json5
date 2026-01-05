@@ -895,6 +895,32 @@
             "useNormalizedOHMUrl": true
           }
         }
+      },
+      {
+        "name": "appstore",
+        "signingConfig": "appstore",
+        "compatibleSdkVersion": 15,
+        "compileSdkVersion": 18,
+        "targetSdkVersion": 18,
+        "bundleName": "es.com.appstore.tv",
+        "runtimeOS": "OpenHarmony",
+        "buildOption": {
+          "arkOptions": {
+            "buildProfileFields": {
+              "APP_ENTRY": '',
+              "APP_ID": "es.com.appstore.tv",
+              "APP_NAME": "",
+              "APP_ICON": "",
+              "APP_VERSION": "",
+              "APP_BUNDLE_URI": '',
+              "APP_PARAMS": ''
+            }
+          },
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
       }
     ],
     "buildModeSet": [
@@ -1320,6 +1346,18 @@
           "storeFile": "sign/hsport/key.p12",
           "storePassword": "0000001BF17AFB9C2BB2754B939A15F9C13294446C707D3ECC6C5BBA8DE0C9944531F693479DA8F3FAC7C1"
         }
+      },
+      {
+        "name": "appstore",
+        "material": {
+          "certpath": "sign/appstore/key.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001BF1D033B4657AC5FEA464814D30137422EFFC697B710295EB337041BB60D679C2EE7867D61346E5",
+          "profile": "sign/appstore/key.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "sign/appstore/key.p12",
+          "storePassword": "0000001BB9BC0991747BDC8B19D5A9CD4002335B07B33287FEE6AF85AFB0A007B7983B7450667B058817E3"
+        }
       }
     ]
   },
@@ -1530,6 +1568,12 @@
           "name": "hsport",
           "applyToProducts": [
             "hsport"
+          ]
+        },
+        {
+          "name": "appstore",
+          "applyToProducts": [
+            "appstore"
           ]
         }
       ]

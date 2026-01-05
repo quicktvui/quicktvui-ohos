@@ -360,6 +360,15 @@
           "./src/hsport/resources"
         ]
       }
+    },
+    {
+      "name": "appstore",
+      "resource": {
+        "directories": [
+          "./src/main/resources",
+          "./src/appstore/resources"
+        ]
+      }
     }
   ]
 }
