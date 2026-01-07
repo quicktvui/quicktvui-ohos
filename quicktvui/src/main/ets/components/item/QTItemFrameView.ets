@@ -29,6 +29,7 @@ export struct QTItemFrame {
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
   aboutToAppear() {
+    this.renderView.isAttached = true;
     if(this.children[0] instanceof QTBaseComponentView){
       this.children[0].cssFocusable =  false;
       this.children[0].duplicateParentState = true;
@@ -37,7 +38,7 @@ export struct QTItemFrame {
   }
 
   aboutToDisappear() {
-
+    this.renderView.isAttached = false;
   }
 
   build() {

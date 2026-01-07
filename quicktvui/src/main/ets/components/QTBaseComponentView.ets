@@ -41,6 +41,8 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   focusChild : QTView | null = null;
   descendantFocusability : number = 1;
 
+  isAttached: boolean  = false;
+
   public get uid(): string {
     if(this._uid){
       return this._uid

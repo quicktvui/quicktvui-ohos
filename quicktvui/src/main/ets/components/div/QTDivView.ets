@@ -402,6 +402,7 @@ export struct QTDiv {
 
   aboutToAppear() {
     //QTLog.i(TAG_FOCUS,`div about to Appear virtual${this.renderView.isVirtual}, uid:${ViewUtils.getViewUid(this.renderView)}`)
+    this.renderView.isAttached = true;
     if (this.renderView.eventAttachedToWindow) {
       this.renderView.eventAttachedToWindow()
     }
@@ -424,6 +425,7 @@ export struct QTDiv {
   }
 
   aboutToDisappear() {
+    this.renderView.isAttached = false;
     if (this.renderView.eventDetachedFromWindow) {
       this.renderView.eventDetachedFromWindow()
     }
