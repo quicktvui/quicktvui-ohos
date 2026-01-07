@@ -21,7 +21,7 @@ import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderCallback,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
 import { TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
-import { QTAny, QTView } from '../../QTTypes';
+import { QTAny, QTArray, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { FocusUtils } from '../../utils/FocusUtils';
 import { QTLog } from '../../utils/QTLog';
@@ -34,6 +34,7 @@ import { QTViewState } from '../StateView';
 import { TVView } from '../TVView';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
 import { ColorMetrics } from '@kit.ArkUI';
+import { CommonUtils } from '../../utils/CommonUtils';
 
 
 const HippyGestureTag = 'HippyGestureTag'
@@ -277,6 +278,10 @@ export class QTDivView extends HRTvDivView {
           }else{
             FocusUtils.unBlockRootFocus(this)
           }
+        return true;
+      case "blockFocusDirections":
+        this.blockFocusDirections = HRValueUtils.getArray(propValue as QTArray) ?? []
+        QTLog.i(TAG_FOCUS,`blockFoocusDirecitons this:${ExtendUtil.debugView(this)},value:${CommonUtils.hippyAny2String(propValue)}`)
         return true;
     }
     return super.setProp(propKey, propValue)

@@ -182,10 +182,42 @@ export class FocusFinder {
     return false;
   }
 
+  static findNextFocusSpecial(focusedView :TVView | null,direction : number) : TVView | null{
+    if(focusedView instanceof  QTBaseComponentView){
+      let blockFocusDirection = focusedView.blockFocusDirections;
+      let directionName = FocusFinder.getDirectionName(direction);
+      for(let i = 0; i < blockFocusDirection.length; i ++){
+        let s = blockFocusDirection[i]
+        if(s == directionName){
+          QTLog.w(TAG_FOCUS,`findNextFocusSpecial return focused on blockFocusDirection directionName:${directionName}`)
+          return focusedView;
+        }
+      }
+    }
+    return null;
+  }
+
+  static getDirectionName(direction : number): String{
+    switch (direction){
+      case FocusFinder.DIRECTION_LEFT:
+        return "left";
+      case FocusFinder.DIRECTION_RIGHT:
+        return "right";
+      case FocusFinder.DIRECTION_UP:
+        return "up";
+      case FocusFinder.DIRECTION_DOWN:
+        return "down";
+    }
+    return "none"
+  }
+
   static findNextFocus(focusedView: TVView | null, root: QTView, direction: number): TVView | null {
     const views: TVView[] = [];
+    let special = FocusFinder.findNextFocusSpecial(focusedView,direction);
+    if(special != null){
+      return special;
+    }
     FocusFinder.addAllFocusable(views, root, direction);
-
 
     QTLog.i(TAG_FOCUS, `findNextFocus search views length: ${views.length} root : ${ExtendUtil.debugView(root)}`);
     // QTLog.i(TAG_FOCUS, `findNextFocus current focused: ${focusedView ? ExtendUtil.debugView(focusedView) : 'null'}`);
@@ -215,6 +247,7 @@ export class FocusFinder {
         // return null;
         // return FocusFinder.findFirstFocusableByDirection(views, root, direction);
       }
+
 
       QTLog.i(TAG_FOCUS, `findNextFocus current focused rect: ${focusedRect.toString()}`);
 

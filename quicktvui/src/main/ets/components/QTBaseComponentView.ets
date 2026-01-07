@@ -7,7 +7,7 @@ import {
 } from 'hippy'
 import { TAG_FASTLIST, TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
-import { QTAny, QTView } from '../QTTypes';
+import {  QTArray, QTView } from '../QTTypes';
 import { ExtendUtil } from '../utils/ExtendUtil';
 import { QTLog } from '../utils/QTLog';
 import { LayoutAttach } from './fastlist/LayoutAttach';
@@ -40,6 +40,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   currentStates: number[] = [QTViewState.STATE_NORMAL]
   focusChild : QTView | null = null;
   descendantFocusability : number = 1;
+  blockFocusDirections:QTArray = []
 
   isAttached: boolean  = false;
 
