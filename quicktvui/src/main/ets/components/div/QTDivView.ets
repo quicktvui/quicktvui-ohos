@@ -183,7 +183,10 @@ export class QTDivView extends HRTvDivView {
     //     }
     //   }
     // },delay)
-    FocusUtils.requestViewGroupFocus(this,delay)
+    QTLog.i(TAG_FOCUS,`requestFocusBy user call ${this.uid}`)
+    setTimeout(()=>{
+      FocusUtils.requestViewGroupFocus(this,delay)
+    },delay)
   }
 
 
@@ -425,7 +428,10 @@ export struct QTDiv {
     //   QTLog.i(TAG_FOCUS,`+++handle Focus this:${ExtendUtil.debugView(this.renderView)} `)
     // },5000)
     if(this.renderView.autofocus && this.renderView.cssFocusable){
-      FocusUtils.requestFocus(this.renderView)
+      QTLog.i(TAG_FOCUS,`autofocus requestFoous:${this.renderView.uid}`)
+      setTimeout(()=>{
+        FocusUtils.requestFocus(this.renderView)
+      },100)
     }
   }
 

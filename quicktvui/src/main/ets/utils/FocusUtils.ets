@@ -16,20 +16,28 @@ export class FocusUtils{
     static requestFocus(view : QTView | null | undefined){
         let uid = ViewUtils.getViewUid(view)
         if(uid){
-          QTLog.e(TAG_FOCUS,`exe requestFocus view :${ExtendUtil.debugView(view)}`)
-          focusControl.requestFocus(uid)
+          let b = focusControl.requestFocus(uid)
+          if(!b){
+            QTLog.fatal(TAG_FOCUS,`exe requestFocus view :${ExtendUtil.debugView(view)} success:${b} uid:${uid}`)
+          }else{
+            QTLog.e(TAG_FOCUS,`exe requestFocus view :${ExtendUtil.debugView(view)} success:${b} uid:${uid}`)
+          }
         }else{
-          QTLog.e(TAG_FOCUS,`requestFocus fail uid is null view :${ExtendUtil.debugView(view)}`)
+          QTLog.fatal(TAG_FOCUS,`requestFocus fail uid is null view :${ExtendUtil.debugView(view)}`)
         }
       }
 
   static requestFocusById(uid : string | null | undefined) : boolean {
     if(uid){
       let b =  focusControl.requestFocus(uid)
-      QTLog.e(TAG_FOCUS,`exe requestFocus view :${uid} success:${b}`)
+      if(b){
+        QTLog.e(TAG_FOCUS,`exe requestFocusById view uid:${uid} success:${b}`)
+      }else{
+        QTLog.fatal(TAG_FOCUS,`exe requestFocusById view uid:${uid} success:${b}`)
+      }
       return b;
     }else{
-      QTLog.e(TAG_FOCUS,`requestFocus fail uid is null view :${uid}`)
+      QTLog.fatal(TAG_FOCUS,`requestFocus fail uid is null view :${uid}`)
     }
     return false;
   }
