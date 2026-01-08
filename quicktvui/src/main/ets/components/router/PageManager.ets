@@ -9,6 +9,7 @@ export class PageManager {
   private static pages: Map<string, IPage> = new Map();
   // private static currentPageId: string | null = null;
   private static uiContext : UIContext | null = null;
+  private static frontPage : string | null = null;
 
   static setUIContext(uiContext : UIContext){
     PageManager.uiContext = uiContext;
@@ -16,6 +17,17 @@ export class PageManager {
 
   static getUIContext(): UIContext | null{
     return PageManager.uiContext;
+  }
+
+  static markPageToFront(pageId:string){
+    PageManager.frontPage = pageId;
+  }
+
+  static isFrontPage(pageId:string | null){
+    if(pageId && pageId == PageManager.frontPage){
+      return true;
+    }
+    return false;
   }
 
   /**

@@ -40,6 +40,7 @@ export class QTPageView extends QTBaseComponentView implements IPage {
   setProp(propKey: string, propValue: HippyAny): boolean {
     switch (propKey) {
       case 'isDialogMode': {
+        QTLog.i(TAG_PAGE,`setDialogMode:${propValue} this:${ExtendUtil.debugView(this)}`)
         this.isDialogMode = propValue as boolean;
         return true;
       }
@@ -61,7 +62,7 @@ export class QTPageView extends QTBaseComponentView implements IPage {
 
   dispatchKeyEvent(event: KeyEvent): boolean {
     QTLog.d(TAG_PAGE,`dispatchKeyEvent this page is Front ${this.isFront} uid: ${this.uid}`)
-    if(this.isFront){
+    if(this.isFront && PageManager.isFrontPage(this.uid)){
       return this.focusManager.dispatchKeyEvent(event)
     }else{
       return false;
@@ -113,6 +114,7 @@ export class QTPageView extends QTBaseComponentView implements IPage {
     // this.uid = `page-${this.tag}`
     QTLog.i(TAG_PAGE,`+++++aboutToAppear page id :${this.uid}`)
     PageManager.registerPage(this.uid,this)
+    PageManager.markPageToFront(this.uid)
     setTimeout(()=>{
       this.restoreFocus()
     },100)
