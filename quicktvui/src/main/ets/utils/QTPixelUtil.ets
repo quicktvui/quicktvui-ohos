@@ -97,6 +97,14 @@ export class QTPixelUtil{
     return PixelUtil.px2dp(display.getDefaultDisplaySync().width)
   }
 
+  public static getScreenWidth() : number{
+    return display.getDefaultDisplaySync().width;
+  }
+
+  public static getScreenHeight() : number{
+    return display.getDefaultDisplaySync().height;
+  }
+
   public static getScreenDevHeight(){
     return PixelUtil.px2dp(display.getDefaultDisplaySync().height)
   }

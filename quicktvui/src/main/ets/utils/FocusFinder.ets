@@ -6,6 +6,7 @@ import { QTView } from "../QTTypes";
 import { ExtendUtil } from "./ExtendUtil";
 import { FocusUtils } from "./FocusUtils";
 import { QTLog } from "./QTLog";
+import { QTPixelUtil } from "./QTPixelUtil";
 
 // Rect类实现
 class Rect {
@@ -171,8 +172,51 @@ export class FocusFinder {
   private static mBestCandidateRect = new Rect();
   private static mTempRect = new Rect(); // 新增的临时Rect
 
+  static isCheckOutOfScreen(rect : Rect){
+    if(rect.bottom < 0 || rect.top > QTPixelUtil.getScreenHeight()){
+        return true;
+    }
+    if(rect.right < 0 || rect.left > QTPixelUtil.getScreenWidth()){
+      return true;
+    }
+    return false;
+  }
+
+  static findNextFocusSpecial(focusedView :TVView | null,direction : number) : TVView | null{
+    if(focusedView instanceof  QTBaseComponentView){
+      let blockFocusDirection = focusedView.blockFocusDirections;
+      let directionName = FocusFinder.getDirectionName(direction);
+      for(let i = 0; i < blockFocusDirection.length; i ++){
+        let s = blockFocusDirection[i]
+        if(s == directionName){
+          QTLog.w(TAG_FOCUS,`findNextFocusSpecial return focused on blockFocusDirection directionName:${directionName}`)
+          return focusedView;
+        }
+      }
+    }
+    return null;
+  }
+
+  static getDirectionName(direction : number): String{
+    switch (direction){
+      case FocusFinder.DIRECTION_LEFT:
+        return "left";
+      case FocusFinder.DIRECTION_RIGHT:
+        return "right";
+      case FocusFinder.DIRECTION_UP:
+        return "up";
+      case FocusFinder.DIRECTION_DOWN:
+        return "down";
+    }
+    return "none"
+  }
+
   static findNextFocus(focusedView: TVView | null, root: QTView, direction: number): TVView | null {
     const views: TVView[] = [];
+    let special = FocusFinder.findNextFocusSpecial(focusedView,direction);
+    if(special != null){
+      return special;
+    }
     FocusFinder.addAllFocusable(views, root, direction);
 
     QTLog.i(TAG_FOCUS, `findNextFocus search views length: ${views.length} root : ${ExtendUtil.debugView(root)}`);
@@ -203,6 +247,7 @@ export class FocusFinder {
         // return null;
         // return FocusFinder.findFirstFocusableByDirection(views, root, direction);
       }
+
 
       QTLog.i(TAG_FOCUS, `findNextFocus current focused rect: ${focusedRect.toString()}`);
 
@@ -267,6 +312,10 @@ export class FocusFinder {
 
       // 跳过无效矩形
       if (!viewRect) {
+        continue;
+      }
+      if(FocusFinder.isCheckOutOfScreen(viewRect)){
+        QTLog.w(TAG_FOCUS,`find next return oon outOfScreen2`)
         continue;
       }
 
@@ -338,11 +387,14 @@ export class FocusFinder {
     }
     else if (target.cssFocusable === true) {
       //views.push(target);
-      QTLog.e(TAG_FOCUS,`addAllFocusable sip view :${ExtendUtil.debugView(target)}`)
+      QTLog.e(TAG_FOCUS,`addAllFocusable skip view :${ExtendUtil.debugView(target)}`)
     }
     if (target.children && target.children.length > 0) {
       target.children.forEach((child: QTView) => {
-        FocusFinder.addAllFocusable(views, child, direction);
+        //FocusFinder.addAllFocusable(views, child, direction);
+        if(child instanceof  QTBaseComponentView){
+          child.addFocusables(views,direction)
+        }
       });
     }
   }
@@ -386,7 +438,7 @@ export class FocusFinder {
       rect.top = c.windowOffset.y;
       rect.right = rect.left + c.size.width;
       rect.bottom = rect.top + c.size.height;
-      QTLog.d(TAG_FOCUS, `getViewRectInRoot reutrn view: ${view.uid} type:${view.viewType} size:${c.size?.width}x${c.size?.height} ,left: ${rect.left},top : ${rect.top}`);
+      QTLog.d(TAG_FOCUS, `getViewRectInRoot reutrn view: ${view.uid} type:${view.viewType} size:${c.size?.width}x${c.size?.height} ,left: ${rect.left},right,${rect.right},top : ${rect.top},bottom:${rect.bottom}`);
       return rect;
     } catch (e) {
       QTLog.e(TAG_FOCUS, `getViewRectInRoot error: ${e}`);
@@ -440,6 +492,10 @@ export class FocusFinder {
       // 获取候选视图的矩形（可能返回null）
       const candidateRect = FocusFinder.getViewRectInRoot( candidate, root);
       if (!candidateRect) {
+        continue;
+      }
+      if(FocusFinder.isCheckOutOfScreen(candidateRect)){
+        QTLog.w(TAG_FOCUS,`find next return oon outOfScreen rect:${candidate} +",getScreenWidth:"+${QTPixelUtil.getScreenWidth()},getScreenHeight+${QTPixelUtil.getScreenHeight()}`)
         continue;
       }
 
