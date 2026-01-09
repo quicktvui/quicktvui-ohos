@@ -95,10 +95,14 @@ export class ESDownloadModule extends BaseModule {
         const downloadParams = params[0] as HippyMap
         DownloadManager.getInstance().download(this.hippyAnyToDownload(downloadParams))
           .then(() => {
-            promise.resolve(true)
+            if (promise) {
+              promise.resolve(true)
+            }
           })
           .catch((err: BusinessError) => {
-            promise.reject(JSON.stringify(err))
+            if (promise) {
+              promise.reject(JSON.stringify(err))
+            }
           })
         break;
       }
@@ -138,10 +142,14 @@ export class ESDownloadModule extends BaseModule {
       case 'release': {
         DownloadManager.getInstance().release()
           .then(() => {
-            promise.resolve(true)
+            if (promise) {
+              promise.resolve(true)
+            }
           })
           .catch((err: BusinessError) => {
-            promise.reject(JSON.stringify(err))
+            if (promise) {
+              promise.reject(JSON.stringify(err))
+            }
           })
         break;
       }
