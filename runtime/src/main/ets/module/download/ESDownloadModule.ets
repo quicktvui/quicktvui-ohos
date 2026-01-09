@@ -15,6 +15,7 @@ import { DownloadManager } from './DownloadManager';
 import { DownloadMessage } from './DownloadMessage';
 import { DownloadProgress } from './DownloadProgress';
 import { DownloadStatus } from './DownloadStatus';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 /**
  * 下载模块
@@ -93,6 +94,12 @@ export class ESDownloadModule extends BaseModule {
       case 'download': {
         const downloadParams = params[0] as HippyMap
         DownloadManager.getInstance().download(this.hippyAnyToDownload(downloadParams))
+          .then(() => {
+            promise.resolve(true)
+          })
+          .catch((err: BusinessError) => {
+            promise.reject(JSON.stringify(err))
+          })
         break;
       }
       case 'start': {
@@ -130,6 +137,12 @@ export class ESDownloadModule extends BaseModule {
       }
       case 'release': {
         DownloadManager.getInstance().release()
+          .then(() => {
+            promise.resolve(true)
+          })
+          .catch((err: BusinessError) => {
+            promise.reject(JSON.stringify(err))
+          })
         break;
       }
       default:
