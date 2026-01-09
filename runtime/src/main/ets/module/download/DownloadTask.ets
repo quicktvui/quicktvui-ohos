@@ -148,10 +148,17 @@ export class DownloadTask {
   }
 
   async start() {
-
     if (this.downloadTask) {
       LogUtils.d(this.TAG, `Download start`);
       await this.downloadTask.start();
+      if (this.downloadStatusListener) {
+        const status: DownloadStatus<DownloadMessage> = {
+          state: DownloadState.START,
+          download: this.downloadInfo,
+          data: null
+        }
+        this.downloadStatusListener(status)
+      }
     } else {
       LogUtils.d(this.TAG, `Download start: DownloadTask is null`);
     }
