@@ -5,6 +5,7 @@ import {
   HippyAny,
   HIPPY_COMPONENT_KEY_PREFIX,
 } from 'hippy'
+import { QTPixelUtil } from '../../utils/QTPixelUtil';
 import { QTBaseComponentView } from '../QTBaseComponentView';
 
 /**
@@ -20,7 +21,7 @@ export class QTPieProgressView extends QTBaseComponentView {
   public maskColor: string = 'rgba(0, 0, 0, 0.7)';
 
   public ringWidth: number = 3;
-  public borderRadius: number = 20; // 默认圆角 20
+  public borderRadius: number = 10; // 默认圆角 20
 
   public needsDraw: () => void = () => {
   };
@@ -70,7 +71,7 @@ export class QTPieProgressView extends QTBaseComponentView {
       case 'borderWidth':
         let rwVal = Number(propValue);
         if (!isNaN(rwVal) && rwVal >= 0) {
-          this.ringWidth = rwVal;
+          this.ringWidth = QTPixelUtil.dev2Vp(rwVal);
           shouldRedraw = true;
         }
         break;
@@ -78,7 +79,7 @@ export class QTPieProgressView extends QTBaseComponentView {
       case 'borderRadius':
         let brVal = Number(propValue);
         if (!isNaN(brVal) && brVal >= 0) {
-          this.borderRadius = brVal;
+          this.borderRadius = QTPixelUtil.dev2Vp(brVal);
           shouldRedraw = true;
         }
         break;
