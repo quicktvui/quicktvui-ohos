@@ -134,6 +134,12 @@ export class QTItemRootView extends QTRenderBaseView{
       // console.warn(TAG_LAYOUT,`set FastItem size:[${childView.cssWidth},height:${childView.cssHeight}]`)
       //QTPixelUtil.setRenderViewLayout(this,[0,0,child.cssWidth,child.cssHeight]);
       this.letItemMatchChildPosition(child)
+      if(child instanceof QTFastItemView) {
+        //fastItem兼容一下
+        LayoutAttach.obtainLayoutAttach(this).setFixedWidth(child.getContentWidth())
+        LayoutAttach.obtainLayoutAttach(this).setFixedHeight(child.getContentHeight())
+        QTPixelUtil.setRenderViewLayout(this,[0,0,child.getContentWidth(),child.getContentHeight()]);
+      }
       //QTLog.e(TAG_LAYOUT,`notifyChildSizeChanged parentView:${ExtendUtil.debugView(this.parentList)},dataPosition:${this.dataPosition},this.cssWidth:${this.cssWidth}`)
       // if(this.parentList instanceof QTFastListView && this.dataPosition){
       //   this.parentList.notifyItemChanged(this.dataPosition)
@@ -214,6 +220,7 @@ export class QTItemRootView extends QTRenderBaseView{
           itemLa.setFixedWidth(childView.getContentWidth())
           itemLa.setFixedHeight(childView.getContentHeight())
           QTPixelUtil.setRenderViewLayout(this,[0,0,childView.getContentWidth(),childView.getContentHeight()]);
+          QTLog.w(TAG_LAYOUT,`layoutItem aboutToAppear width${this.cssWidth} itemHeight:${this.cssHeight},itemView getContentHeight:${childView.getContentHeight()}`)
         }else{
           QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
         }
@@ -224,10 +231,10 @@ export class QTItemRootView extends QTRenderBaseView{
 
   }
   onAboutToReuse(params: Record<string, Object>){
-    if(this.children[0]){
-      QTPixelUtil.setRenderViewLayout(this,[this.children[0].cssPositionX,this.children[0].cssPositionY,this.children[0].cssWidth,this.children[0].cssHeight]);
-      QTPixelUtil.setRenderViewLayout(this.children[0],[0,0,this.children[0].cssWidth,this.children[0].cssHeight]);
-    }
+    // if(this.children[0]){
+    //   QTPixelUtil.setRenderViewLayout(this,[this.children[0].cssPositionX,this.children[0].cssPositionY,this.children[0].cssWidth,this.children[0].cssHeight]);
+    //   QTPixelUtil.setRenderViewLayout(this.children[0],[0,0,this.children[0].cssWidth,this.children[0].cssHeight]);
+    // }
     this.updateDirty = true;
     // let item = this.parentList?.dataSource.
     //this.pendingUpdates
@@ -241,6 +248,8 @@ export class QTItemRootView extends QTRenderBaseView{
       })
     }
   }
+
+
 
 
   setProp(propKey: string, propValue: HippyAny): boolean {
@@ -310,6 +319,9 @@ export struct QTItemRoot {
   }
 
   aboutToAppear(): void {
+    if(this.renderView.children[0] instanceof QTFastItemView){
+      QTLog.w(TAG_LAYOUT,`itemRootView aboutToAppear width${this.renderView.cssWidth} itemHeight:${this.renderView.cssHeight},itemView getContentHeight:${this.renderView.children[0].getContentHeight()}`)
+    }
 
   }
 

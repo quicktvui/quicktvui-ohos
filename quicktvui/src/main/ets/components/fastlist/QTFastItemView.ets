@@ -14,6 +14,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 import QTRenderBaseView from '../QTRenderBaseView';
 import { TVView } from '../TVView';
 import { FastListUtils } from './FastListUtils';
+import { LayoutAttach } from './LayoutAttach';
 
 
 @Observed
@@ -141,9 +142,11 @@ export struct QTFastItem {
     if(this.children[0]){
       if(this.renderView.cssWidth < 1){
         this.renderView.cssWidth = this.children[0].cssWidth
+        LayoutAttach.obtainLayoutAttach(this.renderView).fixedWidth = this.children[0].cssWidth
       }
       if(this.renderView.cssHeight< 1){
         this.renderView.cssHeight = this.children[0].cssHeight
+        LayoutAttach.obtainLayoutAttach(this.renderView).fixedHeight = this.children[0].cssHeight
       }
     }
 
