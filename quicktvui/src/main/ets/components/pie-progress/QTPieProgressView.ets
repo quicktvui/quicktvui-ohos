@@ -7,18 +7,22 @@ import {
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView';
 
+/**
+ * 逻辑层：QTPieProgressView
+ * 管理进度数据和重绘通知
+ */
 @Observed
 export class QTPieProgressView extends QTBaseComponentView {
-  public color: string = '#FF6600'; // 默认颜色，参考你图片的橙色
-  public progress: number = 0; // 进度 0 - 100
+  public color: string = '#FF6600'; // 亮色（扫描过的区域）
+  public trackColor: string = '#E0E0E0'; // 暗色（未扫描的底色）
+  public progress: number = 0; // 进度 0-100
+
+  public needsDraw: () => void = () => {
+  };
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
-
-  // 定义一个回调函数，用于通知 UI 组件重绘
-  public needsDraw: () => void = () => {
-  };
 
   setProp(propKey: string, propValue: HippyAny): boolean {
     let shouldRedraw = false;
@@ -26,8 +30,10 @@ export class QTPieProgressView extends QTBaseComponentView {
     if (propKey === 'color') {
       this.color = propValue as string;
       shouldRedraw = true;
+    } else if (propKey === 'trackColor') { // 如果需要动态改底色
+      this.trackColor = propValue as string;
+      shouldRedraw = true;
     } else if (propKey === 'progress') {
-      // 确保进度在 0-100 之间
       let val = Number(propValue);
       if (isNaN(val)) {
         val = 0;
@@ -37,7 +43,6 @@ export class QTPieProgressView extends QTBaseComponentView {
     }
 
     if (shouldRedraw) {
-      // 属性变化后，通知 Canvas 重绘
       this.needsDraw();
       return true;
     }
@@ -45,6 +50,10 @@ export class QTPieProgressView extends QTBaseComponentView {
   }
 }
 
+/**
+ * UI层：QTPieProgress
+ * 负责 Canvas 绘制
+ */
 @Component
 export struct QTPieProgress {
   @ObjectLink renderView: QTPieProgressView
@@ -52,62 +61,60 @@ export struct QTPieProgress {
   private settings: RenderingContextSettings = new RenderingContextSettings(true);
   private context: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings);
 
-  aboutToAppear() {
-
-  }
-
   aboutToDisappear() {
-    // 清理引用，防止内存泄漏
     this.renderView.needsDraw = () => {
     };
   }
 
-  // 核心绘制逻辑
   draw() {
-    // 获取宽高 (注意：QTBaseComponentView 中的 cssWidth 可能是字符串或数字)
     const w = typeof this.renderView.cssWidth === 'number' ? this.renderView.cssWidth :
       parseFloat(this.renderView.cssWidth) || 100;
     const h = typeof this.renderView.cssHeight === 'number' ? this.renderView.cssHeight :
       parseFloat(this.renderView.cssHeight) || 100;
 
-    // 计算中心点和半径
     const centerX = w / 2;
     const centerY = h / 2;
-    const lineWidth = 8; // 进度条宽度
-    const radius = Math.min(centerX, centerY) - lineWidth; // 留出线宽的边距
+    const borderWidth = 2; // 外边框宽度
+    const radius = Math.min(centerX, centerY) - borderWidth;
 
-    // 清空画布
     this.context.clearRect(0, 0, w, h);
 
-    // 1. 绘制底色圆环 (灰色轨道)
+    // 1. 绘制底色 (全圆)
     this.context.beginPath();
-    this.context.lineWidth = lineWidth;
-    this.context.strokeStyle = '#EEEEEE'; // 浅灰色底轨
-    this.context.lineCap = 'round';
     this.context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    this.context.stroke();
+    this.context.fillStyle = this.renderView.trackColor;
+    this.context.fill();
 
-    // 2. 绘制进度圆环 (有颜色的部分)
+    // 2. 绘制进度 (扇形扫描)
     if (this.renderView.progress > 0) {
       this.context.beginPath();
-      this.context.lineWidth = lineWidth;
-      this.context.strokeStyle = this.renderView.color;
-      this.context.lineCap = 'round';
-
-      // Canvas 的 0 度是在 3 点钟方向，我们需要从 12 点钟方向开始 (-90度)
+      this.context.moveTo(centerX, centerY); // 关键：移回圆心
       const startAngle = -Math.PI / 2;
-      // 计算结束角度：起始角 + (2PI * 百分比)
       const endAngle = startAngle + (Math.PI * 2 * (this.renderView.progress / 100));
-
       this.context.arc(centerX, centerY, radius, startAngle, endAngle);
-      this.context.stroke();
+      this.context.closePath();
+      this.context.fillStyle = this.renderView.color;
+      this.context.fill();
     }
 
-    // 3. 绘制中间的文字 (例如 "85%")
-    this.context.font = 'bold 30px sans-serif'; // 字体大小可根据实际需求调整
-    this.context.fillStyle = this.renderView.color;
+    // 3. 绘制外边框
+    this.context.beginPath();
+    this.context.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    this.context.strokeStyle = this.renderView.color;
+    this.context.lineWidth = borderWidth;
+    this.context.stroke();
+
+    // 4. 绘制百分比文字
+    this.context.font = 'bold 30px sans-serif'; // 根据组件大小可能需要动态计算字体大小
     this.context.textAlign = 'center';
     this.context.textBaseline = 'middle';
+
+    // 文字描边+填充，确保可视性
+    this.context.lineWidth = 1;
+    this.context.strokeStyle = '#000000';
+    this.context.strokeText(`${Math.round(this.renderView.progress)}%`, centerX, centerY);
+
+    this.context.fillStyle = '#FFFFFF';
     this.context.fillText(`${Math.round(this.renderView.progress)}%`, centerX, centerY);
   }
 
@@ -115,31 +122,23 @@ export struct QTPieProgress {
     Canvas(this.context)
       .applyRenderViewBaseAttr(this.renderView)
       .onReady(() => {
-        // 1. 绑定重绘回调：当 View 层数据变化时，执行这里的 draw
         this.renderView.needsDraw = () => {
           this.draw();
         };
-        // 2. 初始绘制
         this.draw();
       })
   }
 }
 
-// base props for all components
+// Extend 部分不变
 @Extend(Canvas)
 function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({
-    width:
-    typeof $$.cssWidth === 'number'
-      ? $$.cssWidth
-      : parseFloat($$.cssWidth) || 100,
-    height:
-    typeof $$.cssHeight === 'number'
-      ? $$.cssHeight
-      : parseFloat($$.cssHeight) || 100,
+    width: typeof $$.cssWidth === 'number' ? $$.cssWidth : parseFloat($$.cssWidth) || 100,
+    height: typeof $$.cssHeight === 'number' ? $$.cssHeight : parseFloat($$.cssHeight) || 100,
   })
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
