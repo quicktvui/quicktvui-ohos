@@ -22,9 +22,13 @@ export struct LoadingSplashView {
             .alt($r('app.media.app_icon'))
 
           // 优先显示 appInfo.appName，为空则显示本地默认字符串
-          Text(this.appInfo?.appName ? this.appInfo.appName : $r('app.string.app_name'))
+          Text(
+            this.appInfo?.appName && this.appInfo.appName.trim().length > 0
+              ? this.appInfo.appName
+              : $r('app.string.app_name')
+          )
             .fontSize(60)
-            .fontColor(Color.Black) // 显式设置颜色，防止在某些背景下看不清
+            .fontColor(Color.Black)
             .margin({ left: 15 })
         }
         .justifyContent(FlexAlign.Center)
