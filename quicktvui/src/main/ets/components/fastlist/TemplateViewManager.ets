@@ -66,6 +66,7 @@ export class TemplateViewManager{
           case 'showIf':
             p.renderView.cssVisibility = value ? Visibility.Visible : Visibility.Hidden
             handle = true;
+            break;
             case 'fontSize':
             case 'textSize':
             toValue = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(value))
@@ -74,9 +75,9 @@ export class TemplateViewManager{
         }
         if(!handle){
           if(p.renderView instanceof QTTextView){
-            QTLog.i(TAG_REUSE,`applyPatchUpdate on bindItem key:${key},value:${value},old Text:${p.renderView.text}`)
+            QTLog.i(TAG_LAYOUT,`applyPatchUpdate on bindItem key:${key},value:${toValue},old Text:${p.renderView.text},this:${ExtendUtil.debugView(p.renderView)}`)
           }else{
-            QTLog.i(TAG_REUSE,`applyPendingProp on bindItem  key:${key},value:${value},view:${ExtendUtil.debugView(p.renderView)}`)
+            QTLog.i(TAG_REUSE,`applyPendingProp on bindItem  key:${key},value:${toValue},view:${ExtendUtil.debugView(p.renderView)}`)
           }
           p.renderView.setProp(key,toValue)
         }
@@ -326,6 +327,7 @@ export class TemplateViewManager{
     let toUpdate = new Map<string, HippyAny>()
     let patch = new PathUpdate(rendView,toUpdate)
     templateProps.forEach((value,key)=>{
+
       if(!(TemplateCodeParser.PENDING_PROP_CREATE_IF === key)){
         if(TemplateCodeParser.isEquationProp(value)){
           let b = TemplateCodeParser.parseBooleanFromPendingProp(key,itemData,value)
@@ -334,13 +336,22 @@ export class TemplateViewManager{
         }else{
           let pendingProp = TemplateCodeParser.parsePlaceholderProp(key,templateProps)
           if(pendingProp){
-            //LayoutAttach.obtainLayoutAttach(rendView).pendingProps.set(key,pendingProp)
             let dataFromValue = TemplateCodeParser.getValueFromCode(itemData,pendingProp)
-            // console.info(QUICKTVUI_TAG,`++put pendingProp key:${key},dataFromValue:${dataFromValue},pendingProp:${pendingProp} ,value:${value},data:${CommonUtils.hippyAny2String(dataFromValue)}`)
+            // console.info(TAG_LAYOUT,`++put pendingProp key:${key},dataFromValue:${dataFromValue},pendingProp:${pendingProp} ,value:${value},data:${CommonUtils.hippyAny2String(dataFromValue)}`)
             //从${xx}取出dataFromValue数据
             patch.pendingProps.set(key,pendingProp as string)
             if(!this.handleCustomProps(key,dataFromValue,patch,true)){
               toUpdate.set(key,dataFromValue)
+            }
+            if("style" == key || "flexStyle" == key){
+              //这里是因为style处理时，fontSize并没有作用，手动添加
+              let style = HRValueUtils.getMap(dataFromValue);
+              if(style){
+                if(style.get("fontSize")){
+                  //console.info(TAG_LAYOUT,`++put fontSize ,style.get("fontSize"):${style.get("fontSize")},data:${CommonUtils.hippyAny2String(dataFromValue)}`)
+                  toUpdate.set("fontSize",QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(style.get("fontSize"))))
+                }
+              }
             }
           }else{
             // console.log(QUICKTVUI_TAG,`--gatherToUpdateMap discard key:${key},data:${CommonUtils.hippyAny2String(value)}`)
