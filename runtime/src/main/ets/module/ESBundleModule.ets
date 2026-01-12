@@ -8,7 +8,7 @@ import {
   HippyArray
 } from 'hippy';
 import { BaseModule } from './BaseModule';
-import { installer } from '@kit.AbilityKit';
+import { common, installer } from '@kit.AbilityKit';
 import { bundleManager } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 
@@ -111,8 +111,7 @@ export class ESBundleModule extends BaseModule {
               promise.reject(JSON.stringify(err))
             } else {
               LogUtils.d(this.TAG, 'getBundleInfo success');
-              // promise.resolve(JSON.stringify(data))
-              promise.resolve(BundleInfoConverter.convertToHippyAny(data))
+              promise.resolve(JSON.stringify(data))
             }
           });
         } catch (err) {
@@ -135,14 +134,7 @@ export class ESBundleModule extends BaseModule {
               promise.reject(JSON.stringify(err))
             } else {
               LogUtils.d(this.TAG, 'getAllBundleInfo success');
-              const ret: HippyArray = []
-              if (data && data.length > 0) {
-                for (let i = 0; i < data.length; i++) {
-                  const info = BundleInfoConverter.convertToHippyAny(data[i])
-                  ret.push(info)
-                }
-              }
-              promise.resolve(ret)
+              promise.resolve(JSON.stringify(data))
             }
           });
         } catch (err) {
@@ -152,32 +144,32 @@ export class ESBundleModule extends BaseModule {
         break;
       }
 
+      case 'startAbility': {
+        const bundleName = params[0] as string
+        const abilityName = params[1] as string
+        let want: Want = {
+          bundleName: bundleName,
+          abilityName: abilityName
+        };
+        try {
+          const context = this.ctx.getAbilityContext() as common.UIAbilityContext;
+          context.startAbility(want, (err: BusinessError) => {
+            if (err) {
+              LogUtils.e(this.TAG, 'startAbility exception ' + JSON.stringify(err));
+              promise.reject(JSON.stringify(err))
+            } else {
+              promise.resolve(true)
+            }
+          });
+        } catch (err) {
+          LogUtils.e(this.TAG, 'startAbility exception ' + JSON.stringify(err));
+          promise.reject(JSON.stringify(err))
+        }
+        break;
+      }
       default:
         super.call(method, params, promise);
     }
     return null;
-  }
-}
-
-export class BundleInfoConverter {
-  /**
-   * 主转换函数
-   */
-  static convertToHippyAny(info: bundleManager.BundleInfo): HippyRecord {
-    const record: HippyRecord = {};
-
-    record['name'] = info.name;
-    record['vendor'] = info.vendor;
-    record['versionCode'] = info.versionCode;
-    record['versionName'] = info.versionName;
-    record['minCompatibleVersionCode'] = info.minCompatibleVersionCode;
-    record['targetVersion'] = info.targetVersion;
-    record['installTime'] = info.installTime;
-    record['updateTime'] = info.updateTime;
-    record['appIndex'] = info.appIndex;
-    if (info.firstInstallTime !== undefined) {
-      record['firstInstallTime'] = info.firstInstallTime;
-    }
-    return record;
   }
 }
