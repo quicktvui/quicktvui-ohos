@@ -61,11 +61,11 @@ export class QTViewActor{
       if(this.hostView instanceof QTBaseComponentView){
         if(this.hostView.isAttached){
           QTLog.d(TAG_FOCUS,`addFocusables by view Actor this : ${ExtendUtil.debugView(this.hostView)}`)
+          if(this.hostView.descendantFocusability != 2){
+            views.push(this.hostView)
+          }
         }else{
           QTLog.w(TAG_FOCUS,`addFocusables return on detached  this : ${ExtendUtil.debugView(this.hostView)}`)
-        }
-        if(this.hostView.descendantFocusability != 2){
-          views.push(this.hostView)
         }
       }else{
         QTLog.w(TAG_FOCUS,`addFocusables canTakeFocus reutrn  this : ${ExtendUtil.debugView(this.hostView)}`)

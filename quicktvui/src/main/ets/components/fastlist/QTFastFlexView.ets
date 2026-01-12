@@ -81,7 +81,7 @@ export class QTFastFlexView extends QTRenderBaseView {
 
   onDataChanged(data : HippyArray | null){
     QTLog.d(TAG_FASTLIST,`FastFlex:onDataChanged rootListID:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
-    this.virtualChildren = []
+    this.virtualChildren.length = 0;
     this.dataSource?.setPlaceholderEnabled(this.enablePlaceholder)
     if(this.dataSource && data && data.length > 0){
       for(let  i = 0; i < data.length; i++){
@@ -99,8 +99,6 @@ export class QTFastFlexView extends QTRenderBaseView {
       //     return new ItemView(index,item as HippyMap)
       //   })
       // )
-    }else{
-      this.virtualChildren = []
     }
   }
 

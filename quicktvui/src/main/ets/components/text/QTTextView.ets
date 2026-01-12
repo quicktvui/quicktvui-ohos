@@ -12,6 +12,7 @@ import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from '../../Constant';
 import { QTLog } from '../../utils/QTLog';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTViewState } from '../StateView';
+import { MeasureUtils } from '@ohos.arkui.UIContext';
 
 
 @Observed
@@ -22,7 +23,7 @@ export class QTTextView extends QTRenderBaseView{
   text: string = ""
   fontColor: ResourceColor | null = null
   userFontColor: ResourceColor | null = null
-  fontSize: Dimension = 16
+  fontSize: number = 16
   lineHeight: number | null = null
   // fontStyle: FontStyle = FontStyle.Normal
   // fontWeight: number | FontWeight | string = FontWeight.Normal
@@ -86,6 +87,10 @@ export class QTTextView extends QTRenderBaseView{
       case "fontSize":
       case "textSize":
         this.fontSize = HRValueUtils.getNumber(propValue);
+        if(Number.isNaN(this.fontSize)){
+          this.fontSize = 20;
+        }
+        QTLog.i(TAG_LAYOUT,`setTextFontSize:${this.fontSize},text:${this.text},this:${ExtendUtil.debugView(this)}`)
         return true;
       case "paddingRect":
         let padding = propValue as HippyArray
@@ -186,10 +191,17 @@ export struct  QTText {
   @ObjectLink children: HippyObservedArray<QTView>
   // @Consume('autoSize') autoSize?: number[]
 
-  @State textSize: SizeOptions = MeasureText.measureTextSize({
+  // @State textSize: SizeOptions = MeasureText.measureTextSize({
+  //   textContent: this.renderView.text,
+  //   fontSize: this.renderView.fontSize,
+  // })
+
+  @State uiContext: UIContext = this.getUIContext();
+  @State uiContextMeasure: MeasureUtils = this.uiContext.getMeasureUtils();
+  @State textSize: SizeOptions = this.uiContextMeasure.measureTextSize({
     textContent: this.renderView.text,
-    fontSize: this.renderView.fontSize,
-  })
+    fontSize: this.renderView.fontSize
+  });
 
 
   build(): void {
@@ -199,7 +211,7 @@ export struct  QTText {
       .height(this.renderView.cssHeight > 0 ? this.renderView.cssHeight :  this.textSize.height)
       .padding(this.renderView.qtPadding)
       .onAreaChange((oldValue: Area, newValue: Area) => {
-        QTLog.d(TAG_LAYOUT,`0 textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width}`)
+        QTLog.d(TAG_LAYOUT,`0 textView notifyChildSizeChanged text:${this.renderView.text},oldWidth:${oldValue.width},new Value:${newValue.width} textSize Width:${this.textSize.width}`)
         if(newValue.width != oldValue.width || newValue.height != oldValue.height){
           if(this.renderView.parentView instanceof QTBaseComponentView){
             let newWidth = 0
