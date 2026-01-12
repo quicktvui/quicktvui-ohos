@@ -47,6 +47,7 @@ import { QTFastItem, QTFastItemView } from './fastlist/QTFastItemView';
 import { QTNodeOp, QTNodeOpView } from './node/QTNodeOpView';
 import { QTHRRichText, QTRichTextView } from './text/QTRichTextView';
 import { QTModal, QTModalView } from './modal/QTModalView';
+import { QTPercentLoadingView } from './percent-loading/QTPercentLoadingView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -78,7 +79,8 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("TabsView", (ctx): HippyRenderBaseView => new QTTabsView(ctx))
     registerMap.set("RecyclerViewPager", (ctx): HippyRenderBaseView => new InnerViewPagerView(ctx))
     registerMap.set("ItemStoreView", (ctx): HippyRenderBaseView => new ItemStoreView(ctx))
-    //测试
+
+    registerMap.set("PercentLoadingComponent", (ctx): HippyRenderBaseView => new QTPercentLoadingView(ctx))
     registerMap.set("LoadingViewComponent", (ctx): HippyRenderBaseView => new QTLoadingView(ctx))
     registerMap.set("QrCodeComponent", (ctx): HippyRenderBaseView => new QTQRCodeView(ctx))
     registerMap.set("ESWebViewComponent", (ctx): HippyRenderBaseView => new QTWebView(ctx))
@@ -185,8 +187,7 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTMediaSeriesView,
       children: $$.children,
     })
-  } 
-  else if ($$ instanceof QTTextView) {
+  } else if ($$ instanceof QTTextView) {
     QTText({
       renderView: $$ as QTTextView,
       children: $$.children,
@@ -289,17 +290,16 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTFastItemView,
       children: $$.children,
     })
-  }else if ($$ instanceof QTRichTextView) {
+  } else if ($$ instanceof QTRichTextView) {
     QTHRRichText({
       renderView: $$ as QTRichTextView,
     })
-  }else if($$ instanceof QTModalView){
+  } else if ($$ instanceof QTModalView) {
     QTModal({
       renderView: $$ as QTModalView,
       children: $$.children,
     })
-  }
-  else {
+  } else {
     QTFallback({
       renderView: $$ as QTFallbackView,
       children: $$.children,
