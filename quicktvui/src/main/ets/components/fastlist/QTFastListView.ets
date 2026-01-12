@@ -529,6 +529,7 @@ export class QTFastListView extends QTRenderBaseView{
 
   onDataChanged(data : HippyArray | null){
     console.debug(TAG_FASTLIST,`onDataChanged data size:${data ? data.length : 0} spanCount:${this.spanCount},this:${ExtendUtil.debugView(this)}`)
+    this.virtualChildren.length = 0;
     if(data && data.length > 0){
       this.virtualChildren.push(...
         data?.map((item,index)=>{
@@ -542,7 +543,6 @@ export class QTFastListView extends QTRenderBaseView{
       )
       this.notifyReload()
     }else{
-      this.virtualChildren = []
       this.notifyReload()
     }
   }
