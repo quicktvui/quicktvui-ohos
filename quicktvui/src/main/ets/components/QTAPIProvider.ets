@@ -47,7 +47,7 @@ import { QTFastItem, QTFastItemView } from './fastlist/QTFastItemView';
 import { QTNodeOp, QTNodeOpView } from './node/QTNodeOpView';
 import { QTHRRichText, QTRichTextView } from './text/QTRichTextView';
 import { QTModal, QTModalView } from './modal/QTModalView';
-import { QTPercentLoadingView } from './percent-loading/QTPercentLoadingView';
+import { QTPercentLoading, QTPercentLoadingView } from './percent-loading/QTPercentLoadingView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -225,6 +225,12 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
   } else if ($$ instanceof QTPlayMarkView) {
     QTPlayMark({
       renderView: $$ as QTPlayMarkView,
+      children: $$.children,
+    })
+  }
+  else if ($$ instanceof QTPercentLoadingView) {
+    QTPercentLoading({
+      renderView: $$ as QTPercentLoadingView,
       children: $$.children,
     })
   }
