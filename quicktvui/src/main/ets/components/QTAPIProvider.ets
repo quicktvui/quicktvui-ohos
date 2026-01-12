@@ -48,6 +48,7 @@ import { QTNodeOp, QTNodeOpView } from './node/QTNodeOpView';
 import { QTHRRichText, QTRichTextView } from './text/QTRichTextView';
 import { QTModal, QTModalView } from './modal/QTModalView';
 import { QTPercentLoading, QTPercentLoadingView } from './percent-loading/QTPercentLoadingView';
+import { QTPieProgress, QTPieProgressView } from './pie-progress/QTPieProgressView';
 
 export class QTAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
@@ -81,6 +82,8 @@ export class QTAPIProvider extends HippyAPIProvider {
     registerMap.set("ItemStoreView", (ctx): HippyRenderBaseView => new ItemStoreView(ctx))
 
     registerMap.set("PercentLoadingComponent", (ctx): HippyRenderBaseView => new QTPercentLoadingView(ctx))
+    registerMap.set("PieProgressComponent", (ctx): HippyRenderBaseView => new QTPieProgressView(ctx))
+
     registerMap.set("LoadingViewComponent", (ctx): HippyRenderBaseView => new QTLoadingView(ctx))
     registerMap.set("QrCodeComponent", (ctx): HippyRenderBaseView => new QTQRCodeView(ctx))
     registerMap.set("ESWebViewComponent", (ctx): HippyRenderBaseView => new QTWebView(ctx))
@@ -227,10 +230,14 @@ export function buildCustomRenderView($$: HippyRenderBaseView) {
       renderView: $$ as QTPlayMarkView,
       children: $$.children,
     })
-  }
-  else if ($$ instanceof QTPercentLoadingView) {
+  } else if ($$ instanceof QTPercentLoadingView) {
     QTPercentLoading({
       renderView: $$ as QTPercentLoadingView,
+      children: $$.children,
+    })
+  } else if ($$ instanceof QTPieProgressView) {
+    QTPieProgress({
+      renderView: $$ as QTPieProgressView,
       children: $$.children,
     })
   }
