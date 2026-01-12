@@ -87,6 +87,9 @@
       {
         "name": "ohos.permission.GET_NETWORK_INFO"
       },
+      {
+        "name": "ohos.permission.INSTALL_BUNDLE"
+      },
       //      {
       //        "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
       //      },
