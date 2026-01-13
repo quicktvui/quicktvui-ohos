@@ -907,12 +907,12 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": 'Debug',
+              "APP_ENTRY": '',
               "APP_ID": "es.com.harmonyos.tv",
               "APP_NAME": "",
               "APP_ICON": "",
               "APP_VERSION": "",
-              "APP_BUNDLE_URI": '',
+              "APP_BUNDLE_URI": 'assets:///vue',
               "APP_PARAMS": ''
             }
           },
