@@ -16,7 +16,7 @@ export default class RuntimeEntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     LogUtils.i(this.TAG, `Ability onCreate`)
     // 打印原始的 uri，方便排查转义问题
-    LogUtils.i(this.TAG, `onCreate: want: uri: ${want?.uri}  launchParam: ${JSON.stringify(launchParam)}`)
+    LogUtils.e(this.TAG, `onCreate: want: uri: ${want?.uri}  launchParam: ${JSON.stringify(launchParam)}`)
 
     App.instance.context = this.context
     App.instance.nav = new NavPathStack()

@@ -16,7 +16,6 @@ aa start -b cn.openharmony.app.center -a EntryAbility
 
 ## 启动传递参数
 
-
 ```
-hdc shell aa start -b cn.openharmony.app.center -m runtime -a default -u "esapp://action/start?es_pkg=test&from=cmd&uri=192.168.40.92:38989"
+hdc shell aa start -b com.extscreen.runtime -m runtime -a default -U "esapp://action/start?es_pkg=test&from=cmd&uri=192.168.40.92:38989"
 ```
