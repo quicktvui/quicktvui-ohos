@@ -90,6 +90,12 @@
       {
         "name": "ohos.permission.INSTALL_BUNDLE"
       },
+      {
+        "name": "ohos.permission.GET_BUNDLE_INFO"
+      },
+      {
+        "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
+      },
       //      {
       //        "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
       //      },
