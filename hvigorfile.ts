@@ -7,6 +7,19 @@ import { hvigor } from '@ohos/hvigor';
 import * as fs from 'fs';
 import * as path from 'path';
 
+// 辅助函数：读取并解析 json5 (支持注释和尾部逗号)
+function readJson5(filePath: string) {
+  if (!fs.existsSync(filePath)) return null;
+  const content = fs.readFileSync(filePath, 'utf-8');
+  // 使用 new Function 解析，完美兼容 JSON5 语法
+  try {
+    return (new Function("return " + content))();
+  } catch (e) {
+    console.error(`[PermissionSwitch] JSON5 解析失败: ${filePath}`, e);
+    return null;
+  }
+}
+
 export default {
   system: appTasks,
   plugins: [{
@@ -34,11 +47,11 @@ export default {
               const configPath = path.join(hapContext.getModulePath(), 'configs', 'module_appstore.json5');
               if (fs.existsSync(configPath)) {
                 try {
-                  const fileContent = fs.readFileSync(configPath, 'utf-8');
-                  const jsonContent = fileContent.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, '');
-                  const newConfigObj = JSON.parse(jsonContent);
-                  hapContext.setModuleJsonOpt(newConfigObj);
-                  console.log(`✅ [SUCCESS] 已为模块 [runtime] 注入 module.json5 (Bundle: ${bundleName})`);
+                  const newConfigObj = readJson5(configPath); // 使用增强的读取函数
+                  if (newConfigObj) {
+                    hapContext.setModuleJsonOpt(newConfigObj);
+                    console.log(`✅ [SUCCESS] 已为模块 [runtime] 注入 module.json5`);
+                  }
                 } catch (e) {
                   console.error(`❌ [ERROR] 注入失败: ${e}`);
                 }
