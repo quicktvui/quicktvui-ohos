@@ -39,7 +39,7 @@ export class ElementNode{
 export class QTItemRootView extends QTRenderBaseView{
 
   reuse(view: QTItemRootView) {
-    QTLog.e(TAG_REUSE,`reuse this:${this.dataPosition} ,data:${CommonUtils.hippyMap2String(view.itemData)}`)
+    QTLog.d(TAG_REUSE,`reuse this:${this.dataPosition} ,data:${CommonUtils.hippyMap2String(view.itemData)}`)
       // setTimeout(()=>{
         if(view.itemData) {
           this.updateItemPendingProps(view.itemData)
@@ -220,7 +220,7 @@ export class QTItemRootView extends QTRenderBaseView{
           itemLa.setFixedWidth(childView.getContentWidth())
           itemLa.setFixedHeight(childView.getContentHeight())
           QTPixelUtil.setRenderViewLayout(this,[0,0,childView.getContentWidth(),childView.getContentHeight()]);
-          QTLog.w(TAG_LAYOUT,`layoutItem aboutToAppear width${this.cssWidth} itemHeight:${this.cssHeight},itemView getContentHeight:${childView.getContentHeight()}`)
+          // QTLog.w(TAG_LAYOUT,`layoutItem aboutToAppear width${this.cssWidth} itemHeight:${this.cssHeight},itemView getContentHeight:${childView.getContentHeight()}`)
         }else{
           QTPixelUtil.setRenderViewLayout(this,[0,0,childView.cssWidth,childView.cssHeight]);
         }
@@ -319,9 +319,9 @@ export struct QTItemRoot {
   }
 
   aboutToAppear(): void {
-    if(this.renderView.children[0] instanceof QTFastItemView){
-      QTLog.w(TAG_LAYOUT,`itemRootView aboutToAppear width${this.renderView.cssWidth} itemHeight:${this.renderView.cssHeight},itemView getContentHeight:${this.renderView.children[0].getContentHeight()}`)
-    }
+    // if(this.renderView.children[0] instanceof QTFastItemView){
+    //   QTLog.w(TAG_LAYOUT,`itemRootView aboutToAppear width${this.renderView.cssWidth} itemHeight:${this.renderView.cssHeight},itemView getContentHeight:${this.renderView.children[0].getContentHeight()}`)
+    // }
 
   }
 
@@ -330,10 +330,10 @@ export struct QTItemRoot {
   }
 
   aboutToReuse(params: Record<string, Object>): void {
-    console.warn(TAG_REUSE,`++aboutToReuse dataPosition:${this.renderView.dataPosition}，itemView:${params['itemView']}`)
+    QTLog.d(TAG_REUSE,`++aboutToReuse dataPosition:${this.renderView.dataPosition}，itemView:${params['itemView']}`)
 
     let view = params['renderView'] as QTView
-    console.warn(TAG_REUSE,`aboutToReuse view:${ExtendUtil.debugView(view)}`);
+    QTLog.d(TAG_REUSE,`aboutToReuse view:${ExtendUtil.debugView(view)}`);
 
     //this.renderView.onAboutToReuse(params)
     if(view instanceof QTItemRootView){

@@ -527,6 +527,13 @@ export class QTFastListView extends QTRenderBaseView{
     return this.virtualChildren.indexOf(itemView)
   }
 
+  newItem(index:number,item:QTAny) : QTItemRootView{
+    let it =  new ItemView(index,item as HippyMap)
+    let fi = new QTItemRootView(this.ctx).init(this,it)
+    LayoutAttach.obtainLayoutAttach(fi).pageUid = this.getPageUid();
+    return fi;
+  }
+
   onDataChanged(data : HippyArray | null){
     console.debug(TAG_FASTLIST,`onDataChanged data size:${data ? data.length : 0} spanCount:${this.spanCount},this:${ExtendUtil.debugView(this)}`)
     this.virtualChildren.length = 0;
@@ -535,10 +542,7 @@ export class QTFastListView extends QTRenderBaseView{
         data?.map((item,index)=>{
           // QTLog.d(TAG_FASTLIST,`onDataChanged crate item :${CommonUtils.hippyAny2String(item)}`)
           //CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
-          let it =  new ItemView(index,item as HippyMap)
-          let fi = new QTItemRootView(this.ctx).init(this,it)
-          LayoutAttach.obtainLayoutAttach(fi).pageUid = this.getPageUid();
-          return fi;
+          return this.newItem(index,item);
         })
       )
       this.notifyReload()
@@ -564,19 +568,23 @@ export class QTFastListView extends QTRenderBaseView{
 
 
   updateItemRange(start : number,count:number,data:HippyArray){
+    QTLog.i(TAG_FASTLIST,`updateItemRange start:${start},count:${count},data:${CommonUtils.hippyAny2String(data)}`)
     data?.forEach((item,index)=>{
       let itemIndex = index + start;
-      let fi = this.virtualChildren[itemIndex]
-      if(fi instanceof QTItemRootView){
-        QTLog.d(TAG_FASTLIST,`updateItemRange crate item :`)
-        CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
-        // let it =  new ItemView(index + start,item as HippyMap)
-        // fi.itemView = it
-        CommonUtils.updateMap(fi.itemView?.raw,item as HippyMap)
-        fi.updateTimes += 1
-      }else{
-        console.error(TAG_FASTLIST,`updateItemRange error item is null index:${itemIndex}`)
-      }
+      let fi = this.newItem(itemIndex,item)
+      this.virtualChildren.splice(itemIndex,1,fi)
+      QTLog.w(TAG_FASTLIST,`updateItemRange replace index :${itemIndex}`)
+      // let fi = this.virtualChildren[itemIndex]
+      // if(fi instanceof QTItemRootView){
+      //   QTLog.d(TAG_FASTLIST,`updateItemRange crate item :`)
+      //   CommonUtils.printMapPretty(item as HippyMap,'FastListView:',false)
+      //   // let it =  new ItemView(index + start,item as HippyMap)
+      //   // fi.itemView = it
+      //   CommonUtils.updateMap(fi.itemView?.raw,item as HippyMap)
+      //   fi.updateTimes += 1
+      // }else{
+      //   console.error(TAG_FASTLIST,`updateItemRange error item is null index:${itemIndex}`)
+      // }
     })
     // this.virtualChildren.splice(start,count,...replaced)
     if(count > 1){
@@ -714,7 +722,7 @@ export class QTFastListView extends QTRenderBaseView{
 
           break;
         case 'updateItem':
-          QTLog.d(TAG_FASTLIST,`updateItem params length:${params.length}`)
+          QTLog.d(TAG_FASTLIST,`updateItem params length:${params.length},data:${CommonUtils.hippyAny2String(params[1])}`)
           this.updateItemRange(params[0] as number,1,[params[1]])
           break;
         case 'updateItemRange':
