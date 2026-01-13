@@ -19,7 +19,7 @@
       {
         "name": "EntryAbility",
         "srcEntry": "./ets/entryability/RuntimeEntryAbility.ets",
-        "description": "demo",
+        "description": "EntryAbility",
         "icon": "$media:layered_image",
         "label": "$string:app_name",
         "startWindowIcon": "$media:layered_image",
