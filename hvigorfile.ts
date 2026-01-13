@@ -36,7 +36,7 @@ export default {
         console.log(`>>> [PermissionSwitch] 当前构建 BundleName: ${bundleName}`);
 
         //商店渠道
-        if (bundleName === 'tv.harmonyos.appstore') {
+        if (bundleName === 'tv.huan.appstore.hmos') {
           console.log(`>>> [PermissionSwitch] 命中目标包名，准备注入权限配置...`);
           rootNode.subNodes((subNode) => {
             if (subNode.getNodeName() === 'runtime') {

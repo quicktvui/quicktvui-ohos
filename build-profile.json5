@@ -902,7 +902,7 @@
         "compatibleSdkVersion": 15,
         "compileSdkVersion": 18,
         "targetSdkVersion": 18,
-        "bundleName": "tv.harmonyos.appstore",
+        "bundleName": "tv.huan.appstore.hmos",
         "runtimeOS": "OpenHarmony",
         "buildOption": {
           "arkOptions": {
