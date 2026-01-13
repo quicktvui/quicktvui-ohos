@@ -42,7 +42,7 @@ hdc shell aa start -b com.extscreen.runtime -a EntryAbility -U "esapp://es.com.e
 ## 启动 runtime & es.com.elsbharmony.tv & 0.0.2 & 正式环境
 
 ```
-hdc shell aa start -b com.extscreen.runtime -a EntryAbility -U "esapp://es.com.elsbharmony.tv/0.0.2?from=cmd"
+hdc shell "aa start -b com.extscreen.runtime -a EntryAbility -U 'esapp://es.com.elsbharmony.tv/0.0.2?from=cmd&entry=Application'"
 
 ```
 
