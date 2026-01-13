@@ -907,7 +907,7 @@
         "buildOption": {
           "arkOptions": {
             "buildProfileFields": {
-              "APP_ENTRY": '',
+              "APP_ENTRY": 'Debug',
               "APP_ID": "es.com.harmonyos.tv",
               "APP_NAME": "",
               "APP_ICON": "",
