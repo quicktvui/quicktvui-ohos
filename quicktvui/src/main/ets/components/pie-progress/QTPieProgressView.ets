@@ -20,7 +20,7 @@ export class QTPieProgressView extends QTBaseComponentView {
   // 建议默认值写死，防止外部没传参时变黑
   public maskColor: string = 'rgba(0, 0, 0, 0.7)';
 
-  public ringWidth: number = 3;
+  public ringWidth: number = 5;
   public borderRadius: number = 10; // 默认圆角 20
 
   public needsDraw: () => void = () => {
@@ -140,7 +140,7 @@ export struct QTPieProgress {
     this.context.fillStyle = this.renderView.maskColor;
 
     // 如果担心颜色太深，可以在这里强制锁死透明度 (可选)
-    // this.context.globalAlpha = 0.7;
+    this.context.globalAlpha = 0.7;
 
     this.drawRoundedRect(this.context, 0, 0, w, h, this.renderView.borderRadius);
     this.context.fill();
