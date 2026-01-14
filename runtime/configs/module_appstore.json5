@@ -73,12 +73,6 @@
           }
         ]
       },
-      {
-        "name": "xiangsheng",
-        "srcEntry": "./ets/entryability/RuntimeEntryAbility.ets",
-        "startWindowIcon": "$media:layered_image",
-        "startWindowBackground": "$color:start_window_background"
-      }
     ],
     "requestPermissions": [
       {
@@ -86,6 +80,15 @@
       },
       {
         "name": "ohos.permission.GET_NETWORK_INFO"
+      },
+      {
+        "name": "ohos.permission.INSTALL_BUNDLE"
+      },
+      {
+        "name": "ohos.permission.GET_BUNDLE_INFO"
+      },
+      {
+        "name": "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED"
       },
       {
         "name": "ohos.permission.LOCATION",

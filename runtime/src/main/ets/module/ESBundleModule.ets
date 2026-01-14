@@ -11,6 +11,7 @@ import { BaseModule } from './BaseModule';
 import { common, installer } from '@kit.AbilityKit';
 import { bundleManager } from '@kit.AbilityKit';
 import { BusinessError } from '@kit.BasicServicesKit';
+import { launcherBundleManager } from '@kit.AbilityKit';
 
 @HippyNativeModule({ name: "ESBundleModule" })
 export class ESBundleModule extends BaseModule {
@@ -164,6 +165,43 @@ export class ESBundleModule extends BaseModule {
         } catch (err) {
           LogUtils.e(this.TAG, 'startAbility exception ' + JSON.stringify(err));
           promise.reject(JSON.stringify(err))
+        }
+        break;
+      }
+      case 'getLauncherAbilityInfo': {
+        const bundleName = params[0] as string
+        try {
+          launcherBundleManager.getLauncherAbilityInfo(bundleName, 100,
+            (err: BusinessError, data: launcherBundleManager.LauncherAbilityInfo[]) => {
+              if (err !== null) {
+                promise.reject(JSON.stringify(err))
+                LogUtils.e(this.TAG, 'getLauncherAbilityInfo exception ' + JSON.stringify(err));
+              } else {
+                LogUtils.d(this.TAG, 'getLauncherAbilityInfo success' + JSON.stringify(data));
+                promise.resolve(JSON.stringify(data))
+              }
+            })
+        } catch (err) {
+          promise.reject(JSON.stringify(err))
+          LogUtils.e(this.TAG, 'getLauncherAbilityInfo exception ' + JSON.stringify(err));
+        }
+        break;
+      }
+      case 'getAllLauncherAbilityInfo': {
+        try {
+          launcherBundleManager.getAllLauncherAbilityInfo(100,
+            (err: BusinessError, data: launcherBundleManager.LauncherAbilityInfo[]) => {
+              if (err !== null) {
+                LogUtils.e(this.TAG, 'getAllLauncherAbilityInfo exception ' + JSON.stringify(err));
+                promise.reject(JSON.stringify(err))
+              } else {
+                LogUtils.d(this.TAG, 'getAllLauncherAbilityInfo success' + JSON.stringify(data));
+                promise.resolve(JSON.stringify(data))
+              }
+            });
+        } catch (err) {
+          promise.reject(JSON.stringify(err))
+          LogUtils.e(this.TAG, 'getAllLauncherAbilityInfo exception ' + JSON.stringify(err));
         }
         break;
       }
