@@ -263,6 +263,12 @@ export class QTDivView extends HRTvDivView {
           this.autofocus = HRValueUtils.getBoolean(propValue,true)
           QTLog.w(TAG_FOCUS,`set AutofocusPosition:${this.autofocus},this:${ExtendUtil.debugView(this)}`)
           return true
+        case 'requestFocus':
+          QTLog.w(TAG_FOCUS,`set requestFocus:${propValue},this:${ExtendUtil.debugView(this)}`)
+          if(propValue){
+            this.requestFocus(200)
+          }
+        return true;
         case 'enableFocusBorder': {
           this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, false)
         }
@@ -274,7 +280,7 @@ export class QTDivView extends HRTvDivView {
           this.focusBorderColor = HRValueUtils.getNumber(propValue)
           QTLog.w(TAG_STATE_DRAW,`set focusBorderColor:${propValue} number:${this.focusBorderColor} ,this:${ExtendUtil.debugView(this)}`)
         return true;
-      case 'blockRootFocus':
+        case 'blockRootFocus':
           let enableBlock = HRValueUtils.getBoolean(propValue,false)
           if(enableBlock){
             FocusUtils.blockRootFocus(this)
@@ -435,6 +441,8 @@ export struct QTDiv {
     }
   }
 
+
+
   aboutToDisappear() {
     this.renderView.isAttached = false;
     if (this.renderView.eventDetachedFromWindow) {
@@ -450,6 +458,13 @@ export struct QTDiv {
           ForEach(this.children, (item: QTView) => {
             buildHippyRenderView(item, null)
           }, (item: QTView) => item.tag + '')
+          // Text(`DIV:uid:${this.renderView.uid}`)
+          //   .width(200)
+          //   .height(50)
+          //   .fontSize(16)
+          //   .fontColor(Color.White)
+          //   .backgroundColor(Color.Black)
+          //   .zIndex(9999)
         }
         .applyRenderViewBaseAttr(this.renderView)
         .applyGestures(this.renderView)
@@ -476,6 +491,13 @@ export struct QTDiv {
           ForEach(this.children, (item: QTView) => {
             buildHippyRenderView(item, null)
           }, (item: QTView) => item.tag + '')
+          // Text(`DIV:uid:${this.renderView.uid}`)
+          //   .width(200)
+          //   .height(50)
+          //   .fontSize(16)
+          //   .fontColor(Color.White)
+          //   .backgroundColor(Color.Black)
+          //   .zIndex(9999)
         }
         .applyRenderViewBaseAttr(this.renderView)
         // .attributeModifier(this.visibilityModifier)

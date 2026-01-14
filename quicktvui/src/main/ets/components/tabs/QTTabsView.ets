@@ -217,8 +217,14 @@ export class QTTabsView extends QTRenderBaseView{
 
   addFocusables(views: TVView[], direction: number): boolean {
     let pd = this.getTabData(this.currentIndex)
-    QTLog.d(TAG_FOCUS,`Tabs addFocusables currentContent:${ExtendUtil.debugView(pd!!.contentView)} curentIdex:${this.currentIndex}`)
-    this.tabList?.addFocusables(views,direction)
+    let tabChild = this.tabList?.virtualChildren[this.currentIndex]
+    QTLog.d(TAG_FOCUS,`Tabs addFocusables tabChild:${ExtendUtil.debugView(tabChild)} curentIdex:${this.currentIndex}`)
+    if(tabChild instanceof QTBaseComponentView){
+      tabChild.addFocusables(views,direction)
+    }else{
+      this.tabList?.addFocusables(views,direction)
+    }
+
     return pd?.contentView?.addFocusables(views,direction) ? true : false;
     return true;
   }

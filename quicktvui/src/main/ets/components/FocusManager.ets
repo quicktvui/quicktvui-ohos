@@ -95,6 +95,19 @@ export class FocusManager{
     return false;
   }
 
+  public  requestFocus(){
+    let nextFocus : TVView | null = null;
+    nextFocus = this.focusSearchInDescendants(this.focusedView,FocusFinder.DIRECTION_DOWN,this.rootView);
+    if(!nextFocus){
+      nextFocus = FocusFinder.findNextFocus(this.focusedView,this.rootView,FocusFinder.DIRECTION_DOWN)
+    }
+    QTLog.i(TAG_FOCUS,`dispatchKeyEvent curentFocus:${this.focusedView?.uid} ,find nextFocus :${nextFocus?.uid}`)
+    if(nextFocus){
+      FocusUtils.requestFocusById(nextFocus.uid)
+      this.focusedView = nextFocus;
+    }
+  }
+
   setFocusedView(view : TVView | null){
     this.focusedView = view;
   }

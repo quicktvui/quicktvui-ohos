@@ -115,9 +115,12 @@ export class QTPageView extends QTBaseComponentView implements IPage {
     QTLog.i(TAG_PAGE,`+++++aboutToAppear page id :${this.uid}`)
     PageManager.registerPage(this.uid,this)
     PageManager.markPageToFront(this.uid)
-    setTimeout(()=>{
-      this.restoreFocus()
-    },100)
+    if(this.isDialogMode){
+      setTimeout(()=>{
+        QTLog.i(TAG_FOCUS,`requestFirstFocus for dialog`)
+        this.focusManager.requestFocus();
+      },100)
+    }
   }
 
   setPageUIContext(uiContext : UIContext){
