@@ -311,7 +311,7 @@ export class FocusFinder {
       const viewRect = FocusFinder.getViewRectInRoot(view, root);
 
       // 跳过无效矩形
-      if (!viewRect) {
+      if (!viewRect || viewRect.isEmpty()) {
         continue;
       }
       if(FocusFinder.isCheckOutOfScreen(viewRect)){
@@ -491,7 +491,7 @@ export class FocusFinder {
 
       // 获取候选视图的矩形（可能返回null）
       const candidateRect = FocusFinder.getViewRectInRoot( candidate, root);
-      if (!candidateRect) {
+      if (!candidateRect || candidateRect.isEmpty()) {
         continue;
       }
       if(FocusFinder.isCheckOutOfScreen(candidateRect)){

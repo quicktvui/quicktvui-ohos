@@ -289,6 +289,10 @@ export class QTFastListView extends QTRenderBaseView{
     // if(propKey === 'attributes'){
     //   CommonUtils.printObject(propValue,'FastList setAttributes')
     // }
+    if(this.isRecycled){
+      QTLog.e(TAG_REUSE,`FastList setProp return on reyclced this:${ExtendUtil.debugView(this)}`)
+      return true;
+    }
     switch (propKey){
       case "scrollOffset":
         this.scrollOffset = HRValueUtils.getNumber(propValue)

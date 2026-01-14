@@ -187,7 +187,14 @@ export struct  QTFastList {
   }
 
 
+  aboutToReuse(params: Record<string, Object>): void {
+    QTLog.w(TAG_REUSE, `FastList +++ aboutToReuse this:${this.renderView.uid}`)
+    this.renderView.isRecycled = false;
+  }
 
+  aboutToRecycle(): void {
+    this.renderView.isRecycled = true;
+  }
 
 
 

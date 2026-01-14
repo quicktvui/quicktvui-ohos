@@ -8,9 +8,9 @@ import {
   HippyRenderCallback,
   HippyEndBatchCallback,
 } from 'hippy'
-import { TAG_FASTLIST, TAG_FOCUS } from '../../Constant';
+import { TAG_FASTLIST, TAG_FOCUS, TAG_REUSE } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
-import { QTView } from '../../QTTypes';
+import { QTAny, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
 import { QTLog } from '../../utils/QTLog';
 import { QTBaseComponentView } from '../QTBaseComponentView';
@@ -110,6 +110,9 @@ export class QTFastFlexView extends QTRenderBaseView {
     let key : string | null = ''
 
     if (item instanceof QTItemRootView && item.itemView){
+      if(item.uid){
+        return item.uid
+      }
       key =  item.itemView.getItemForEachKey();
       if(!key){
         key = item.itemView.getItemId();
@@ -149,9 +152,12 @@ export class QTFastFlexView extends QTRenderBaseView {
   }
 
   addFocusables(views: TVView[], direction: number): boolean {
+    QTLog.w(TAG_FOCUS,`FastFlex addFocusables uid:${this.uid} ,virtualChildren length:${this.virtualChildren.length}`)
     if (this.virtualChildren && this.virtualChildren.length > 0) {
       this.virtualChildren.forEach((child: QTView) => {
+        QTLog.d(TAG_FOCUS,`FastFlex add child :${ExtendUtil.debugView(child)},parent:${this.uid}`)
         if(child instanceof QTBaseComponentView){
+          // QTLog.d(TAG_FOCUS,`FastFlex add child uid:${child.uid},parent:${this.uid}`)
           child.addFocusables(views,direction)
         }else if (child.cssFocusable === true) {
           QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
@@ -162,6 +168,10 @@ export class QTFastFlexView extends QTRenderBaseView {
   }
 
   setProp(propKey: string, propValue: HippyAny): boolean {
+    if(this.isRecycled){
+      QTLog.w(TAG_REUSE,`FastFlex set prop return on reyclced key:${propKey}`)
+      return true;
+    }
     switch (propKey) {
       case "cachePool":
         QTLog.d(TAG_FASTLIST,`FastFlex:setCachePool :${propValue}`)
@@ -171,7 +181,7 @@ export class QTFastFlexView extends QTRenderBaseView {
         return true;
       case "list":
         if(propValue instanceof Array){
-          QTLog.d(TAG_FASTLIST,`FastFlex:setListData:${HRValueUtils.getArray(propValue)}`)
+          QTLog.w(TAG_REUSE,`FastFlex:setListData this:${this.uid}  recycled:${this.isRecycled} data:${HRValueUtils.getArray(propValue)}`)
           this.onDataChanged(HRValueUtils.getArray(propValue))
         }else{
           console.error(TAG_FASTLIST,`FastFlex:setListData error list is not array propValue:${propValue}`)
@@ -283,10 +293,18 @@ export struct QTFastFlex {
         QTItemRoot({
           renderView:item as QTItemRootView,
           children: item.children,
-        }).reuseId(item.getReuseId())
+        })
+          // .reuseId(item.getReuseId())
       },(item : QTItemRootView,index)=>{
         return this.renderView.keyGenerate(item,index)
       })
+      // Text(`FLEX:uid:${this.renderView.uid}`)
+      //   .width(200)
+      //   .height(50)
+      //   .fontSize(16)
+      //   .fontColor(Color.White)
+      //   .backgroundColor(Color.Black)
+      //   .zIndex(9999)
       // ContentSlot(this.renderView.childSlot)
     }
     .applyRenderViewBaseAttr(this.renderView)
@@ -306,9 +324,39 @@ export struct QTFastFlex {
   }
 
   aboutToDisappear(): void {
-    if(this.endBatchCallback){
-      this.renderView.ctx.getNativeRender().removeEndBatchCallback(this.renderView.ctx.getRootId(),this.endBatchCallback)
-    }
+    // if(this.endBatchCallback){
+    //   this.renderView.ctx.getNativeRender().removeEndBatchCallback(this.renderView.ctx.getRootId(),this.endBatchCallback)
+    // }
+  }
+
+  aboutToReuse(params: Record<string, Object>): void {
+    this.renderView.isRecycled = false;
+    QTLog.w(TAG_REUSE,`FastFlex +++ aboutToReuse this:${this.renderView.uid}`)
+    // let view = params['renderView'] as QTView
+    // if(view instanceof QTFastFlexView){
+    //
+    //   for(let i = 0; i < this.renderView.virtualChildren.length;  i++){
+    //     QTLog.w(TAG_REUSE,`FastFlex this child:${ExtendUtil.debugView(this.renderView.virtualChildren[i])}`)
+    //   }
+    //   QTLog.e(TAG_REUSE,`-----------------------------------------`)
+    //   for(let i = 0; i < view.virtualChildren.length;  i++){
+    //     QTLog.w(TAG_REUSE,`FastFlex reuse view child:${ExtendUtil.debugView(view.virtualChildren[i])}`)
+    //   }
+    //   QTLog.e(TAG_REUSE,`-----FastFlex aboutToReuse view:${ExtendUtil.debugView(view)} children count:${view.virtualChildren.length},this childrenCount:${this.renderView.virtualChildren.length}`);
+    // }
+
+    //this.renderView.onAboutToReuse(params)
+    // if(view instanceof QTItemRootView){
+    //   this.renderView.reuse(view)
+    // }
+  }
+
+  aboutToRecycle(): void {
+    this.renderView.isRecycled = true;
+    QTLog.e(TAG_REUSE,`FastFlex --- aboutToRecycle  this:${this.renderView.uid}`)
+    // for(let i = 0; i < this.renderView.virtualChildren.length;  i++){
+    //   QTLog.e(TAG_REUSE,`FastFlex aboutToRecycle this child:${ExtendUtil.debugView(this.renderView.virtualChildren[i])}`)
+    // }
   }
 
 }

@@ -43,6 +43,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   blockFocusDirections:QTArray = []
 
   isAttached: boolean  = false;
+  isRecycled : boolean  = false;
 
   public get uid(): string {
     if(this._uid){
