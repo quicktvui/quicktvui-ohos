@@ -112,7 +112,7 @@ export class ApiAppLoader implements AppLoader {
    */
   private fetchAppInfo(): Promise<AppInfo> {
     const requestData = this.generateRequestParams();
-
+    console.info('ApiAppLoader: fetchAppInfo appBundleUri:', this.data.appBundleUri);
     return new Promise<AppInfo>((resolve, reject) => {
       const call = http.createHttp();
       call.request(
@@ -129,13 +129,13 @@ export class ApiAppLoader implements AppLoader {
         },
         (error: BusinessError, response: http.HttpResponse) => {
           if (error) {
-            console.error('Http Request Failed:', JSON.stringify(error));
+            console.error('ApiAppLoader Http Request Failed:', JSON.stringify(error));
             reject(error);
             return;
           }
 
           if (response.responseCode !== 200) {
-            reject(`Http Error Code: ${response.responseCode}`);
+            reject(`ApiAppLoader Http Error Code: ${response.responseCode}`);
             return;
           }
 
@@ -153,14 +153,14 @@ export class ApiAppLoader implements AppLoader {
               if (jsonResult.code === 200 && jsonResult.data) {
                 resolve(jsonResult.data);
               } else {
-                reject(`Server Business Error: ${jsonResult.msg || 'Unknown'}`);
+                reject(`ApiAppLoader Server Business Error: ${jsonResult.msg || 'Unknown'}`);
               }
             } catch (e) {
-              console.error('Parse/Decode Error:', e);
-              reject('Response parse failed');
+              console.error('ApiAppLoader Parse/Decode Error:', e);
+              reject('ApiAppLoader Response parse failed');
             }
           } else {
-            reject('Invalid response type');
+            reject('ApiAppLoader Invalid response type');
           }
         }
       );
@@ -248,6 +248,15 @@ export class ApiAppLoader implements AppLoader {
 
     // 3. 拼接 dist/vendor.js
     const filePath = `${baseDir}/dist/vendor.js`;
+
+    try {
+      // accessSync 如果文件不存在会抛出异常，所以如果跑通了就是存在
+      fs.accessSync(filePath);
+      console.debug(`[ApiAppLoader] ✅ vendor.js exists at: ${filePath}`);
+    } catch (e) {
+      console.error(`[ApiAppLoader] ❌ vendor.js NOT FOUND at: ${filePath}`);
+    }
+
     return filePath;
   }
 
@@ -268,6 +277,12 @@ export class ApiAppLoader implements AppLoader {
     // 3. 拼接 dist/index.js
     const filePath = `${baseDir}/dist/index.js`;
 
+    try {
+      fs.accessSync(filePath);
+      console.debug(`[ApiAppLoader] ✅ index.js exists at: ${filePath}`);
+    } catch (e) {
+      console.error(`[ApiAppLoader] ❌ index.js NOT FOUND at: ${filePath}`);
+    }
     return filePath;
   }
 }

@@ -1,5 +1,6 @@
 import { EsData } from "../../EsData";
 import { AppLoader, AppLoaderFactory } from "./AppLoader";
+import fs from '@ohos.file.fs';
 
 export class AssetsAppLoader implements AppLoader {
   private data: EsData;
@@ -24,10 +25,26 @@ export class AssetsAppLoader implements AppLoader {
   }
 
   getVendorJsFile(): string {
-    return `${this.baseDir}/vendor.js`
+    const filePath = `${this.baseDir}/vendor.js`;
+
+    try {
+      fs.accessSync(filePath);
+      console.debug(`[FileCheck] ✅ vendor.js exists: ${filePath}`);
+    } catch (e) {
+      console.error(`[FileCheck] ❌ vendor.js NOT FOUND: ${filePath}`);
+    }
+    return filePath;
   }
 
   getIndexJsFile(): string {
-    return `${this.baseDir}/index.js`
+    const filePath = `${this.baseDir}/index.js`;
+
+    try {
+      fs.accessSync(filePath);
+      console.debug(`[FileCheck] ✅ index.js exists: ${filePath}`);
+    } catch (e) {
+      console.error(`[FileCheck] ❌ index.js NOT FOUND: ${filePath}`);
+    }
+    return filePath;
   }
 }
