@@ -81,6 +81,8 @@ export class QTTabsView extends QTRenderBaseView{
 
   resumeTaskRunnable : number = -1;
 
+  suspension = true;
+
   public tabsData: HippyObservedArray<TabPageData> = new HippyObservedArray()
 
   constructor(ctx: NativeRenderContext) {
@@ -179,6 +181,9 @@ export class QTTabsView extends QTRenderBaseView{
         return true;
       case "alphaTransform":
         return true;
+      case "suspension":
+        this.suspension = HRValueUtils.getBoolean(propValue,true)
+        return true;
 
       default :
         break;
@@ -187,7 +192,7 @@ export class QTTabsView extends QTRenderBaseView{
       case 'useDiff':
       case "singleTabMode":
       case "autoReFocusOnSingleTab":
-      case "suspension":
+
       case "useSuspensionBg":
       case "isHideList":
       case "suspensionHideOffset":
@@ -255,7 +260,9 @@ export class QTTabsView extends QTRenderBaseView{
           }
         }else{
           QTLog.d(TAG_TABS,`onBackPressed requestFocus at tab : ${this.currentIndex}`)
-          this.requestTabListFocus(this.currentIndex)
+          setTimeout(()=>{
+            this.requestTabListFocus(this.currentIndex)
+          },100)
         }
 
         return true;
@@ -319,6 +326,13 @@ export class QTTabsView extends QTRenderBaseView{
 
   onContentScroll(pageIndex:number,scrolledValue:number){
     QTLog.i(TAG_TABS,`onContentScroll pageIndex:${pageIndex},scrolledValue:${scrolledValue}`)
+    if(this.suspension){
+      if(scrolledValue > 50){
+        this.tabList?.setVisibility(Visibility.Hidden)
+      }else{
+        this.tabList?.setVisibility(Visibility.Visible)
+      }
+    }
   }
 
   updateTabsData(data : QTArray){
@@ -589,6 +603,8 @@ export class QTTabsView extends QTRenderBaseView{
     map.set('data',tabPageData?.tabItem)
     ExtendUtil.sendViewEvent(this,'onPageChanged',map)
     this.sendTabsEvent('onTabChanged',map)
+    //tab选中效果
+    this.tabList?.setSelectedChild(page)
   }
 
   sendTabsEvent(eventName:string,map : QTMap){

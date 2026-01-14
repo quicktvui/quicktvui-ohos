@@ -167,6 +167,14 @@ export class QTFastListView extends QTRenderBaseView{
 
   scrollEnable:boolean = true;
 
+  selectChildPosition : number = -1;
+
+  targetFocusChildPosition : number = -1;
+
+  focusMemory : boolean = true;
+
+  enableSelectOnFocus : boolean  = true;
+
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   constructor(ctx: NativeRenderContext) {
@@ -192,8 +200,19 @@ export class QTFastListView extends QTRenderBaseView{
     }
   }
 
-  setSelectedChild(position : number){
-
+  setSelectedChild(position : number,changeTargetFocusChild : boolean = true){
+    let selectChild = this.virtualChildren[this.selectChildPosition]
+    if(selectChild instanceof QTBaseComponentView){
+      selectChild.setSelected(false)
+    }
+    this.selectChildPosition = position;
+    if(changeTargetFocusChild){
+      this.targetFocusChildPosition = position;
+    }
+    let child = this.virtualChildren[position]
+    if(child instanceof QTBaseComponentView){
+      child.setSelected(true)
+    }
   }
 
   focusSearch(focused: TVView | null, direction: number): TVView | null {
@@ -388,16 +407,14 @@ export class QTFastListView extends QTRenderBaseView{
         //暂不实现
         return true;
       case "focusMemory":
-
+        this.focusMemory = HRValueUtils.getBoolean(propValue,true)
         return true;
       case "pauseTaskOnHide":
         //暂不实现
         return true;
       case "setSelectChildPosition":
-
-        return true;
       case "selectChildPosition":
-
+        this.setSelectedChild(HRValueUtils.getNumber(propValue))
         return true;
       case "shakePreCheckNumber":
         //暂不实现
@@ -430,7 +447,7 @@ export class QTFastListView extends QTRenderBaseView{
 
         return true;
       case "enableSelectOnFocus":
-
+        this.enableSelectOnFocus = HRValueUtils.getBoolean(propValue,true)
         return true;
       case "nextTargetFocusPosition":
 
@@ -562,6 +579,9 @@ export class QTFastListView extends QTRenderBaseView{
 
 
   requestChildFocus(position : number,delay : number = 0){
+    if(this.enableSelectOnFocus){
+      this.setSelectedChild(position)
+    }
     let child = this.virtualChildren[position]
     if(child){
       FocusUtils.requestViewGroupFocus(child,delay)
@@ -717,7 +737,11 @@ export class QTFastListView extends QTRenderBaseView{
 
           break;
         case 'setSelectChildPosition':
-
+          if(params.length == 2){
+            this.setSelectedChild(params[0] as number,params[1] as boolean)
+          }else{
+            this.setSelectedChild(params[0] as number,true)
+          }
           break;
         case 'scrollToPositionWithOffset':
 

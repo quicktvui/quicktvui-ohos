@@ -171,6 +171,13 @@ export class QTItemRootView extends QTRenderBaseView{
     }
   }
 
+  setSelected(selected: boolean): void {
+    super.setSelected(selected)
+    if(this.contentView instanceof QTBaseComponentView){
+      this.contentView.setSelected(selected)
+    }
+  }
+
 
   letItemMatchChildPosition(childView : QTView){
     let childLa = LayoutAttach.obtainLayoutAttach(childView)

@@ -81,6 +81,10 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
     QTLog.w(TAG_FOCUS, `setShowOnState  showOnStateArray: ${JSON.stringify(this.showOnStateArray)}`);
   }
 
+  setVisibility(visibility : Visibility){
+    this.visibility = visibility;
+  }
+
   setShowOnCustomState(showOnState: string[]): void {
     //throw new Error('setShowOnCustomState Method not implemented.');
   }
