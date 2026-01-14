@@ -4,14 +4,12 @@ import {
   NativeRenderContext,
   HippyAny,
   buildHippyRenderView,
-  HIPPY_COMPONENT_KEY_PREFIX,
 } from 'hippy'
 import { QTBaseComponentView, QTDivView } from '../../../../../Index';
-import { QTBaseView } from '../../QTTypes';
 
 @Observed
 export class QTItemFrameView extends QTDivView {
-  enableFocusBorder: boolean = true;
+  enableFocusBorder: boolean = false;
   // duplicateParentState:boolean = true;
   constructor(ctx: NativeRenderContext) {
     super(ctx)

@@ -32,6 +32,8 @@ import { HippyResourceLoader } from 'hippy/src/main/ets/hippy_framework/HippyRes
 import { UrlUtils } from 'hippy/src/main/ets/support/utils/UrlUtils';
 import { HRPadding, HRRect } from 'hippy/src/main/ets/renderer_native/utils/HRTypes';
 import { QTBaseComponentView } from '../../QTBaseComponentView';
+import { QTPixelUtil } from '../../../utils/QTPixelUtil';
+import { QTViewState } from '../../StateView';
 
 interface TvImageLoadEvent {
   width: number
@@ -107,6 +109,14 @@ export class HRTvImageView extends QTBaseComponentView {
   border: BorderOptions = {}   //模拟selected选中效果
   duplicateParentState: boolean = true
 
+  mUserSetBackgroundColor : ResourceColor = Color.Transparent;
+  stateBackgroundColor : ResourceColor  = Color.Transparent;
+  focusBorderRadius : number = 8;
+  focusBorderColor : ResourceColor  = Color.White;
+
+  isFocusState : boolean  = false;
+
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
     LogUtils.d(this.TAG, "constructor")
@@ -143,7 +153,14 @@ export class HRTvImageView extends QTBaseComponentView {
     //     this.visibility = Visibility.Hidden
     //   }
     // }
-    this.drawableStateChanged(this.currentStates)
+    //this.drawableStateChanged(this.currentStates)
+  }
+
+  drawableStateChanged(currentState: number[]): void {
+    this.currentStates = currentState;
+    this.isFocusState = currentState.indexOf(QTViewState.STATE_FOCUSED) > -1
+    // QTLog.i(TAG_STATE_DRAW,`image drawableStateChanged currentState :${currentState.indexOf(QTViewState.STATE_FOCUSED)} enableFocusBorder :${this.enableFocusBorder}`)
+    // super.drawableStateChanged(currentState)
   }
 
   private setResizeMode(pvalue: string) {
@@ -441,7 +458,13 @@ export class HRTvImageView extends QTBaseComponentView {
       //     this.sid = propValue as string
       //   }
       //   return true
-
+      case 'focusBorderRadius':
+        this.focusBorderRadius = QTPixelUtil.dev2Vp(QTPixelUtil.getDimensionValue(propValue as HippyAny))
+        return true
+      case 'focusBorderColor':
+        this.focusBorderColor = HRValueUtils.getNumber(propValue as HippyAny)
+        //QTLog.w(TAG_STATE_DRAW,`set focusBorderColor:${propValue} number:${this.focusBorderColor} ,this:${ExtendUtil.debugView(this)}`)
+        return true;
       default:
         break
     }
@@ -647,10 +670,40 @@ export class HRTvImageView extends QTBaseComponentView {
   }
 }
 
+
 @Component
 export struct HRTvImage {
   @ObjectLink renderView: HRTvImageView
   private readonly TAG = "HRTvImage"
+
+  @Builder
+  buildFocusBorder(){
+    if(this.renderView.isFocusState && this.renderView.enableFocusBorder){
+      Stack(){
+        Rect({
+          width:this.renderView.cssWidth + 4,
+          height: this.renderView.cssHeight + 4,
+          radius:this.renderView.focusBorderRadius,
+        }) .fill(Color.Transparent) // 透明填充
+          .stroke(this.renderView.focusBorderColor)
+          .strokeWidth(2)         // 边框宽度
+
+        Rect({
+          width:this.renderView.cssWidth,
+          height: this.renderView.cssHeight,
+          radius:this.renderView.focusBorderRadius - 2,
+        }) .fill(Color.Transparent) // 透明填充
+          .stroke(Color.Black)
+          .position({x:2,y:2})
+          .strokeWidth(1)         // 边框宽度
+      }
+      .width(this.renderView.cssWidth + 4)
+      .height(this.renderView.cssHeight + 4)
+      .position({x:-2,y:-2})
+    }else{
+      //noting
+    }
+  }
 
   aboutToAppear(): void {
     LogUtils.d(this.TAG, "aboutToAppear enter")
@@ -659,6 +712,7 @@ export struct HRTvImage {
 
   build() {
     if (this.renderView.src) {
+      this.buildFocusBorder()
       Image(this.renderView.src)
         .applyRenderViewBaseAttr(this.renderView)
         .alt(this.renderView.cssAlt)
