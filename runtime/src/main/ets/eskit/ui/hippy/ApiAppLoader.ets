@@ -8,6 +8,7 @@ import request from '@ohos.request';
 import { BusinessError } from '@ohos.base';
 import { FileUtil } from '../../utils/FileUtil';
 import { http } from '@kit.NetworkKit';
+import BuildProfile from 'BuildProfile';
 
 export class ApiAppLoader implements AppLoader {
   private data: EsData;
@@ -323,45 +324,60 @@ export class ApiAppLoader implements AppLoader {
    * [新增方法] 打印指定版本目录下 dist 文件夹内的文件列表和大小
    * @param appVersionDir 应用的版本根目录 (例如: .../apps/com.pkg/1.0.0)
    */
+  /**
+   * [调试专用] 打印解压目录下的真实结构
+   */
   private printDistFiles(appVersionDir: string) {
-    const distPath = `${appVersionDir}/dist`;
-    console.info(`[ApiAppLoader] 正在检查 dist 目录: ${distPath}`);
+    if (!BuildProfile.DEBUG) {
+      return
+    }
+    console.info(`================= [Debug 文件结构分析] =================`);
+    console.info(`检查目标根路径: ${appVersionDir}`);
 
     try {
-      // 1. 检查 dist 目录是否存在
-      if (!fs.accessSync(distPath)) {
-        console.warn(`[ApiAppLoader] dist 目录不存在!`);
+      if (!fs.accessSync(appVersionDir)) {
+        console.error(`❌ 严重错误: 版本根目录不存在! ${appVersionDir}`);
         return;
       }
 
-      // 2. 获取目录下所有文件名
-      const fileNames = fs.listFileSync(distPath);
-      if (fileNames.length === 0) {
-        console.warn(`[ApiAppLoader] dist 目录是空的`);
+      // 1. 打印根目录下的第一层内容 (看看是不是多了一层文件夹)
+      const rootFiles = fs.listFileSync(appVersionDir);
+      console.info(`📂 根目录包含 [${rootFiles.length}] 个项目: ${JSON.stringify(rootFiles)}`);
+
+      if (rootFiles.length === 0) {
+        console.warn(`⚠️ 警告: 根目录是空的！解压可能失败了，或者ZIP包是空的。`);
         return;
       }
 
-      console.info(`--- [ApiAppLoader] Start Listing Files in dist ---`);
-      // 3. 遍历文件并获取大小
-      for (const name of fileNames) {
-        const fullPath = `${distPath}/${name}`;
-        try {
-          const stat = fs.statSync(fullPath);
-          if (stat.isDirectory()) {
-            console.info(`[Dir ] ${name}`);
-          } else {
-            // stat.size 单位是字节(Byte)
-            console.info(`[File] ${name} | Size: ${stat.size} B (${(stat.size / 1024).toFixed(2)} KB)`);
+      // 2. 尝试寻找 dist (原本的逻辑)
+      const distPath = `${appVersionDir}/dist`;
+      if (fs.accessSync(distPath)) {
+        console.info(`✅ 成功发现 dist 目录: ${distPath}`);
+        const distFiles = fs.listFileSync(distPath);
+        console.info(`   dist 目录下包含: ${JSON.stringify(distFiles)}`);
+      } else {
+        console.warn(`❌ 在根目录下未找到 'dist' 文件夹。`);
+
+        // 3. 智能推测：如果根目录下只有一个文件夹，打印那个文件夹里的内容
+        if (rootFiles.length === 1) {
+          const subDirName = rootFiles[0];
+          const subDirPath = `${appVersionDir}/${subDirName}`;
+          if (fs.statSync(subDirPath).isDirectory()) {
+            console.info(`💡 提示: 发现唯一的子文件夹 [${subDirName}]，正在查看其内部...`);
+            const subFiles = fs.listFileSync(subDirPath);
+            console.info(`   [${subDirName}] 内部包含: ${JSON.stringify(subFiles)}`);
+
+            if (subFiles.includes('dist')) {
+              console.error(`🔥 结论: 目录结构多了一层！实际路径应该是: .../${subDirName}/dist`);
+            }
           }
-        } catch (fileErr) {
-          console.error(`[ApiAppLoader] 获取文件状态失败: ${name}`, fileErr);
         }
       }
-      console.info(`--- [ApiAppLoader] End Listing Files ---`);
 
     } catch (e) {
-      console.error(`[ApiAppLoader] printDistFiles 发生异常:`, e);
+      console.error(`[Debug] 文件结构分析发生异常:`, e);
     }
+    console.info(`=======================================================`);
   }
 }
 
