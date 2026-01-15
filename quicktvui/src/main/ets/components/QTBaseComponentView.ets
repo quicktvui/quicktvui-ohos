@@ -8,6 +8,7 @@ import {
 import { TAG_FASTLIST, TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW } from '../Constant';
 import { HRValueUtils } from '../HRValueUtils';
 import {  QTArray, QTView } from '../QTTypes';
+import { CommonUtils } from '../utils/CommonUtils';
 import { ExtendUtil } from '../utils/ExtendUtil';
 import { QTLog } from '../utils/QTLog';
 import { LayoutAttach } from './fastlist/LayoutAttach';
@@ -145,15 +146,7 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
   }
 
   isFocusedOrDuplicateParentFocusState() : boolean {
-    if(this.isFocused()){
-      return true;
-    }
-    if(this.parentView instanceof QTBaseComponentView){
-      let parentFocused = this.parentView.isFocusedOrDuplicateParentFocusState();
-      QTLog.d(TAG_STATE_DRAW,`parentFocused : ${parentFocused},this:${ExtendUtil.debugView(this)}`)
-      return this.duplicateParentState && parentFocused;
-    }
-    return false;
+    return this.currentStates.indexOf(QTViewState.STATE_FOCUSED) > -1
   }
 
   isSelectedOrDuplicateParentSelectState() : boolean {
@@ -322,7 +315,6 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         return true;
       case 'enableFocusBorder': {
         this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, true)
-        // this.setFocusBoxStyle(); //预设focusBox样式
       }
         return true
       case 'focusable': {
@@ -334,6 +326,10 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
       case 'descendantFocusability':
         this.descendantFocusability = HRValueUtils.getNumber(propValue);
         QTLog.i(TAG_FOCUS, `set descendantFocusability ${this.descendantFocusability} view:` + ExtendUtil.debugView(this))
+        return true;
+      case "blockFocusDirections":
+        this.blockFocusDirections = HRValueUtils.getArray(propValue as QTArray) ?? []
+        QTLog.w(TAG_FOCUS,`blockFoocusDirecitons this:${ExtendUtil.debugView(this)},value:${CommonUtils.hippyAny2String(propValue)}`)
         return true;
       // case 'blockRootFocus':
       //   let enableBlock = HRValueUtils.getBoolean(propValue,false)

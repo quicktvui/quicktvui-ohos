@@ -19,6 +19,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TVView } from '../TVView';
 import { FocusUtils } from '../../utils/FocusUtils';
 import { QTViewActor } from '../QTViewActor';
+import { FocusFinder } from '../../utils/FocusFinder';
 
 const PREFIX_KEY = "FASTLIST"
 
@@ -175,6 +176,8 @@ export class QTFastListView extends QTRenderBaseView{
 
   enableSelectOnFocus : boolean  = true;
 
+  forceBlockFocusOnFail: boolean  = false;
+
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   constructor(ctx: NativeRenderContext) {
@@ -184,8 +187,8 @@ export class QTFastListView extends QTRenderBaseView{
 
 
   exeScroll(){
+    QTLog.w(TAG_FASTLIST,`exeScroll view:${ExtendUtil.debugView(this)}`)
     this.scroller.scrollToIndex(this.initialPosition)
-    
   }
 
   getTemplate() : HippyObservedArray<QTView>{
@@ -215,6 +218,9 @@ export class QTFastListView extends QTRenderBaseView{
     }
   }
 
+
+
+
   focusSearch(focused: TVView | null, direction: number): TVView | null {
     if(this.hasFocus()){
       let innerSeared = FocusUtils.focusSearchInViewGroup(this,focused,direction)
@@ -222,7 +228,12 @@ export class QTFastListView extends QTRenderBaseView{
       if(innerSeared != null){
         return innerSeared;
       }
+      if(this.forceBlockFocusOnFail ||  FocusFinder.isBlockFocusDirection(direction,this.blockFocusDirections)){
+        QTLog.w(TAG_FOCUS,`FastList focusSearch return focused on blockedByDirection forceBlockFocusOnFail :${this.forceBlockFocusOnFail}`)
+        return focused;
+      }
     }
+
     return super.focusSearch(focused,direction);
   }
 
@@ -251,9 +262,9 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   onUIAboutToAppear(ui : QTFastList){
-    QTLog.e(TAG_FASTLIST,`FastList onUIAboutToAppear this:${ExtendUtil.debugView(this)}`)
-    // if(this.tag != -1){
-      QTLog.e(TAG_FASTLIST,`onUIAboutToAppear setupDataSource:${ExtendUtil.debugView(this)}，this.tag:${this.tag}`)
+    QTLog.w(TAG_FASTLIST,`####FastList onUIAboutToAppear this:${ExtendUtil.debugView(this)}`)
+    QTLog.w(TAG_FASTLIST,`onUIAboutToAppear setupDataSource:${ExtendUtil.debugView(this)}，this.tag:${this.tag}`)
+    if(!this.dataSource){
       if(!this.isVirtual){
         this.setupDataSource(this.tag)
       }else{
@@ -263,7 +274,15 @@ export class QTFastListView extends QTRenderBaseView{
           QTLog.fatal(TAG_FASTLIST,`nUIAboutToAppear setupDataSource error when templateView is null`)
         }
       }
+    }
     // }
+  }
+
+  onUIAboutToDisappear(){
+    QTLog.e(TAG_FASTLIST,`----FastList onUIAboutToDisappear this:${ExtendUtil.debugView(this)}`)
+    if(this.endBatchCallback){
+      this.ctx.getNativeRender().removeEndBatchCallback(this.ctx.getRootId(),this.endBatchCallback)
+    }
   }
 
 
@@ -292,11 +311,7 @@ export class QTFastListView extends QTRenderBaseView{
     }
   }
 
-  onUIAboutToDisappear(){
-    if(this.endBatchCallback){
-      this.ctx.getNativeRender().removeEndBatchCallback(this.ctx.getRootId(),this.endBatchCallback)
-    }
-  }
+
 
   getDisplayChildren(): HippyObservedArray<QTView> {
     return this.virtualChildren
@@ -441,10 +456,16 @@ export class QTFastListView extends QTRenderBaseView{
         //暂不实现
         return true;
       case "forceBlockFocusOnFail":
-
+        this.forceBlockFocusOnFail = HRValueUtils.getBoolean(propValue,true)
+        QTLog.w(TAG_FOCUS,`set forceBlockFocusOnFail :${propValue},this:${ExtendUtil.debugView(this)}`)
         return true;
       case "blockFocusOnFail":
-
+        QTLog.w(TAG_FOCUS,`set blockFocusOnFail :${propValue},this:${ExtendUtil.debugView(this)}`)
+        this.forceBlockFocusOnFail = HRValueUtils.getBoolean(propValue,true)
+        return true;
+      case "blockedOnFail":
+        QTLog.w(TAG_FOCUS,`set blockedOnFail :${propValue},this:${ExtendUtil.debugView(this)}`)
+        this.forceBlockFocusOnFail = HRValueUtils.getBoolean(propValue,true)
         return true;
       case "enableSelectOnFocus":
         this.enableSelectOnFocus = HRValueUtils.getBoolean(propValue,true)
@@ -555,9 +576,12 @@ export class QTFastListView extends QTRenderBaseView{
     return fi;
   }
 
+
   onDataChanged(data : HippyArray | null){
     console.debug(TAG_FASTLIST,`onDataChanged data size:${data ? data.length : 0} spanCount:${this.spanCount},this:${ExtendUtil.debugView(this)}`)
     this.virtualChildren.length = 0;
+    // this.scrollToTop(false)
+    this.resetScroll();
     if(data && data.length > 0){
       this.virtualChildren.push(...
         data?.map((item,index)=>{
@@ -644,7 +668,7 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   clearData(){
-    this.virtualChildren = []
+    this.virtualChildren.length = 0;
     this.notifyReload()
   }
 
@@ -675,7 +699,13 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   public scrollToTop(smooth : boolean  = true ){
+    QTLog.i(TAG_FASTLIST,`scrollToTop smooth :${smooth},this:${ExtendUtil.debugView(this)}`)
+    this.resetScroll();
     this.scroller.scrollToIndex(0,smooth)
+  }
+
+  resetScroll(){
+    this.onScrolledOffset = 0;
   }
 
   aboutToUpdate(): void {

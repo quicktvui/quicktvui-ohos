@@ -83,6 +83,8 @@ export class QTTabsView extends QTRenderBaseView{
 
   suspension = true;
 
+  checkScrollTopYOffset = 50;
+
   public tabsData: HippyObservedArray<TabPageData> = new HippyObservedArray()
 
   constructor(ctx: NativeRenderContext) {
@@ -220,6 +222,14 @@ export class QTTabsView extends QTRenderBaseView{
   //   return this.getTabData(this.currentIndex)?.contentView?.virtualChildren
   // }
 
+  getCurrentContentView() : WaterfallListView | null{
+    let pd = this.getTabData(this.currentIndex)
+    if(pd?.contentView){
+      return pd?.contentView
+    }
+    return null;
+  }
+
   addFocusables(views: TVView[], direction: number): boolean {
     let pd = this.getTabData(this.currentIndex)
     let tabChild = this.tabList?.virtualChildren[this.currentIndex]
@@ -249,6 +259,7 @@ export class QTTabsView extends QTRenderBaseView{
     if(pd?.contentView){
       let needScrollToTop = pd.contentView.onScrolledOffset > 20 ? true:  false;
       if(needScrollToTop){
+        QTLog.i(TAG_TABS,`scrollContentToTop :${this.currentIndex}`)
         this.scrollContentToTop(this.currentIndex)
         if(this.isSingleContent()){
           QTLog.d(TAG_TABS,`onBackPressed requestFocus at singleTab : ${this.currentIndex}`)
@@ -288,6 +299,7 @@ export class QTTabsView extends QTRenderBaseView{
     super.addSubRenderView(subView,index)
     if(subView instanceof QTFastListView){
       this.tabList = subView;
+      this.tabList.enableSelectOnFocus = false;
       this.tabList.eventItemClick = ((index,clickedView)=>{
         //QTLog.i(TAG_TABS,`TabsView clicked:${index},clickedView:${ExtendUtil.debugView(clickedView)}`)
         this.notifyPageChange(index)
@@ -314,6 +326,7 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   scrollContentToTop(pageIndex: number){
+    QTLog.i(TAG_TABS,`scrollContentToTop pageIndex:${pageIndex}`)
     let t = this.tabsData[pageIndex]
     if(t){
       t.contentView?.scrollToTop(false)
@@ -327,7 +340,7 @@ export class QTTabsView extends QTRenderBaseView{
   onContentScroll(pageIndex:number,scrolledValue:number){
     QTLog.i(TAG_TABS,`onContentScroll pageIndex:${pageIndex},scrolledValue:${scrolledValue}`)
     if(this.suspension){
-      if(scrolledValue > 50){
+      if(scrolledValue > this.checkScrollTopYOffset){
         this.tabList?.setVisibility(Visibility.Hidden)
       }else{
         this.tabList?.setVisibility(Visibility.Visible)
@@ -460,10 +473,20 @@ export class QTTabsView extends QTRenderBaseView{
 
 
   viewAboutToAppear(){
-    //console.error(TAG_TABS,`viewAboutToAppear`)
-    // setTimeout(()=>{
-    //   this.controller.setTabBarTranslate({ x: 0, y: 80 });
-    // })
+    if(this.suspension){
+      let contentView : WaterfallListView | null  = this.getCurrentContentView();
+      let scrolledY = contentView?.onScrolledOffset ?? 0
+      QTLog.i(TAG_TABS,`viewAboutToAppear contentView:${ExtendUtil.debugView(contentView)} scrolledY:${scrolledY}`)
+      if(contentView){
+        if(scrolledY > this.checkScrollTopYOffset){
+          this.tabList?.setVisibility(Visibility.Hidden)
+        }else{
+          this.tabList?.setVisibility(Visibility.Visible)
+        }
+      }else{
+        this.tabList?.setVisibility(Visibility.Visible)
+      }
+    }
   }
 
   onTabsContentWillChangeCallback(currentIndex: number,comingIndex: number) : boolean{
@@ -776,9 +799,12 @@ export struct  QTTabs {
           return ''+index
         })
       }
+
       // .barMode(BarMode.Scrollable)
       // .barOverlap(true)\
       .barHeight(0)
+      .key(this.renderView.uid)
+      .id(this.renderView.uid)
       .barBackgroundColor(Color.White)
       .onContentWillChange((currentIndex:number,comingIndex:number)=>{
 
@@ -792,7 +818,12 @@ export struct  QTTabs {
   }
 
   aboutToAppear(): void {
+    QTLog.d(TAG_TABS,`++aboutToAppear `)
     this.renderView.viewAboutToAppear()
+  }
+
+  aboutToDisappear(): void {
+    QTLog.d(TAG_TABS,`--aboutToAppear `)
   }
 }
 

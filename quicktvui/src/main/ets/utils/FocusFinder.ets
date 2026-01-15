@@ -2,7 +2,7 @@ import { QTBaseComponentView } from "../components/QTBaseComponentView";
 import { PageManager } from "../components/router/PageManager";
 import { TVView } from "../components/TVView";
 import { TAG_FOCUS } from "../Constant";
-import { QTView } from "../QTTypes";
+import { QTArray, QTView } from "../QTTypes";
 import { ExtendUtil } from "./ExtendUtil";
 import { FocusUtils } from "./FocusUtils";
 import { QTLog } from "./QTLog";
@@ -182,6 +182,7 @@ export class FocusFinder {
     return false;
   }
 
+
   static findNextFocusSpecial(focusedView :TVView | null,direction : number) : TVView | null{
     if(focusedView instanceof  QTBaseComponentView){
       let blockFocusDirection = focusedView.blockFocusDirections;
@@ -209,6 +210,21 @@ export class FocusFinder {
         return "down";
     }
     return "none"
+  }
+
+  static isBlockFocusDirection(direction : number,directions:QTArray | null){
+    if(!directions || directions.length < 1){
+      return false
+    }
+    let directionName = FocusFinder.getDirectionName(direction);
+    for(let i = 0; i < directions.length; i ++){
+      let s = directions[i]
+      if(s == directionName){
+        QTLog.w(TAG_FOCUS,`isBlockFocusDirection return  directionName:${directionName}`)
+        return true;
+      }
+    }
+    return false;
   }
 
   static findNextFocus(focusedView: TVView | null, root: QTView, direction: number): TVView | null {

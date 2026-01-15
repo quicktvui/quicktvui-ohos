@@ -352,7 +352,6 @@ export struct QTItemRoot {
 
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTBaseComponentView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
@@ -375,7 +374,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //tv basic
-  .key($$.name)
-  .id($$.sid)
+  .key($$.uid)
+  .id($$.uid)
   .visibility($$.visibility)
 }

@@ -1,7 +1,11 @@
 import {NativeRenderContext} from 'hippy'
-import { QTAny, QTView } from '../../QTTypes';
+import { TAG_FASTLIST, TAG_TABS } from '../../Constant';
+import { QTAny, QTArray, QTView } from '../../QTTypes';
+import { ExtendUtil } from '../../utils/ExtendUtil';
+import { QTLog } from '../../utils/QTLog';
 import { LayoutAttach } from '../fastlist/LayoutAttach';
 import { QTFastListView } from "../fastlist/QTFastListView";
+import { VirtualViewRegistry } from '../fastlist/VirtualViewRegistry';
 
 @Observed
 export class WaterfallListView extends QTFastListView{
@@ -9,6 +13,7 @@ export class WaterfallListView extends QTFastListView{
   constructor(ctx: NativeRenderContext,parentView: QTView) {
     super(ctx);
     this.parentView = parentView
+    VirtualViewRegistry.getInstance().registerView(this)
     this.init()
   }
 
@@ -27,5 +32,24 @@ export class WaterfallListView extends QTFastListView{
     }
   }
 
+  public scrollToTop(smooth?: boolean): void {
+    QTLog.i(TAG_TABS,`WaterfallListView scrollToTop smooth :${smooth},this:${ExtendUtil.debugView(this)}`)
+    super.scrollToTop(smooth)
+  }
+
+  onDataChanged(data: QTArray | null): void {
+    super.onDataChanged(data)
+    QTLog.d(TAG_TABS,"WaterfallListView onDataChanged")
+  }
+
+  onDidScroll(scrollOffset: number, scrollState: ScrollState): void {
+    super.onDidScroll(scrollOffset,scrollState)
+    QTLog.d(TAG_TABS,`onDidScroll scrolledY:${this.onScrolledOffset}`)
+  }
+
+
+  onUIAboutToDisappear(): void {
+    this.scrollToTop(false)
+  }
 
 }

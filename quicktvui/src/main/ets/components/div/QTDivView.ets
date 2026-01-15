@@ -91,10 +91,10 @@ export class QTDivView extends HRTvDivView {
 
   mUserSetFocusBackgroundColor : ResourceColor = Color.Transparent;
   mUserSetSelectBackgroundColor : ResourceColor = Color.Transparent;
+  originZIndex : number | null = 0;
   mUserSetBackgroundColor : ResourceColor = Color.Transparent;
   stateBackgroundColor : ResourceColor  = Color.Transparent;
   focusBorderRadius : number = 8;
-  originZIndex : number | null = 0;
   focusBorderColor : ResourceColor  = Color.White;
 
   constructor(ctx: NativeRenderContext) {
@@ -288,10 +288,7 @@ export class QTDivView extends HRTvDivView {
             FocusUtils.unBlockRootFocus(this)
           }
         return true;
-      case "blockFocusDirections":
-        this.blockFocusDirections = HRValueUtils.getArray(propValue as QTArray) ?? []
-        QTLog.i(TAG_FOCUS,`blockFoocusDirecitons this:${ExtendUtil.debugView(this)},value:${CommonUtils.hippyAny2String(propValue)}`)
-        return true;
+
     }
     return super.setProp(propKey, propValue)
   }
@@ -312,7 +309,7 @@ export class QTDivView extends HRTvDivView {
   }
 
   handleFocus(isFocused: boolean): void {
-    QTLog.w(TAG_TABS,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
+    QTLog.w(TAG_STATE_DRAW,`+++handle Focus this:${ExtendUtil.debugView(this)} isFocused:${isFocused},focusable:${this.cssFocusable}`)
     if(this.cssFocusable){
       this.onFocusChanged(true)
     }
@@ -540,7 +537,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .onClick($$.eventClick)
   //edit by tv
   //basic
-  .key($$.name)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
   .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
   .clip($$.clipChildren)
   .id($$.uid? $$.uid : `real_${$$.tag}`)

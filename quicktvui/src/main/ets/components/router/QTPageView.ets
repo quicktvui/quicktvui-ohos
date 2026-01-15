@@ -168,7 +168,7 @@ export struct QTPage {
 // base props for all components
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTPageView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+  // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({ width: $$.cssWidth, height: $$.cssHeight })
@@ -179,7 +179,8 @@ function applyRenderViewBaseAttr($$: QTPageView) {
   .accessibilityText($$.cssAccessibilityLabel)
   // .focusable($$.cssFocusable)
   .border($$.cssBorder)
-  .id($$.uid)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)

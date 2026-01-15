@@ -363,7 +363,7 @@ export struct QTFastFlex {
 
 @Extend(Row)
 function applyRenderViewBaseAttr($$: QTFastFlexView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+  // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
@@ -386,7 +386,7 @@ function applyRenderViewBaseAttr($$: QTFastFlexView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //tv basic
-  .key($$.name)
-  .id($$.sid)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
 }

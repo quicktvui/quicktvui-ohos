@@ -185,7 +185,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //tv basic
-  .key($$.name)
-  .id($$.sid)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
 }
