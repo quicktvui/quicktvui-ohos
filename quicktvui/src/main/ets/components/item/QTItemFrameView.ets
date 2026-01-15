@@ -75,6 +75,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   .key($$.name)
   .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
   .clip($$.clipChildren)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
   .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
   //div

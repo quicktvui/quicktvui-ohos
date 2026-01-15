@@ -43,6 +43,9 @@ export struct  QTFastList {
     let key : string | null = ''
 
     if (item instanceof QTItemRootView && item.itemView){
+      if(item.uid){
+        return item.uid
+      }
       key =  item.itemView.getItemForEachKey();
       if(!key){
         key = item.itemView.getItemId();
@@ -217,7 +220,7 @@ export struct  QTFastList {
 
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: QTFastListView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+  // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
@@ -240,7 +243,7 @@ function applyRenderViewBaseAttr($$: QTFastListView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
   //tv basic
-  .key($$.name)
-  .id($$.sid)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
 }

@@ -251,7 +251,7 @@ export struct  QTText {
 
 @Extend(Text)
 function applyRenderViewBaseAttr($$: QTBaseComponentView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+  // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .opacity($$.cssOpacity)
@@ -272,8 +272,8 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
-  .key($$.name)
-  .id($$.sid)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
 }
 

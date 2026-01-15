@@ -127,7 +127,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
-  .key($$.name)
-  .id($$.sid)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
 }

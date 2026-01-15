@@ -251,9 +251,9 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   onUIAboutToAppear(ui : QTFastList){
-    QTLog.e(TAG_FASTLIST,`FastList onUIAboutToAppear this:${ExtendUtil.debugView(this)}`)
-    // if(this.tag != -1){
-      QTLog.e(TAG_FASTLIST,`onUIAboutToAppear setupDataSource:${ExtendUtil.debugView(this)}，this.tag:${this.tag}`)
+    QTLog.w(TAG_FASTLIST,`####FastList onUIAboutToAppear this:${ExtendUtil.debugView(this)}`)
+    QTLog.w(TAG_FASTLIST,`onUIAboutToAppear setupDataSource:${ExtendUtil.debugView(this)}，this.tag:${this.tag}`)
+    if(!this.dataSource){
       if(!this.isVirtual){
         this.setupDataSource(this.tag)
       }else{
@@ -263,7 +263,15 @@ export class QTFastListView extends QTRenderBaseView{
           QTLog.fatal(TAG_FASTLIST,`nUIAboutToAppear setupDataSource error when templateView is null`)
         }
       }
+    }
     // }
+  }
+
+  onUIAboutToDisappear(){
+    QTLog.e(TAG_FASTLIST,`----FastList onUIAboutToDisappear this:${ExtendUtil.debugView(this)}`)
+    if(this.endBatchCallback){
+      this.ctx.getNativeRender().removeEndBatchCallback(this.ctx.getRootId(),this.endBatchCallback)
+    }
   }
 
 
@@ -292,11 +300,7 @@ export class QTFastListView extends QTRenderBaseView{
     }
   }
 
-  onUIAboutToDisappear(){
-    if(this.endBatchCallback){
-      this.ctx.getNativeRender().removeEndBatchCallback(this.ctx.getRootId(),this.endBatchCallback)
-    }
-  }
+
 
   getDisplayChildren(): HippyObservedArray<QTView> {
     return this.virtualChildren
@@ -555,9 +559,12 @@ export class QTFastListView extends QTRenderBaseView{
     return fi;
   }
 
+
   onDataChanged(data : HippyArray | null){
     console.debug(TAG_FASTLIST,`onDataChanged data size:${data ? data.length : 0} spanCount:${this.spanCount},this:${ExtendUtil.debugView(this)}`)
     this.virtualChildren.length = 0;
+    // this.scrollToTop(false)
+    this.resetScroll();
     if(data && data.length > 0){
       this.virtualChildren.push(...
         data?.map((item,index)=>{
@@ -644,7 +651,7 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   clearData(){
-    this.virtualChildren = []
+    this.virtualChildren.length = 0;
     this.notifyReload()
   }
 
@@ -675,7 +682,13 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   public scrollToTop(smooth : boolean  = true ){
+    QTLog.i(TAG_FASTLIST,`scrollToTop smooth :${smooth},this:${ExtendUtil.debugView(this)}`)
+    this.resetScroll();
     this.scroller.scrollToIndex(0,smooth)
+  }
+
+  resetScroll(){
+    this.onScrolledOffset = 0;
   }
 
   aboutToUpdate(): void {

@@ -772,7 +772,7 @@ function applyColumnRenderViewBaseAttr($$: HRTvImageView) {
 // base props for all components
 @Extend(Image)
 function applyRenderViewBaseAttr($$: HRTvImageView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+  .key($$.uid)
   .backgroundColor($$.cssBackgroundColor)
   .position({x: $$.cssPositionX, y: $$.cssPositionY})
   .size({width:$$.cssWidth, height: $$.cssHeight})
