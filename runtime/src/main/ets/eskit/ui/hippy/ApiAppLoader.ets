@@ -48,15 +48,40 @@ export class ApiAppLoader implements AppLoader {
             const potentialMd5File = `${potentialVersionDir}/${targetMd5}`;
 
             // 判断是否是文件夹且包含对应的MD5文件
-            if (fs.statSync(potentialVersionDir).isDirectory() && fs.accessSync(potentialMd5File)) {
-              console.info(`ApiAppLoader: 在本地版本 [${fileName}] 中找到匹配的MD5: ${targetMd5}`);
-              isCached = true;
-              cachedDir = potentialVersionDir;
+            let hasMd5Marker = false;
+            try {
+              if (fs.statSync(potentialVersionDir).isDirectory() && fs.accessSync(potentialMd5File)) {
+                hasMd5Marker = true;
+              }
+            } catch (e) {
+              // 忽略访问异常
+            }
 
-              // 修正：如果本地查到的版本号和服务端不一致（理论上MD5一致版本号也该一致，但也可能存在特殊情况），
-              // 这里可以根据业务决定是否要更新 this.data.versionName。
-              // 暂时保持使用服务端返回的 versionName，或者你可以选择: this.data.versionName = fileName;
-              break;
+            if (hasMd5Marker) {
+              // ========================= 核心修复开始 =========================
+              // 不仅要看MD5标记，还要检查关键内容 dist 目录是否存在
+              const distDir = `${potentialVersionDir}/dist`;
+              let isContentValid = false;
+              try {
+                if (fs.accessSync(distDir)) {
+                  isContentValid = true;
+                }
+              } catch (e) {
+                // dist 不存在或无法访问
+              }
+
+              if (isContentValid) {
+                console.info(`ApiAppLoader: ✅ 在本地版本 [${fileName}] 中找到匹配MD5且内容完整: ${targetMd5}`);
+                isCached = true;
+                cachedDir = potentialVersionDir;
+                // 暂时保持使用服务端返回的 versionName
+                break;
+              } else {
+                console.warn(`ApiAppLoader: ⚠️ 发现损坏的缓存 (MD5存在但dist缺失): ${fileName}，将忽略并重新下载`);
+                // 为了保险，尝试删除这个错误的标记文件，避免干扰
+                try { fs.unlinkSync(potentialMd5File); } catch (e) {}
+              }
+              // ========================= 核心修复结束 =========================
             }
           }
         }
@@ -67,10 +92,14 @@ export class ApiAppLoader implements AppLoader {
       // --- 决策分支 ---
       if (isCached) {
         console.info(`ApiAppLoader: 本地缓存校验通过，跳过下载。目标路径: ${cachedDir}`);
+
+        // 【新增调用 1】: 如果命中缓存，打印缓存中的 dist 文件
+        this.printDistFiles(cachedDir);
+
         console.info('ApiAppLoader: 加载流程全部完成');
         return; // 直接结束
       } else {
-        console.info(`ApiAppLoader: 未在任何版本中找到匹配的MD5，执行全量清理并重新下载`);
+        console.info(`ApiAppLoader: 未在任何版本中找到匹配且完整的缓存，执行全量清理并重新下载`);
         // 删除整个包名目录 (清理所有旧版本)
         FileUtil.deleteDir(packageRootDir);
       }
@@ -100,6 +129,9 @@ export class ApiAppLoader implements AppLoader {
       // ---------------------------------------
 
       console.info('ApiAppLoader: 最终解压文件夹路径:', targetDir);
+
+      // 【新增调用 2】: 下载解压完成后，打印新生成的 dist 文件
+      this.printDistFiles(targetDir);
 
       console.info('ApiAppLoader: 加载流程全部完成');
     } catch (e) {
@@ -284,6 +316,52 @@ export class ApiAppLoader implements AppLoader {
       console.error(`[ApiAppLoader] ❌ index.js NOT FOUND at: ${filePath}`);
     }
     return filePath;
+  }
+
+
+  /**
+   * [新增方法] 打印指定版本目录下 dist 文件夹内的文件列表和大小
+   * @param appVersionDir 应用的版本根目录 (例如: .../apps/com.pkg/1.0.0)
+   */
+  private printDistFiles(appVersionDir: string) {
+    const distPath = `${appVersionDir}/dist`;
+    console.info(`[ApiAppLoader] 正在检查 dist 目录: ${distPath}`);
+
+    try {
+      // 1. 检查 dist 目录是否存在
+      if (!fs.accessSync(distPath)) {
+        console.warn(`[ApiAppLoader] dist 目录不存在!`);
+        return;
+      }
+
+      // 2. 获取目录下所有文件名
+      const fileNames = fs.listFileSync(distPath);
+      if (fileNames.length === 0) {
+        console.warn(`[ApiAppLoader] dist 目录是空的`);
+        return;
+      }
+
+      console.info(`--- [ApiAppLoader] Start Listing Files in dist ---`);
+      // 3. 遍历文件并获取大小
+      for (const name of fileNames) {
+        const fullPath = `${distPath}/${name}`;
+        try {
+          const stat = fs.statSync(fullPath);
+          if (stat.isDirectory()) {
+            console.info(`[Dir ] ${name}`);
+          } else {
+            // stat.size 单位是字节(Byte)
+            console.info(`[File] ${name} | Size: ${stat.size} B (${(stat.size / 1024).toFixed(2)} KB)`);
+          }
+        } catch (fileErr) {
+          console.error(`[ApiAppLoader] 获取文件状态失败: ${name}`, fileErr);
+        }
+      }
+      console.info(`--- [ApiAppLoader] End Listing Files ---`);
+
+    } catch (e) {
+      console.error(`[ApiAppLoader] printDistFiles 发生异常:`, e);
+    }
   }
 }
 
