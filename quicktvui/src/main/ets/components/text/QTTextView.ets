@@ -36,20 +36,22 @@ export class QTTextView extends QTRenderBaseView{
   textOverflow: TextOverflow = TextOverflow.Clip
   focusColor: ResourceColor | null = null
   selectColor: ResourceColor | null = null
-  duplicateParentState: boolean = true
+  duplicateParentState: boolean = false
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)
   }
 
   drawableStateChanged(currentState: number[]): void {
-    super.handleShowOnState(currentState)
-    if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_FOCUSED)){
-      this.fontColor = this.focusColor;
-    } else if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_SELECTED)){
-      this.fontColor = this.selectColor;
-    }else{
-      this.fontColor = this.userFontColor;
+    if(this.duplicateParentState){
+      super.handleShowOnState(currentState)
+      if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_FOCUSED)){
+        this.fontColor = this.focusColor;
+      } else if(ExtendUtil.stateContainsAttribute(currentState,QTViewState.STATE_SELECTED)){
+        this.fontColor = this.selectColor;
+      }else{
+        this.fontColor = this.userFontColor;
+      }
     }
   }
 

@@ -107,7 +107,7 @@ export class HRTvImageView extends QTBaseComponentView {
   focus: boolean = false
   visible: boolean = false
   border: BorderOptions = {}   //模拟selected选中效果
-  duplicateParentState: boolean = true
+  duplicateParentState: boolean = false
 
   mUserSetBackgroundColor : ResourceColor = Color.Transparent;
   stateBackgroundColor : ResourceColor  = Color.Transparent;
