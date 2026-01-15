@@ -19,6 +19,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 import { TVView } from '../TVView';
 import { FocusUtils } from '../../utils/FocusUtils';
 import { QTViewActor } from '../QTViewActor';
+import { FocusFinder } from '../../utils/FocusFinder';
 
 const PREFIX_KEY = "FASTLIST"
 
@@ -175,6 +176,8 @@ export class QTFastListView extends QTRenderBaseView{
 
   enableSelectOnFocus : boolean  = true;
 
+  forceBlockFocusOnFail: boolean  = false;
+
   private endBatchCallback: HippyEndBatchCallback | null = null
 
   constructor(ctx: NativeRenderContext) {
@@ -184,8 +187,8 @@ export class QTFastListView extends QTRenderBaseView{
 
 
   exeScroll(){
+    QTLog.w(TAG_FASTLIST,`exeScroll view:${ExtendUtil.debugView(this)}`)
     this.scroller.scrollToIndex(this.initialPosition)
-    
   }
 
   getTemplate() : HippyObservedArray<QTView>{
@@ -215,6 +218,9 @@ export class QTFastListView extends QTRenderBaseView{
     }
   }
 
+
+
+
   focusSearch(focused: TVView | null, direction: number): TVView | null {
     if(this.hasFocus()){
       let innerSeared = FocusUtils.focusSearchInViewGroup(this,focused,direction)
@@ -222,7 +228,12 @@ export class QTFastListView extends QTRenderBaseView{
       if(innerSeared != null){
         return innerSeared;
       }
+      if(this.forceBlockFocusOnFail ||  FocusFinder.isBlockFocusDirection(direction,this.blockFocusDirections)){
+        QTLog.w(TAG_FOCUS,`FastList focusSearch return focused on blockedByDirection forceBlockFocusOnFail :${this.forceBlockFocusOnFail}`)
+        return focused;
+      }
     }
+
     return super.focusSearch(focused,direction);
   }
 
@@ -445,10 +456,16 @@ export class QTFastListView extends QTRenderBaseView{
         //暂不实现
         return true;
       case "forceBlockFocusOnFail":
-
+        this.forceBlockFocusOnFail = HRValueUtils.getBoolean(propValue,true)
+        QTLog.w(TAG_FOCUS,`set forceBlockFocusOnFail :${propValue},this:${ExtendUtil.debugView(this)}`)
         return true;
       case "blockFocusOnFail":
-
+        QTLog.w(TAG_FOCUS,`set blockFocusOnFail :${propValue},this:${ExtendUtil.debugView(this)}`)
+        this.forceBlockFocusOnFail = HRValueUtils.getBoolean(propValue,true)
+        return true;
+      case "blockedOnFail":
+        QTLog.w(TAG_FOCUS,`set blockedOnFail :${propValue},this:${ExtendUtil.debugView(this)}`)
+        this.forceBlockFocusOnFail = HRValueUtils.getBoolean(propValue,true)
         return true;
       case "enableSelectOnFocus":
         this.enableSelectOnFocus = HRValueUtils.getBoolean(propValue,true)

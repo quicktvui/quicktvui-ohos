@@ -288,10 +288,7 @@ export class QTDivView extends HRTvDivView {
             FocusUtils.unBlockRootFocus(this)
           }
         return true;
-      case "blockFocusDirections":
-        this.blockFocusDirections = HRValueUtils.getArray(propValue as QTArray) ?? []
-        QTLog.i(TAG_FOCUS,`blockFoocusDirecitons this:${ExtendUtil.debugView(this)},value:${CommonUtils.hippyAny2String(propValue)}`)
-        return true;
+
     }
     return super.setProp(propKey, propValue)
   }
