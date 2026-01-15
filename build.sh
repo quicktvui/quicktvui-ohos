@@ -71,7 +71,7 @@ build_channel() {
 # 4. 渠道列表
 # ========================================================
 CHANNELS=(
-xiangsheng
+appstore
 #doudizhu
 #ctyangshenggong
 #haoqidongwu

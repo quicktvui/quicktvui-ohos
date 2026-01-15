@@ -53,7 +53,7 @@ export struct Debug {
   // TODO debugMode = true  拉取本地服务
   // TODO debugMode = false 读取 resources/rawfile/vue 目录文件
   private debugMode: boolean = true
-  @State debugServerHost: string = '192.168.80.148' //TODO 调试服务地址
+  @State debugServerHost: string = '192.168.80.191' //TODO 调试服务地址
   //----------------------------------------------------------------------------------
 
   @State debugServerAvailable: boolean = false
