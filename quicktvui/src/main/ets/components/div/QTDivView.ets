@@ -33,8 +33,7 @@ import { QTBaseComponentView } from '../QTBaseComponentView';
 import { QTViewState } from '../StateView';
 import { TVView } from '../TVView';
 import { HRTvDivView } from '../vendored/view/HRTvDivView';
-import { ColorMetrics } from '@kit.ArkUI';
-import { CommonUtils } from '../../utils/CommonUtils';
+import { ColorMetrics, UIContext } from '@kit.ArkUI';
 
 
 const HippyGestureTag = 'HippyGestureTag'
@@ -333,6 +332,7 @@ export class QTDivView extends HRTvDivView {
     if(this.isEventFocus()){
       FastListUtils.handleItemFocus(this,isFocused)
     }
+    this.focus = isFocused;
     this.updateStateArray()
     this.drawableStateChanged(this.currentStates)
     super.onFocusChanged(isFocused)
@@ -471,6 +471,12 @@ export struct QTDiv {
         // .attributeModifier(this.visibilityModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
+        .scale(this.renderView.focus ? { x: this.renderView.focusScale, y: this.renderView.focusScale } : {})
+        .animation({
+          duration: this.renderView.focus ? 400 : 100,
+          iterations: 1, // 播放次数
+          playMode: PlayMode.Normal
+        })
         .onFocus(() => this.renderView.onFocus())
         .onBlur(() => this.renderView.onBlur())
         .onClick((event=>{
@@ -501,6 +507,12 @@ export struct QTDiv {
         // .attributeModifier(this.colorModifier)
         .alignContent(Alignment.Center)
         .align(Alignment.Center)
+        .scale(this.renderView.focus ? { x: this.renderView.focusScale, y: this.renderView.focusScale } : {})
+        .animation({
+          duration: this.renderView.focus ? 400 : 100,
+          iterations: 1, // 播放次数
+          playMode: PlayMode.Normal
+        })
         // .hoverEffect(HoverEffect.Scale)
         .onFocus(() => this.renderView.onFocus())
         .onBlur(() => this.renderView.onBlur())
@@ -538,7 +550,7 @@ function applyRenderViewBaseAttr($$: QTDivView) {
   //edit by tv
   //basic
   .key($$.uid? $$.uid : `real_${$$.tag}`)
-  .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
+  // .scale($$.focus ? { x: $$.focusScale, y: $$.focusScale } : {})
   .clip($$.clipChildren)
   .id($$.uid? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)

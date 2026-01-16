@@ -15,10 +15,6 @@ export struct  QTFastList {
   @ObjectLink children: HippyObservedArray<QTView>
 
 
-  test : boolean = false
-
-
-
 
 
   // 监听autoSize变化的回调函数
@@ -149,8 +145,9 @@ export struct  QTFastList {
                 children: item.children,
               })
                 .reuseId(item.getReuseId())
-            }.onFocus(()=>{
-              this.renderView.scroller.scrollToIndex(index,false,ScrollAlign.CENTER)
+            }
+            .onFocus(()=>{
+              this.renderView.scroller.scrollToIndex(index,true,ScrollAlign.CENTER)
             })
             .margin(item.decoration)
           }, this.keyGenerate)
