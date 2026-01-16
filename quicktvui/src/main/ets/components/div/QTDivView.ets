@@ -330,8 +330,8 @@ export class QTDivView extends HRTvDivView {
       map.set('sid',sid)
       ExtendUtil.sendViewEvent(this,'onFocus',map)
     }
-    if(isFocused && this.isEventFocus()){
-      FastListUtils.handleItemFocus(this)
+    if(this.isEventFocus()){
+      FastListUtils.handleItemFocus(this,isFocused)
     }
     this.updateStateArray()
     this.drawableStateChanged(this.currentStates)
@@ -353,17 +353,17 @@ export class QTDivView extends HRTvDivView {
 export struct QTDiv {
   @ObjectLink renderView: QTDivView
   @ObjectLink children: HippyObservedArray<QTView>
-  @Consume('autoSize') @Watch('onAutoSizeChange') autoSize? : number[]
+  // @Consume('autoSize') @Watch('onAutoSizeChange') autoSize? : number[]
 
   private readonly TAG = "QTDiv"
   // @State colorModifier: MyStackModifier = modifier
-  @State visibilityModifier: MyStackModifierVisible = visibleModifier
+  // @State visibilityModifier: MyStackModifierVisible = visibleModifier
 
   // 监听autoSize变化的回调函数
-  onAutoSizeChange(newValue: number[], oldValue: number[]) {
-
-
-  }
+  // onAutoSizeChange(newValue: number[], oldValue: number[]) {
+  //
+  //
+  // }
 
   shouldAddGesture() {
     return deviceInfo.sdkApiVersion >= 11 && (

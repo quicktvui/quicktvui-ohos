@@ -199,6 +199,7 @@ export class QTFastListView extends QTRenderBaseView{
   setCustomTemplate(customTemplate: QTView | null){
     this.templateView = customTemplate;
     if(customTemplate){
+      QTLog.i(TAG_FAST_EVENT,`FastListView setCustomTemplate this:${ExtendUtil.debugView(this)},customTemplate:${ExtendUtil.debugView(customTemplate)}`)
       this.mHandleEventNodeId = customTemplate.tag
     }
   }
@@ -263,12 +264,15 @@ export class QTFastListView extends QTRenderBaseView{
 
   onUIAboutToAppear(ui : QTFastList){
     QTLog.w(TAG_FASTLIST,`####FastList onUIAboutToAppear this:${ExtendUtil.debugView(this)}`)
-    QTLog.w(TAG_FASTLIST,`onUIAboutToAppear setupDataSource:${ExtendUtil.debugView(this)}，this.tag:${this.tag}`)
+    QTLog.w(TAG_FAST_EVENT,`onUIAboutToAppear setupDataSource:${ExtendUtil.debugView(this)}，this.tag:${this.tag},roootList:${LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId}`)
     if(!this.dataSource){
       if(!this.isVirtual){
         this.setupDataSource(this.tag)
       }else{
-        if(this.templateView){
+        let rootList = LayoutAttach.obtainLayoutAttach(this).virtualExtra.rootListId
+        if(rootList > -1){
+          this.setupDataSource(rootList)
+        }else if(this.templateView){
           this.setupDataSource(this.templateView.tag)
         }else{
           QTLog.fatal(TAG_FASTLIST,`nUIAboutToAppear setupDataSource error when templateView is null`)
@@ -296,7 +300,7 @@ export class QTFastListView extends QTRenderBaseView{
   }
 
   setupDataSource(rootListID : number){
-    QTLog.e(TAG_FASTLIST,`setupDataSource rootListID:${rootListID} this:${ExtendUtil.debugView(this)}`)
+    QTLog.e(TAG_FAST_EVENT,`setupDataSource rootListID:${rootListID} this:${ExtendUtil.debugView(this)}`)
     this.dataSource = new FastListDataSource(this.ctx,this.virtualChildren)
     this.dataSource.rootListId = rootListID
     this.dataSource.setPlaceholderEnabled(this.enablePlaceholder)

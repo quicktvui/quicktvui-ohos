@@ -8,7 +8,12 @@ import {
   buildHippyRenderView,
   LogUtils,
 } from 'hippy'
+import { TAG_FOCUS } from '../../Constant'
+import { QTView } from '../../QTTypes'
+import { ExtendUtil } from '../../utils/ExtendUtil'
+import { QTLog } from '../../utils/QTLog'
 import { QTBaseComponentView } from '../QTBaseComponentView'
+import { TVView } from '../TVView'
 
 /**
  * 动画
@@ -43,6 +48,24 @@ export class QTAnimationView extends QTBaseComponentView {
       return;
     }
     super.call(method, params, callback)
+  }
+
+  addFocusables(views: TVView[], direction: number): boolean {
+    if(!super.addFocusables(views,direction)){
+      //证明自身是不可获焦的
+      if (this.children && this.children.length > 0) {
+        this.children.forEach((child: QTView) => {
+          if(child instanceof QTBaseComponentView){
+            child.addFocusables(views,direction)
+          }else if (child.cssFocusable === true) {
+            //views.push(child);
+            //不是
+            QTLog.e(TAG_FOCUS,`addFocusables skip focusable view : ${ExtendUtil.debugView(child)}`)
+          }
+        });
+      }
+    }
+    return true;
   }
 }
 
@@ -592,8 +615,8 @@ export struct QTAnimation {
 }
 
 @Extend(Stack)
-function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
-  .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
+function applyRenderViewBaseAttr($$: QTAnimationView) {
+  // .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
   .backgroundColor($$.cssBackgroundColor)
   .position({ x: $$.cssPositionX, y: $$.cssPositionY })
   .size({ width: $$.cssWidth, height: $$.cssHeight })
@@ -605,6 +628,8 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
+  .key($$.uid? $$.uid : `real_${$$.tag}`)
+  .id($$.uid? $$.uid : `real_${$$.tag}`)
   .linearGradient($$.cssLinearGradient)
   .backgroundImage($$.cssBackgroundImage)
   .backgroundImageSize($$.cssBackgroundImageSize)

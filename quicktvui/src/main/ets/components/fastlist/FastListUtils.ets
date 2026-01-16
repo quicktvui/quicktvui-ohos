@@ -19,14 +19,14 @@ export class FastListUtils{
   static EVENT_ATTACH = 'onAttachedToWindow'
   static EVENT_DETACH = 'onDetachedFromWindow'
 
-  static handleItemFocus(clickView : QTView){
-    QTLog.d(TAG_CLICK,`onFocus rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId}`)
+  static handleItemFocus(clickView : QTView,isFocused:boolean){
+    QTLog.d(TAG_FAST_EVENT,`onFocus rootID:${LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId},clickView:${ExtendUtil.debugView(clickView)}`)
     let rootListId = LayoutAttach.obtainLayoutAttach(clickView).virtualExtra.rootListId
     if(rootListId != -1){
       let fastItem : QTItemRootView | null = FastListUtils.findItemView(clickView)
       let itemView :ItemView | null | undefined = fastItem?.itemView
       if(!itemView){
-        QTLog.e(TAG_CLICK,"handleItemFocus error findItemView null ")
+        QTLog.e(TAG_FAST_EVENT,"handleItemFocus error findItemView null ")
         return;
       }
       let parentList : QTPendingListView | null = FastListUtils.findListParent(fastItem)
@@ -35,7 +35,7 @@ export class FastListUtils{
       if(parentList){
         itemPosition = parentList.itemIndexOfDataList(fastItem)
       }else{
-        QTLog.e(TAG_CLICK,`handleItemFocus error find pendingList null ,itemView parent:${itemView.renderView?.parentView}`)
+        QTLog.e(TAG_FAST_EVENT,`handleItemFocus error find pendingList null ,itemView parent:${itemView.renderView?.parentView}`)
       }
 
       if(parentList instanceof QTFastListView){
@@ -64,14 +64,15 @@ export class FastListUtils{
       map.set('sid',sid)
       map.set('position',itemPosition)
       map.set('name',name)
+      map.set('hasFocus',isFocused)
       if(itemRaw){
         map.set('item',itemRaw)
       }
       map.set('parentPosition',parentPosition)
-      QTLog.d(TAG_CLICK,`sendd handleItemFocus data:${CommonUtils.hippyMap2String(map)} `)
+      QTLog.d(TAG_FAST_EVENT,`sendd handleItemFocus data:${CommonUtils.hippyMap2String(map)} `)
       ExtendUtil.sendUIEvent(clickView.ctx,rootListId,FastListUtils.EVENT_FOCUS,map)
     }else{
-      QTLog.e(TAG_CLICK,`handleItemFocus error rootListId is -1 clickView:${ExtendUtil.debugView(clickView)}`)
+      QTLog.e(TAG_FAST_EVENT,`handleItemFocus error rootListId is -1 clickView:${ExtendUtil.debugView(clickView)}`)
     }
 
 
