@@ -473,7 +473,8 @@ export struct QTDiv {
         .align(Alignment.Center)
         .scale(this.renderView.focus ? { x: this.renderView.focusScale, y: this.renderView.focusScale } : {})
         .animation({
-          duration: this.renderView.focus ? 400 : 100,
+          duration: this.renderView.focus ? 400 : 50,
+          curve: Curve.EaseInOut,
           iterations: 1, // 播放次数
           playMode: PlayMode.Normal
         })
@@ -509,7 +510,8 @@ export struct QTDiv {
         .align(Alignment.Center)
         .scale(this.renderView.focus ? { x: this.renderView.focusScale, y: this.renderView.focusScale } : {})
         .animation({
-          duration: this.renderView.focus ? 400 : 100,
+          duration: this.renderView.focus ? 400 : 50,
+          curve: Curve.EaseInOut,
           iterations: 1, // 播放次数
           playMode: PlayMode.Normal
         })
