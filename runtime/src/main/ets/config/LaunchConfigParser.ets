@@ -23,8 +23,8 @@ export class LaunchConfigParser {
       cfg.appIcon = params.icon
     }
     //verion
-    if (typeof params.verion === 'string') {
-      cfg.appVersion = params.verion
+    if (typeof params.appVersion === 'string') {
+      cfg.appVersion = params.appVersion
     }
     //debug
     if (typeof params.debug === 'boolean') {

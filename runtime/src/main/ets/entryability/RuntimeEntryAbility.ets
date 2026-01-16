@@ -104,8 +104,8 @@ export default class RuntimeEntryAbility extends UIAbility {
       // 2. Path -> 版本号 (version)
       // 移除开头的 '/'，例如 /2.0 -> 2.0
       const pathVer = urlObj.pathname.startsWith('/') ? urlObj.pathname.substring(1) : urlObj.pathname;
-      if (!want.parameters['version'] && pathVer) {
-        want.parameters['version'] = pathVer;
+      if (!want.parameters['appVersion'] && pathVer) {
+        want.parameters['appVersion'] = pathVer;
       }
 
       // --- B. 解析 Query 参数 ---

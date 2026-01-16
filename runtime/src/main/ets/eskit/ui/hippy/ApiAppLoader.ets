@@ -328,9 +328,10 @@ export class ApiAppLoader implements AppLoader {
    * [调试专用] 打印解压目录下的真实结构
    */
   private printDistFiles(appVersionDir: string) {
-    if (!BuildProfile.DEBUG) {
-      return
-    }
+    //TODO
+    // if (!BuildProfile.DEBUG) {
+    //   return
+    // }
     console.info(`================= [Debug 文件结构分析] =================`);
     console.info(`检查目标根路径: ${appVersionDir}`);
 

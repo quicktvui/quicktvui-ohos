@@ -53,7 +53,7 @@ hdc shell "aa start -b com.extscreen.runtime -a EntryAbility -U 'esapp://es.com.
 `http%3A%2F%2Ftest-api.extscreen.com%2Fextscreenapi%2Fapi%2Fextend_screen%2Fv2%2Fhili%2Fclient%2Ftvinfo%2Fharmony`
 
 ```
-hdc shell "aa start -b com.extscreen.runtime -a EntryAbility -U 'esapp://es.com.elsbharmony.tv/0.0.2?from=cmd&entry=Application&uri=http%3A%2F%2Ftest-api.extscreen.com%2Fextscreenapi%2Fapi%2Fextend_screen%2Fv2%2Fhili%2Fclient%2Ftvinfo%2Fharmony'"
+hdc shell "aa start -b com.extscreen.runtime -a EntryAbility -U 'esapp://es.com.haohanplaylet.tv/1.1.5?from=cmd&entry=Application&uri=http%3A%2F%2Ftest-api.extscreen.com%2Fextscreenapi%2Fapi%2Fextend_screen%2Fv2%2Fhili%2Fclient%2Ftvinfo%2Fharmony'"
 ```
 
 
