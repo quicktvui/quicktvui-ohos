@@ -18,90 +18,62 @@ export class ApiAppLoader implements AppLoader {
     console.info(`ApiAppLoader: data: ${JSON.stringify(data)}`);
   }
 
+
   /**
-   * 主流程：获取信息 -> 检查本地多版本MD5 -> (清理/下载) -> 解压
+   * 主流程：获取信息 -> 检查【当前版本】本地MD5 -> (清理/下载) -> 解压
    */
   async startLoad(): Promise<void> {
     try {
       console.info('ApiAppLoader: 开始请求应用信息...');
       const appInfo = await this.fetchAppInfo();
 
-      this.data.appId = appInfo.es_package
-      this.data.appVersion = appInfo.tvpackagever
+      // 更新内存中的版本信息
+      this.data.appId = appInfo.es_package;
+      this.data.appVersion = appInfo.tvpackagever;
 
-      // 1. 获取该包名的根目录 (例如: .../files/app_rpk/apps/com.example.pkg)
-      //    注意：这里不包含具体的版本号
-      const packageRootDir = `${App.instance.context?.filesDir}/app_rpk/apps/${appInfo.es_package}`;
       const targetMd5 = appInfo.tvpackagemd5;
 
+      // 1. 构建当前目标版本的根目录 (例如: .../apps/com.example.pkg/1.0.1)
+      // 修正点：直接定位到具体版本，而不是去遍历父级目录寻找可能的匹配
+      const currentVersionDir = `${App.instance.context?.filesDir}/app_rpk/apps/${appInfo.es_package}/${appInfo.tvpackagever}`;
+      const currentMd5File = `${currentVersionDir}/${targetMd5}`;
+
       let isCached = false;
-      let cachedDir = '';
 
-      // --- 新增逻辑：遍历包名下的所有版本目录，查找是否存在匹配的MD5文件 ---
+      // --- 修复逻辑：只检查当前目标版本目录 ---
       try {
-        if (fs.accessSync(packageRootDir)) {
-          const subFiles = fs.listFileSync(packageRootDir);
+        // 检查 1: 版本文件夹是否存在
+        // 检查 2: MD5 标记文件是否存在
+        if (fs.accessSync(currentVersionDir) && fs.accessSync(currentMd5File)) {
 
-          for (const fileName of subFiles) {
-            // 假设子文件是文件夹（版本号），构建潜在的MD5标记文件路径
-            // 路径格式: .../apps/{包名}/{版本号}/{MD5值}
-            const potentialVersionDir = `${packageRootDir}/${fileName}`;
-            const potentialMd5File = `${potentialVersionDir}/${targetMd5}`;
-
-            // 判断是否是文件夹且包含对应的MD5文件
-            let hasMd5Marker = false;
-            try {
-              if (fs.statSync(potentialVersionDir).isDirectory() && fs.accessSync(potentialMd5File)) {
-                hasMd5Marker = true;
-              }
-            } catch (e) {
-              // 忽略访问异常
-            }
-
-            if (hasMd5Marker) {
-              // ========================= 核心修复开始 =========================
-              // 不仅要看MD5标记，还要检查关键内容 dist 目录是否存在
-              const distDir = `${potentialVersionDir}/dist`;
-              let isContentValid = false;
-              try {
-                if (fs.accessSync(distDir)) {
-                  isContentValid = true;
-                }
-              } catch (e) {
-                // dist 不存在或无法访问
-              }
-
-              if (isContentValid) {
-                console.info(`ApiAppLoader: ✅ 在本地版本 [${fileName}] 中找到匹配MD5且内容完整: ${targetMd5}`);
-                isCached = true;
-                cachedDir = potentialVersionDir;
-                // 暂时保持使用服务端返回的 versionName
-                break;
-              } else {
-                console.warn(`ApiAppLoader: ⚠️ 发现损坏的缓存 (MD5存在但dist缺失): ${fileName}，将忽略并重新下载`);
-                // 为了保险，尝试删除这个错误的标记文件，避免干扰
-                try { fs.unlinkSync(potentialMd5File); } catch (e) {}
-              }
-              // ========================= 核心修复结束 =========================
-            }
+          // 检查 3: 核心内容 dist 是否存在
+          const distDir = `${currentVersionDir}/dist`;
+          if (fs.accessSync(distDir)) {
+            console.info(`ApiAppLoader: ✅ 本地版本 [${appInfo.tvpackagever}] 缓存校验通过: ${targetMd5}`);
+            isCached = true;
+          } else {
+            console.warn(`ApiAppLoader: ⚠️ 缓存损坏 (MD5存在但dist缺失)，将重新下载`);
+            // 尝试清理坏掉的标记，以免下次误判
+            try { fs.unlinkSync(currentMd5File); } catch (e) {}
           }
         }
       } catch (e) {
-        console.warn('ApiAppLoader: 检查本地缓存时出错 (可能目录不存在):', e);
+        // 忽略文件不存在的异常，视为未缓存
+        console.debug('ApiAppLoader: 本地无此版本缓存或检查失败');
       }
 
       // --- 决策分支 ---
       if (isCached) {
-        console.info(`ApiAppLoader: 本地缓存校验通过，跳过下载。目标路径: ${cachedDir}`);
-
-        // 【新增调用 1】: 如果命中缓存，打印缓存中的 dist 文件
-        this.printDistFiles(cachedDir);
-
+        console.info(`ApiAppLoader: 命中缓存，跳过下载。目标路径: ${currentVersionDir}`);
+        this.printDistFiles(currentVersionDir);
         console.info('ApiAppLoader: 加载流程全部完成');
-        return; // 直接结束
+        return;
       } else {
-        console.info(`ApiAppLoader: 未在任何版本中找到匹配且完整的缓存，执行全量清理并重新下载`);
-        // 删除整个包名目录 (清理所有旧版本)
+        console.info(`ApiAppLoader: 未找到版本 [${appInfo.tvpackagever}] 的完整缓存，执行清理并重新下载`);
+
+        // 策略选择：
+        // 1. 如果你是强制更新机制，通常会清理掉该包名下的 *所有* 旧版本，只保留最新的
+        const packageRootDir = `${App.instance.context?.filesDir}/app_rpk/apps/${appInfo.es_package}`;
         FileUtil.deleteDir(packageRootDir);
       }
       // -------------------------------------------------------------
@@ -111,14 +83,13 @@ export class ApiAppLoader implements AppLoader {
 
       console.info(`ApiAppLoader: 下载并校验MD5成功，路径: ${download.path}`);
 
-      // 重新获取具体版本的目标路径 (因为上面可能删除了，这里 getAppDir 会负责逻辑上的路径构建)
-      // 注意：getAppDir 内部判断了 exists 则不创建，但我们上面 deleteDir 了，所以这里要在 unzip 前确保父目录存在
+      // 获取目标解压目录 (这里还是用上面计算好的 currentVersionDir 逻辑)
       const targetDir = this.getAppDir(appInfo);
 
       console.info(`ApiAppLoader: 开始解压到: ${targetDir}`);
       await this.unzip(download.path, targetDir);
 
-      // --- 逻辑补充：解压完成后，写入MD5文件作为标记 ---
+      // --- 解压完成，写入MD5标记 ---
       try {
         const markerPath = `${targetDir}/${appInfo.tvpackagemd5}`;
         const file = fs.openSync(markerPath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
@@ -130,13 +101,12 @@ export class ApiAppLoader implements AppLoader {
       // ---------------------------------------
 
       console.info('ApiAppLoader: 最终解压文件夹路径:', targetDir);
-
-      // 【新增调用 2】: 下载解压完成后，打印新生成的 dist 文件
       this.printDistFiles(targetDir);
 
       console.info('ApiAppLoader: 加载流程全部完成');
     } catch (e) {
       console.error('ApiAppLoader: 流程异常:', JSON.stringify(e));
+      // 这里建议抛出异常供上层捕获处理UI
     }
   }
 
