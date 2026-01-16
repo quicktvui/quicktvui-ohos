@@ -305,17 +305,14 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         //
         //   return true;
       case 'duplicateParentState':
-        {
           this.duplicateParentState = HRValueUtils.getBoolean(propValue as HippyAny, true);
           // this.setDuplicate();
-        }
         return true
       case 'selected':
         this.setSelected(HRValueUtils.getBoolean(propValue as HippyAny, true))
         return true;
-      case 'enableFocusBorder': {
+      case 'enableFocusBorder':
         this.enableFocusBorder = HRValueUtils.getBoolean(propValue as HippyAny, true)
-      }
         return true
       case 'focusable': {
         this.focusable = HRValueUtils.getBoolean(propValue as HippyAny, false)
