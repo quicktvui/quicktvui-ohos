@@ -66,6 +66,7 @@ export default class RuntimeEntryAbility extends UIAbility {
         runtimeConfig?.appBundleUri,
         runtimeConfig?.appParams,
         runtimeConfig?.appEnableOAID,
+        runtimeConfig?.oaid,
       )
       App.instance.nav?.pushDestination(
         { name: runtimeConfig.appEntry, param: params },

@@ -43,10 +43,14 @@ struct Main {
         LogUtils.i(this.TAG, `Get OAID success: ${oaid}`);
 
         // 3. 存入全局缓存 (AppStorage)，后续页面可以通过 AppStorage.get('GLOBAL_OAID') 获取
-        AppStorage.setOrCreate('GLOBAL_OAID', oaid);
+        if (App.instance.runtimeConfig) {
+          App.instance.runtimeConfig.oaid = oaid
+        }
       } else {
         LogUtils.w(this.TAG, 'User denied OAID permission.');
-        AppStorage.setOrCreate('GLOBAL_OAID', ''); // 拒绝存空
+        if (App.instance.runtimeConfig) {
+          App.instance.runtimeConfig.oaid = ''
+        }
       }
     } catch (e) {
       LogUtils.e(this.TAG, `OAID Init Error: ${JSON.stringify(e)}`);
@@ -71,6 +75,7 @@ struct Main {
       runtimeConfig?.appBundleUri,
       runtimeConfig?.appParams,
       runtimeConfig?.appEnableOAID,
+      runtimeConfig?.oaid,
     )
     App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, params, false);
   }

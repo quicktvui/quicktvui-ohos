@@ -11,4 +11,6 @@ export interface Config {
   appBundleUri?: string
   //
   appParams?: object
+  //
+  oaid?: string
 }

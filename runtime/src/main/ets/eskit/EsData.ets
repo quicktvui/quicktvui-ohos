@@ -16,6 +16,8 @@ export class EsData {
 
   appEnableOAID?: boolean
 
+  oaid?: string
+
   public static buildESData(
     appId?: string,
     appVersion?: string,
@@ -25,6 +27,7 @@ export class EsData {
     appBundleUri?: string,
     appParams?: object,
     appEnableOAID?: boolean,
+    oaid?: string
   ): EsData {
     const data: EsData = {
       appId,
@@ -35,6 +38,7 @@ export class EsData {
       appBundleUri,
       appParams,
       appEnableOAID,
+      oaid
     }
     return data;
   }
