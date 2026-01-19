@@ -1,16 +1,16 @@
 import {
-  bundleManager,
-  common
+  bundleManager, common, abilityAccessCtrl // [新增] 用于请求权限
 } from '@kit.AbilityKit';
 import { connection } from '@kit.NetworkKit';
 import { BusinessError, deviceInfo } from '@kit.BasicServicesKit';
 import { display } from '@kit.ArkUI';
 import { statfs } from '@kit.CoreFileKit';
+import { identifier } from '@kit.AdsKit'; // [新增] 用于获取 OAID
 import { LogUtils } from 'hippy'; // 保持你的 LogUtils 引用
 import { App } from '../App';
 
 // ---------------------------------------------------------
-// 1. 将 InfoRow 提取为独立的组件，确保 UI 刷新机制生效
+// 1. InfoRow 组件
 // ---------------------------------------------------------
 @Component
 struct InfoRow {
@@ -30,7 +30,7 @@ struct InfoRow {
         .layoutWeight(1)
         .textAlign(TextAlign.End)
         .fontWeight(FontWeight.Regular)
-        .textOverflow({ overflow: TextOverflow.Ellipsis }) // 防止文字过长换行难看
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
         .maxLines(1)
     }
     .width('100%')
@@ -51,23 +51,24 @@ export function PageDeviceBuilder(name: string, param: Object) {
 export struct DevicePage {
   private TAG: string = 'DevicePage'
   private navPathStack: NavPathStack = new NavPathStack();
-
-  // 给所有 @State 加上默认值 "..."，这样一进页面你能看到它们占位，确认 UI 有在渲染
+  // 基础信息
   @State deviceName: string = '...'
   @State deviceModel: string = '...'
   @State osFullName: string = '...'
   @State sdkApiVersion: string = '...'
   @State deviceType: string = '...'
-
+  // [新增] OAID
+  @State oaid: string = '点击获取'
+  // 屏幕信息
   @State screenResolution: string = '...'
   @State screenDensity: string = '...'
-
+  // 网络信息
   @State ipAddress: string = '正在获取...'
   @State netType: string = '...'
-
+  // 存储信息
   @State storageTotal: string = '正在计算...'
   @State storageFree: string = '...'
-
+  // 应用信息
   @State appName: string = '正在查询...'
   @State appVersion: string = '...'
 
@@ -78,6 +79,53 @@ export struct DevicePage {
     this.initAppInfo()
     this.initStorageInfo()
     this.initNetworkInfo()
+
+    // [新增] 初始化 OAID
+    this.initOAID()
+  }
+
+  // --- [新增] OAID 获取逻辑 ---
+  private async initOAID() {
+    try {
+      const atManager = abilityAccessCtrl.createAtManager();
+      const context = getContext(this) as common.UIAbilityContext;
+
+      // 请求 APP_TRACKING_CONSENT 权限
+      atManager.requestPermissionsFromUser(context, ['ohos.permission.APP_TRACKING_CONSENT'])
+        .then((data) => {
+          // authResults[0] === 0 表示授权成功
+          if (data.authResults && data.authResults.length > 0 && data.authResults[0] === 0) {
+            LogUtils.i(this.TAG, 'OAID permission granted, fetching...');
+            this.getOAIDRaw();
+          } else {
+            LogUtils.w(this.TAG, 'OAID permission denied');
+            this.oaid = '用户未授权 (点击重试)';
+            // 注意：即使用户拒绝，identifier.getOAID() 仍可调用，但会返回 0000...
+          }
+        })
+        .catch((err: BusinessError) => {
+          LogUtils.e(this.TAG, `Request permission failed: ${JSON.stringify(err)}`);
+          this.oaid = '权限请求出错';
+        })
+    } catch (e) {
+      LogUtils.e(this.TAG, `initOAID error: ${JSON.stringify(e)}`);
+      this.oaid = '不支持或出错';
+    }
+  }
+
+  // 调用 AdsKit 接口
+  private getOAIDRaw() {
+    try {
+      identifier.getOAID().then((data) => {
+        LogUtils.i(this.TAG, `OAID success: ${data}`);
+        this.oaid = data;
+      }).catch((err: BusinessError) => {
+        LogUtils.e(this.TAG, `getOAID api failed: ${JSON.stringify(err)}`);
+        this.oaid = `获取失败: ${err.code}`;
+      });
+    } catch (err) {
+      this.oaid = "API调用异常";
+    }
   }
 
   // --- 硬件信息 ---
@@ -104,14 +152,12 @@ export struct DevicePage {
     }
   }
 
-  // --- 应用信息 (重点修复) ---
+  // --- 应用信息 ---
   private initAppInfo() {
     let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION;
     bundleManager.getBundleInfoForSelf(bundleFlags).then((data) => {
       LogUtils.i(this.TAG, `[AppInfo] Fetched: ${data.name}`);
-      // 这里的赋值会自动触发 InfoRow 组件的 @Prop 更新
       this.appName = data.name;
-      this.appVersion = data.versionCode + ""; // 保存一下做后续逻辑
       this.appVersion = `${data.versionName} (${data.versionCode})`;
     }).catch((err: BusinessError) => {
       LogUtils.e(this.TAG, `[AppInfo] Error: ${JSON.stringify(err)}`);
@@ -123,7 +169,6 @@ export struct DevicePage {
   private async initStorageInfo() {
     try {
       let context = getContext(this) as common.UIAbilityContext;
-      // 使用 cacheDir 更加稳定
       let path = context.cacheDir;
       let freeSize = await statfs.getFreeSize(path);
       let totalSize = await statfs.getTotalSize(path);
@@ -152,14 +197,16 @@ export struct DevicePage {
         this.ipAddress = addressArray[0].address?.address ?? '获取异常';
       }
 
-      this.netType = "已连接"; // 简化显示，确保有值
+      this.netType = "已连接";
     } catch (e) {
       LogUtils.e(this.TAG, `[Network] Error: ${JSON.stringify(e)}`);
     }
   }
 
   private formatBytes(bytes: number) {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) {
+      return '0 B';
+    }
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -181,18 +228,27 @@ export struct DevicePage {
 
         Scroll() {
           Column() {
-            // 注意：这里使用独立的 Component 组件，传入参数
-
+            // 硬件信息组
             Text("硬件信息").fontSize(14).fontColor('#007DFF').width('100%').margin({ top: 10, bottom: 5 })
             InfoRow({ title: "设备名称", value: this.deviceName })
             InfoRow({ title: "设备型号", value: this.deviceModel })
+
+            // [新增] OAID 行，包裹点击事件方便重试
+            Row() {
+              InfoRow({ title: "OAID", value: this.oaid })
+            }.onClick(() => {
+              this.initOAID()
+            })
+
             InfoRow({ title: "系统版本", value: this.osFullName })
             InfoRow({ title: "分辨率", value: this.screenResolution })
 
+            // 软件信息组
             Text("系统与软件").fontSize(14).fontColor('#007DFF').width('100%').margin({ top: 20, bottom: 5 })
             InfoRow({ title: "应用名称", value: this.appName })
             InfoRow({ title: "应用版本", value: this.appVersion })
 
+            // 存储网络组
             Text("存储与网络").fontSize(14).fontColor('#007DFF').width('100%').margin({ top: 20, bottom: 5 })
             InfoRow({ title: "IP 地址", value: this.ipAddress })
             InfoRow({ title: "网络状态", value: this.netType })
@@ -210,9 +266,12 @@ export struct DevicePage {
           .backgroundColor('#FF4040')
           .margin({ bottom: 20 })
           .onClick(() => {
-            // 简单的退出逻辑
-            if (this.navPathStack.size() > 0) this.navPathStack.pop();
-            else (getContext(this) as common.UIAbilityContext).terminateSelf();
+            if (this.navPathStack.size() >
+              0) {
+              this.navPathStack.pop();
+            } else {
+              (getContext(this) as common.UIAbilityContext).terminateSelf();
+            }
           })
       }
       .width('100%')
