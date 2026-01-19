@@ -15,7 +15,8 @@ import { QTView } from "../../QTTypes";
 import { GeneratePageData, MyComponentParams } from './types/index';
 import { TAG_MediaSeries } from '../../Constant';
 import { ColorMetrics } from "@kit.ArkUI";
-import { inputEventClient, KeyCode } from "@kit.InputKit";
+import { KeyCode } from "@kit.InputKit";
+import { QTPixelUtil } from "../../utils/QTPixelUtil";
 
 @Component
 export struct QTMediaSeries {
@@ -33,53 +34,75 @@ export struct QTMediaSeries {
     params.set('tag', this.renderView.tag)
     event.send(this.renderView.ctx, this.renderView.tag, params)
     console.log(TAG_MediaSeries, `HippyViewEvent send :${this.renderView.tag}`)
-    let keyDown: inputEventClient.KeyEvent = {
-      isPressed: true,
-      keyCode: KeyCode.KEYCODE_TAB,
-      keyDownDuration: 0,
-      isIntercepted: false
-    };
-    let keyUp: inputEventClient.KeyEvent = {
-      isPressed: false,
-      keyCode: KeyCode.KEYCODE_TAB,
-      keyDownDuration: 0,
-      isIntercepted: false
-    };
+    // let keyDown: inputEventClient.KeyEvent = {
+    //   isPressed: true,
+    //   keyCode: KeyCode.KEYCODE_TAB,
+    //   keyDownDuration: 0,
+    //   isIntercepted: false
+    // };
+    // let keyUp: inputEventClient.KeyEvent = {
+    //   isPressed: false,
+    //   keyCode: KeyCode.KEYCODE_TAB,
+    //   keyDownDuration: 0,
+    //   isIntercepted: false
+    // };
 
     console.log('123456');
-      try {
-        // 触发tab点击，使默认焦点组件多态样式生效
-        inputEventClient.injectEvent({ KeyEvent: keyDown });
-        inputEventClient.injectEvent({ KeyEvent: keyUp });
-        console.log('123456  123');
-      } catch (e) {
-        console.log("123456 tab key event click false")
-      }
+      // try {
+      //   // 触发tab点击，使默认焦点组件多态样式生效
+      //   inputEventClient.injectEvent({ KeyEvent: keyDown });
+      //   inputEventClient.injectEvent({ KeyEvent: keyUp });
+      //   console.log('123456  123');
+      // } catch (e) {
+      //   console.log("123456 tab key event click false")
+      // }
   }
+
+
+  // Stack() {
+  //   Rect({
+  //     width: px2vp(this.renderView.initParamTemplate.width + 4),
+  //     height: px2vp(this.renderView.initParamTemplate.height + 4),
+  //     radius: px2vp(8),
+  //   }).fill(Color.Transparent) // 透明填充
+  //     .stroke(Color.White)
+  //     .strokeWidth(px2vp(2)) // 边框宽度
+  //
+  //   Rect({
+  //     width: px2vp(this.renderView.initParamTemplate.width),
+  //     height: px2vp(this.renderView.initParamTemplate.height),
+  //     radius: px2vp(4),
+  //   }).fill(Color.Transparent) // 透明填充
+  //     .stroke(Color.Black)
+  //     .position({ x: px2vp(2), y: px2vp(2) })
+  //     .strokeWidth(px2vp(1)) // 边框宽度
+  // }
+  // .width(px2vp(this.renderView.initParamTemplate.width + 4))
+  // .height(px2vp(this.renderView.initParamTemplate.height + 4))
+  // .position({ x: -2, y: -2 })
 
   @Builder
   buildFocusBorder(){
-    Stack() {
+    Stack(){
       Rect({
-        width: px2vp(this.renderView.initParamTemplate.width + 4),
-        height: px2vp(this.renderView.initParamTemplate.height + 4),
-        radius: px2vp(8),
-      }).fill(Color.Transparent) // 透明填充
-        .stroke(Color.White)
-        .strokeWidth(px2vp(2)) // 边框宽度
-
-      Rect({
-        width: px2vp(this.renderView.initParamTemplate.width),
+        width:px2vp( this.renderView.initParamTemplate.width),
         height: px2vp(this.renderView.initParamTemplate.height),
-        radius: px2vp(4),
-      }).fill(Color.Transparent) // 透明填充
+        radius:8,
+      }) .fill(Color.Transparent) // 透明填充
+        .stroke(Color.White)
+        .strokeWidth(2)         // 边框宽度
+      Rect({
+        width:px2vp( this.renderView.initParamTemplate.width ),
+        height: px2vp(this.renderView.initParamTemplate.height),
+        radius:8
+      }) .fill(Color.Transparent) // 透明填充
         .stroke(Color.Black)
-        .position({ x: px2vp(2), y: px2vp(2) })
-        .strokeWidth(px2vp(1)) // 边框宽度
+        .position({x:2,y:2})
+        .strokeWidth(1)         // 边框宽度
     }
-    .width(px2vp(this.renderView.initParamTemplate.width + 4))
-    .height(px2vp(this.renderView.initParamTemplate.height + 4))
-    .position({ x: -2, y: -2 })
+    .width(px2vp(this.renderView.initParamTemplate.width ))
+    .height(px2vp(this.renderView.initParamTemplate.height))
+    .position({x:-2,y:-2})
   }
 
   build() {
@@ -89,9 +112,7 @@ export struct QTMediaSeries {
           LazyForEach(this.renderView.listData, (item: MyComponentParams, index: number) => {
             ListItem() {
               Stack(){
-                if (this.renderView.focusStr == item.key){
-                  this.buildFocusBorder()
-                }
+
                 Row() {
                   Image(item.cover)
                     .width(px2vp(this.renderView.initParamTemplate.extra.imgWidth))
@@ -127,16 +148,22 @@ export struct QTMediaSeries {
                     .fontFamily('HarmonyOS Sans')
                     .fontSize(px2vp(this.renderView.initParamTemplate.floatTitleSize))
                 }
+                .clip(false)
                 .width(px2vp(this.renderView.initParamTemplate.width))
                 .height(px2vp(this.renderView.initParamTemplate.height))
                 .backgroundColor('#80988787')
                 .alignItems(VerticalAlign.Top)
                 .focusable(true)
+                .focusBox({ strokeColor: ColorMetrics.rgba(0, 0, 0, 0) })
+                if (this.renderView.focusStr == item.key){
+                  this.buildFocusBorder()
+                }
               }
-
             }
+            .clip(false)
             .width(px2vp(this.renderView.initParamTemplate.width))
             .height(px2vp(this.renderView.initParamTemplate.height))
+            .focusBox({ strokeColor: ColorMetrics.rgba(0, 0, 0, 0) })
             .margin({
               left: index === 0 ? px2vp(120) : 0,
               right: index === this.renderView.listData.totalCount() - 1 ? px2vp(120) : 0,
@@ -167,6 +194,7 @@ export struct QTMediaSeries {
             })
           }, (item: string) => item)
         }
+        .clip(false)
         .scrollBar(BarState.On) //临时调试开启 BarState.On
         .listDirection(Axis.Horizontal) // 排列方向
         .height(px2vp(this.renderView.initParamTemplate.height + 5))

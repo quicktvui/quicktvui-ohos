@@ -449,16 +449,16 @@ export struct HRTvDiv {
       .visibility(this.renderView.visibility)
       // .nextFocus(this.renderView.nextFocus) // TODO 当前测试设备不支持 nextFocus，需要先注释
       .focusScopeId(this.renderView.sid, this.renderView.focusMemory) // TODO 目前web端未验证出实际效果
-      .onFocus(() => {
-        this.renderView.focus = true
-        LogUtils.d(this.TAG, "onFocus，name:" + this.renderView.name);
-        this.renderView.handleFocus(this.renderView.focus)
-      })
-      .onBlur(() => {
-        this.renderView.focus = false
-        LogUtils.d(this.TAG, "onFocus，name:" + this.renderView.name);
-        this.renderView.handleBlur(this.renderView.focus)
-      })
+      // .onFocus(() => {
+      //   // this.renderView.focus = true
+      //   LogUtils.d(this.TAG, "onFocus，name:" + this.renderView.name);
+      //   this.renderView.handleFocus(this.renderView.focus)
+      // })
+      // .onBlur(() => {
+      //   // this.renderView.focus = false
+      //   LogUtils.d(this.TAG, "onFocus，name:" + this.renderView.name);
+      //   this.renderView.handleBlur(this.renderView.focus)
+      // })
       .attributeModifier(this.colorModifier)
     } else {
       Stack() {
@@ -477,15 +477,15 @@ export struct HRTvDiv {
       .visibility(this.renderView.visibility)
       // .nextFocus(this.renderView.nextFocus) // TODO 当前测试设备不支持 nextFocus，需要先注释
       .focusScopeId(this.renderView.sid, this.renderView.focusMemory) // TODO 目前web端未验证出实际效果
-      .onFocus(() => {
-        this.renderView.focus = true
-        LogUtils.d(this.TAG, "onFocus，nam1e:" + this.renderView.name);
-        this.renderView.handleFocus(this.renderView.focus)
-      })
-      .onBlur(() => {
-        this.renderView.focus = false
-        this.renderView.handleBlur(this.renderView.focus)
-      })
+      // .onFocus(() => {
+      //   // this.renderView.focus = true
+      //   LogUtils.d(this.TAG, "onFocus，nam1e:" + this.renderView.name);
+      //   this.renderView.handleFocus(this.renderView.focus)
+      // })
+      // .onBlur(() => {
+      //   // this.renderView.focus = false
+      //   this.renderView.handleBlur(this.renderView.focus)
+      // })
       .attributeModifier(this.colorModifier)
     }
   }
