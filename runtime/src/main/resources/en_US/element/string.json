@@ -99,6 +99,10 @@
     {
       "name": "cross_mark",
       "value": "❌"
+    },
+    {
+      "name": "app_tracking_reason",
+      "value": "We use your device identifier to improve our services and user experience."
     }
   ]
 }

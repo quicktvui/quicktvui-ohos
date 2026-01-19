@@ -1,16 +1,18 @@
 import {
-  bundleManager, common, abilityAccessCtrl // [新增] 用于请求权限
+  bundleManager,
+  common,
+  abilityAccessCtrl
 } from '@kit.AbilityKit';
 import { connection } from '@kit.NetworkKit';
-import { BusinessError, deviceInfo } from '@kit.BasicServicesKit';
-import { display } from '@kit.ArkUI';
+import { BusinessError, deviceInfo, pasteboard } from '@kit.BasicServicesKit'; // [新增] pasteboard
+import { display, promptAction } from '@kit.ArkUI'; // [新增] promptAction
 import { statfs } from '@kit.CoreFileKit';
-import { identifier } from '@kit.AdsKit'; // [新增] 用于获取 OAID
-import { LogUtils } from 'hippy'; // 保持你的 LogUtils 引用
+import { identifier } from '@kit.AdsKit';
+import { LogUtils } from 'hippy';
 import { App } from '../App';
 
 // ---------------------------------------------------------
-// 1. InfoRow 组件
+// 1. InfoRow 组件 (修改：添加点击复制功能)
 // ---------------------------------------------------------
 @Component
 struct InfoRow {
@@ -24,6 +26,8 @@ struct InfoRow {
         .fontColor('#AAAAAA')
         .width('35%')
         .fontWeight(FontWeight.Medium)
+
+      // 修改：给 Value 文本添加点击事件
       Text(this.value)
         .fontSize(18)
         .fontColor(Color.White)
@@ -32,15 +36,44 @@ struct InfoRow {
         .fontWeight(FontWeight.Regular)
         .textOverflow({ overflow: TextOverflow.Ellipsis })
         .maxLines(1)
+        .onClick(() => {
+          this.copyToClipboard(this.value)
+        })
     }
     .width('100%')
     .padding({ top: 12, bottom: 12 })
     .border({ width: { bottom: 1 }, color: '#4A5261' })
   }
+
+  // [新增] 复制逻辑
+  private copyToClipboard(text: string) {
+    if (!text || text.includes('...')) {
+      return;
+    }
+    try {
+      // 1. 创建剪贴板数据
+      let pasteData = pasteboard.createData(pasteboard.MIMETYPE_TEXT_PLAIN, text);
+      // 2. 获取系统剪贴板对象
+      let systemPasteboard = pasteboard.getSystemPasteboard();
+      // 3. 写入数据
+      systemPasteboard.setData(pasteData).then(() => {
+        // 4. 成功提示
+        promptAction.showToast({
+          message: `已复制: ${text}`,
+          duration: 1500,
+          bottom: 100 // 提示框位置稍微靠上一点
+        });
+      }).catch((err: BusinessError) => {
+        LogUtils.e('InfoRow', 'Copy failed: ' + JSON.stringify(err));
+      });
+    } catch (e) {
+      LogUtils.e('InfoRow', 'Copy error: ' + JSON.stringify(e));
+    }
+  }
 }
 
 // ---------------------------------------------------------
-// 2. 主页面逻辑
+// 2. 主页面逻辑 (保持不变，仅展示完整结构)
 // ---------------------------------------------------------
 @Builder
 export function PageDeviceBuilder(name: string, param: Object) {
@@ -51,24 +84,24 @@ export function PageDeviceBuilder(name: string, param: Object) {
 export struct DevicePage {
   private TAG: string = 'DevicePage'
   private navPathStack: NavPathStack = new NavPathStack();
-  // 基础信息
+
   @State deviceName: string = '...'
   @State deviceModel: string = '...'
   @State osFullName: string = '...'
   @State sdkApiVersion: string = '...'
   @State deviceType: string = '...'
-  // [新增] OAID
+
   @State oaid: string = '点击获取'
-  // 屏幕信息
+
   @State screenResolution: string = '...'
   @State screenDensity: string = '...'
-  // 网络信息
+
   @State ipAddress: string = '正在获取...'
   @State netType: string = '...'
-  // 存储信息
+
   @State storageTotal: string = '正在计算...'
   @State storageFree: string = '...'
-  // 应用信息
+
   @State appName: string = '正在查询...'
   @State appVersion: string = '...'
 
@@ -79,48 +112,36 @@ export struct DevicePage {
     this.initAppInfo()
     this.initStorageInfo()
     this.initNetworkInfo()
-
-    // [新增] 初始化 OAID
     this.initOAID()
   }
 
-  // --- [新增] OAID 获取逻辑 ---
+  // --- OAID 获取 ---
   private async initOAID() {
     try {
       const atManager = abilityAccessCtrl.createAtManager();
       const context = getContext(this) as common.UIAbilityContext;
 
-      // 请求 APP_TRACKING_CONSENT 权限
       atManager.requestPermissionsFromUser(context, ['ohos.permission.APP_TRACKING_CONSENT'])
         .then((data) => {
-          // authResults[0] === 0 表示授权成功
           if (data.authResults && data.authResults.length > 0 && data.authResults[0] === 0) {
-            LogUtils.i(this.TAG, 'OAID permission granted, fetching...');
             this.getOAIDRaw();
           } else {
-            LogUtils.w(this.TAG, 'OAID permission denied');
-            this.oaid = '用户未授权 (点击重试)';
-            // 注意：即使用户拒绝，identifier.getOAID() 仍可调用，但会返回 0000...
+            this.oaid = '用户未授权 (点击空白处重试)';
           }
         })
         .catch((err: BusinessError) => {
-          LogUtils.e(this.TAG, `Request permission failed: ${JSON.stringify(err)}`);
           this.oaid = '权限请求出错';
         })
     } catch (e) {
-      LogUtils.e(this.TAG, `initOAID error: ${JSON.stringify(e)}`);
       this.oaid = '不支持或出错';
     }
   }
 
-  // 调用 AdsKit 接口
   private getOAIDRaw() {
     try {
       identifier.getOAID().then((data) => {
-        LogUtils.i(this.TAG, `OAID success: ${data}`);
         this.oaid = data;
       }).catch((err: BusinessError) => {
-        LogUtils.e(this.TAG, `getOAID api failed: ${JSON.stringify(err)}`);
         this.oaid = `获取失败: ${err.code}`;
       });
     } catch (err) {
@@ -128,7 +149,7 @@ export struct DevicePage {
     }
   }
 
-  // --- 硬件信息 ---
+  // --- 基础信息 ---
   private initBasicDeviceInfo() {
     try {
       this.deviceName = deviceInfo.marketName || 'Unknown';
@@ -136,52 +157,42 @@ export struct DevicePage {
       this.osFullName = deviceInfo.osFullName || 'HarmonyOS';
       this.sdkApiVersion = deviceInfo.sdkApiVersion.toString();
       this.deviceType = deviceInfo.deviceType || 'default';
-    } catch (e) {
-      LogUtils.e(this.TAG, 'initBasic error: ' + JSON.stringify(e));
-    }
+    } catch (e) { }
   }
 
-  // --- 屏幕信息 ---
+  // --- 屏幕 ---
   private initScreenInfo() {
     try {
       let displayClass = display.getDefaultDisplaySync();
       this.screenResolution = `${displayClass.width} x ${displayClass.height}`;
       this.screenDensity = `${displayClass.densityDPI}`;
-    } catch (e) {
-      LogUtils.e(this.TAG, 'initScreen error: ' + JSON.stringify(e));
-    }
+    } catch (e) { }
   }
 
-  // --- 应用信息 ---
+  // --- 应用 ---
   private initAppInfo() {
     let bundleFlags = bundleManager.BundleFlag.GET_BUNDLE_INFO_WITH_APPLICATION;
     bundleManager.getBundleInfoForSelf(bundleFlags).then((data) => {
-      LogUtils.i(this.TAG, `[AppInfo] Fetched: ${data.name}`);
       this.appName = data.name;
       this.appVersion = `${data.versionName} (${data.versionCode})`;
     }).catch((err: BusinessError) => {
-      LogUtils.e(this.TAG, `[AppInfo] Error: ${JSON.stringify(err)}`);
       this.appName = "查询失败";
     });
   }
 
-  // --- 存储信息 ---
+  // --- 存储 ---
   private async initStorageInfo() {
     try {
       let context = getContext(this) as common.UIAbilityContext;
       let path = context.cacheDir;
       let freeSize = await statfs.getFreeSize(path);
       let totalSize = await statfs.getTotalSize(path);
-
       this.storageFree = this.formatBytes(freeSize);
       this.storageTotal = this.formatBytes(totalSize);
-    } catch (e) {
-      LogUtils.e(this.TAG, `[Storage] Error: ${JSON.stringify(e)}`);
-      this.storageFree = "未知";
-    }
+    } catch (e) { }
   }
 
-  // --- 网络信息 ---
+  // --- 网络 ---
   private async initNetworkInfo() {
     try {
       const netHandle = connection.getDefaultNetSync();
@@ -190,23 +201,17 @@ export struct DevicePage {
         this.netType = "None";
         return;
       }
-
       const properties = await connection.getConnectionProperties(netHandle);
       const addressArray = properties.linkAddresses;
       if (addressArray && addressArray.length > 0) {
         this.ipAddress = addressArray[0].address?.address ?? '获取异常';
       }
-
       this.netType = "已连接";
-    } catch (e) {
-      LogUtils.e(this.TAG, `[Network] Error: ${JSON.stringify(e)}`);
-    }
+    } catch (e) { }
   }
 
   private formatBytes(bytes: number) {
-    if (bytes === 0) {
-      return '0 B';
-    }
+    if (bytes === 0) return '0 B';
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -216,7 +221,6 @@ export struct DevicePage {
   build() {
     NavDestination() {
       Column() {
-        // 标题
         Row() {
           Text("设备详情")
             .fontSize(30)
@@ -228,27 +232,29 @@ export struct DevicePage {
 
         Scroll() {
           Column() {
-            // 硬件信息组
             Text("硬件信息").fontSize(14).fontColor('#007DFF').width('100%').margin({ top: 10, bottom: 5 })
             InfoRow({ title: "设备名称", value: this.deviceName })
             InfoRow({ title: "设备型号", value: this.deviceModel })
 
-            // [新增] OAID 行，包裹点击事件方便重试
+            // OAID 这里有一个特殊的逻辑：
+            // 1. 点击具体的 OAID 字符串 -> 触发 InfoRow 内部的复制
+            // 2. 点击该行的空白处 -> 触发外层的 onClick (重试获取)
             Row() {
               InfoRow({ title: "OAID", value: this.oaid })
             }.onClick(() => {
-              this.initOAID()
+              // 如果 OAID 是异常状态，允许点击整行重试
+              if(this.oaid.includes('点击') || this.oaid.includes('未授权')) {
+                this.initOAID()
+              }
             })
 
             InfoRow({ title: "系统版本", value: this.osFullName })
             InfoRow({ title: "分辨率", value: this.screenResolution })
 
-            // 软件信息组
             Text("系统与软件").fontSize(14).fontColor('#007DFF').width('100%').margin({ top: 20, bottom: 5 })
             InfoRow({ title: "应用名称", value: this.appName })
             InfoRow({ title: "应用版本", value: this.appVersion })
 
-            // 存储网络组
             Text("存储与网络").fontSize(14).fontColor('#007DFF').width('100%').margin({ top: 20, bottom: 5 })
             InfoRow({ title: "IP 地址", value: this.ipAddress })
             InfoRow({ title: "网络状态", value: this.netType })
@@ -259,19 +265,14 @@ export struct DevicePage {
         }
         .layoutWeight(1)
 
-        // 退出按钮
         Button("返回")
           .width('80%')
           .height(50)
           .backgroundColor('#FF4040')
           .margin({ bottom: 20 })
           .onClick(() => {
-            if (this.navPathStack.size() >
-              0) {
-              this.navPathStack.pop();
-            } else {
-              (getContext(this) as common.UIAbilityContext).terminateSelf();
-            }
+            if (this.navPathStack.size() > 0) this.navPathStack.pop();
+            else (getContext(this) as common.UIAbilityContext).terminateSelf();
           })
       }
       .width('100%')

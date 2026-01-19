@@ -127,6 +127,16 @@
           "when": "always"
         }
       },
+      {
+        "name": "ohos.permission.APP_TRACKING_CONSENT",
+        "reason": "$string:app_tracking_reason",
+        "usedScene": {
+          "abilities": [
+            "RuntimeEntryAbility"
+          ],
+          "when": "inuse"
+        }
+      }
     ]
   }
 }
