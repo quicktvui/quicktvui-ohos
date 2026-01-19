@@ -6,5 +6,6 @@ export const DefaultConfig: Config = {
   appEntry: 'Application',
   appDebug: false,
   appEnableOAID: false,
-  appBundleUri: 'https://api.extscreen.com/extscreenapi/api/extend_screen/v2/hili/client/tvinfo', //assets:///vue',
+          // http://test-api.extscreen.com/extscreenapi/api/extend_screen/v2/hili/client/tvinfo/harmony
+  appBundleUri: 'https://api.extscreen.com/extscreenapi/api/extend_screen/v2/hili/client/tvinfo/harmony', //assets:///vue',
 }
