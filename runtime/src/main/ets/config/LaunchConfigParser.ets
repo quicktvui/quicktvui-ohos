@@ -30,6 +30,10 @@ export class LaunchConfigParser {
     if (typeof params.debug === 'boolean') {
       cfg.appDebug = params.debug
     }
+    //appEnableOAID
+    if (typeof params.appEnableOAID === 'boolean') {
+      cfg.appEnableOAID = params.appEnableOAID
+    }
     //uri
     if (typeof params.uri === 'string') {
       cfg.appBundleUri = params.uri

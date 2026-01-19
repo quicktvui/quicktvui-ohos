@@ -31,6 +31,7 @@
         //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
           "APP_DEBUG": true,
+          "APP_ENABLE_OAID": false
         },
         "obfuscation": {
           "ruleOptions": {
@@ -48,6 +49,7 @@
         //会覆盖所有的应用的单独配置项
         "buildProfileFields": {
           "APP_DEBUG": false,
+          "APP_ENABLE_OAID": false
         },
         "obfuscation": {
           "ruleOptions": {

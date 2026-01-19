@@ -9,6 +9,7 @@ export const BuildConfig: Config = {
   appVersion: BuildProfile.APP_VERSION,
   appEntry: BuildProfile.APP_ENTRY,
   appDebug: BuildProfile.APP_DEBUG,
+  appEnableOAID: BuildProfile.APP_ENABLE_OAID,
   appBundleUri: BuildProfile.APP_BUNDLE_URI,
   appParams: BuildProfile.APP_PARAMS ? JSON.parse(BuildProfile.APP_PARAMS) : undefined,
 }

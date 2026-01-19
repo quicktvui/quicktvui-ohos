@@ -22,6 +22,7 @@ struct Main {
       runtimeConfig?.appDebug,
       runtimeConfig?.appBundleUri,
       runtimeConfig?.appParams,
+      runtimeConfig?.appEnableOAID,
     )
     App.instance.nav?.pushPathByName(runtimeConfig?.appEntry, params, false);
   }

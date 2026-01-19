@@ -5,5 +5,6 @@ export const DefaultConfig: Config = {
   appName: '',
   appEntry: 'Application',
   appDebug: false,
+  appEnableOAID: false,
   appBundleUri: 'https://api.extscreen.com/extscreenapi/api/extend_screen/v2/hili/client/tvinfo', //assets:///vue',
 }

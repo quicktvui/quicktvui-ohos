@@ -45,6 +45,7 @@ export class ConfigResolver {
 
       appParams: launch?.appParams ?? BuildConfig.appParams ?? DefaultConfig.appParams,
       appDebug: launch?.appDebug ?? BuildConfig.appDebug ?? DefaultConfig.appDebug,
+      appEnableOAID: launch?.appEnableOAID ?? BuildConfig.appEnableOAID ?? DefaultConfig.appEnableOAID,
     }
   }
 }

@@ -14,6 +14,8 @@ export class EsData {
   /* 自定义加载地址 */
   appBundleUri?: string
 
+  appEnableOAID?: boolean
+
   public static buildESData(
     appId?: string,
     appVersion?: string,
@@ -22,6 +24,7 @@ export class EsData {
     appDebug?: boolean,
     appBundleUri?: string,
     appParams?: object,
+    appEnableOAID?: boolean,
   ): EsData {
     const data: EsData = {
       appId,
@@ -31,6 +34,7 @@ export class EsData {
       appDebug,
       appBundleUri,
       appParams,
+      appEnableOAID,
     }
     return data;
   }
