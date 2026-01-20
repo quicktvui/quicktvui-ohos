@@ -5,11 +5,14 @@ import {
   HippyAny,
   HippyRenderCallback,
   HIPPY_COMPONENT_KEY_PREFIX,
-  buildHippyRenderView
+  buildHippyRenderView,
+  LogUtils
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { PageManager } from './PageManager';
 import { QTPageView } from './QTPageView';
+
+const TAG = "QTPageRouter";
 
 @Observed
 export class QTPageRouterView extends QTBaseComponentView {
@@ -33,6 +36,7 @@ export class QTPageRouterView extends QTBaseComponentView {
 @Component
 export struct QTPageRouter {
   @ObjectLink renderView: QTPageRouterView
+  // 依然需要 ObjectLink 保证响应式，但不需要 Watch 做延迟了
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
   public call(method: string, params: Array<HippyAny>,
@@ -42,7 +46,10 @@ export struct QTPageRouter {
 
   aboutToAppear(): void {
     this.renderView.event = this
-    PageManager.setUIContext(this.getUIContext())
+    const uiContext = this.getUIContext();
+    if (uiContext) {
+      PageManager.setUIContext(uiContext);
+    }
   }
 
   aboutToDisappear() {
@@ -50,52 +57,68 @@ export struct QTPageRouter {
   }
 
   /**
-   * 核心逻辑：获取当前应该显示的 Children 列表
-   * 从后往前找，找到第一个非 Dialog 的页面，将其以及它上面的所有页面返回
+   * 计算可见区域的起始索引
+   * 目的：只渲染栈顶可见的页面，底下的页面即使在 children 数组里，也不构建 UI
    */
-  private getVisibleChildren(): Array<HippyRenderBaseView> {
+  private getVisibleStartIndex(): number {
     if (!this.children || this.children.length === 0) {
-      return [];
+      return 0;
     }
 
-    let visibleStartIndex = 0;
     const count = this.children.length;
+    // [性能保险] 最大允许叠加渲染层数。
+    // 如果没有动画，其实只需要渲染栈顶 1 层即可。
+    // 如果有透明 Dialog，可能需要渲染 2-3 层。
+    const MAX_STACK_DEPTH = 3;
+    let currentDepth = 0;
+    let visibleStartIndex = 0;
 
-    // 倒序寻找基座（第一个非 Dialog 的页面）
+    // 倒序遍历，找到最底下的那个“基座”
     for (let i = count - 1; i >= 0; i--) {
       const item = this.children[i];
-      // 安全获取 isDialogMode 属性
       let isDialog = false;
+
       if (item instanceof QTPageView) {
         isDialog = item.isDialogMode;
-      } else {
-        // 处理非 TS 类型安全的情况，或者 item 不是 QTPageView 的情况
-        isDialog = (item as QTPageView).isDialogMode === true;
       }
 
-      if (!isDialog) {
+      currentDepth++;
+      // 如果是非透明页面（基座），或者深度超标，就以此为起点
+      if (!isDialog || currentDepth >= MAX_STACK_DEPTH) {
         visibleStartIndex = i;
-        break; // 找到了底座，停止
+        break;
       }
     }
-
-    // 利用 slice 返回一个新的子数组（浅拷贝，item引用不变，不会影响 key 的生成）
-    // 注意：如果 HippyObservedArray 不支持 slice，可能需要用 Array.from(this.children).slice(...)
-    return this.children.slice(visibleStartIndex);
+    return visibleStartIndex;
   }
 
   build(): void {
     Stack() {
-      ForEach(this.getVisibleChildren(), (item: HippyRenderBaseView) => {
-        buildHippyRenderView(item, null)
-      }, (item: HippyRenderBaseView) => item ? item.tag + '' : '')
+      // [核心优化点]
+      // 1. 直接遍历 this.children，绝对不要用 slice() 生成新数组
+      //    这保证了 ArkUI 认为数据源引用没变，只处理 Push 进来的那一个新 Item
+      // 2. 只有新 Push 的页面会触发 buildHippyRenderView，
+      //    底下的旧页面因为 Key 没变且数据没变，ArkUI 会直接复用，零开销。
+      ForEach(this.children, (item: HippyRenderBaseView, index: number) => {
+        // [逻辑过滤]
+        // 在循环内部判断是否渲染。不满足条件的页面，ArkUI 不会生成对应的 Component 实例
+        if (item && index >= this.getVisibleStartIndex()) {
+          buildHippyRenderView(item, null)
+        }
+      }, (item: HippyRenderBaseView) => {
+        // [Key 生成]
+        // 必须使用唯一 ID。
+        // 只要 Key 不变，ArkUI 就不会销毁重建这个节点。
+        return item ? (HIPPY_COMPONENT_KEY_PREFIX + item.tag) : ''
+      })
+
       ContentSlot(this.renderView.childSlot)
     }
     .applyRenderViewBaseAttr(this.renderView)
   }
 }
 
-// base props for all components
+// 样式设置保持不变
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
@@ -104,10 +127,9 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
-  .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
+  .visibility(($$ as HippyRenderBaseView).cssVisibility)
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
@@ -121,4 +143,3 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
 }
-
