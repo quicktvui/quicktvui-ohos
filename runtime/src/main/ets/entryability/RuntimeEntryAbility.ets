@@ -14,8 +14,6 @@ import { AssetsAppLoader } from '../eskit/ui/hippy/AssetsAppLoader';
 
 export default class RuntimeEntryAbility extends UIAbility {
   public readonly TAG: string = 'RuntimeEntryAbility'
-  // 轮询定时器 ID
-  private pollTimer: number = -1;
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     PerfLogger.start('AppLaunch');
@@ -49,6 +47,7 @@ export default class RuntimeEntryAbility extends UIAbility {
   }
 
   private parseAndMergeUriParams(want: Want) {
+    // ... 保持原有逻辑不变 ...
     const uriString = want.uri;
     if (!uriString) return;
     try {
@@ -76,106 +75,49 @@ export default class RuntimeEntryAbility extends UIAbility {
     PerfLogger.mark('AppLaunch', 'onWindowStageCreate_Start');
     App.instance.windowStage = windowStage;
 
-    // =================================================================
-    // 1. 【暴力轮询】每 15ms 尝试一次，抢在 loadContent 完成前初始化
-    // =================================================================
-    this.startPollingPreWarm(windowStage);
-
     let entryPage = 'pages/Main';
     windowStage.loadContent(entryPage, (err) => {
-      // 停止轮询，避免浪费资源
-      this.stopPolling();
-
       if (err.code) {
         LogUtils.i(this.TAG, `Failed to load content: ${JSON.stringify(err)}`)
         return;
       }
 
-      // =================================================================
-      // 2. 【兜底策略】如果轮询一直没成功，这里最后补救
-      // =================================================================
-      this.tryExecutePreWarmSync(windowStage, "LoadContent_Success");
+      // [PERF] 这是系统允许的最早时刻。
+      // 在 loadContent 回调执行的瞬间，UIContext 刚刚准备好，立刻启动引擎。
+      this.tryExecutePreWarm(windowStage, "LoadContent_Success");
 
       PerfLogger.mark('AppLaunch', 'loadContent_Success');
     });
   }
 
   /**
-   * 启动轮询预热
+   * 同步预热
    */
-  private startPollingPreWarm(windowStage: window.WindowStage) {
-    let attempts = 0;
-    const maxAttempts = 20; // 最多试 20 次 (约 300ms)
-
-    this.pollTimer = setInterval(() => {
-      attempts++;
-      // 如果已经预热成功，直接停止
-      if (AppManager.instance.engineInitPromise || AppManager.instance.preloadedEngine) {
-        this.stopPolling();
-        return;
-      }
-
-      if (attempts > maxAttempts) {
-        this.stopPolling();
-        return;
-      }
-
-      // 尝试同步获取
-      const success = this.tryExecutePreWarmSync(windowStage, `Polling_Attempt_${attempts}`);
-      if (success) {
-        this.stopPolling(); // 成功了就停止
-      }
-    }, 15); // 每 15ms 试一次
-  }
-
-  private stopPolling() {
-    if (this.pollTimer !== -1) {
-      clearInterval(this.pollTimer);
-      this.pollTimer = -1;
-    }
-  }
-
-  /**
-   * 尝试同步预热，返回是否成功
-   */
-  private tryExecutePreWarmSync(windowStage: window.WindowStage, source: string): boolean {
-    if (AppManager.instance.engineInitPromise || AppManager.instance.preloadedEngine) return true;
+  private tryExecutePreWarm(windowStage: window.WindowStage, source: string) {
+    if (AppManager.instance.engineInitPromise || AppManager.instance.preloadedEngine) return;
 
     try {
-      // 使用同步方法，因为它最快
       const win = windowStage.getMainWindowSync();
-      if (!win) return false;
-
-      // 关键点：如果 Window 还没准备好，这里会抛出 abnormal 异常
-      // 我们捕获这个异常，然后等待下一次轮询
+      if (!win) return;
       const uiContext = win.getUIContext();
 
-      this.doPreWarm(uiContext, source);
-      return true; // 没报错就是成功了
+      const runtimeConfig = App.instance.runtimeConfig;
+      if (runtimeConfig) {
+        const esData = EsData.buildESData(
+          runtimeConfig.appId, runtimeConfig.appVersion, runtimeConfig.appName,
+          runtimeConfig.appIcon, runtimeConfig.appDebug, runtimeConfig.appBundleUri,
+          runtimeConfig.appParams, runtimeConfig.appEnableOAID, runtimeConfig.oaid
+        );
+        const appLoader = AppLoaderFactory.create(esData);
+
+        if (appLoader instanceof AssetsAppLoader) {
+          const corePath = appLoader.getVendorJsFile();
+          LogUtils.w(this.TAG, `[PERF] Trigger Pre-warm from: ${source}`);
+          AppManager.instance.preWarmEngine(this.context, uiContext, corePath, true);
+        }
+      }
     } catch (e) {
-      // 只有在非轮询模式下才打印 error，防止轮询刷屏
-      if (!source.startsWith("Polling")) {
-        LogUtils.w(this.TAG, `[PERF] Pre-warm failed (${source}): ${e.message}`);
-      }
-      return false;
-    }
-  }
-
-  private doPreWarm(uiContext: UIContext, source: string) {
-    const runtimeConfig = App.instance.runtimeConfig;
-    if (runtimeConfig) {
-      const esData = EsData.buildESData(
-        runtimeConfig.appId, runtimeConfig.appVersion, runtimeConfig.appName,
-        runtimeConfig.appIcon, runtimeConfig.appDebug, runtimeConfig.appBundleUri,
-        runtimeConfig.appParams, runtimeConfig.appEnableOAID, runtimeConfig.oaid
-      );
-      const appLoader = AppLoaderFactory.create(esData);
-
-      if (appLoader instanceof AssetsAppLoader) {
-        const corePath = appLoader.getVendorJsFile();
-        LogUtils.w(this.TAG, `[PERF] Trigger Pre-warm from: ${source}`);
-        AppManager.instance.preWarmEngine(this.context, uiContext, corePath, true);
-      }
+      LogUtils.e(this.TAG, `[PERF] Pre-warm failed (${source}): ${e.message}`);
     }
   }
 
