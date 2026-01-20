@@ -10,6 +10,10 @@ import { LaunchConfigParser } from '../config/LaunchConfigParser';
 import { ConfigResolver } from '../config/ConfigResolver';
 import Url from '@ohos.url'
 import { PerfLogger } from '../utils/PerfLogger';
+// 引入 AppManager 和 Loader 相关，用于预热
+import { AppManager } from '../eskit/AppManager';
+import { AppLoaderFactory } from '../eskit/ui/hippy/AppLoader';
+import { AssetsAppLoader } from '../eskit/ui/hippy/AssetsAppLoader';
 
 export default class RuntimeEntryAbility extends UIAbility {
   public readonly TAG: string = 'RuntimeEntryAbility'
@@ -156,6 +160,36 @@ export default class RuntimeEntryAbility extends UIAbility {
 
     // 这里建议也把 windowStage 存入 App 单例，方便后续动态路由使用
     App.instance.windowStage = windowStage;
+
+    // --- [PERF] 核心优化：在此处开始预热 Hippy 引擎 ---
+    try {
+      const runtimeConfig = App.instance.runtimeConfig;
+      if (runtimeConfig) {
+        const esData = EsData.buildESData(
+          runtimeConfig.appId,
+          runtimeConfig.appVersion,
+          runtimeConfig.appName,
+          runtimeConfig.appIcon,
+          runtimeConfig.appDebug,
+          runtimeConfig.appBundleUri,
+          runtimeConfig.appParams,
+          runtimeConfig.appEnableOAID,
+          runtimeConfig.oaid
+        );
+        // 使用 LoaderFactory 快速获取 vendor 包路径
+        const appLoader = AppLoaderFactory.create(esData);
+        // 仅当加载器是 Assets (本地包) 时才预热，因为远程包需要下载
+        if (appLoader instanceof AssetsAppLoader) {
+          const corePath = appLoader.getVendorJsFile();
+          const uiContext = windowStage.getMainWindowSync().getUIContext();
+          // 调用 AppManager 进行预热
+          AppManager.instance.preWarmEngine(this.context, uiContext, corePath, true);
+        }
+      }
+    } catch (e) {
+      LogUtils.e(this.TAG, '[PERF] Pre-warm failed: ' + e);
+    }
+    // --------------------------------------------------
 
     // 根据解析出来的 runtimeConfig 决定是否直接跳 Debug 页
     // 假设 runtimeConfig.appEntry 是你在 LaunchConfigParser 里处理好的入口页面名称

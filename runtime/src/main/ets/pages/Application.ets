@@ -71,6 +71,9 @@ struct Application {
         // [PERF] 资源 (JS Bundle/Assets) 下载/读取完毕
         PerfLogger.mark('HippyLaunch', 'AssetsReady');
 
+        // [PERF] 激活焦点逻辑 (原逻辑在 generateEngineInitParams，现在移到这里确保生效)
+        this.getUIContext().getFocusController().activate(true, false)
+
         this.appContext.engine = await this.createEngine()
         this.loadModule()
       }
@@ -84,6 +87,19 @@ struct Application {
   }
 
   private createEngine(): Promise<HippyEngine> {
+    // 1. [PERF] 检查是否有预热好的引擎
+    if (AppManager.instance.preloadedEngine) {
+      PerfLogger.mark('HippyLaunch', 'Engine_Hit_Cache'); // 命中缓存
+      return Promise.resolve(AppManager.instance.preloadedEngine);
+    }
+
+    // 2. [PERF] 检查是否正在预热中
+    if (AppManager.instance.engineInitPromise) {
+      PerfLogger.mark('HippyLaunch', 'Engine_Wait_Prewarm'); // 等待预热完成
+      return AppManager.instance.engineInitPromise;
+    }
+
+    // 3. 兜底：现场创建 (与原逻辑保持一致)
     return new Promise<HippyEngine>((resolve, reject) => {
       // [PERF] 开始初始化引擎
       PerfLogger.mark('HippyLaunch', 'EngineInit_Start');
@@ -107,9 +123,9 @@ struct Application {
   }
 
   private generateEngineInitParams(): EngineInitParams {
-    //
-    this.getUIContext().getFocusController().activate(true, false)
-    //
+    // 注意：这里的 activate 已经移到了 startLoadApp，避免重复调用或时序问题
+    // this.getUIContext().getFocusController().activate(true, false)
+
     const params = new EngineInitParams(libHippy, App.instance.context!, this.getUIContext())
     params.debugMode = false
     params.enableLog = false
