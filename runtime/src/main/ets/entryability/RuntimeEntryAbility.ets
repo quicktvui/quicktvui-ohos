@@ -9,11 +9,14 @@ import { App } from '../App';
 import { LaunchConfigParser } from '../config/LaunchConfigParser';
 import { ConfigResolver } from '../config/ConfigResolver';
 import Url from '@ohos.url'
+import { PerfLogger } from '../utils/PerfLogger';
 
 export default class RuntimeEntryAbility extends UIAbility {
   public readonly TAG: string = 'RuntimeEntryAbility'
 
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
+    PerfLogger.start('AppLaunch');
+
     LogUtils.i(this.TAG, `Ability onCreate`)
     // 打印原始的 uri，方便排查转义问题
     LogUtils.e(this.TAG, `onCreate: want: uri: ${want?.uri}  launchParam: ${JSON.stringify(launchParam)}`)
@@ -22,6 +25,8 @@ export default class RuntimeEntryAbility extends UIAbility {
     App.instance.nav = new NavPathStack()
 
     this.launch(want, launchParam, false)
+
+    PerfLogger.mark('AppLaunch', 'Ability.onCreate_Finished');
   }
 
   onNewWant(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -145,6 +150,8 @@ export default class RuntimeEntryAbility extends UIAbility {
   }
 
   onWindowStageCreate(windowStage: window.WindowStage): void {
+    PerfLogger.mark('AppLaunch', 'onWindowStageCreate_Start');
+
     LogUtils.i(this.TAG, `Ability onWindowStageCreate`)
 
     // 这里建议也把 windowStage 存入 App 单例，方便后续动态路由使用
@@ -163,6 +170,7 @@ export default class RuntimeEntryAbility extends UIAbility {
         return;
       }
       LogUtils.i(this.TAG, `Succeeded in loading the content.`)
+      PerfLogger.mark('AppLaunch', 'loadContent_Success');
     });
   }
 
@@ -171,6 +179,7 @@ export default class RuntimeEntryAbility extends UIAbility {
   }
 
   onForeground(): void {
+    PerfLogger.mark('AppLaunch', 'Ability.onForeground');
     LogUtils.i(this.TAG, `Ability onForeground`)
   }
 

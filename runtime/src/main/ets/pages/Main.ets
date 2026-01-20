@@ -3,6 +3,7 @@ import { App } from '../App';
 import { EsData } from '../eskit/EsData';
 import { abilityAccessCtrl, common } from '@kit.AbilityKit'; // [新增] 权限控制
 import { identifier } from '@kit.AdsKit'; // [新增] OAID
+import { PerfLogger } from '../utils/PerfLogger';
 
 /**
  * 入口
@@ -13,6 +14,8 @@ struct Main {
   private readonly TAG: string = 'MainPage'
 
   async aboutToAppear() {
+    PerfLogger.mark('AppLaunch', 'MainPage.aboutToAppear_start');
+
     LogUtils.d(this.TAG, 'Lifecycle: aboutToAppear');
     // 获取配置
     const runtimeConfig = App.instance.runtimeConfig;
@@ -23,6 +26,7 @@ struct Main {
       // 没开启，直接跳转
       this.launchPage();
     }
+    PerfLogger.mark('AppLaunch', 'MainPage.aboutToAppear_end');
   }
 
   /**
