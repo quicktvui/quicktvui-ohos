@@ -19,7 +19,7 @@
  */
 import deviceInfo  from '@ohos.deviceInfo';
 import {HippyAny,buildHippyRenderView,NativeRenderContext,HippyRenderCallback,HippyObservedArray,HIPPY_COMPONENT_KEY_PREFIX} from 'hippy'
-import { TAG_FOCUS, TAG_QUICKTVUI, TAG_STATE_DRAW, TAG_TABS } from '../../Constant';
+import { TAG_FOCUS, TAG_HOVER, TAG_QUICKTVUI, TAG_STATE_DRAW, TAG_TABS } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTView } from '../../QTTypes';
 import { ExtendUtil } from '../../utils/ExtendUtil';
@@ -78,12 +78,10 @@ const visibleModifier: MyStackModifierVisible = new MyStackModifierVisible("invi
 @Observed
 export class QTDivView extends HRTvDivView {
   handleOnHover(isHover: boolean, event: HoverEvent) {
-    QTLog.d(TAG_FOCUS,`handleOnHover :${isHover} this:${ExtendUtil.debugView(this)} `)
-    // if(isHover && this.cssFocusable){
-    //   this.requestFocus(100)
-    // }
+    QTLog.d(TAG_HOVER,`handleOnHover :${isHover} this:${ExtendUtil.debugView(this)} `)
+    //请求焦点会崩溃
+    // focusControl.requestFocus(this.uid)
   }
-
  handleOnHoverMove(data : HoverEvent){
    QTLog.d(TAG_FOCUS,`handleOnHoverMove this:${ExtendUtil.debugView(this)}`)
 }
@@ -483,12 +481,12 @@ export struct QTDiv {
         .onClick((event=>{
           ViewUtils.handleClickEvent(event,this.renderView)
         }))
-        // .hoverEffect(HoverEffect.Scale)
-        // .onHover(this.renderView.handleOnHover)
+        .hoverEffect(this.renderView.cssFocusable ? HoverEffect.Scale : HoverEffect.None)
+        .onHover(this.renderView.handleOnHover)
+        .onHoverMove(this.renderView.handleOnHoverMove)
         .focusBox({
           strokeColor:ColorMetrics.rgba(0, 0, 0,0),
         })
-        // .onHoverMove(this.renderView.handleOnHoverMove)
     }else {
         Stack() {
           this.buildFocusBorder()
@@ -518,8 +516,9 @@ export struct QTDiv {
         // .hoverEffect(HoverEffect.Scale)
         .onFocus(() => this.renderView.onFocus())
         .onBlur(() => this.renderView.onBlur())
-        // .onHover(this.renderView.handleOnHover)
-        // .onHoverMove(this.renderView.handleOnHoverMove)
+        .hoverEffect(this.renderView.cssFocusable ? HoverEffect.Scale : HoverEffect.None)
+        .onHover(this.renderView.handleOnHover)
+        .onHoverMove(this.renderView.handleOnHoverMove)
         .focusBox({
           strokeColor:ColorMetrics.rgba(0, 0, 0,0),
         })

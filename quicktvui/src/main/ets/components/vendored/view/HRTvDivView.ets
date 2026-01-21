@@ -206,23 +206,6 @@ export class HRTvDivView extends QTBaseComponentView {
           // this.setDuplicate();
         }
         return true
-      case HRNodeProps.VISIBILITY:
-        let visibility = propValue as string;
-        switch (visibility) {
-          case 'visible': {
-            this.visibility = Visibility.Visible;
-            break;
-          }
-          case 'invisible': {
-            this.visibility = Visibility.Hidden;
-            break;
-          }
-          case 'gone': {
-            this.visibility = Visibility.None;
-            break;
-          }
-        }
-        return true;
       case 'nextFocusId':
         this.setNextFocus(propValue);
         return true;

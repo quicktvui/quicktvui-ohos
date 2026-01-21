@@ -1,6 +1,6 @@
 import { QTFastListView } from "./QTFastListView"
 import {HippyObservedArray,HRDiv,HIPPY_COMPONENT_KEY_PREFIX,HippyRenderBaseView,buildHippyRenderView,HippyMap,HippyEndBatchCallback} from 'hippy'
-import { TAG_FASTLIST, TAG_LAYOUT, TAG_REUSE } from "../../Constant";
+import { TAG_FASTLIST, TAG_HOVER, TAG_LAYOUT, TAG_REUSE, TAG_SCROLL } from "../../Constant";
 import { FastListDataSource } from "./FastListDataSource";
 import { NodeUtils } from "../../utils/NodeUtils";
 import { QTView } from "../../QTTypes";
@@ -80,6 +80,14 @@ export struct  QTFastList {
     return 'view-'+index*/
   }
 
+  calculateScrollOffsetToCenter(parentSize : number,childToCenter: QTItemRootView) : number{
+    let itemLayoutPosition : number  = childToCenter.itemLayoutPosition as number ?? 0;
+    let parentCenter = parentSize * 0.5
+    let childSize = this.renderView.isHorizontal ? childToCenter.cssWidth : childToCenter.cssHeight;
+    let childCenter = itemLayoutPosition + childSize * 0.5;
+    return childCenter - parentCenter
+  }
+
 
   build(): void {
     if(this.renderView.spanCount){
@@ -147,7 +155,19 @@ export struct  QTFastList {
                 .reuseId(item.getReuseId())
             }
             .onFocus(()=>{
-              this.renderView.scroller.scrollToIndex(index,true,ScrollAlign.CENTER)
+              this.renderView.scroller.scrollToIndex(index,false,ScrollAlign.CENTER)
+            })
+            // .onAreaChange((oldValue: Area, newValue: Area) => {
+            //   QTLog.i(TAG_SCROLL,`onList Item AreaChange oldValuex:${oldValue.position.x},y:${oldValue.position.y}
+            //   ,newValue:x:${newValue.position.x},y:${newValue.position.y}`)
+            //   if(this.renderView.isHorizontal){
+            //     item.itemLayoutPosition = newValue.position.x;
+            //   }else{
+            //     item.itemLayoutPosition = newValue.position.y;
+            //   }
+            // })
+            .onHover((isHover: boolean,event: HoverEvent)=>{
+              QTLog.d(TAG_HOVER,`List onHover isHover ${isHover}`)
             })
             .margin(item.decoration)
           }, this.keyGenerate)
@@ -159,9 +179,6 @@ export struct  QTFastList {
         .onAttach(()=>{
           console.error(TAG_FASTLIST,`List on Aattch!!`)
           // this.renderView.scroller.scrollToIndex(5)
-        })
-        .onDidScroll((scrollOffset: number, scrollState: ScrollState) => {
-          this.renderView.onDidScroll(scrollOffset,scrollState)
         })
         .onScrollVisibleContentChange(()=>{
           this.renderView.dataSource?.makeBindEventDirty()

@@ -328,6 +328,26 @@ export class QTBaseComponentView extends HippyCustomComponentView  implements  Q
         this.blockFocusDirections = HRValueUtils.getArray(propValue as QTArray) ?? []
         QTLog.w(TAG_FOCUS,`blockFoocusDirecitons this:${ExtendUtil.debugView(this)},value:${CommonUtils.hippyAny2String(propValue)}`)
         return true;
+      case 'visible':
+        this.visibility = (propValue as boolean) ? Visibility.Visible : Visibility.Hidden;
+        return true;
+      case 'visibility':
+        let visibility = propValue as string;
+        switch (visibility) {
+          case 'visible': {
+            this.visibility = Visibility.Visible;
+            break;
+          }
+          case 'invisible': {
+            this.visibility = Visibility.Hidden;
+            break;
+          }
+          case 'gone': {
+            this.visibility = Visibility.None;
+            break;
+          }
+        }
+        return true;
       // case 'blockRootFocus':
       //   let enableBlock = HRValueUtils.getBoolean(propValue,false)
       //   this.viewActor.blockRootFocus(enableBlock,this)

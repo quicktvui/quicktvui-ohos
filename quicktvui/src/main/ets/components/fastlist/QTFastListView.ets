@@ -1,6 +1,6 @@
 
 import {HippyObservedArray,NativeRenderContext,HippyAny,HippyRenderCallback,HippyArray,HippyMap,HippyEndBatchCallback} from 'hippy'
-import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_FOCUS, TAG_REUSE } from '../../Constant';
+import { TAG_FASTLIST, TAG_FAST_EVENT, TAG_FOCUS, TAG_REUSE, TAG_SCROLL } from '../../Constant';
 import { HRValueUtils } from '../../HRValueUtils';
 import { QTAny, QTArray, QTMap, QTView } from '../../QTTypes';
 import { CommonUtils } from '../../utils/CommonUtils';
@@ -93,6 +93,7 @@ export class QTFastListView extends QTRenderBaseView{
     }
     return super.getPageUid();
   }
+
 
   onScrollIndex(start: number, end: number, center: number) {
     //QTLog.i(TAG_FAST_EVENT,`onScrollIndex start:${start},end:${end},center:${center}`)
@@ -603,6 +604,41 @@ export class QTFastListView extends QTRenderBaseView{
   deleteItemRange(start : number,cout:number){
     this.virtualChildren.splice(start, cout)
     this.notifyReload()
+  }
+
+  calculateScrollOffsetToCenter(parentSize : number,childToCenter: QTItemRootView) : number{
+    let itemLayoutPosition : number  = childToCenter.itemLayoutPosition as number ?? 0;
+    let parentCenter = parentSize * 0.5
+    let childSize = this.isHorizontal ? childToCenter.cssWidth : childToCenter.cssHeight;
+    let childCenter = itemLayoutPosition + childSize * 0.5;
+    return childCenter - parentCenter
+  }
+
+
+  notifyChildRequestFocus(child: QTView, focusedView: TVView): void {
+    super.notifyChildRequestFocus(child,focusedView)
+    //let children : Array<QTItemRootView> = this.virtualChildren
+    // setTimeout(()=>{
+    //   if(child instanceof QTItemRootView){
+    //     this.requestChildOnScreen(child)
+    //   }
+    // },1000)
+  }
+
+
+
+
+  requestChildOnScreen(item : QTItemRootView){
+    let parentSize = this.isHorizontal ? this.cssWidth : this.cssHeight;
+    let scrollOffset = this.calculateScrollOffsetToCenter(parentSize,item as QTItemRootView)
+    QTLog.w(TAG_SCROLL,`requestChildOnScreen parentSize:${parentSize},scrollOffset:${scrollOffset},itemLayoutPosition:${item.itemLayoutPosition} item position:${item.dataPosition}`)
+    if(this.isHorizontal){
+      if(scrollOffset != 0){
+        this.scroller.scrollToIndex(item.dataPosition,false,ScrollAlign.CENTER)
+      }else{
+        this.scroller.scrollToIndex(item.dataPosition,false,ScrollAlign.CENTER)
+      }
+    }
   }
 
 

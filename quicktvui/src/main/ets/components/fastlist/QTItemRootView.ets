@@ -25,6 +25,7 @@ import { QTFastItemView } from './QTFastItemView';
 import { QTFastListView } from './QTFastListView';
 import { PathUpdate, PendingPathUpdate, TemplateViewManager } from './TemplateViewManager';
 import { VirtualViewRegistry } from './VirtualViewRegistry';
+import { Position } from '@kit.ArkUI';
 
 const PREFIX_KEY = "ITEMROOT"
 
@@ -70,6 +71,8 @@ export class QTItemRootView extends QTRenderBaseView{
   pendingUpdates:Array<PendingPathUpdate> = []
 
   public enablePlaceholder : boolean  = false;
+
+  itemLayoutPosition : Length | undefined = 0;
 
   constructor(ctx: NativeRenderContext) {
     super(ctx)

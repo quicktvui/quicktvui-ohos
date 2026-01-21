@@ -9,6 +9,8 @@ const TAG_TABS = 'DebugTabs'
 const TAG_FOCUS = 'DebugFocus'
 const TAG_STATE_DRAW = 'DebugStateDraw'
 const TAG_PAGE = 'DebugPage'
+const TAG_HOVER = 'DebugHover'
+const TAG_SCROLL = 'DebugScroll'
 
 export {
   QUICKTVUI_TAG as TAG_QUICKTVUI,
@@ -21,5 +23,7 @@ export {
   TAG_TABS,
   TAG_FOCUS,
   TAG_PAGE,
-  TAG_STATE_DRAW
+  TAG_STATE_DRAW,
+  TAG_HOVER,
+  TAG_SCROLL
 }
