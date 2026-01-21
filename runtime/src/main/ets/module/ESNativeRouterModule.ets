@@ -8,6 +8,7 @@ import { bundleManager, common, OpenLinkOptions } from '@kit.AbilityKit';
 import { App } from '../App';
 import { EsData } from '../eskit/EsData';
 import Url from '@ohos.url'
+import { Want } from '@kit.AbilityKit'; // 记得导入 Want
 
 /**
  *
@@ -171,9 +172,12 @@ export class ESNativeRouterModule extends BaseModule {
           const openLinkOptions: OpenLinkOptions = {
             appLinkingOnly: appLinkingOnly
           };
+
+          LogUtils.e(this.TAG, `OpenLink: link: ${link}`)
+
           const context = this.ctx.getAbilityContext() as common.UIAbilityContext;
           context.openLink(link, openLinkOptions).then(() => {
-            LogUtils.i(this.TAG, `OpenLink: link: ${link}`)
+            LogUtils.e(this.TAG, `OpenLink: link: ${link}`)
             promise?.resolve(true)
           }).catch((err: BusinessError) => {
             LogUtils.e(this.TAG,
@@ -184,6 +188,76 @@ export class ESNativeRouterModule extends BaseModule {
           LogUtils.e(this.TAG,
             `Failed to OpenLink. code=${error.code}, message=${error.message}`)
           promise?.reject(error)
+        }
+        break;
+      }
+      case 'startAbility': {
+        try {
+          // 1. 定义变量
+          let uri = '';
+          let bundleName = '';
+          let abilityName = ''; // 如果将来有 -n 参数指定 abilityName，可以预留
+          let flags = 0x10000000; // 默认 FLAG_ABILITY_NEW_MISSION
+
+          LogUtils.i(this.TAG, `startAbility raw params: ${JSON.stringify(params)}`);
+
+          // 2. 解析 CLI 风格参数: [['-d', 'xxx'], ['-p', 'xxx']]
+          if (Array.isArray(params)) {
+            for (const item of params) {
+              // 确保每一项是数组且至少有两个元素 [key, value]
+              if (Array.isArray(item) && item.length >= 2) {
+                const key = item[0] as string;
+                const value = item[1] as string;
+
+                switch (key) {
+                  case '-d': // Data / URI
+                    uri = value;
+                    break;
+                  case '-p': // Package / BundleName
+                    bundleName = value;
+                    break;
+                  case '-f': // Flags (可选支持)
+                    flags = parseInt(value) || flags;
+                    break;
+                  // 如果需要支持 abilityName，可以加 case '-n': abilityName = value;
+                }
+              }
+            }
+          }
+
+          // 3. 校验必要参数
+          if (!bundleName) {
+            const msg = 'Missing bundleName (-p) for startAbility';
+            LogUtils.e(this.TAG, msg);
+            promise?.reject(msg);
+            break;
+          }
+
+          // 4. 构造 Want 对象
+          const want: Want = {
+            bundleName: bundleName,
+            uri: uri,
+            flags: flags
+          };
+
+          // 如果将来支持指定 Ability，可以加上
+          // if (abilityName) { want.abilityName = abilityName; }
+
+          LogUtils.i(this.TAG, `Executing startAbility with Want: ${JSON.stringify(want)}`);
+
+          // 5. 调用系统能力
+          const context = this.ctx.getAbilityContext() as common.UIAbilityContext;
+
+          context.startAbility(want).then(() => {
+            LogUtils.i(this.TAG, `startAbility success.`);
+            promise?.resolve(true);
+          }).catch((err: BusinessError) => {
+            LogUtils.e(this.TAG, `startAbility failed. code=${err.code}, msg=${err.message}`);
+            promise?.reject(JSON.stringify(err));
+          });
+        } catch (error) {
+          LogUtils.e(this.TAG, `startAbility exception: ${JSON.stringify(error)}`);
+          promise?.reject(error);
         }
         break;
       }
