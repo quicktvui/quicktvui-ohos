@@ -10,19 +10,16 @@ import {
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { PageManager } from './PageManager';
-import { QTPageView } from './QTPageView';
+import { QTPageView } from './QTPageView'; // 导入 QTPageView
 
 const TAG = "QTPageRouter";
 
 @Observed
 export class QTPageRouterView extends QTBaseComponentView {
   public event: QTPageRouter | null = null
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
-  }
-
-  setProp(propKey: string, propValue: HippyAny): boolean {
-    return super.setProp(propKey, propValue)
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
@@ -36,7 +33,6 @@ export class QTPageRouterView extends QTBaseComponentView {
 @Component
 export struct QTPageRouter {
   @ObjectLink renderView: QTPageRouterView
-  // 依然需要 ObjectLink 保证响应式，但不需要 Watch 做延迟了
   @ObjectLink children: HippyObservedArray<HippyRenderBaseView>
 
   public call(method: string, params: Array<HippyAny>,
@@ -57,8 +53,9 @@ export struct QTPageRouter {
   }
 
   /**
-   * 计算可见区域的起始索引
-   * 目的：只渲染栈顶可见的页面，底下的页面即使在 children 数组里，也不构建 UI
+   * 计算可见的起始索引。
+   * 逻辑：从栈顶向下找，找到第一个“非透明背景”（isDialogMode=false）的页面。
+   * 该页面及其之上的所有页面都应该可见。该页面之下的页面隐藏。
    */
   private getVisibleStartIndex(): number {
     if (!this.children || this.children.length === 0) {
@@ -66,25 +63,21 @@ export struct QTPageRouter {
     }
 
     const count = this.children.length;
-    // [性能保险] 最大允许叠加渲染层数。
-    // 如果没有动画，其实只需要渲染栈顶 1 层即可。
-    // 如果有透明 Dialog，可能需要渲染 2-3 层。
-    const MAX_STACK_DEPTH = 3;
-    let currentDepth = 0;
     let visibleStartIndex = 0;
 
-    // 倒序遍历，找到最底下的那个“基座”
+    // 倒序遍历（从栈顶往下找）
     for (let i = count - 1; i >= 0; i--) {
       const item = this.children[i];
       let isDialog = false;
 
+      // 关键：判断 child 是否为 QTPageView，并读取 isDialogMode
       if (item instanceof QTPageView) {
         isDialog = item.isDialogMode;
       }
 
-      currentDepth++;
-      // 如果是非透明页面（基座），或者深度超标，就以此为起点
-      if (!isDialog || currentDepth >= MAX_STACK_DEPTH) {
+      // 如果遇到了一个非 Dialog 页面（全屏页面），那么它就是最底层的可见页
+      // 它下面的页面都不需要显示了
+      if (!isDialog) {
         visibleStartIndex = i;
         break;
       }
@@ -94,21 +87,23 @@ export struct QTPageRouter {
 
   build(): void {
     Stack() {
-      // [核心优化点]
-      // 1. 直接遍历 this.children，绝对不要用 slice() 生成新数组
-      //    这保证了 ArkUI 认为数据源引用没变，只处理 Push 进来的那一个新 Item
-      // 2. 只有新 Push 的页面会触发 buildHippyRenderView，
-      //    底下的旧页面因为 Key 没变且数据没变，ArkUI 会直接复用，零开销。
+      // 1. 遍历所有 children，不要 slice，保持引用
       ForEach(this.children, (item: HippyRenderBaseView, index: number) => {
-        // [逻辑过滤]
-        // 在循环内部判断是否渲染。不满足条件的页面，ArkUI 不会生成对应的 Component 实例
-        if (item && index >= this.getVisibleStartIndex()) {
-          buildHippyRenderView(item, null)
+        // 2. 【核心修复】：只要 item 存在，就必须执行 buildHippyRenderView
+        // 绝对不能用 if (index >= visible) 来包裹 buildHippyRenderView，
+        // 否则 ArkUI 会销毁底下的组件，导致 Detail 页重建、滚动丢失。
+        if (item) {
+          Stack() {
+            buildHippyRenderView(item, null)
+          }
+          .applyItemAttr(item, index, this.getVisibleStartIndex())
         }
       }, (item: HippyRenderBaseView) => {
-        // [Key 生成]
-        // 必须使用唯一 ID。
-        // 只要 Key 不变，ArkUI 就不会销毁重建这个节点。
+        // 3. Key 生成：确保唯一且稳定，防止重新渲染
+        // item.uid 是你在 QTPageView 构造函数里生成的 `page-${num}`，非常适合做 Key
+        if (item instanceof QTPageView && item.uid) {
+          return item.uid
+        }
         return item ? (HIPPY_COMPONENT_KEY_PREFIX + item.tag) : ''
       })
 
@@ -118,7 +113,18 @@ export struct QTPageRouter {
   }
 }
 
-// 样式设置保持不变
+// 抽取子项属性设置，控制 Visibility
+@Extend(Stack)
+function applyItemAttr(item: HippyRenderBaseView, index: number, visibleStartIndex: number) {
+  // 核心逻辑：如果 index 小于起始可见索引，设为不可见，而不是销毁
+  .visibility(index >= visibleStartIndex ? Visibility.Visible : Visibility.None)
+  // 确保层级正确
+  .zIndex(index)
+  // 这里的 Key 和 ForEach 的 key 最好保持一致
+  .key(item instanceof QTPageView && item.uid ? item.uid : (HIPPY_COMPONENT_KEY_PREFIX + item.tag))
+}
+
+// 根容器属性
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
