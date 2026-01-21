@@ -8,7 +8,6 @@ import request from '@ohos.request';
 import { BusinessError } from '@ohos.base';
 import { FileUtil } from '../../utils/FileUtil';
 import { http } from '@kit.NetworkKit';
-import BuildProfile from 'BuildProfile';
 
 export class ApiAppLoader implements AppLoader {
   private data: EsData;
@@ -35,7 +34,8 @@ export class ApiAppLoader implements AppLoader {
 
       // 1. 构建当前目标版本的根目录 (例如: .../apps/com.example.pkg/1.0.1)
       // 修正点：直接定位到具体版本，而不是去遍历父级目录寻找可能的匹配
-      const currentVersionDir = `${App.instance.context?.filesDir}/app_rpk/apps/${appInfo.es_package}/${appInfo.tvpackagever}`;
+      const currentVersionDir =
+        `${App.instance.context?.filesDir}/app_rpk/apps/${appInfo.es_package}/${appInfo.tvpackagever}`;
       const currentMd5File = `${currentVersionDir}/${targetMd5}`;
 
       let isCached = false;
@@ -54,7 +54,10 @@ export class ApiAppLoader implements AppLoader {
           } else {
             console.warn(`ApiAppLoader: ⚠️ 缓存损坏 (MD5存在但dist缺失)，将重新下载`);
             // 尝试清理坏掉的标记，以免下次误判
-            try { fs.unlinkSync(currentMd5File); } catch (e) {}
+            try {
+              fs.unlinkSync(currentMd5File);
+            } catch (e) {
+            }
           }
         }
       } catch (e) {
@@ -170,10 +173,25 @@ export class ApiAppLoader implements AppLoader {
     });
   }
 
+  /**
+   * 格式化 UUID/OAID：去除中划线
+   * 输入: "d3b4695c-1611-417a-9938-9270e77a5bbf"
+   * 输出: "d3b4695c1611417a99389270e77a5bbf"
+   */
+  private formatId(id: string): string {
+    if (!id) {
+      return '';
+    }
+    // 使用正则 /-/g 进行全局替换
+    return id.replace(/-/g, '');
+  }
+
   private generateRequestParams(): ArrayBuffer {
     const params: Params = {
       source: '', // 根据实际情况填写
       sdk_ver: '3.0',
+      mac_eth: this.formatId(this.data.oaid ?? ''),
+      mac_wifi: this.formatId(this.data.oaid ?? ''),
       client: {
         es_package: this.data.appId!,
         es_package_ver: this.data.appVersion || '',
@@ -366,6 +384,8 @@ interface Params {
   source: string;
   client: Client;
   sdk_ver: string;
+  mac_eth: string,
+  mac_wifi: string,
 }
 
 interface Client {

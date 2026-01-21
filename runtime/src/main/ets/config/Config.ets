@@ -6,8 +6,11 @@ export interface Config {
   appVersion?: string
   appEntry?: string
   appDebug?: boolean
+  appEnableOAID?: boolean
   //
   appBundleUri?: string
   //
   appParams?: object
+  //
+  oaid?: string
 }

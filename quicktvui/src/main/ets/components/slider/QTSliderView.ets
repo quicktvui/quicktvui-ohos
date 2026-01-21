@@ -21,9 +21,9 @@ export class QTSliderView extends QTBaseComponentView {
   public minProgress: number = 0;
   public step: number = 0;
   public progressDefaultColor: string = ''; // 进度条背景颜色
-  public setIndicatorBackgroundColor: string= '#ffffff' // 指示器背景颜色
+  public setIndicatorBackgroundColor: string = '#ffffff' // 指示器背景颜色
   public progressHeight: number = 10; // 进度条的高度
-  public progressRadius: number = 0;  // 进度条的圆角
+  public progressRadius: number = 0; // 进度条的圆角
   public slideRange: SlideRange = {}; // 有效滑动区间
   public thumbWidth: number = 40; // 滑块的宽
   public thumbHeight: number = 40; // 滑块的高
@@ -117,7 +117,7 @@ export class QTSliderView extends QTBaseComponentView {
         let to = params[1] as number;
         this.step = params[2] as number;
         this.maxProgress = params[1] as number;
-        this.slideRange = {from, to};
+        this.slideRange = { from, to };
         break;
       }
       case 'setThumbWidth': {
@@ -139,22 +139,22 @@ export class QTSliderView extends QTBaseComponentView {
         break;
       }
       case 'setThumbDrawable': {
-        let initParam : QTMap = params[0] as QTMap;
+        let initParam: QTMap = params[0] as QTMap;
         let colors: HippyAny = initParam.get('colors') as string;
-        let cornerRadius: number = HRValueUtils.getNumberValue('cornerRadius',initParam,100);
-        let orientation: number = HRValueUtils.getNumberValue('orientation',initParam,1);
-        this.thumbDrawable = {width:cornerRadius ,height:cornerRadius};
+        let cornerRadius: number = HRValueUtils.getNumberValue('cornerRadius', initParam, 100);
+        let orientation: number = HRValueUtils.getNumberValue('orientation', initParam, 1);
+        this.thumbDrawable = { width: cornerRadius, height: cornerRadius };
         this.thumbBorderColor = colors;
         this.thumbBorderWidth = orientation;
         break;
       }
       case 'setThumbInactivatedDrawable': {
         this.thumbType = SliderBlockType.SHAPE;
-        let initParam : QTMap = params[0] as QTMap;
+        let initParam: QTMap = params[0] as QTMap;
         let colors = initParam.get('colors') as string;
-        let cornerRadius = HRValueUtils.getNumberValue('cornerRadius',initParam,100);
-        let orientation = HRValueUtils.getNumberValue('orientation',initParam,1);
-        this.thumbInactivatedDrawable = {width:cornerRadius ,height:cornerRadius};
+        let cornerRadius = HRValueUtils.getNumberValue('cornerRadius', initParam, 100);
+        let orientation = HRValueUtils.getNumberValue('orientation', initParam, 1);
+        this.thumbInactivatedDrawable = { width: cornerRadius, height: cornerRadius };
         this.thumbInactivatedBorderColor = colors;
         this.thumbInactivatedBorderWidth = orientation;
         // 未激活给页面的初始值
@@ -212,7 +212,11 @@ export struct QTSlider {
       .selectedColor(this.renderView.color) // 滑轨的已滑动部分颜色
       .slideRange(this.renderView.slideRange) // 有效滑动区间
       .blockSize({ width: this.renderView.thumbWidth, height: this.renderView.thumbHeight }) // 滑块的宽高
-      .blockStyle({ type: this.renderView.thumbType, image: this.renderView.blockUrl, shape: new Ellipse(this.renderView.thumbDrawable) }) // 滑块的样式
+      .blockStyle({
+        type: this.renderView.thumbType,
+        image: this.renderView.blockUrl,
+        shape: new Ellipse(this.renderView.thumbDrawable)
+      }) // 滑块的样式
       .blockBorderColor(this.renderView.blockBorderColor) // 滑块的边框颜色
       .blockBorderWidth(this.renderView.blockBorderWidth) // 滑块的边框宽度
       .focusable(this.renderView.cssFocusable) // 是否获焦
@@ -225,6 +229,11 @@ export struct QTSlider {
         this.renderView.blockDrawable = this.renderView.thumbDrawable;
         this.renderView.blockBorderColor = this.renderView.thumbBorderColor;
         this.renderView.blockBorderWidth = this.renderView.thumbBorderWidth;
+
+        let event = new HippyViewEvent("onFocus")
+        let params = new Map<string, HippyAny>()
+        params.set('isFocused', true)
+        event.send(this.renderView.ctx, this.renderView.tag, params)
       })
       .onBlur(() => {
         // 失去焦点是未激活的初始值
@@ -232,8 +241,13 @@ export struct QTSlider {
         this.renderView.blockDrawable = this.renderView.thumbInactivatedDrawable;
         this.renderView.blockBorderColor = this.renderView.thumbInactivatedBorderColor;
         this.renderView.blockBorderWidth = this.renderView.thumbInactivatedBorderWidth;
+
+        let event = new HippyViewEvent("onFocus")
+        let params = new Map<string, HippyAny>()
+        params.set('isFocused', false)
+        event.send(this.renderView.ctx, this.renderView.tag, params)
       })
-      .onChange((value: number, mode: SliderChangeMode)=>{
+      .onChange((value: number, mode: SliderChangeMode) => {
         switch (mode) {
           case SliderChangeMode.Begin:
             LogUtils.d(this.TAG, "=========onChange=====>>>>" + value + ' 开始')
@@ -280,7 +294,7 @@ function applyRenderViewBaseAttr($$: QTBaseComponentView) {
   .translate($$.cssTranslate)
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
-  .key($$.uid? $$.uid : `real_${$$.tag}`)
-  .id($$.uid? $$.uid : `real_${$$.tag}`)
+  .key($$.uid ? $$.uid : `real_${$$.tag}`)
+  .id($$.uid ? $$.uid : `real_${$$.tag}`)
   .visibility($$.visibility)
 }

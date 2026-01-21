@@ -95,6 +95,10 @@
     {
       "name": "cross_mark",
       "value": "❌"
+    },
+    {
+      "name": "app_tracking_reason",
+      "value": "我们需要您的设备标识以提供更好的服务。"
     }
   ]
 }

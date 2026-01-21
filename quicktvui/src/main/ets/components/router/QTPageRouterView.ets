@@ -5,21 +5,21 @@ import {
   HippyAny,
   HippyRenderCallback,
   HIPPY_COMPONENT_KEY_PREFIX,
-  buildHippyRenderView
+  buildHippyRenderView,
+  LogUtils
 } from 'hippy'
 import { QTBaseComponentView } from '../QTBaseComponentView';
 import { PageManager } from './PageManager';
-import { QTPageView } from './QTPageView';
+import { QTPageView } from './QTPageView'; // 导入 QTPageView
+
+const TAG = "QTPageRouter";
 
 @Observed
 export class QTPageRouterView extends QTBaseComponentView {
   public event: QTPageRouter | null = null
+
   constructor(ctx: NativeRenderContext) {
     super(ctx)
-  }
-
-  setProp(propKey: string, propValue: HippyAny): boolean {
-    return super.setProp(propKey, propValue)
   }
 
   call(method: string, params: Array<HippyAny>, callback: HippyRenderCallback | null): void {
@@ -42,7 +42,10 @@ export struct QTPageRouter {
 
   aboutToAppear(): void {
     this.renderView.event = this
-    PageManager.setUIContext(this.getUIContext())
+    const uiContext = this.getUIContext();
+    if (uiContext) {
+      PageManager.setUIContext(uiContext);
+    }
   }
 
   aboutToDisappear() {
@@ -50,52 +53,78 @@ export struct QTPageRouter {
   }
 
   /**
-   * 核心逻辑：获取当前应该显示的 Children 列表
-   * 从后往前找，找到第一个非 Dialog 的页面，将其以及它上面的所有页面返回
+   * 计算可见的起始索引。
+   * 逻辑：从栈顶向下找，找到第一个“非透明背景”（isDialogMode=false）的页面。
+   * 该页面及其之上的所有页面都应该可见。该页面之下的页面隐藏。
    */
-  private getVisibleChildren(): Array<HippyRenderBaseView> {
+  private getVisibleStartIndex(): number {
     if (!this.children || this.children.length === 0) {
-      return [];
+      return 0;
     }
 
-    let visibleStartIndex = 0;
     const count = this.children.length;
+    let visibleStartIndex = 0;
 
-    // 倒序寻找基座（第一个非 Dialog 的页面）
+    // 倒序遍历（从栈顶往下找）
     for (let i = count - 1; i >= 0; i--) {
       const item = this.children[i];
-      // 安全获取 isDialogMode 属性
       let isDialog = false;
+
+      // 关键：判断 child 是否为 QTPageView，并读取 isDialogMode
       if (item instanceof QTPageView) {
         isDialog = item.isDialogMode;
-      } else {
-        // 处理非 TS 类型安全的情况，或者 item 不是 QTPageView 的情况
-        isDialog = (item as QTPageView).isDialogMode === true;
       }
 
+      // 如果遇到了一个非 Dialog 页面（全屏页面），那么它就是最底层的可见页
+      // 它下面的页面都不需要显示了
       if (!isDialog) {
         visibleStartIndex = i;
-        break; // 找到了底座，停止
+        break;
       }
     }
-
-    // 利用 slice 返回一个新的子数组（浅拷贝，item引用不变，不会影响 key 的生成）
-    // 注意：如果 HippyObservedArray 不支持 slice，可能需要用 Array.from(this.children).slice(...)
-    return this.children.slice(visibleStartIndex);
+    return visibleStartIndex;
   }
 
   build(): void {
     Stack() {
-      ForEach(this.getVisibleChildren(), (item: HippyRenderBaseView) => {
-        buildHippyRenderView(item, null)
-      }, (item: HippyRenderBaseView) => item ? item.tag + '' : '')
+      // 1. 遍历所有 children，不要 slice，保持引用
+      ForEach(this.children, (item: HippyRenderBaseView, index: number) => {
+        // 2. 【核心修复】：只要 item 存在，就必须执行 buildHippyRenderView
+        // 绝对不能用 if (index >= visible) 来包裹 buildHippyRenderView，
+        // 否则 ArkUI 会销毁底下的组件，导致 Detail 页重建、滚动丢失。
+        if (item) {
+          Stack() {
+            buildHippyRenderView(item, null)
+          }
+          .applyItemAttr(item, index, this.getVisibleStartIndex())
+        }
+      }, (item: HippyRenderBaseView) => {
+        // 3. Key 生成：确保唯一且稳定，防止重新渲染
+        // item.uid 是你在 QTPageView 构造函数里生成的 `page-${num}`，非常适合做 Key
+        if (item instanceof QTPageView && item.uid) {
+          return item.uid
+        }
+        return item ? (HIPPY_COMPONENT_KEY_PREFIX + item.tag) : ''
+      })
+
       ContentSlot(this.renderView.childSlot)
     }
     .applyRenderViewBaseAttr(this.renderView)
   }
 }
 
-// base props for all components
+// 抽取子项属性设置，控制 Visibility
+@Extend(Stack)
+function applyItemAttr(item: HippyRenderBaseView, index: number, visibleStartIndex: number) {
+  // 核心逻辑：如果 index 小于起始可见索引，设为不可见，而不是销毁
+  .visibility(index >= visibleStartIndex ? Visibility.Visible : Visibility.None)
+  // 确保层级正确
+  .zIndex(index)
+  // 这里的 Key 和 ForEach 的 key 最好保持一致
+  .key(item instanceof QTPageView && item.uid ? item.uid : (HIPPY_COMPONENT_KEY_PREFIX + item.tag))
+}
+
+// 根容器属性
 @Extend(Stack)
 function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .key(HIPPY_COMPONENT_KEY_PREFIX + $$.tag)
@@ -104,10 +133,9 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .size({ width: $$.cssWidth, height: $$.cssHeight })
   .opacity($$.cssOpacity)
   .clip($$.cssOverflow)
-  .visibility(($$ as HippyRenderBaseView).cssVisibility) // must add as, otherwise the compiler has error
+  .visibility(($$ as HippyRenderBaseView).cssVisibility)
   .zIndex($$.cssZIndex)
   .accessibilityText($$.cssAccessibilityLabel)
-  // .focusable($$.cssFocusable)
   .border($$.cssBorder)
   .shadow($$.cssShadow)
   .linearGradient($$.cssLinearGradient)
@@ -121,4 +149,3 @@ function applyRenderViewBaseAttr($$: HippyRenderBaseView) {
   .hitTestBehavior($$.hitTestBehavior)
   .onClick($$.eventClick)
 }
-

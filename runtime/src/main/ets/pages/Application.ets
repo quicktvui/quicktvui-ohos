@@ -26,6 +26,7 @@ import { AppContext } from '../eskit/AppContext'
 import { AppManager } from '../eskit/AppManager'
 import { App } from '../App'
 import { AppLoader, AppLoaderFactory } from '../eskit/ui/hippy/AppLoader'
+import { PerfLogger } from '../utils/PerfLogger'
 
 @Builder
 export function PageDebugBuilder() {
@@ -61,8 +62,18 @@ struct Application {
   private async startLoadApp() {
     try {
       if (this.appInfo) {
+        // [PERF] 开始加载 App 资源
+        PerfLogger.mark('HippyLaunch', 'StartLoadApp');
+
         this.appLoader = AppLoaderFactory.create(this.appInfo)
         await this.appLoader.startLoad()
+
+        // [PERF] 资源 (JS Bundle/Assets) 下载/读取完毕
+        PerfLogger.mark('HippyLaunch', 'AssetsReady');
+
+        // [PERF] 激活焦点逻辑 (原逻辑在 generateEngineInitParams，现在移到这里确保生效)
+        this.getUIContext().getFocusController().activate(true, false)
+
         this.appContext.engine = await this.createEngine()
         this.loadModule()
       }
@@ -76,11 +87,29 @@ struct Application {
   }
 
   private createEngine(): Promise<HippyEngine> {
+    // 1. [PERF] 检查是否有预热好的引擎
+    if (AppManager.instance.preloadedEngine) {
+      PerfLogger.mark('HippyLaunch', 'Engine_Hit_Cache'); // 命中缓存
+      return Promise.resolve(AppManager.instance.preloadedEngine);
+    }
+
+    // 2. [PERF] 检查是否正在预热中
+    if (AppManager.instance.engineInitPromise) {
+      PerfLogger.mark('HippyLaunch', 'Engine_Wait_Prewarm'); // 等待预热完成
+      return AppManager.instance.engineInitPromise;
+    }
+
+    // 3. 兜底：现场创建 (与原逻辑保持一致)
     return new Promise<HippyEngine>((resolve, reject) => {
+      // [PERF] 开始初始化引擎
+      PerfLogger.mark('HippyLaunch', 'EngineInit_Start');
+
       const engine = createHippyEngine(this.generateEngineInitParams())
       engine.initEngine({
         onInitialized: (statusCode: EngineInitStatus, msg: string) => {
           if (statusCode == EngineInitStatus.STATUS_OK) {
+            // [PERF] 引擎初始化成功
+            PerfLogger.mark('HippyLaunch', 'EngineInit_Success');
             resolve(engine)
           } else {
             reject({
@@ -94,9 +123,9 @@ struct Application {
   }
 
   private generateEngineInitParams(): EngineInitParams {
-    //
-    this.getUIContext().getFocusController().activate(true, false)
-    //
+    // 注意：这里的 activate 已经移到了 startLoadApp，避免重复调用或时序问题
+    // this.getUIContext().getFocusController().activate(true, false)
+
     const params = new EngineInitParams(libHippy, App.instance.context!, this.getUIContext())
     params.debugMode = false
     params.enableLog = false
@@ -121,9 +150,16 @@ struct Application {
   private loadModule() {
     const params = this.generateLoadModuleParams()
     const viewThis = this
+
+    // [PERF] 开始加载业务模块 (运行 JS)
+    PerfLogger.mark('HippyLaunch', 'LoadModule_Call');
+
     const view = this.appContext.engine?.loadModuleWithListener(params, {
       onLoadCompleted(statusCode: ModuleLoadStatus, msg: string) {
         console.log("loadModule", statusCode, msg)
+        // [PERF] JS Bundle 加载并执行完毕
+        PerfLogger.mark('HippyLaunch', 'BundleLoaded');
+
         animateToImmediately({
           duration: 800,
           delay: 1000,
@@ -138,9 +174,15 @@ struct Application {
       },
       onFirstViewAdded() {
         console.log("onFirstViewAdded")
+        // [PERF] 首个 View 节点被添加
+        PerfLogger.mark('HippyLaunch', 'FirstViewAdded');
       },
       onFirstContentfulPaint() {
-        console.log("onFirstViewAdded")
+        console.log("onFirstViewAdded") // 保持原代码 log 不变
+        // [PERF] 首屏内容绘制完成 (FCP) - 核心指标
+        PerfLogger.mark('HippyLaunch', 'FirstContentfulPaint');
+        // [PERF] 结束本次启动性能分析
+        PerfLogger.end('HippyLaunch');
       }
     })
 
@@ -223,6 +265,10 @@ struct Application {
     })
     .onAppear(() => {
       LogUtils.e(this.TAG, 'Lifecycle: onAppear');
+
+      // [PERF] 页面出现，开始启动计时
+      PerfLogger.start('HippyLaunch');
+
       if (this.appInfo) {
         this.parseEsData(this.appInfo)
       }
@@ -319,6 +365,3 @@ struct Application {
     })
   }
 }
-
-
-

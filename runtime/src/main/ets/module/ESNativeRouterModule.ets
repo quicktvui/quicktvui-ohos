@@ -8,6 +8,7 @@ import { bundleManager, common, OpenLinkOptions } from '@kit.AbilityKit';
 import { App } from '../App';
 import { EsData } from '../eskit/EsData';
 import Url from '@ohos.url'
+import { Want } from '@kit.AbilityKit'; // 记得导入 Want
 
 /**
  *
@@ -65,11 +66,10 @@ export class ESNativeRouterModule extends BaseModule {
       }
       case 'openESApp': {
         try {
-          // 传入的 payload 格式：
-          // esapp://es.hello.world/2.0?entry=Debug&uri=assets%3A%2F%2F%2Fvue%2F&params=%7B%22key%22%3A%22value%22%7D&debug=true&from=cmd
           const payload = params[0] as string;
-          console.log(this.TAG + " openESApp params: " + payload)
-          // 1. 使用标准库解析
+          console.log(this.TAG + " openESApp params: " + payload);
+
+          // 1. 解析 URL
           const urlObj = Url.URL.parseURL(payload);
 
           LogUtils.e(this.TAG,
@@ -77,15 +77,29 @@ export class ESNativeRouterModule extends BaseModule {
 
           // 2. 校验协议
           if (urlObj.protocol === 'esapp:') {
-            // --- A. 提取基础信息 ---
-            // Host 即为包名
-            const pkgName = urlObj.hostname;
-            // Path 即为版本 (去掉开头的 /)
-            const version = urlObj.pathname.startsWith('/') ? urlObj.pathname.substring(1) : urlObj.pathname;
-
-            // --- B. 提取 Query 参数 ---
             const queryParams = urlObj.params;
 
+            let pkgName = '';
+            let version = '';
+
+            // --- A. 格式分流逻辑 ---
+            // 检查是否为新格式: esapp://action/start
+            if (urlObj.hostname === 'action' && urlObj.pathname.startsWith('/start')) {
+              // [新格式逻辑]
+              // 优先取 es_pkg，如果没有则取 pkg
+              pkgName = queryParams.get('es_pkg') || queryParams.get('pkg') || '';
+              // 新格式中如果没有版本号，可以给默认值 '1.0' 或保留为空
+              version = queryParams.get('version') || '1.0';
+            } else {
+              // [旧格式逻辑] esapp://es.hello.world/2.0
+              // Host 即为包名
+              pkgName = urlObj.hostname;
+              // Path 即为版本 (去掉开头的 /)
+              version = urlObj.pathname.startsWith('/') ? urlObj.pathname.substring(1) : urlObj.pathname;
+            }
+
+            // --- B. 提取通用 Query 参数 ---
+            // 无论哪种格式，这些参数的提取逻辑是一样的
             const appName = queryParams.get('name');
             const appIcon = queryParams.get('icon');
 
@@ -95,35 +109,51 @@ export class ESNativeRouterModule extends BaseModule {
             // 调试标记
             const isDebug = queryParams.get('debug') === 'true';
 
-            // URI (需要解码)
-            const encodedUri = queryParams.get('uri');
-            const realUri = encodedUri ? decodeURIComponent(encodedUri) : '';
+            // URI 处理
+            const rawUri = queryParams.get('uri');
+            const realUri = rawUri ? decodeURIComponent(rawUri) : '';
 
-            // JSON Params (需要解码 + 反序列化)
-            const encodedArgs = queryParams.get('args');
+            // --- C. 参数 JSON 处理 (args/params) ---
+            // 兼容两种参数名: args (新格式/部分旧格式) 和 params (部分旧格式)
+            const encodedArgs = queryParams.get('args') || queryParams.get('params');
             let argJson: Record<string, Object> = {};
             try {
               if (encodedArgs) {
+                // 尝试解码并解析
                 argJson = JSON.parse(decodeURIComponent(encodedArgs)) as Record<string, Object>;
               }
             } catch (e) {
-              LogUtils.w(this.TAG, `JSON parse failed: ${e}`);
+              LogUtils.w(this.TAG, `JSON parse encoded failed, trying raw: ${e}`);
+              // 容错处理：有时传入的 JSON 没有 URL Encode，尝试直接解析
+              try {
+                if (encodedArgs) {
+                  argJson = JSON.parse(encodedArgs) as Record<string, Object>;
+                }
+              } catch (e2) {
+                LogUtils.e(this.TAG, `JSON parse completely failed`);
+              }
             }
 
-            // --- C. 构造 EsData ---
+            // --- D. 构造 EsData ---
             const appInfo: EsData = {
-              appId: pkgName,
+              appId: pkgName, // 统一后的包名
               appName: appName || '',
               appIcon: appIcon || '',
-              appVersion: version,
+              appVersion: version, // 统一后的版本
               appBundleUri: realUri,
               appParams: argJson,
               appDebug: isDebug
             };
-            // --- D. 路由跳转 ---
+
+            // --- E. 路由跳转 ---
             LogUtils.e(this.TAG, `Navigating to ${entryPage} with info: ${JSON.stringify(appInfo)}`);
 
-            App.instance.nav?.pushPathByName(entryPage, appInfo, false);
+            if (pkgName) {
+              App.instance.nav?.pushPathByName(entryPage, appInfo, false);
+            } else {
+              LogUtils.e(this.TAG, `Package name is empty, cannot open ESApp.`);
+            }
+
           } else {
             LogUtils.w(this.TAG, `Unknown scheme: ${urlObj.protocol}`);
           }
@@ -142,9 +172,12 @@ export class ESNativeRouterModule extends BaseModule {
           const openLinkOptions: OpenLinkOptions = {
             appLinkingOnly: appLinkingOnly
           };
+
+          LogUtils.e(this.TAG, `OpenLink: link: ${link}`)
+
           const context = this.ctx.getAbilityContext() as common.UIAbilityContext;
           context.openLink(link, openLinkOptions).then(() => {
-            LogUtils.i(this.TAG, `OpenLink: link: ${link}`)
+            LogUtils.e(this.TAG, `OpenLink: link: ${link}`)
             promise?.resolve(true)
           }).catch((err: BusinessError) => {
             LogUtils.e(this.TAG,
@@ -155,6 +188,76 @@ export class ESNativeRouterModule extends BaseModule {
           LogUtils.e(this.TAG,
             `Failed to OpenLink. code=${error.code}, message=${error.message}`)
           promise?.reject(error)
+        }
+        break;
+      }
+      case 'startAbility': {
+        try {
+          // 1. 定义变量
+          let uri = '';
+          let bundleName = '';
+          let abilityName = ''; // 如果将来有 -n 参数指定 abilityName，可以预留
+          let flags = 0x10000000; // 默认 FLAG_ABILITY_NEW_MISSION
+
+          LogUtils.i(this.TAG, `startAbility raw params: ${JSON.stringify(params)}`);
+
+          // 2. 解析 CLI 风格参数: [['-d', 'xxx'], ['-p', 'xxx']]
+          if (Array.isArray(params)) {
+            for (const item of params) {
+              // 确保每一项是数组且至少有两个元素 [key, value]
+              if (Array.isArray(item) && item.length >= 2) {
+                const key = item[0] as string;
+                const value = item[1] as string;
+
+                switch (key) {
+                  case '-d': // Data / URI
+                    uri = value;
+                    break;
+                  case '-p': // Package / BundleName
+                    bundleName = value;
+                    break;
+                  case '-f': // Flags (可选支持)
+                    flags = parseInt(value) || flags;
+                    break;
+                  // 如果需要支持 abilityName，可以加 case '-n': abilityName = value;
+                }
+              }
+            }
+          }
+
+          // 3. 校验必要参数
+          if (!bundleName) {
+            const msg = 'Missing bundleName (-p) for startAbility';
+            LogUtils.e(this.TAG, msg);
+            promise?.reject(msg);
+            break;
+          }
+
+          // 4. 构造 Want 对象
+          const want: Want = {
+            bundleName: bundleName,
+            uri: uri,
+            flags: flags
+          };
+
+          // 如果将来支持指定 Ability，可以加上
+          // if (abilityName) { want.abilityName = abilityName; }
+
+          LogUtils.i(this.TAG, `Executing startAbility with Want: ${JSON.stringify(want)}`);
+
+          // 5. 调用系统能力
+          const context = this.ctx.getAbilityContext() as common.UIAbilityContext;
+
+          context.startAbility(want).then(() => {
+            LogUtils.i(this.TAG, `startAbility success.`);
+            promise?.resolve(true);
+          }).catch((err: BusinessError) => {
+            LogUtils.e(this.TAG, `startAbility failed. code=${err.code}, msg=${err.message}`);
+            promise?.reject(JSON.stringify(err));
+          });
+        } catch (error) {
+          LogUtils.e(this.TAG, `startAbility exception: ${JSON.stringify(error)}`);
+          promise?.reject(error);
         }
         break;
       }

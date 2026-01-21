@@ -17,11 +17,11 @@
       }
     },
     {
-      "name": "Animation",
-      "pageSourceFile": "src/main/ets/pages/Animation.ets",
-      "buildFunction": "PageDebugBuilder",
+      "name": "Device",
+      "pageSourceFile": "src/main/ets/pages/Device.ets",
+      "buildFunction": "PageDeviceBuilder",
       "data": {
-        "description": "this is Animation page"
+        "description": "this is Device page"
       }
     }
   ]

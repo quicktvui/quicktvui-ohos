@@ -71,7 +71,8 @@ build_channel() {
 # 4. 渠道列表
 # ========================================================
 CHANNELS=(
-appstore
+#runtime
+#appstore
 #doudizhu
 #ctyangshenggong
 #haoqidongwu
@@ -100,7 +101,7 @@ appstore
 #  g_pacman
 #  g_rectangle
 #  g_road
-#  g_snake
+  g_snake
 )
 
 # ========================================================

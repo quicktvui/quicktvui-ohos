@@ -47,7 +47,16 @@ export class ImageLoader implements ImageLoaderAdapter {
           if (dataHolder.resultCode == ResourceDataHolder.RESOURCE_LOAD_SUCCESS_CODE) {
             const r = image.createImageSource(dataHolder.buffer as ArrayBuffer)
             if (r) { // TODO: crash protect
-              r.createPixelMap().then(value => {
+              // 定义解码选项 TODO
+              const decodingOptions: image.DecodingOptions = {
+                desiredSize: {
+                  width: width,   // 目标渲染宽度 (从组件传入)
+                  height: height  // 目标渲染高度
+                },
+                editable: false,    // 只读模式更快
+                desiredPixelFormat: image.PixelMapFormat.RGB_565,
+              };
+              r.createPixelMap(decodingOptions).then(value => {
                 listener.onRequestSuccess(value)
               })
             }
