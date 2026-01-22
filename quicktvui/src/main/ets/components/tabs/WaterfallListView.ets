@@ -49,7 +49,7 @@ export class WaterfallListView extends QTFastListView{
 
 
   onUIAboutToDisappear(): void {
-    this.scrollToTop(false)
+    // this.scrollToTop(false)
   }
 
 }

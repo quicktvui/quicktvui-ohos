@@ -14,6 +14,7 @@ import { TVView } from '../TVView';
 import { TabsDataSource } from './TabsDataSource';
 import { WaterfallListView } from './WaterfallListView';
 import { KeyCode } from '@kit.InputKit';
+import { PageManager } from '../router/PageManager';
 
 
 @Observed
@@ -285,12 +286,11 @@ export class QTTabsView extends QTRenderBaseView{
   }
 
   dispatchKeyEvent(event: KeyEvent): boolean {
-    if(event.keyCode == KeyCode.KEYCODE_BACK){
+    if(event.keyCode == KeyCode.KEYCODE_BACK && PageManager.isFrontPage(LayoutAttach.obtainLayoutAttach(this).pageUid)){
       if(this.onBackPressed()){
         QTLog.w(TAG_PAGE,`take over back pressed`)
         return true;
       }
-
     }
     return false;
   }

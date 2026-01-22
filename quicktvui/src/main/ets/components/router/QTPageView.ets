@@ -87,7 +87,6 @@ export class QTPageView extends QTBaseComponentView implements IPage {
   restoreFocus() {
     if (this.savedFocusUid != null) {
         let b = FocusUtils.requestFocusById(this.savedFocusUid)
-
         if(!b){
           QTLog.e(TAG_FOCUS,`restoreFocus fail view may has destoryed uid:${this.savedFocusUid} request focus from page`)
           FocusUtils.requestViewGroupFocus(this)
@@ -99,7 +98,14 @@ export class QTPageView extends QTBaseComponentView implements IPage {
   aboutToDisappear(){
     QTLog.w(TAG_PAGE,`----aboutToDisappear page id :${this.uid}`)
     this.isFront = false;
-    this.saveFocus()
+    // this.saveFocus()
+    let frontPageId = PageManager.routerBack(this.uid)
+    if(frontPageId){
+      let frontPage = PageManager.getPage(frontPageId)
+      if(frontPage){
+          frontPage.onResumePage()
+      }
+    }
     setTimeout(()=>{
       PageManager.unregisterPage(this.uid)
     },100)
@@ -109,12 +115,24 @@ export class QTPageView extends QTBaseComponentView implements IPage {
     this.savedFocusUid = undefined;
   }
 
+  onResumePage(): void {
+    this.restoreFocus()
+  }
+
+  onPausePage(): void {
+    this.saveFocus()
+  }
+
   aboutToAppear(){
     this.isFront = true;
     // this.uid = `page-${this.tag}`
     QTLog.i(TAG_PAGE,`+++++aboutToAppear page id :${this.uid}`)
+    let topPage = PageManager.getTopPage();
+    if(topPage){
+      topPage.onPausePage();
+    }
     PageManager.registerPage(this.uid,this)
-    PageManager.markPageToFront(this.uid)
+    PageManager.bringToFront(this.uid)
     if(this.isDialogMode){
       setTimeout(()=>{
         QTLog.i(TAG_FOCUS,`requestFirstFocus for dialog`)
@@ -122,6 +140,8 @@ export class QTPageView extends QTBaseComponentView implements IPage {
       },100)
     }
   }
+
+
 
   setPageUIContext(uiContext : UIContext){
     this.uiContext = uiContext;
